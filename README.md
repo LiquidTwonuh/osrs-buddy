@@ -17,7 +17,7 @@ It's a single HTML file with no build step, wrapped as a Windows app with
 [Tauri](https://tauri.app). Your data lives in your browser's local storage and
 never leaves your machine.
 
-![version](https://img.shields.io/badge/version-1.1-e6c35c) ![platform](https://img.shields.io/badge/platform-Windows-6b7d8e)
+![version](https://img.shields.io/badge/version-1.2-e6c35c) ![platform](https://img.shields.io/badge/platform-Windows-6b7d8e)
 
 ## What it does
 
@@ -84,7 +84,7 @@ single source of truth.
 | `OSRS-Buddy.html` | the app — stable |
 | `OSRS-Buddy-dev.html` | development sandbox |
 | `app/` | Tauri wrapper |
-| `archive/` | pre-git version snapshots |
+| `releases/` | a runnable copy of each released version |
 
 ## Credit
 

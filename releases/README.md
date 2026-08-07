@@ -9,6 +9,7 @@ a copy of your data — for that, use ⇓ Backup in Settings.
 
 | File | Released |
 |---|---|
+| `OSRS-Buddy-v1.2.html` | 7 Aug 2026 — automatic backups, wider planner, High Alch |
 | `OSRS-Buddy-v1.1.html` | 7 Aug 2026 — profiles, quest reward detail |
 | `OSRS-Buddy-v1.0.html` | 6 Aug 2026 — quest planner, renumbered 1.0 |
 | `OSRS-Buddy-v0.7.html` | 31 Jul 2026 — Wise Old Bud, skill-based Scroll |

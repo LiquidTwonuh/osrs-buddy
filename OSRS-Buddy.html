@@ -141,6 +141,11 @@
   .qp-tag.free{color:var(--green); border-color:#2f5a28}
   /* tech tree */
   .qp-tree-wrap{overflow:auto; padding:6px 2px 12px}
+  /* popped out: the tree panel takes the whole viewport, everything else waits */
+  .qp-panel.popped{position:fixed; inset:0; z-index:70; margin:0; border-radius:0;
+    display:flex; flex-direction:column; overflow:hidden; padding:12px 16px 0}
+  .qp-panel.popped .qp-tree-wrap{flex:1; min-height:0}
+  .qp-panel.popped .qp-detail{max-height:34vh; overflow:auto; flex:none}
   .qp-tree{position:relative}
   .qp-tree svg{position:absolute; inset:0; pointer-events:none; overflow:visible}
   .qp-node{position:absolute; width:176px; box-sizing:border-box; padding:6px 8px; border-radius:8px;
@@ -238,6 +243,12 @@
   .qp-step{display:flex; align-items:center; gap:9px; padding:6px 0; border-top:1px solid var(--border); font-size:13px}
   .qp-step .n{color:var(--muted); font-size:11px; min-width:20px}
   .qp-step.ready .nm{color:var(--gold); font-weight:bold}
+  /* restore points */
+  .bk-list{display:flex; flex-direction:column; gap:4px}
+  .bk-row{display:flex; align-items:center; gap:8px; font-size:12px; padding:5px 8px;
+    background:var(--panel2); border:1px solid var(--border); border-radius:7px}
+  .bk-row .bk-when{font-weight:bold}
+  .bk-row .bk-what{color:var(--muted); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
   /* profile chips in the character pops */
   .prof-list{display:flex; flex-direction:column; gap:4px; margin-bottom:8px}
   .prof-list:empty{display:none}
@@ -249,6 +260,8 @@
   .prof-chip .pc-x{color:var(--muted); flex:none; padding:0 2px}
   .prof-chip .pc-x:hover{color:var(--red,#e0623d)}
   .prof-hint{font-size:11px; color:var(--muted); margin:2px 0 6px}
+  .dp-recl{background:none; border:0; color:var(--muted); cursor:pointer; font-size:11px; padding:0 3px; margin-left:4px}
+  .dp-recl:hover{color:var(--gold)}
   /* skill info modal — click a Home skill tile */
   .skill{cursor:pointer; transition:transform .1s}
   .skill:hover{transform:translateY(-1px); border-color:var(--gold-dim)}
@@ -300,7 +313,13 @@
     border:1px solid var(--border); border-radius:7px; padding:8px 10px; font-weight:bold; font-size:13px; width:100%}
   .side-refresh:hover{border-color:var(--gold-dim)}
   .content{flex:1; min-width:0; padding:26px 28px 90px}
+  /* 880px is a comfortable reading width for the text-led views. The quest planner
+     is a map, not prose — it gets the whole window. */
+  /* no transition here: animating between a length and min() leaves the computed
+     value stuck in a half-resolved calc() when the view is hidden at toggle time */
   .content-inner{max-width:880px; margin:0 auto}
+  body[data-wide] .content-inner{max-width:2000px}
+  body[data-wide] .app{max-width:none}  /* the shell caps at 1180 — let the map have the window */
   .view > .panel:first-child, .view > details.panel:first-child{margin-top:0}
 
   /* home polish */
@@ -737,6 +756,11 @@
       <div class="set-sec">
         <div class="set-h">Feedback</div>
         <a class="ghost small" id="bugBtn" target="_blank" rel="noopener" style="display:inline-block">🐛 Report a bug</a>
+      </div>
+      <div class="set-sec">
+        <div class="set-h">Restore</div>
+        <div id="backupList" class="bk-list"></div>
+        <p class="small muted" style="margin:6px 0 0">The app snapshots your data daily and before anything risky. These live on this device — use ⇓ Backup for a copy you keep elsewhere.</p>
         <p class="small muted" style="margin:6px 0 0">Opens a GitHub issue with the app version filled in. Needs a free GitHub account — anyone can post one.</p>
       </div>
     </div>
@@ -1160,7 +1184,66 @@ let refreshTimer = null;
 function load(){
   try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }catch(e){ return {}; }
 }
-function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+// A silent save failure used to mean data quietly stopped persisting. Say so instead.
+let saveFailed = false;
+function save(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    saveFailed = false;
+  }catch(e){
+    if(!saveFailed){
+      saveFailed = true;
+      try{ toast("Couldn't save — storage may be full. Export a backup from Settings.", true); }catch(_){}
+    }
+  }
+}
+
+// ============ AUTOMATIC BACKUPS ============
+// Rolling local snapshots so a bad import, a mis-click, or a corrupted write is
+// recoverable. Only irreplaceable data is kept — the quest database and wiki cache
+// are ~96% of the bytes and re-download themselves, so they're excluded.
+const BACKUP_KEY = "osrs_todo_backups_v1";
+const BACKUP_KEEP = 8;
+const BACKUP_SKIP = ["questDB","wikiCache","updCheck"];
+function backupList(){ try{ return JSON.parse(localStorage.getItem(BACKUP_KEY))||[]; }catch(e){ return []; } }
+function backupWrite(list){
+  // if space is tight, drop the oldest snapshots rather than fail
+  for(let n=list.length; n>0; n--){
+    try{ localStorage.setItem(BACKUP_KEY, JSON.stringify(list.slice(0,n))); return true; }catch(e){}
+  }
+  return false;
+}
+function snapshotNow(reason){
+  const slim = {};
+  Object.keys(state).forEach(k=>{ if(!BACKUP_SKIP.includes(k)) slim[k] = state[k]; });
+  const list = backupList();
+  list.unshift({ ts:Date.now(), reason:reason||"automatic", state:slim, profiles:profStore() });
+  backupWrite(list.slice(0, BACKUP_KEEP));
+}
+function backupStats(b){
+  const s = b.state||{};
+  return { log:(s.scroll&&s.scroll.log||[]).length,
+           goals:(s.goals||[]).length+(s.manual||[]).length,
+           quests:Object.keys(s.questsDone||{}).length,
+           chars:1+Object.keys((b.profiles&&b.profiles.stash)||{}).length };
+}
+function restoreBackup(i){
+  const b = backupList()[i];
+  if(!b) return false;
+  snapshotNow("before restore");   // restoring is itself undoable
+  const keep = {};
+  BACKUP_SKIP.forEach(k=>{ if(state[k]!==undefined) keep[k]=state[k]; });
+  state = Object.assign({}, b.state, keep);
+  if(b.profiles) profSaveStore(b.profiles);
+  live = null;
+  ensure(); save();
+  return true;
+}
+// once a day is enough to catch "yesterday was fine"
+function backupDaily(){
+  const list = backupList();
+  if(!list.length || Date.now()-list[0].ts > 20*3600e3) snapshotNow("daily");
+}
 
 // ============ PROFILES ============
 // Each character is its own world: goals, Scroll, priorities, quest record — all of it.
@@ -1368,7 +1451,8 @@ function renderProfiles(){
   $$(".prof-list [data-profdel]").forEach(x=>x.onclick=(e)=>{
     e.stopPropagation();
     const k = x.dataset.profdel;
-    if(!confirm("Delete this profile and ALL its data (Scroll, goals, quest record)? This can't be undone.")) return;
+    if(!confirm("Delete this profile and ALL its data (Scroll, goals, quest record)?\n\nA snapshot is taken first — you can restore it from Settings.")) return;
+    snapshotNow("before deleting a profile");
     deleteProfile(k);
     renderProfiles();
     toast("Profile deleted");
@@ -1807,8 +1891,27 @@ const SKILL_COLOR = {
   // non-skill chips — days that aren't about XP but still deserve a colour
   Questing:     "oklch(0.65 0.16 255)",  // vivid quest blue
   Clues:        "oklch(0.64 0.16 350)",  // clue pink (also auto-detected from WOM)
+  // Magic XP that came from alching rather than combat. Picked by searching OKLCH
+  // for the gold furthest from every colour above: 12.5 from its nearest neighbour
+  // (Runecraft), where the palette's tightest existing pair is 4.6.
+  "High Alch":  "oklch(0.94 0.19 70)",
 };
 const SKILL_MUTED = "#7b7264"; // manual-only days (no game data to colour by)
+// WiseOldMan reports XP, not what earned it — Magic from alching looks identical to
+// Magic from combat. These let you say which it was, per day; the choice is stored
+// against the date and survives refreshes (the auto cache gets rebuilt, this doesn't).
+const RECLASS_OPTIONS = { magic: ["High Alch"] };
+function reclassOf(iso, womKey){
+  const r = state.scroll.reclass && state.scroll.reclass[iso];
+  return (r && r[womKey]) || null;
+}
+function setReclass(iso, womKey, label){
+  state.scroll.reclass = state.scroll.reclass || {};
+  const day = state.scroll.reclass[iso] = state.scroll.reclass[iso] || {};
+  if(label) day[womKey] = label; else delete day[womKey];
+  if(!Object.keys(day).length) delete state.scroll.reclass[iso];
+  save();
+}
 function skillColorKey(womKey){
   if(COMBAT_LUMP_KEYS.has(womKey)) return "Combat";
   if(womKey==="runecrafting") return "Runecraft";
@@ -1821,7 +1924,7 @@ function skillsByDate(){
   const auto = (state.scroll.autoOn!==false && state.scroll.auto) ? state.scroll.auto : {};
   for(const iso in auto){
     const d=auto[iso], agg={};
-    for(const k in (d.skills||{})){ const key=skillColorKey(k); agg[key]=(agg[key]||0)+d.skills[k]; }
+    for(const k in (d.skills||{})){ const key=reclassOf(iso,k)||skillColorKey(k); agg[key]=(agg[key]||0)+d.skills[k]; }
     let kc=0; for(const b in (d.bosses||{})) kc+=Math.max(0,d.bosses[b]);
     if(kc>0) agg["Combat"]=(agg["Combat"]||0)+kc*8000; // rough xp-equivalent so bossing days read red
     if(d.clues>0) agg["Clues"]=(agg["Clues"]||0)+d.clues*3000; // auto-detected clue completions get their pink back
@@ -2255,13 +2358,21 @@ function typesByDate(){
   for(const d in m) out[d]=ACTIVITIES.filter(a=>m[d].has(a.id)).map(a=>a.id);
   return out;
 }
+// A day can involve plenty of skills — three bands was dropping the rest silently.
+// Equal bands, not proportional: a day is a day, regardless of where the XP landed.
+const HEAT_MAX_BANDS = 6;
 function cellBg(typeIds){
   if(!typeIds || !typeIds.length) return "";
-  const c=typeIds.slice(0,3).map(id=>heatCol(id));
+  const c = typeIds.slice(0, HEAT_MAX_BANDS).map(id=>heatCol(id));
   if(c.length===1) return c[0];
-  const s="rgba(0,0,0,.55)"; // crisp dark seam so split colors don't bleed into each other
-  if(c.length===2) return `linear-gradient(135deg, ${c[0]} 0 calc(50% - .8px), ${s} calc(50% - .8px) calc(50% + .8px), ${c[1]} calc(50% + .8px) 100%)`;
-  return `linear-gradient(135deg, ${c[0]} 0 calc(33.3% - .8px), ${s} calc(33.3% - .8px) calc(33.3% + .8px), ${c[1]} calc(33.3% + .8px) calc(66.6% - .8px), ${s} calc(66.6% - .8px) calc(66.6% + .8px), ${c[2]} calc(66.6% + .8px) 100%)`;
+  const seam="rgba(0,0,0,.55)", w=".8px"; // crisp dark divider so colours don't bleed
+  const step = 100/c.length, parts=[];
+  c.forEach((col,i)=>{
+    const a=(i*step).toFixed(2), b=((i+1)*step).toFixed(2);
+    parts.push(`${col} ${i===0?"0":`calc(${a}% + ${w})`} ${i===c.length-1?"100%":`calc(${b}% - ${w})`}`);
+    if(i<c.length-1) parts.push(`${seam} calc(${b}% - ${w}) calc(${b}% + ${w})`);
+  });
+  return `linear-gradient(135deg, ${parts.join(", ")})`;
 }
 
 // Draws one calendar grid into a container. Same data everywhere; size comes from the wrapper's --cell.
@@ -2493,7 +2604,16 @@ function autoGainsHtml(iso){
   const a=(state.scroll.autoOn!==false && state.scroll.auto) ? state.scroll.auto[iso] : null;
   if(!a) return "";
   const rows=[];
-  Object.entries(a.skills||{}).sort((x,y)=>y[1]-x[1]).forEach(([k,xp])=> rows.push(`<span class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:baseline;background:${SKILL_COLOR[skillColorKey(k)]||SKILL_MUTED}"></span>${nice(k)} <b>+${fmt(xp)}</b> xp`));
+  Object.entries(a.skills||{}).sort((x,y)=>y[1]-x[1]).forEach(([k,xp])=>{
+    const re = reclassOf(iso,k), key = re || skillColorKey(k);
+    const opt = (RECLASS_OPTIONS[k]||[])[0];
+    const btn = opt
+      ? `<button class="dp-recl" data-recl="${iso}|${k}|${escapeHtml(opt)}" title="${re?`Put this back to ${nice(k)}`:`This was ${opt} — recolour the day`}">${re?"↺":"🪙"}</button>`
+      : "";
+    // keep the original skill visible — it's still Magic XP, just earned by alching
+    const label = re ? `${nice(k)} XP - ${escapeHtml(re)}` : nice(k);
+    rows.push(`<span class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:baseline;background:${SKILL_COLOR[key]||SKILL_MUTED}"></span>${label} <b>+${fmt(xp)}</b> xp${btn}`);
+  });
   Object.entries(a.bosses||{}).sort((x,y)=>y[1]-x[1]).forEach(([k,kc])=> rows.push(`${nice(k)} <b>+${fmt(kc)}</b> KC`));
   if(a.clues>0) rows.push(`<b>+${a.clues}</b> clue${a.clues>1?"s":""}`);
   if(a.minis>0) rows.push(`<b>+${fmt(a.minis)}</b> minigame score`);
@@ -2579,6 +2699,16 @@ function openDayPopover(iso, anchor){
     if(comp) comp.scrollIntoView({behavior:"smooth", block:"center"});
   });
   // empty day → composer with that date already picked, so a missed day is one click to fill
+  // "that Magic was alching" — recolour the day without touching the underlying XP
+  $$("#dayPop [data-recl]").forEach(b=>b.onclick=(ev)=>{
+    ev.stopPropagation();
+    const [iso, k, label] = b.dataset.recl.split("|");
+    const on = !!reclassOf(iso, k);
+    setReclass(iso, k, on ? null : label);
+    renderScroll(); renderHeatmap();
+    openDayPopover(iso, document.querySelector(`[data-iso="${iso}"]`) || b);
+    toast(on ? `Back to ${nice(k)}` : `Marked as ${label}`);
+  });
   $$("#dayPop [data-dplog]").forEach(b=>b.onclick=(ev)=>{
     ev.stopPropagation();
     const iso = b.dataset.dplog;
@@ -2636,7 +2766,10 @@ function renderHeatmap(){
   $("#heatSub").textContent = loggedDays ? `${loggedDays} day${loggedDays>1?"s":""} logged` : "start logging to fill this in";
 }
 let heatResizeT=null;
-window.addEventListener("resize", ()=>{ clearTimeout(heatResizeT); heatResizeT=setTimeout(renderHeatmap, 200); });
+window.addEventListener("resize", ()=>{
+  clearTimeout(heatResizeT);
+  heatResizeT=setTimeout(()=>{ renderHeatmap(); if(typeof qpFitTree==="function") qpFitTree(); }, 200);
+});
 
 function renderLogList(){
   const el=$("#logList");
@@ -3650,7 +3783,8 @@ function renderQuestPlanner(){
     save(); renderQuestPlanner();
   });
   res.innerHTML = target ? qpPlanHtml(target, db) : `<div class="panel"><div class="empty">Pick a goal above, or search for any quest.</div></div>`;
-  if(target) qpWire(db);
+  if(target){ qpWire(db); qpFitTree(); }
+  else if(qpPopped){ qpPopped=false; document.body.style.overflow=""; } // no tree to fill the screen with
 }
 function qpLoad(){
   const setup=$("#qpSetup");
@@ -3757,8 +3891,9 @@ function qpPlanHtml(target, db){
       ${gapRows}`:`<div class="empty">No skill requirements standing in your way.</div>`}
     ${plan.blockers.length?`<div class="small muted" style="margin-top:8px">⚑ Quest-point gates: ${plan.blockers.slice(0,3).map(b=>`${b.quest} needs ${b.qp} QP`).join(" · ")}</div>`:""}
   </div>
-  <div class="panel">
-    <div class="section-title center"><h3>Dependency tree</h3><span class="small muted">hover to trace · drag to rearrange · click to focus</span></div>
+  <div class="panel qp-panel${qpPopped?" popped":""}" id="qpTreePanel">
+    <div class="section-title center"><h3>Dependency tree</h3><span class="small muted">hover to trace · drag to rearrange · click to inspect</span>
+      <button class="ghost small" id="qpPop" title="${qpPopped?"Back to the page (Esc)":"Fill the window — easier on big chains"}">${qpPopped?"⤡ Exit full screen":"⤢ Full screen"}</button></div>
     ${qpCrumbs(target)}
     <div class="qp-legend"><span><i style="background:var(--green-bg);border:1px solid #2f5a28"></i>done</span>
       <span><i style="background:var(--panel2);border:1px solid var(--gold)"></i>ready now</span>
@@ -3797,6 +3932,15 @@ const QP_COLW=200, QP_ROWH=64, QP_PADX=8, QP_PADY=8, QP_NODEW=176, QP_NODEH=52;
 function qpTrail(){ return (state.qpHist = state.qpHist || []); }
 let qpDrag=false; // true while a node is being dragged (suppresses hover highlight)
 let qpKeyWired=false; // Esc handler is global, so it's only attached once
+let qpPopped=false;   // tree panel filling the window (not persisted — a viewing mode, not a preference)
+// The tree lays out to a fixed pixel width; when the container is wider, centre it
+// so a small chain doesn't hug the left edge of a big window.
+function qpFitTree(){
+  const wrap=document.querySelector("#qpResult .qp-tree-wrap"), tree=wrap&&wrap.querySelector(".qp-tree");
+  if(!wrap||!tree) return;
+  const w=parseFloat(tree.style.width)||tree.offsetWidth;
+  tree.style.margin = w < wrap.clientWidth ? "0 auto" : "0";
+}
 let qpPos={};   // live node positions for the drawn tree (drag mutates this)
 let qpEdges=[]; // [{from,to}] so edges can be redrawn/highlighted without a full re-render
 // Order nodes inside each column so connected quests line up — barycenter sweeps,
@@ -4098,6 +4242,18 @@ function qpWire(db){
       document.addEventListener("mouseup", up);
     });
   });
+  const pop = $("#qpPop");
+  if(pop) pop.onclick = ()=>{
+    qpPopped = !qpPopped;
+    const p = $("#qpTreePanel");
+    if(p) p.classList.toggle("popped", qpPopped);
+    document.body.style.overflow = qpPopped ? "hidden" : "";
+    if(pop){
+      pop.textContent = qpPopped ? "⤡ Exit full screen" : "⤢ Full screen";
+      pop.title = qpPopped ? "Back to the page (Esc)" : "Fill the window — easier on big chains";
+    }
+    qpFitTree();
+  };
   const pin = $("#qpPin");
   if(pin) pin.onclick = ()=>{
     const t = state.qpTarget, saved = (state.qpSaved = state.qpSaved||[]);
@@ -4135,9 +4291,11 @@ function qpWire(db){
     qpKeyWired = true;
     document.addEventListener("keydown", e=>{
       if(e.key!=="Escape") return;
-      if(state.lastView!=="quests" || !qpTrail().length) return;
+      if(state.lastView!=="quests") return;
       if(/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||"")) return;
-      goBack();
+      const pb = $("#qpPop");
+      if(qpPopped && pb){ pb.click(); return; }  // leave full screen first
+      if(qpTrail().length) goBack();
     });
   }
   $$("#qpResult [data-qpdone2]").forEach(b=>b.onclick=(e)=>{
@@ -4553,8 +4711,36 @@ function renderUpdSetting(msg){
   else if(u) el.innerHTML = `v${APP_VERSION} · <b style="color:var(--gold)">${escapeHtml(u.tag)} is available</b> — <a href="${u.dl}" target="_blank" rel="noopener">download</a>`;
   else el.innerHTML = `OSRS Buddy v${APP_VERSION}${state.updCheck&&state.updCheck.ts?` · up to date`:``}`;
 }
+function renderBackups(){
+  const el = $("#backupList"); if(!el) return;
+  const list = backupList();
+  if(!list.length){ el.innerHTML = `<div class="small muted">No snapshots yet — one is taken each day you open the app.</div>`; return; }
+  const when = ts => {
+    const d=new Date(ts), mins=Math.round((Date.now()-ts)/60000);
+    if(mins<60) return mins+"m ago";
+    if(mins<1440) return Math.round(mins/60)+"h ago";
+    return fmtDay(isoDate(d));
+  };
+  el.innerHTML = list.map((b,i)=>{
+    const s = backupStats(b);
+    return `<div class="bk-row">
+      <span class="bk-when">${when(b.ts)}</span>
+      <span class="bk-what">${s.log} log · ${s.goals} goals · ${s.quests} quests${s.chars>1?` · ${s.chars} characters`:""}${b.reason!=="daily"?` · ${escapeHtml(b.reason)}`:""}</span>
+      <button class="ghost small" data-bkrestore="${i}">Restore</button>
+    </div>`;
+  }).join("");
+  $$("#backupList [data-bkrestore]").forEach(b=>b.onclick=()=>{
+    const i = +b.dataset.bkrestore, st = backupStats(backupList()[i]);
+    if(!confirm(`Restore this snapshot?\n\n${st.log} log entries · ${st.goals} goals · ${st.quests} quests\n\nYour current data is snapshotted first, so this is undoable.`)) return;
+    if(restoreBackup(i)){
+      renderAll(); renderBackups();
+      toast("Restored ✓");
+      if(state.username) loadCharacter({name:state.username, live:false, silent:true});
+    }
+  });
+}
 function openSettings(){
-  renderFontSeg(); renderNumSeg(); renderUpdSetting();
+  renderFontSeg(); renderNumSeg(); renderUpdSetting(); renderBackups();
   const bb = $("#bugBtn");
   if(bb){
     const body = encodeURIComponent("**What happened**\n\n\n**What I expected**\n\n\n---\nversion: "+APP_VERSION+"\nbrowser: "+navigator.userAgent);
@@ -4734,8 +4920,19 @@ $("#themeBtn").onclick = ()=>{
 };
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.1";
+const APP_VERSION = "1.2";
 const PATCH_NOTES = [
+  {v:"1.2", date:"August 7, 2026", title:"Backups, a wider planner, and alching", notes:[
+    "The app now keeps eight rolling snapshots of your data — taken daily, and before anything risky like importing a backup or deleting a profile. Restore any of them from Settings; restoring is itself undoable. The quest database is excluded because it re-downloads itself.",
+    "A failed save no longer passes silently. If storage is full the app says so instead of quietly not persisting your data.",
+    "The quest planner now uses the full window instead of a fixed column, and the dependency tree has a full screen button. Escape leaves full screen, then steps back through the breadcrumb trail.",
+    "Fixed the activity heatmap showing at most three skills per day. Days with more now show up to six, so a varied day looks varied.",
+    "Added High Alch. Magic experience is normally counted as combat, so alching was invisible; open a day and use the button on the Magic row to mark it as alching, and the day recolours gold. The choice is remembered per day.",
+    "Quest rewards now list the items you receive with their pictures, and unlocks separately. Items you can merely equip or buy afterwards are no longer listed as rewards.",
+    "Skills can be starred from the Home skill panel to make them priorities the Scroll watches.",
+    "Ask Bud answers training questions with the wiki's recommended methods for your current level range.",
+    "Added a bug report link in Settings.",
+  ]},
   {v:"1.1", date:"August 7, 2026", title:"Profiles, and a lot of quest detail", notes:[
     "Added profiles. Each character keeps its own Scroll, goals, priorities, quest progress and notes — loading a different name switches profiles instead of mixing the data together. Themes, fonts and quest data stay shared. Backups include every profile.",
     "Fixed the activity heatmap reading only the last hour of your history. It now pages through your full stats history, so days you trained weeks ago appear correctly. Existing days are never overwritten by a short refresh.",
@@ -4835,9 +5032,12 @@ function switchView(name){
   $$(".navitem").forEach(n=>n.classList.toggle("active", n.dataset.view===name));
   $$(".view").forEach(v=>v.classList.toggle("hidden", v.id!=="view-"+name));
   state.lastView=name; save();
+  // the planner is a map — let it use the whole window instead of the reading column
+  document.body.toggleAttribute("data-wide", name==="quests");
   closeSidebar(); window.scrollTo(0,0);
   // heatmaps size themselves to their container — refit when their view becomes visible
   if(name==="home" || name==="scroll") renderHeatmap();
+  if(name==="quests") qpFitTree();
 }
 $$(".navitem").forEach(n=>n.onclick=()=>switchView(n.dataset.view));
 function openSidebar(){ $("#sidebar").classList.add("open"); $("#sbBackdrop").classList.remove("hidden"); }
@@ -4848,6 +5048,7 @@ $("#sbBackdrop").onclick = closeSidebar;
 // ---- backup / import (merge: current data wins on id clashes) ----
 function mergeImportedState(inc){
   if(!inc || typeof inc !== "object" || Array.isArray(inc)) throw new Error("bad backup");
+  snapshotNow("before importing a backup"); // an import merges into live data — keep an out
   // profile-aware backups carry the other characters too — restore any not already here
   if(inc.__profiles && inc.__profiles.stash){
     const p = profStore(), curKey = profKey(profName());
@@ -4912,7 +5113,8 @@ if(state.username){
   loadCharacter({live:false, silent:true}).then(()=> loadCharacter({live:true, silent:true}));
 }
 setupRefresh();
-setTimeout(qdbEnsure, 800); // quest data self-loads; slight delay so character stats go first
+backupDaily();               // a restore point for today, before anything can go wrong
+setTimeout(qdbEnsure, 800);  // quest data self-loads; slight delay so character stats go first
 </script>
 </body>
 </html>
