@@ -60,9 +60,11 @@ Use the [installer](https://github.com/LiquidTwonuh/osrs-buddy/releases/latest/d
 above, or just open `OSRS-Buddy.html` in a browser — it's the same app either way.
 The installer gets you a proper window, a Start Menu entry, and an icon.
 
-## Building the Windows app
+## Building it yourself (optional)
 
-Requires [Rust](https://rustup.rs) and Node.
+**You don't need this to use the app** — the installer above is all anyone needs.
+This section is only for compiling your own copy from source, which needs
+[Rust](https://rustup.rs) and [Node](https://nodejs.org).
 
 ```bash
 cd app
