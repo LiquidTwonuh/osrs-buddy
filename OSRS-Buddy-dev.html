@@ -205,11 +205,72 @@
   .qpd-q:hover{background:var(--panel2); color:var(--gold)}
   .qpd-q .dot{flex:none}
   .qpd-q.done{color:var(--green)} .qpd-q.done:hover{color:var(--green)}
+  .qpd-xp{display:flex; flex-wrap:wrap; gap:5px; margin:2px 0 6px}
+  .qpd-items{display:flex; flex-wrap:wrap; gap:6px}
+  .qpd-item{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; padding:3px 9px 3px 5px;
+    background:var(--panel2); border:1px solid var(--border); border-radius:14px}
+  .qpd-item img{width:22px; height:22px; object-fit:contain; flex:none}
+  .qpd-uns{margin-top:5px}
+  .qpd-un{font-size:12.5px; padding:1px 0; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  /* gap rows expand into the quests that pay XP in that skill */
+  .qp-gap{cursor:pointer; border-radius:6px}
+  .qp-gap:hover{background:var(--panel2)}
+  .qp-gap .g-caret{color:var(--muted); font-size:10px; margin-left:4px; transition:transform .15s; flex:none}
+  .qp-gap.open .g-caret{transform:rotate(180deg)}
+  .qp-boost{padding:2px 4px 6px 12px; margin:0 0 4px 8px; border-left:2px solid var(--border)}
+  .qp-boost .bxp{margin-left:auto; color:var(--muted); font-size:11.5px; flex:none}
+  .qp-boost .b-note{color:var(--muted); font-size:12px; padding:3px 6px}
+  /* saved plans — pinned targets you can jump back to */
+  .qp-saved{display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin-top:9px}
+  .qp-saved-label{width:100%; text-align:center; font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted)}
+  .qp-plan-chip{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; padding:4px 9px;
+    background:var(--panel2); border:1px solid var(--gold-dim); border-radius:14px; color:var(--text);
+    font-family:inherit; cursor:pointer}
+  .qp-plan-chip:hover{border-color:var(--gold)}
+  .qp-plan-chip.on{border-color:var(--gold); color:var(--gold)}
+  .qp-plan-chip .pp{color:var(--muted); font-size:11px}
+  .qp-plan-chip .pbar{width:44px; height:4px; border-radius:2px; background:var(--inset); overflow:hidden}
+  .qp-plan-chip .pbar i{display:block; height:100%; background:var(--green)}
+  .qp-plan-chip .px{color:var(--muted); padding:0 1px}
+  .qp-plan-chip .px:hover{color:var(--red,#e0623d)}
   .qp-legend{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; font-size:11.5px; color:var(--muted); margin-top:4px}
   .qp-legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px}
   .qp-step{display:flex; align-items:center; gap:9px; padding:6px 0; border-top:1px solid var(--border); font-size:13px}
   .qp-step .n{color:var(--muted); font-size:11px; min-width:20px}
   .qp-step.ready .nm{color:var(--gold); font-weight:bold}
+  /* profile chips in the character pops */
+  .prof-list{display:flex; flex-direction:column; gap:4px; margin-bottom:8px}
+  .prof-list:empty{display:none}
+  .prof-chip{display:flex; align-items:center; gap:7px; width:100%; text-align:left; font:inherit; font-size:12.5px;
+    padding:5px 8px; background:var(--panel2); border:1px solid var(--border); border-radius:7px; color:var(--text); cursor:pointer}
+  .prof-chip:hover{border-color:var(--gold-dim)}
+  .prof-chip.active{border-color:var(--gold); color:var(--gold); cursor:default}
+  .prof-chip .pc-name{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .prof-chip .pc-x{color:var(--muted); flex:none; padding:0 2px}
+  .prof-chip .pc-x:hover{color:var(--red,#e0623d)}
+  .prof-hint{font-size:11px; color:var(--muted); margin:2px 0 6px}
+  /* skill info modal — click a Home skill tile */
+  .skill{cursor:pointer; transition:transform .1s}
+  .skill:hover{transform:translateY(-1px); border-color:var(--gold-dim)}
+  #skillWrap{position:fixed; inset:0; z-index:80}
+  #skillBack{position:absolute; inset:0; background:rgba(0,0,0,.32)}
+  /* left/top are set per-open in JS, centered on the skills panel (not the viewport —
+     the sidebar offsets the content, so viewport-centering looks shifted) */
+  #skillModal{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:min(440px, calc(100vw - 30px)); max-height:min(80vh, 640px); overflow:auto;
+    background:var(--panel); border:1px solid var(--gold-dim); border-radius:12px; padding:14px 16px;
+    box-shadow:0 12px 40px rgba(0,0,0,.45)}
+  .sk-facts{display:flex; flex-direction:column; gap:4px; font-size:13px}
+  .sk-facts .fx{display:flex; align-items:center; gap:8px}
+  .sk-facts .fx .fi{flex:none; width:18px; text-align:center}
+  .sk-facts b{color:var(--gold)}
+  .sk-hero{display:flex; align-items:center; gap:12px; margin:10px 0 4px}
+  .sk-hero .sk-lvl{font-family:var(--font-display); font-size:34px; font-weight:700; color:var(--gold); line-height:1}
+  .sk-bar{height:7px; border-radius:4px; background:var(--inset); overflow:hidden; margin-bottom:5px}
+  .sk-bar i{display:block; height:100%; background:var(--gold); border-radius:4px}
+  .sk-week{font-size:13px}
+  .sk-week b{color:var(--green)}
+  .sk-acts{display:flex; gap:8px; flex-wrap:wrap; margin-top:4px}
   /* settings modal */
   #settingsWrap{position:fixed; inset:0; z-index:80}
   #settingsBack{position:absolute; inset:0; background:rgba(0,0,0,.55)}
@@ -618,6 +679,7 @@
         <button class="sm-refresh js-load" id="loadBtn" data-busy="…" title="Pull your current stats live from the game">↻</button>
       </div>
       <div class="char-pop hidden" id="charPop">
+        <div class="prof-list" id="profList"></div>
         <input type="text" id="username" placeholder="RuneScape username" autocomplete="off">
         <button class="primary js-load" id="loadBtnStats" style="width:100%">↻ Load character</button>
         <p class="muted" style="font-size:11px; margin:7px 0 0">Hiscores lag play — log out in-game to post fresh XP. Re-pulls max once a minute.</p>
@@ -632,6 +694,10 @@
   </aside>
 
   <!-- settings modal -->
+  <div id="skillWrap" class="hidden">
+    <div id="skillBack"></div>
+    <div id="skillModal"></div>
+  </div>
   <div id="settingsWrap" class="hidden">
     <div id="settingsBack"></div>
     <div id="settingsModal">
@@ -668,6 +734,11 @@
         <input type="file" id="importFile" accept="application/json,.json" class="hidden">
         <p class="small muted" style="margin:6px 0 0">Backups include everything — character, goals, Scroll, priorities, notes.</p>
       </div>
+      <div class="set-sec">
+        <div class="set-h">Feedback</div>
+        <a class="ghost small" id="bugBtn" target="_blank" rel="noopener" style="display:inline-block">🐛 Report a bug</a>
+        <p class="small muted" style="margin:6px 0 0">Opens a GitHub issue with the app version filled in. Needs a free GitHub account — anyone can post one.</p>
+      </div>
     </div>
   </div>
 
@@ -699,6 +770,7 @@
             <button class="ch-btn js-load" id="loadBtnHome" data-busy="…" title="Pull your current stats live from the game">↻</button>
           </div>
           <div class="char-pop hidden" id="charPopHome" style="width:290px; max-width:100%">
+            <div class="prof-list" id="profListHome"></div>
             <input type="text" id="usernameHome" placeholder="RuneScape username" autocomplete="off">
             <button class="primary js-load" id="loadBtnHomeGo" style="width:100%">↻ Load character</button>
           </div>
@@ -1089,6 +1161,54 @@ function load(){
   try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }catch(e){ return {}; }
 }
 function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+// ============ PROFILES ============
+// Each character is its own world: goals, Scroll, priorities, quest record — all of it.
+// The ACTIVE profile lives at LS_KEY in the exact shape the app has always used (so the
+// rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
+// Switching = stash current, restore (or create) the other. Nothing is ever merged.
+const PROF_KEY = "osrs_todo_profiles_v1";
+const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView"];
+function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
+function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
+function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
+function profKey(n){ return (n||"").trim().toLowerCase(); }
+function profileList(){
+  const p = profStore(), cur = profKey(profName());
+  const rows = [{key:cur, name: profName() || "(no character)", active:true}];
+  Object.keys(p.stash).forEach(k=>{
+    if(k===cur) return;
+    const s = p.stash[k];
+    rows.push({key:k, name:(s.playerMeta && s.playerMeta.displayName) || s.username || k, active:false});
+  });
+  return rows;
+}
+function switchProfile(name){
+  const curKey = profKey(profName());
+  if(curKey && profKey(name)===curKey) return false;
+  const p = profStore();
+  if(curKey){ // stash the current character's world under its own name
+    const stash = {};
+    Object.keys(state).forEach(k=>{ if(!PROFILE_SHARED.includes(k)) stash[k]=state[k]; });
+    p.stash[curKey] = stash;
+  }
+  const shared = {};
+  PROFILE_SHARED.forEach(k=>{ if(state[k]!==undefined) shared[k]=state[k]; });
+  const nk = profKey(name), restored = p.stash[nk];
+  if(restored){ delete p.stash[nk]; state = Object.assign({}, restored, shared); }
+  else state = Object.assign({}, shared, {username: name.trim()});
+  p.active = nk;
+  profSaveStore(p);
+  ensure(); save();
+  live = null; // this character's stats load fresh — never the previous one's
+  if(typeof logSelPrios !== "undefined" && logSelPrios.clear) logSelPrios.clear();
+  return true;
+}
+function deleteProfile(key){
+  const p = profStore();
+  delete p.stash[key];
+  profSaveStore(p);
+}
 function ensure(){
   state.goals = state.goals || [];
   state.manual = state.manual || [];
@@ -1185,6 +1305,15 @@ async function loadCharacter(opts){
   const name = ((opts.name!=null ? opts.name : $("#username").value) || "").trim();
   if(!name){ toast("Enter a username first", true); return; }
   if(loadBusy) return;
+  // A different character name is a different WORLD — switch profiles instead of
+  // writing their stats over this one's heatmap, priorities, and quest record.
+  const curId = profKey(profName());
+  if(curId && profKey(name) !== curId){
+    const existed = !!profStore().stash[profKey(name)];
+    switchProfile(name);
+    renderAll();
+    toast(existed ? "Switched to "+name : "New profile: "+name+" — each character keeps its own data");
+  }
   loadBusy = true;
   const btns=$$(".js-load");
   btns.forEach(b=>{ b.dataset.orig=b.textContent; b.disabled=true; b.textContent = b.dataset.busy || (opts.live!==false?"Updating…":"Loading…"); });
@@ -1210,6 +1339,9 @@ async function loadCharacter(opts){
     }
   }catch(err){
     if(!opts.silent) toast(err.message, true);
+    // a silent background refresh can fail quietly — but if it fails and the app has
+    // NO stats at all, everything downstream is flying blind; say so
+    else if(!live) toast("Couldn't load your stats — hit ↻ to retry. ("+err.message+")", true);
   }finally{
     btns.forEach(b=>{ b.disabled=false; if(b.dataset.orig!=null) b.textContent=b.dataset.orig; });
     loadBusy = false;
@@ -1217,7 +1349,33 @@ async function loadCharacter(opts){
 }
 
 // ============ RENDER ============
+function renderProfiles(){
+  const rows = profileList().filter(r=>r.key);
+  const html = rows.length < 1 ? "" :
+    rows.map(r=>`<button class="prof-chip ${r.active?"active":""}" data-prof="${escapeHtml(r.name)}" ${r.active?"disabled":""}>
+      <span>${r.active?"●":"○"}</span><span class="pc-name">${escapeHtml(r.name)}</span>
+      ${r.active?`<span class="small">active</span>`:`<span class="pc-x" data-profdel="${escapeHtml(r.key)}" title="Delete this profile and all its data">✕</span>`}
+    </button>`).join("") + `<div class="prof-hint">Load a new name below to add another character.</div>`;
+  ["#profList","#profListHome"].forEach(sel=>{ const el=$(sel); if(el) el.innerHTML = html; });
+  $$(".prof-list [data-prof]").forEach(b=>b.onclick=(e)=>{
+    if(e.target.closest("[data-profdel]")) return;
+    const n = b.dataset.prof;
+    if(!switchProfile(n)) return;
+    renderAll();
+    toast("Switched to "+profName());
+    loadCharacter({name: state.username, live:true, silent:true});
+  });
+  $$(".prof-list [data-profdel]").forEach(x=>x.onclick=(e)=>{
+    e.stopPropagation();
+    const k = x.dataset.profdel;
+    if(!confirm("Delete this profile and ALL its data (Scroll, goals, quest record)? This can't be undone.")) return;
+    deleteProfile(k);
+    renderProfiles();
+    toast("Profile deleted");
+  });
+}
 function renderAll(){
+  renderProfiles();
   renderSummary();
   populateMetricDropdown();
   renderQuickAdd();
@@ -1300,7 +1458,7 @@ function renderSkills(){
     const isMax = lvl >= 99;
     if(isMax) maxed++;
     const xpTxt = xpText(xp);
-    return `<div class="skill ${isMax?"maxed":""}" title="${nice(key)} — ${fmt(xp)} XP">
+    return `<div class="skill ${isMax?"maxed":""}" data-skillinfo="${key}" title="${nice(key)} — ${fmt(xp)} XP · click for details">
       <img class="semoji" src="${skillIconUrl(key)}" alt="${key}" width="24" height="24">
       <div>
         <div class="sname">${key}</div>
@@ -2218,13 +2376,26 @@ function logByDate(){
 
 // ---- auto-activity: derive what you did each day by diffing WiseOldMan snapshots ----
 const COMBAT_SKILLS = new Set(["attack","strength","defence","hitpoints","ranged","magic","prayer","slayer"]);
-async function fetchSnapshots(name){
+// WOM returns only 20 snapshots unless you ask (max 200 per page, newest first).
+// Refreshing every 5 minutes means 20 rows can be under an hour of history — so page
+// back until we've covered the window or run out. This is what the heatmap runs on.
+async function fetchSnapshots(name, deep){
+  const PAGE=200, MAX_PAGES = deep ? 8 : 1;
+  const cutoff = Date.now() - 400*86400e3;
+  let all=[];
   try{
-    const res=await fetch(WOM+encodeURIComponent(name)+"/snapshots?period=year");
-    if(!res.ok) return null;
-    const arr=await res.json();
-    return Array.isArray(arr) ? arr.sort((a,b)=> new Date(a.createdAt)-new Date(b.createdAt)) : null;
-  }catch(e){ return null; }
+    for(let p=0;p<MAX_PAGES;p++){
+      if(p) await new Promise(r=>setTimeout(r,250));               // be gentle with WOM
+      const res=await fetch(`${WOM}${encodeURIComponent(name)}/snapshots?period=year&limit=${PAGE}&offset=${p*PAGE}`);
+      if(!res.ok) break;                                           // 429 etc — keep what we have
+      const arr=await res.json();
+      if(!Array.isArray(arr) || !arr.length) break;
+      all=all.concat(arr);
+      if(arr.length<PAGE) break;                                   // last page
+      if(new Date(arr[arr.length-1].createdAt).getTime() < cutoff) break; // far enough back
+    }
+  }catch(e){ if(!all.length) return null; }
+  return all.length ? all.sort((a,b)=> new Date(a.createdAt)-new Date(b.createdAt)) : null;
 }
 // Each consecutive snapshot pair's gains are attributed to the LATER snapshot's date.
 function deriveAutoDays(snaps){
@@ -2253,8 +2424,20 @@ function deriveAutoDays(snaps){
 }
 async function refreshAutoActivity(){
   if(!state.username) return;
-  const snaps=await fetchSnapshots(state.username);
-  if(snaps){ state.scroll.auto = deriveAutoDays(snaps); save(); if(!$("#view-scroll").classList.contains("hidden")||true) renderScroll(); }
+  // One page (200 snapshots ≈ several hours) covers a routine refresh. The full
+  // back-scan only runs when there's no history yet or it's a day old — paging
+  // eight times every five minutes is what gets an IP rate-limited.
+  const s = state.scroll;
+  const deep = !s.autoDeepTs || !Object.keys(s.auto||{}).length || (Date.now()-s.autoDeepTs > 86400e3);
+  const snaps=await fetchSnapshots(state.username, deep);
+  if(snaps && deep){ s.autoDeepTs = Date.now(); }
+  if(!snaps) return;
+  // MERGE, never replace: a short fetch (rate limit, or WOM ageing out old snapshots)
+  // must not erase days we already derived. Newer derivation wins per day.
+  const fresh = deriveAutoDays(snaps);
+  state.scroll.auto = Object.assign({}, state.scroll.auto||{}, fresh);
+  save();
+  renderScroll();
 }
 // manual + auto types merged for heatmap colouring (auto respected only when the toggle is on)
 function mergedTypesByDate(){
@@ -3003,7 +3186,7 @@ async function budSync(){
 //   1× Optimal quest guide  → canonical order, XP rewards, QP awarded
 //   4× batched page content → requirements, boostable flags, prerequisite quests
 // Cached in state.questDB; refresh is manual (the game adds quests rarely).
-const QDB_VERSION = 2;
+const QDB_VERSION = 9;
 function questDB(){ const d=state.questDB; return (d && d.v===QDB_VERSION) ? d : null; }
 // Recipe for Disaster's subquests are stored under their full wiki title, which is far
 // too long for a tree node — show them as "RFD: Freeing Pirate Pete" instead.
@@ -3027,7 +3210,8 @@ function parseOQG(wt){
       rw[1].split("|").forEach(pair=>{
         const kv = pair.split("=");
         if(kv.length===2){
-          const k=kv[0].trim().toLowerCase(), v=parseInt(kv[1].replace(/[^0-9]/g,""),10);
+          let k=kv[0].trim().toLowerCase(); const v=parseInt(kv[1].replace(/[^0-9]/g,""),10);
+          if(k==="runecraft") k="runecrafting"; // the guide's name; WOM's key — mismatched keys silently drop the XP
           if(k && !isNaN(v) && v>0) m[k]=v;
         }
       });
@@ -3059,12 +3243,53 @@ function parseQuestPage(wt){
       if(linkDepth[t]==null || depth<linkDepth[t]) linkDepth[t]=depth;
     }
   });
+  // The ==Rewards== {{Quest rewards}} block: XP bullets feed the simulation as a
+  // fallback for quests the optimal guide skips; everything else (items, unlocks)
+  // becomes short display lines for the detail panel.
+  const rw = wt.match(/\{\{Quest rewards[\s\S]*?\|\s*rewards\s*=([\s\S]*?)\n\}\}/i);
+  const qm = wt.match(/\{\{Quest rewards[\s\S]*?\|\s*qp\s*=\s*(\d+)/i);
+  const gives=[], pageRewards={};
+  const pageQp = qm ? parseInt(qm[1],10) : 0;
+  if(rw){
+    rw[1].split("\n").forEach(line=>{
+      if(!/^\*[^*]/.test(line)) return; // top-level bullets only — sub-bullets are detail
+      const scp = line.match(/\{\{SCP\|([A-Za-z ]+)\|([\d,]+)/);
+      if(scp && /experience/i.test(line)){
+        let k = scp[1].trim().toLowerCase().replace(/ /g,"_");
+        if(k==="runecraft") k="runecrafting";
+        const v = parseInt(scp[2].replace(/,/g,""),10);
+        if(SKILL_ORDER.includes(k) && v>0) pageRewards[k]=(pageRewards[k]||0)+v;
+        return; // XP renders from q.rewards, not as a text line
+      }
+      // Items you RECEIVE lead their bullet ("An [[experience lamp]]…", "3 [[Diamond]]s");
+      // "ability to equip/buy/create", "learn", and "if lost" bullets are unlocks and
+      // trivia — items named there are NOT handed to you (DS1 gives no platebodies).
+      // One exception: "…chest, containing [[barrows gloves]]" — contents ARE received.
+      const lks = [...line.matchAll(/\[\[(?!File:)([^\]|#]+)/gi)].slice(0,5)
+        .map(m=>({t:m[1].trim(), pos:m.index}));
+      if(!lks.length) return;
+      // POSITION matters: "An [[experience lamp]], which…" leads with the item, while
+      // trailing clauses ("If a player loses the helm…") are trivia. So only links
+      // BEFORE the first unlock/trivia phrase count as received.
+      const uIdx = line.search(/\b(ability to|abilities|learn(s|ing)?\b|speaking to|talking to|available|accessible|access to|unlock(s|ed)?\b|if (the|a|an|you|lost)\b|can be (bought|purchased|retrieved))/i);
+      const cIdx = line.search(/\bcontain(s|ing)\b/i);
+      const t = line.replace(/^\*+\s*/,"")
+        .replace(/\{\{[^}]*\}\}/g,"")
+        .replace(/\[\[File:[^\]]*\]\]/gi,"")
+        .replace(/\[\[[^\]|]*\|([^\]]*)\]\]/g,"$1")
+        .replace(/\[\[([^\]]*)\]\]/g,"$1")
+        .replace(/<[^>]+>/g,"").replace(/''+/g,"")
+        .replace(/\s+/g," ").trim();
+      gives.push({L:lks, u:uIdx, c:cIdx, t});
+    });
+  }
   const diff = (qd[0].match(/\|\s*difficulty\s*=\s*([^\n|]+)/i)||[])[1];
   const len  = (qd[0].match(/\|\s*length\s*=\s*([^\n|]+)/i)||[])[1];
   // release number, used to order anything the optimal guide skips.
   // Recipe for Disaster's subquests are numbered 100.1, 100.2 … so they sort into place.
   const num  = (wt.match(/\|\s*number\s*=\s*([\d.]+)/i)||[])[1];
   return { reqs, boostable, qp, linkDepth, number: num?parseFloat(num):null,
+           linkRows: gives, pageRewards, pageQp,
            difficulty: diff?diff.trim():null, length: len?len.trim():null };
 }
 
@@ -3148,11 +3373,68 @@ async function buildQuestDB(onProgress){
     q.prereqs = qLinks.filter(t=>depth[t]===min);
     q.allPrereqLinks = qLinks;
     delete q.linkDepth;
-    q.rewards = rewardsC[n] || {};
-    q.qpGain = qpC[n] || 0;
+    // optimal-guide numbers win; the quest page's own rewards block fills the gaps
+    q.rewards = rewardsC[n] || q.pageRewards || {};
+    q.qpGain = qpC[n] || q.pageQp || 0;
+    delete q.pageRewards; delete q.pageQp;
     q.mini = mini.has(n);
     q.order = names.indexOf(n);
   });
+  // Item rewards: ask the wiki which linked pages are real items (Category:Items),
+  // take the first item per bullet (later ones are comparisons), then fetch pictures.
+  P("Sorting out item rewards…");
+  const cand = new Set();
+  Object.values(quests).forEach(q=>(q.linkRows||[]).forEach(row=>(row.L||[]).forEach(l=>cand.add(l.t))));
+  const carr = [...cand], itemName = {};
+  for(let i=0;i<carr.length;i+=50){
+    try{
+      const j = await (await fetch(`${WIKI_API}?action=query&format=json&origin=*&redirects=1&prop=categories&clcategories=${encodeURIComponent("Category:Items")}&cllimit=500&titles=${encodeURIComponent(carr.slice(i,i+50).join("|"))}`)).json();
+      const qy = j.query||{}, fwd = {};
+      (qy.normalized||[]).forEach(r=>fwd[r.from]=r.to);
+      (qy.redirects||[]).forEach(r=>fwd[r.from]=r.to);
+      const isItem = {};
+      Object.values(qy.pages||{}).forEach(p=>{ if(p.categories && p.categories.length) isItem[p.title]=true; });
+      carr.slice(i,i+50).forEach(t=>{
+        let f=t; for(let k=0;k<3 && fwd[f]; k++) f=fwd[f];
+        if(isItem[f]) itemName[t]=f;
+      });
+    }catch(e){ /* a failed batch just means fewer item chips */ }
+  }
+  Object.values(quests).forEach(q=>{
+    const seen=new Set(), items=[], un=[];
+    (q.linkRows||[]).forEach(row=>{
+      // received = before the first unlock phrase (or the whole bullet if none),
+      // plus anything named after "containing" — chest contents are handed over.
+      // First real item among those wins; later ones are comparisons.
+      const eligible = (row.L||[]).filter(l=>
+        (row.u<0 || l.pos<row.u) || (row.c>=0 && l.pos>row.c));
+      const hit = eligible.map(l=>itemName[l.t]).find(Boolean);
+      if(hit && !seen.has(hit) && items.length<8){ seen.add(hit); items.push({n:hit, img:null}); }
+      // unlock lines: real ability/access bullets only, first clause, no trivia
+      const t = row.t||"";
+      if(un.length<6 && (/^(the ability|ability to|access to|full access|unlocks?\b|learn|new )/i.test(t) || /\b(accessible|available)\b/i.test(t))){
+        let s = t.split(/,\s+(?:which|with the exception|containing|and can|but|if)\b|;\s|\.\s/)[0]
+          .replace(/[.;,]\s*$/,"")
+          .replace(/\s+(with|for|at|by|from|of|to|if)\s*$/,""); // stripped templates leave danglers
+        if(s.length>96) s = s.slice(0,93)+"…";
+        if(s.length>8) un.push(s);
+      }
+    });
+    q.items = items;
+    q.unlocks = un;
+    delete q.linkRows;
+  });
+  P("Fetching item pictures…");
+  const inames = new Set();
+  Object.values(quests).forEach(q=>q.items.forEach(it=>inames.add(it.n)));
+  const iarr = [...inames], thumbs = {};
+  for(let i=0;i<iarr.length;i+=50){
+    try{
+      const j = await (await fetch(`${WIKI_API}?action=query&format=json&origin=*&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=48&titles=${encodeURIComponent(iarr.slice(i,i+50).join("|"))}`)).json();
+      Object.values((j.query||{}).pages||{}).forEach(p=>{ if(p.thumbnail) thumbs[p.title]=p.thumbnail.source; });
+    }catch(e){}
+  }
+  Object.values(quests).forEach(q=>q.items.forEach(it=>{ it.img = thumbs[it.n]||null; }));
   const db = { v:QDB_VERSION, ts:Date.now(), order:names, quests };
   state.questDB = db; save();
   P(`Done — ${names.length} quests.`);
@@ -3209,6 +3491,14 @@ function startUpdateCheck(){
 const XP_TABLE = (()=>{ const t=[0,0]; let s=0; for(let n=1;n<=125;n++){ s+=Math.floor(n+300*Math.pow(2,n/7)); t[n+1]=Math.floor(s/4);} return t; })();
 function xpForLevel(l){ return XP_TABLE[Math.max(1,Math.min(126,l))] || 0; }
 function levelFromXp(xp){ let l=1; while(l<99 && XP_TABLE[l+1]<=xp) l++; return l; }
+// XP for a skill from live stats. The hiscores only rank a skill inside the top ~2M
+// players, and WOM stores unranked experience as -1 — a young account can have a real
+// level 40 with "-1 xp". The level field stays truthful, so fall back to its base XP.
+function liveSkillXp(s){
+  const e = live && live.skills && live.skills[s];
+  if(!e) return 0;
+  return (e.experience!=null && e.experience>=0) ? e.experience : xpForLevel(e.level||1);
+}
 // ONE quest record for the whole app. `state.questsDone` is keyed by canonical quest
 // name; the Roadmap's short ids and Bud's KB both map onto it via their wiki slug, so a
 // tick anywhere (planner, Roadmap, "I did X") is visible everywhere.
@@ -3265,7 +3555,7 @@ function questPlan(target, db){
     .sort((a,b)=>(db.quests[a].order??999)-(db.quests[b].order??999));
   // simulate the run: current xp, add each quest's rewards as you go, flag gates you'd miss
   const xp={};
-  SKILL_ORDER.forEach(s=>{ const e=live&&live.skills&&live.skills[s]; xp[s]= e? e.experience : 0; });
+  SKILL_ORDER.forEach(s=>{ xp[s] = liveSkillXp(s); });
   let qp = remaining.reduce((a,n)=>a,0);
   let qpNow = all.filter(n=>questDone(n)).reduce((a,n)=>a+(db.quests[n].qpGain||0), 0);
   const gaps={}, blockers=[];
@@ -3329,11 +3619,15 @@ function renderQuestPlanner(){
   const setup = $("#qpSetup"), sug = $("#qpSuggest"), res = $("#qpResult");
   if(!setup) return;
   if(!db){
-    setup.innerHTML = `<div class="empty" style="text-align:center">
-      No quest data yet. Bud can read every quest off the wiki — about 5 requests, then it's cached.
-      <div style="margin-top:9px"><button class="primary" id="qpBuild">📥 Load quest data</button></div></div>`;
+    // quest data loads itself at launch — this only shows while that's in flight,
+    // and the manual button only if the automatic load failed
+    setup.innerHTML = qdbBuilding
+      ? `<div class="empty" style="text-align:center">Reading every quest off the wiki — nearly there.
+          <div class="small muted" id="qpProg" style="margin-top:8px">${qdbProgress||"Starting…"}</div></div>`
+      : `<div class="empty" style="text-align:center">
+          Quest data didn't load. <div style="margin-top:9px"><button class="primary" id="qpBuild">📥 Try again</button></div></div>`;
     sug.innerHTML=""; res.innerHTML=""; $("#qpSub").textContent="";
-    $("#qpBuild").onclick = qpLoad;
+    const b=$("#qpBuild"); if(b) b.onclick = qpLoad;
     return;
   }
   const total = db.order.length, done = db.order.filter(questDone).length;
@@ -3342,8 +3636,19 @@ function renderQuestPlanner(){
   const target = state.qpTarget;
   sug.innerHTML = `<div class="qp-sug">${QP_SUGGEST.filter(q=>db.quests[q]).map(q=>
     `<button class="ghost small ${q===target?"on":""}" data-qptarget="${escapeHtml(q)}">${q}</button>`).join("")}
-    <button class="ghost small" data-qptarget="__ALL__">🏆 Quest cape (everything)</button></div>`;
+    <button class="ghost small" data-qptarget="__ALL__">🏆 Quest cape (everything)</button></div>
+    ${qpSavedHtml(db, target)}`;
   $$("#qpSuggest [data-qptarget]").forEach(b=>b.onclick=()=>{ state.qpTarget=b.dataset.qptarget; save(); renderQuestPlanner(); });
+  // saved-plan chips: click loads the plan fresh (own context, so the trail resets); ✕ unpins
+  $$("#qpSuggest [data-qpplan]").forEach(ch=>ch.onclick=(e)=>{
+    if(e.target.closest("[data-qpunsave]")) return;
+    state.qpTarget = ch.dataset.qpplan; state.qpHist = []; save(); renderQuestPlanner();
+  });
+  $$("#qpSuggest [data-qpunsave]").forEach(x=>x.onclick=(e)=>{
+    e.stopPropagation();
+    state.qpSaved = (state.qpSaved||[]).filter(t=>t!==x.dataset.qpunsave);
+    save(); renderQuestPlanner();
+  });
   res.innerHTML = target ? qpPlanHtml(target, db) : `<div class="panel"><div class="empty">Pick a goal above, or search for any quest.</div></div>`;
   if(target) qpWire(db);
 }
@@ -3354,6 +3659,43 @@ function qpLoad(){
     .then(()=>renderQuestPlanner())
     .catch(e=>{ const p=$("#qpProg"); if(p) p.innerHTML = `Couldn't read the wiki just now. <button class="ghost small" onclick="qpLoad()">Try again</button>`; });
 }
+// Quest data fetches itself at launch — no button to remember. Missing or outdated
+// (version bump) → build now; present but older than two weeks → rebuild quietly in
+// the background while the old data keeps working (the game adds quests sometimes).
+let qdbBuilding=false, qdbProgress="";
+async function qdbEnsure(){
+  if(qdbBuilding) return;
+  const db = questDB();
+  const stale = db && (Date.now()-db.ts > 14*86400e3);
+  if(db && !stale) return;
+  qdbBuilding = true;
+  if(!db) renderQuestPlanner(); // swap the failed-state button for the progress text
+  try{
+    await buildQuestDB(m=>{
+      qdbProgress = m;
+      const p=$("#qpProg"); if(p) p.textContent = m;
+    });
+  }catch(e){ /* planner shows Try again; next launch retries too */ }
+  qdbBuilding = false;
+  renderQuestPlanner();
+}
+// Pinned plans, with live progress — the way back to anything you're working toward.
+function qpSavedHtml(db, target){
+  const saved = (state.qpSaved||[]).filter(t=>t==="__ALL__" || db.quests[t]);
+  if(!saved.length) return "";
+  const chips = saved.map(t=>{
+    const plan = t==="__ALL__" ? qpAllPlan(db) : questPlan(t, db);
+    const total = plan.all.length, done = plan.done.length;
+    const pct = total ? Math.round(done/total*100) : 0;
+    return `<button class="qp-plan-chip ${t===target?"on":""}" data-qpplan="${escapeHtml(t)}" title="Open this plan — ${done}/${total} quests done">
+      📌 ${escapeHtml(qpCrumbName(t))}
+      <span class="pbar"><i style="width:${pct}%"></i></span>
+      <span class="pp">${done}/${total}</span>
+      <span class="px" data-qpunsave="${escapeHtml(t)}" title="Unpin">✕</span>
+    </button>`;
+  }).join("");
+  return `<div class="qp-saved"><span class="qp-saved-label">📌 Your plans</span>${chips}</div>`;
+}
 function qpPlanHtml(target, db){
   // "everything" target = all quests; otherwise the chain for one
   const isAll = target==="__ALL__";
@@ -3363,17 +3705,25 @@ function qpPlanHtml(target, db){
   const remaining = plan.remaining;
   const gapRows = Object.entries(plan.gaps).sort((a,b)=>(b[1].need-b[1].have)-(a[1].need-a[1].have)).map(([s,g])=>{
     const trained = plan.chainXp[s]||0;
-    const after = levelFromXp((live&&live.skills&&live.skills[s]?live.skills[s].experience:0)+trained);
+    const after = levelFromXp(liveSkillXp(s)+trained);
     const covered = after>=g.need;
-    return `<div class="qp-gap">
-      <span class="g-lvl">${g.need} ${nice(s)}</span>
-      <span class="grow small ${covered?"":"muted"}">you're ${g.have}${covered?` — the chain trains you to ${after}, so this sorts itself out`:` · ${g.need-g.have} levels short`}</span>
-      ${g.boostable?`<span class="qp-tag boost">boostable</span>`:""}
-      ${covered?`<span class="qp-tag free">covered by rewards</span>`:""}
+    // Without stats every "you're X" would be fiction (the simulation starts all
+    // skills at zero) — show the requirement alone and say why.
+    const verdict = !live ? `<span class="grow small muted">requires ${g.need}</span>`
+      : `<span class="grow small ${covered?"":"muted"}">you're ${g.have}${covered?` — the chain trains you to ${after}, so this sorts itself out`:` · ${g.need-g.have} levels short`}</span>`;
+    return `<div class="qp-gapwrap">
+      <div class="qp-gap" data-qpgap="${s}" title="Click to see which quests reward ${nice(s)} XP">
+        <span class="g-lvl">${g.need} ${nice(s)}</span>
+        ${verdict}
+        ${g.boostable?`<span class="qp-tag boost">boostable</span>`:""}
+        ${(live&&covered)?`<span class="qp-tag free">covered by rewards</span>`:""}
+        <span class="g-caret">▾</span>
+      </div>
+      <div class="qp-boost hidden">${qpBoostList(s, db, plan)}</div>
     </div>`;
   }).join("");
   const realGaps = Object.entries(plan.gaps).filter(([s,g])=>{
-    const after = levelFromXp((live&&live.skills&&live.skills[s]?live.skills[s].experience:0)+(plan.chainXp[s]||0));
+    const after = levelFromXp(liveSkillXp(s)+(plan.chainXp[s]||0));
     return after < g.need;
   }).length;
   const steps = remaining.map((n,i)=>{
@@ -3389,11 +3739,12 @@ function qpPlanHtml(target, db){
       <label class="chk"><input type="checkbox" data-qpdone="${escapeHtml(n)}"></label>
       <span class="nm">${escapeHtml(qpLabel(n))}</span>
       <span class="qreqs grow">${chips}${q.qp?`<span class="qreq qp">${q.qp}<i>QP</i></span>`:""}${lockedQ.length?`<span class="qreq no" title="${escapeHtml(lockedQ.join(", "))}">📜${lockedQ.length}</span>`:""}</span>
-      ${st==="ready"?`<span class="qp-tag free">do now</span>`:`<span class="small muted">${q.difficulty||""}</span>`}
+      ${(live&&st==="ready")?`<span class="qp-tag free">do now</span>`:`<span class="small muted">${q.difficulty||""}</span>`}
     </div>`;
   }).join("");
   return `<div class="panel">
-    <div class="section-title center"><h3>${escapeHtml(title)}</h3>${q&&q.difficulty?`<span class="small muted">${q.difficulty}</span>`:""}</div>
+    <div class="section-title center"><h3>${escapeHtml(title)}</h3>${q&&q.difficulty?`<span class="small muted">${q.difficulty}</span>`:""}
+      <button class="ghost small" id="qpPin">${(state.qpSaved||[]).includes(target)?"📌 Pinned ✓":"📌 Pin this plan"}</button></div>
     <div class="qp-sum">
       <div class="qp-stat"><div class="k">Quests left</div><div class="v">${remaining.length}</div></div>
       <div class="qp-stat"><div class="k">Already done</div><div class="v">${plan.done.length}</div></div>
@@ -3401,7 +3752,8 @@ function qpPlanHtml(target, db){
       ${plan.qpNeeded?`<div class="qp-stat"><div class="k">QP needed</div><div class="v">${plan.qpNeeded}</div></div>`:""}
     </div>
     ${gapRows?`<div class="section-title center" style="margin-top:6px"><h3>What it costs you</h3></div>
-      <p class="muted small" style="text-align:center;margin:0 0 4px">Levels checked at the moment you'd reach each quest — XP the chain hands you along the way is already counted.</p>
+      ${live?`<p class="muted small" style="text-align:center;margin:0 0 4px">Levels checked at the moment you'd reach each quest — XP the chain hands you along the way is already counted.</p>`
+            :`<p class="small" style="text-align:center;margin:0 0 4px;color:var(--gold)">⚠ No character stats loaded — showing requirements only. Hit ↻ to load your stats, then come back.</p>`}
       ${gapRows}`:`<div class="empty">No skill requirements standing in your way.</div>`}
     ${plan.blockers.length?`<div class="small muted" style="margin-top:8px">⚑ Quest-point gates: ${plan.blockers.slice(0,3).map(b=>`${b.quest} needs ${b.qp} QP`).join(" · ")}</div>`:""}
   </div>
@@ -3424,7 +3776,7 @@ function qpAllPlan(db){
   const all = db.order.filter(n=>!db.quests[n].mini);
   const remaining = all.filter(n=>!questDone(n));
   const p = { target:"__ALL__", all, remaining, done: all.filter(questDone), gaps:{}, blockers:[], chainXp:{}, qpNeeded:0 };
-  const xp={}; SKILL_ORDER.forEach(s=>{ const e=live&&live.skills&&live.skills[s]; xp[s]=e?e.experience:0; });
+  const xp={}; SKILL_ORDER.forEach(s=>{ xp[s]=liveSkillXp(s); });
   remaining.forEach(n=>{
     const q=db.quests[n];
     Object.entries(q.reqs||{}).forEach(([s,lvl])=>{
@@ -3553,6 +3905,39 @@ function qpQuestRow(t, db){
   return `<button class="qpd-q ${done?"done":""}" data-qpgo="${escapeHtml(t)}" title="Open ${escapeHtml(qpLabel(t))}">
     <span class="dot">${done?"✅":questStatus(t,db)==="ready"?"🟡":"⬜"}</span>${escapeHtml(qpLabel(t))}</button>`;
 }
+// Every quest that pays XP in a skill, biggest first — the expansion under a gap row.
+// 🧭 marks quests already part of the current plan (their XP is what "covered by rewards" counts).
+function qpBoostList(s, db, plan){
+  const inPlan = new Set((plan.all||[]).filter(n=>!questDone(n)));
+  const rows = Object.keys(db.quests)
+    .map(n=>({n, xp:(db.quests[n].rewards||{})[s]||0}))
+    .filter(r=>r.xp>0)
+    .sort((a,b)=>b.xp-a.xp);
+  if(!rows.length) return `<div class="b-note">No quests reward ${nice(s)} XP.</div>`;
+  const total = rows.filter(r=>!questDone(r.n)).reduce((a,r)=>a+r.xp,0);
+  const li = rows.slice(0,14).map(r=>{
+    const done = questDone(r.n);
+    return `<button class="qpd-q ${done?"done":""}" data-qpgo="${escapeHtml(r.n)}" title="Open ${escapeHtml(qpLabel(r.n))}">
+      <span class="dot">${done?"✅":inPlan.has(r.n)?"🧭":"⬜"}</span>${escapeHtml(qpLabel(r.n))}
+      <span class="bxp">+${r.xp.toLocaleString("en-US")} xp</span></button>`;
+  }).join("");
+  const more = rows.length>14?`<div class="b-note">+${rows.length-14} more quests give smaller amounts</div>`:"";
+  return `<div class="b-note">${total.toLocaleString("en-US")} XP still available from quests · 🧭 = already in this plan</div>${li}${more}`;
+}
+// What the quest hands you: QP + XP as chips, items/unlocks as one-line bullets.
+function qpRewardsHtml(q){
+  const xpChips = Object.entries(q.rewards||{}).sort((a,b)=>b[1]-a[1]).map(([s,a])=>
+    `<span class="qreq ok" title="+${a.toLocaleString("en-US")} ${nice(s)} XP"><img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">+${a>=1000?Math.round(a/1000)+"k":a}</span>`).join("");
+  const qpChip = q.qpGain ? `<span class="qreq qp">${q.qpGain}<i>QP</i></span>` : "";
+  const items = (q.items||[]).map(it=>
+    `<span class="qpd-item" title="${escapeHtml(it.n)}">${it.img?`<img src="${it.img}" alt="" onerror="this.style.display='none'">`:""}${escapeHtml(it.n)}</span>`).join("");
+  const unlocks = (q.unlocks||[]).map(u=>`<div class="qpd-un" title="${escapeHtml(u)}">🔓 ${escapeHtml(u)}</div>`).join("");
+  if(!qpChip && !xpChips && !items && !unlocks) return "";
+  return `<div class="qpd-sec" style="grid-column:1/-1"><h5>Rewards</h5>
+    ${(qpChip||xpChips)?`<div class="qpd-xp">${qpChip}${xpChips}</div>`:""}
+    ${items?`<div class="qpd-items">${items}</div>`:""}
+    ${unlocks?`<div class="qpd-uns">${unlocks}</div>`:""}</div>`;
+}
 function qpDetailHtml(n, db){
   if(!n || !db.quests[n])
     return `<div class="qp-detail-empty">Click any quest in the tree for its full requirements.</div>`;
@@ -3560,12 +3945,12 @@ function qpDetailHtml(n, db){
   const lvlOf = s => (live && live.skills && live.skills[s]) ? live.skills[s].level : 1;
   const reqs = Object.entries(q.reqs||{}).sort((a,b)=>b[1]-a[1]);
   const reqRows = reqs.map(([s,l])=>{
-    const have = lvlOf(s), ok = have>=l, boost = q.boostable && q.boostable[s];
-    return `<div class="qpd-row ${ok?"ok":"no"}">
+    const have = live ? lvlOf(s) : null, ok = have!=null && have>=l, boost = q.boostable && q.boostable[s];
+    return `<div class="qpd-row ${have==null?"":ok?"ok":"no"}">
       <img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">
       <span class="want">${l}</span> <span>${nice(s)}</span>
-      ${(!ok&&boost)?`<span class="qp-tag" title="A boost can cover this">boostable</span>`:""}
-      <span class="have">you: ${have}</span></div>`;
+      ${(have!=null&&!ok&&boost)?`<span class="qp-tag" title="A boost can cover this">boostable</span>`:""}
+      <span class="have">${have==null?"stats not loaded":"you: "+have}</span></div>`;
   }).join("");
   const myQp = qpMyQp(db), qpOk = myQp >= (q.qp||0);
   const qpRow = q.qp ? `<div class="qpd-row ${qpOk?"ok":"no"}">
@@ -3584,7 +3969,7 @@ function qpDetailHtml(n, db){
   const wiki = "https://oldschool.runescape.wiki/w/"+encodeURIComponent(n.replace(/ /g,"_"));
   return `<div class="qpd-head">
       <h4>${escapeHtml(qpLabel(n))}</h4>
-      <span class="qp-tag ${st==="ready"?"free":""}">${st==="done"?"complete":st==="ready"?"ready to start":"blocked"}</span>
+      <span class="qp-tag ${(live&&st==="ready")?"free":""}">${st==="done"?"complete":!live?"stats not loaded":st==="ready"?"ready to start":"blocked"}</span>
       ${parent?`<button class="qpd-q" style="width:auto" data-qpgo="${escapeHtml(parent)}">part of ${escapeHtml(parent)}</button>`:""}
       ${q.difficulty?`<span class="small muted">${escapeHtml(q.difficulty)}</span>`:""}
       ${q.length?`<span class="small muted">· ${escapeHtml(q.length)}</span>`:""}
@@ -3603,6 +3988,7 @@ function qpDetailHtml(n, db){
       <div class="qpd-sec"><h5>${opensHead}</h5>
         <div class="qpd-list">${opens.length?opens.map(t=>qpQuestRow(t,db)).join("")
           :`<div class="qpd-row"><span class="have" style="margin:0">Nothing depends on this.</span></div>`}</div></div>
+      ${qpRewardsHtml(q)}
     </div>`;
 }
 function qpEdgePath(e){
@@ -3644,6 +4030,18 @@ function qpWire(db){
   const tree = document.querySelector("#qpResult .qp-tree");
   $$("#qpResult .qp-node").forEach(x=>x.classList.toggle("sel", x.dataset.qpnode===state.qpSel));
   qpWireDetail(db);
+  // gap row → the quests that pay XP in that skill; a quest click opens its detail panel
+  $$("#qpResult [data-qpgap]").forEach(el=>el.onclick=(e)=>{
+    if(e.target.closest("[data-qpgo]")) return;
+    const b = el.parentElement.querySelector(".qp-boost");
+    if(b) b.classList.toggle("hidden");
+    el.classList.toggle("open");
+  });
+  $$("#qpResult .qp-boost [data-qpgo]").forEach(b=>b.onclick=(e)=>{
+    e.stopPropagation();
+    state.qpSel = b.dataset.qpgo; save(); qpShowDetail(db);
+    const d=$("#qpDetail"); if(d) d.scrollIntoView({behavior:"smooth", block:"center"});
+  });
   // ---- hover highlight: light this quest's direct connections, fade everything else
   if(tree){
     $$("#qpResult [data-qpnode]").forEach(el=>{
@@ -3700,6 +4098,14 @@ function qpWire(db){
       document.addEventListener("mouseup", up);
     });
   });
+  const pin = $("#qpPin");
+  if(pin) pin.onclick = ()=>{
+    const t = state.qpTarget, saved = (state.qpSaved = state.qpSaved||[]);
+    const i = saved.indexOf(t);
+    if(i>=0){ saved.splice(i,1); toast("Plan unpinned"); }
+    else { saved.push(t); toast("Pinned — it'll be waiting under Your plans"); }
+    save(); renderQuestPlanner();
+  };
   const goBack = ()=>{
     const trail = qpTrail();
     if(!trail.length) return;
@@ -3947,6 +4353,86 @@ function askReachTop(n){
   return rows.slice(0,n);
 }
 // Short-term memory: the last entity discussed, so "it" / "that quest" resolves.
+// The wiki's training pages are sectioned "Levels X–Y: Method" — that IS the optimal
+// path, so read the section headings and hand back a ladder. Top-level "Alternative"
+// sections are skipped; pages without level sections (Prayer) just get the link.
+async function budTrainLadder(sk){
+  const ck = "train:"+sk;
+  const c = state.wikiCache && state.wikiCache[ck];
+  if(c && Date.now()-c.ts < 7*86400e3) return c;
+  let title=null, url=null;
+  try{
+    const os = await (await fetch(`${WIKI_API}?action=opensearch&format=json&origin=*&limit=1&search=${encodeURIComponent(nice(sk)+" training")}`)).json();
+    if(os[1] && os[1][0]){ title=os[1][0]; url=os[3][0]; }
+  }catch(e){}
+  if(!title) return null;
+  const rungs=[];
+  try{
+    const j = await (await fetch(`${WIKI_API}?action=parse&prop=sections&format=json&origin=*&page=${encodeURIComponent(title)}`)).json();
+    const secs = (j.parse && j.parse.sections)||[];
+    const altPrefixes = secs.filter(s=>s.toclevel===1 && /alternat|other method|miscell/i.test(s.line)).map(s=>s.number+".");
+    secs.forEach(s=>{
+      const line = s.line.replace(/<[^>]+>/g,"").trim();
+      if(altPrefixes.some(p=>(s.number+".").startsWith(p))) return;
+      let from=null, label=null;
+      let m = line.match(/^Levels?\s+(\d+)[^:]*:\s*(.+)$/i);
+      if(m){ from=parseInt(m[1],10); label=m[2].trim(); }
+      else{
+        m = line.match(/^(.*?)\s*\(levels?\s+(\d+)[^)]*\)\s*$/i);
+        if(m){ from=parseInt(m[2],10); label=m[1].trim(); }
+      }
+      if(from==null || !label) return;
+      const range = (line.match(/evels?\s+([\d\/,+\-–— ]+?)(?::|\))/)||[])[1];
+      rungs.push({from, label, range:(range||String(from)).trim(), anchor:s.anchor});
+    });
+  }catch(e){}
+  const out = {ts:Date.now(), title, url, rungs};
+  state.wikiCache = state.wikiCache||{}; state.wikiCache[ck]=out; save();
+  return out;
+}
+// Training advice from what the app already knows: your level, the quest XP still on
+// the table, and the wiki's training guide (found by search — page names vary by skill).
+async function budTrainAnswer(sk){
+  const e = live && live.skills && live.skills[sk];
+  const xp = liveSkillXp(sk);
+  const head = e
+    ? `Your <b>${nice(sk)}</b> is <b>${e.level}</b>${e.level>=99?` — maxed 🎉`:` (${fmt(xpForLevel(e.level+1)-xp)} xp to ${e.level+1})`}.`
+    : `Load your character and I can talk specifics.`;
+  const hpNote = sk==="hitpoints" ? ` Hitpoints levels itself — every bit of combat XP feeds it, so train Attack, Strength, Ranged, or Magic and it follows along.` : "";
+  let qline = "";
+  const db = questDB();
+  if(db){
+    const rows = Object.keys(db.quests).map(n=>({n, xp:(db.quests[n].rewards||{})[sk]||0}))
+      .filter(r=>r.xp>0 && !questDone(r.n)).sort((a,b)=>b.xp-a.xp).slice(0,3);
+    if(rows.length) qline = ` Quests still holding ${nice(sk)} XP for you: ${rows.map(r=>`<b>${qpLabel(r.n)}</b> (+${fmt(r.xp)})`).join(" · ")} — the Quest planner charts the route.`;
+  }
+  let path = "", link = "";
+  const lad = await budTrainLadder(sk);
+  if(lad){
+    link = ` Full guide: <a href="${lad.url}" target="_blank" rel="noopener">${lad.title} ↗</a>.`;
+    if(lad.rungs.length){
+      // the rung you're on (highest start at/below your level) plus the next few up
+      const lvl = e ? e.level : 1;
+      const sorted = [...lad.rungs].sort((a,b)=>a.from-b.from);
+      const eligible = sorted.filter(r=>r.from<=lvl);
+      const picks = [];
+      if(eligible.length){
+        const mf = Math.max(...eligible.map(r=>r.from));
+        picks.push(eligible.find(r=>r.from===mf));
+      }
+      for(const r of sorted){
+        if(picks.length>=3) break;
+        if(r.from>lvl && !picks.some(p=>p.from===r.from)) picks.push(r);
+      }
+      if(!picks.length) picks.push(...sorted.slice(0,3));
+      path = `<div style="margin-top:4px">The wiki's path from here: ${picks.map(r=>
+        `<a href="${lad.url}#${r.anchor}" target="_blank" rel="noopener"><b>${escapeHtml(r.range)}</b> ${escapeHtml(r.label)}</a>`).join(" → ")}</div>`;
+    }
+  } else {
+    link = ` The wiki's <a href="https://oldschool.runescape.wiki/w/${skillWikiPage(sk)}" target="_blank" rel="noopener">${nice(sk)} page ↗</a> links its training guides.`;
+  }
+  return head + hpNote + path + qline + link;
+}
 let askLastEntity = null;
 function reldoAnswer(q){
   const t=" "+q.toLowerCase().replace(/[?!.,'’]/g," ").replace(/\s+/g," ").trim()+" ";
@@ -3994,6 +4480,12 @@ function reldoAnswer(q){
     if(!top) return `Load your character first and I'll tell you what's within reach.`;
     if(!top.length) return `Nothing locked is close — check the Roadmap for the longer arcs.`;
     return `Closest unlocks from your stats:<ul>${top.map(({it,needs})=>`<li><b>${it.text}</b> — ${needs.map(x=>`${x.need} more ${nice(x.s)}`).join(" · ")}</li>`).join("")}</ul>`;
+  }
+  // "how do I train X" — the skill-modal handoff and a natural question either way
+  if(/ (train|training|level|levelling|leveling|grind|raise) /.test(t)){
+    const alias = {hp:"hitpoints", runecraft:"runecrafting"};
+    let sk = SKILL_ORDER.find(s=>t.includes(" "+s+" ")) || Object.keys(alias).find(a=>t.includes(" "+a+" "));
+    if(sk) return budTrainAnswer(alias[sk]||sk);
   }
   let e=askMatch(t);
   // pronoun follow-ups: "what do I need for it", "can I do that one"
@@ -4061,8 +4553,153 @@ function renderUpdSetting(msg){
   else if(u) el.innerHTML = `v${APP_VERSION} · <b style="color:var(--gold)">${escapeHtml(u.tag)} is available</b> — <a href="${u.dl}" target="_blank" rel="noopener">download</a>`;
   else el.innerHTML = `OSRS Buddy v${APP_VERSION}${state.updCheck&&state.updCheck.ts?` · up to date`:``}`;
 }
-function openSettings(){ renderFontSeg(); renderNumSeg(); renderUpdSetting(); $("#settingsWrap").classList.remove("hidden"); }
+function openSettings(){
+  renderFontSeg(); renderNumSeg(); renderUpdSetting();
+  const bb = $("#bugBtn");
+  if(bb){
+    const body = encodeURIComponent("**What happened**\n\n\n**What I expected**\n\n\n---\nversion: "+APP_VERSION+"\nbrowser: "+navigator.userAgent);
+    bb.href = "https://github.com/"+GH_REPO+"/issues/new?labels=bug&body="+body;
+  }
+  $("#settingsWrap").classList.remove("hidden");
+}
 function closeSettings(){ $("#settingsWrap").classList.add("hidden"); }
+
+// ---- skill info modal (Home → click a skill tile) ----
+function skillWeekXp(key){
+  const auto = state.scroll.auto || {};
+  const cut = new Date(); cut.setDate(cut.getDate()-7);
+  const cutIso = isoDate(cut);
+  let sum = 0;
+  for(const iso in auto){ if(iso >= cutIso) sum += (auto[iso].skills||{})[key]||0; }
+  return sum;
+}
+function skillWikiPage(key){ return key==="runecrafting" ? "Runecraft" : nice(key).replace(/ /g,"_"); }
+// Fun facts from the auto cache: training frequency, streaks, best day, levels gained.
+// Same honesty caveat as the heatmap — resolution is snapshot frequency.
+function skillFacts(key, xp){
+  const auto = state.scroll.auto || {};
+  const cut = new Date(); cut.setDate(cut.getDate()-30);
+  const cutIso = isoDate(cut);
+  let days=0, total30=0, best={xp:0, iso:null};
+  for(const iso in auto){
+    if(iso < cutIso) continue;
+    const g = (auto[iso].skills||{})[key]||0;
+    if(g>0){ days++; total30+=g; if(g>best.xp) best={xp:g, iso}; }
+  }
+  const gAt = iso => ((auto[iso]||{}).skills||{})[key]||0;
+  let streak=0; const cur=new Date();
+  if(gAt(isoDate(cur))<=0) cur.setDate(cur.getDate()-1); // a streak can still be alive if today hasn't posted yet
+  while(gAt(isoDate(cur))>0){ streak++; cur.setDate(cur.getDate()-1); }
+  const lvlsGained = levelFromXp(xp) - levelFromXp(Math.max(0, xp-total30));
+  const tag = skillColorKey(key);
+  const miles = (state.scroll.log||[]).filter(e=>e.milestone && (e.skills||[]).includes(tag)).length;
+  const fx=[];
+  if(days>0){
+    fx.push(`<div class="fx"><span class="fi">📅</span>Trained on <b>${days}</b> of the last 30 days</div>`);
+    if(streak>1) fx.push(`<div class="fx"><span class="fi">🔥</span>Hot streak — <b>${streak} days</b> running</div>`);
+    if(best.iso) fx.push(`<div class="fx"><span class="fi">⚡</span>Best day: <b>+${fmt(best.xp)} xp</b> on ${fmtDay(best.iso)}</div>`);
+    if(lvlsGained>0) fx.push(`<div class="fx"><span class="fi">📈</span><b>${lvlsGained} level${lvlsGained>1?"s":""}</b> gained this month</div>`);
+  } else {
+    fx.push(`<div class="fx"><span class="fi">💤</span>No training seen in the last 30 days</div>`);
+  }
+  if(miles>0) fx.push(`<div class="fx"><span class="fi">🏆</span><b>${miles}</b> milestone day${miles>1?"s":""} logged with this skill</div>`);
+  return fx.join("");
+}
+function openSkillModal(key){
+  const e = live && live.skills && live.skills[key];
+  if(!e) return;
+  const lvl = e.level, xp = liveSkillXp(key), isMax = lvl>=99;
+  const lo = xpForLevel(lvl), hi = xpForLevel(lvl+1);
+  const pct = isMax ? 100 : Math.max(0, Math.min(100, Math.round((xp-lo)/(hi-lo)*100)));
+  const week = skillWeekXp(key);
+  const db = questDB();
+  let quests = "";
+  if(db){
+    const rows = Object.keys(db.quests)
+      .map(n=>({n, xp:(db.quests[n].rewards||{})[key]||0}))
+      .filter(r=>r.xp>0).sort((a,b)=>b.xp-a.xp);
+    const left = rows.filter(r=>!questDone(r.n)).reduce((a,r)=>a+r.xp,0);
+    quests = rows.length
+      ? `<div class="b-note">${left.toLocaleString("en-US")} XP still waiting in quests</div>`+
+        rows.slice(0,10).map(r=>`<button class="qpd-q ${questDone(r.n)?"done":""}" data-skq="${escapeHtml(r.n)}">
+          <span class="dot">${questDone(r.n)?"✅":"⬜"}</span>${escapeHtml(qpLabel(r.n))}
+          <span class="bxp">+${r.xp.toLocaleString("en-US")} xp</span></button>`).join("")+
+        (rows.length>10?`<div class="b-note">+${rows.length-10} more give smaller amounts</div>`:"")
+      : `<div class="b-note">No quests reward ${nice(key)} XP.</div>`;
+  } else {
+    quests = `<div class="b-note">${qdbBuilding?"Quest data is still loading — check back in a moment.":"Quest data hasn't loaded yet — it'll fetch automatically."}</div>`;
+  }
+  // ⭐ = a skill-tag priority the Scroll watches: XP in the skill counts as working on
+  // it, rank 8 so starred-skill days earn the gold ring on the heatmap
+  const tagKey = skillColorKey(key);
+  const starred = state.priorities.some(p=>p.kind==="tag" && p.metric===tagKey);
+  $("#skillModal").innerHTML = `
+    <div class="dp-head"><span><img src="${skillIconUrl(key)}" alt="" width="20" height="20" style="vertical-align:-4px"> ${nice(key)}</span>
+      <span style="margin-left:auto; display:flex; gap:2px">
+        <button class="dp-x" id="skillStar" title="${starred?"Starred — the Scroll is watching this skill. Click to unstar.":"Star this skill — makes it a priority the Scroll watches"}">${starred?"⭐":"☆"}</button>
+        <button class="dp-x" id="skillX" aria-label="Close">✕</button>
+      </span></div>
+    <div class="sk-hero">
+      <div class="sk-lvl">${lvl}</div>
+      <div class="grow" style="min-width:0">
+        <div class="sk-bar"><i style="width:${pct}%"></i></div>
+        <div class="small muted">${fmt(xp)} xp${isMax?" · maxed 🎉":` · ${fmt(hi-xp)} to ${lvl+1}`}${e.rank>0?` · rank ${fmt(e.rank)}`:""}</div>
+      </div>
+    </div>
+    <div class="set-sec"><div class="set-h">This week</div>
+      <div class="sk-week">${week>0?`<b>+${fmt(week)} xp</b> from your game stats`:`No gains recorded this week.`}</div></div>
+    <div class="set-sec"><div class="set-h">Track record</div><div class="sk-facts">${skillFacts(key, xp)}</div></div>
+    <div class="set-sec"><div class="set-h">Quests that give ${nice(key)} XP</div><div class="qpd-list">${quests}</div></div>
+    <div class="set-sec sk-acts">
+      <button class="ghost small" id="skillBud">💬 Ask Bud how to train it</button>
+      <a class="ghost small" href="https://oldschool.runescape.wiki/w/${skillWikiPage(key)}" target="_blank" rel="noopener">Wiki ↗</a>
+    </div>`;
+  $("#skillWrap").classList.remove("hidden");
+  // centre on the skills panel, not the viewport — the sidebar shifts the content column
+  const anchor = $("#skillsGrid").closest(".panel") || $("#skillsGrid");
+  const ar = anchor.getBoundingClientRect(), m = $("#skillModal");
+  m.style.left = (ar.left + ar.width/2) + "px";
+  const vt = Math.max(ar.top, 10), vb = Math.min(ar.bottom, window.innerHeight-10);
+  let cy = (vt + vb) / 2;
+  const h = m.offsetHeight; // rendered above, so height is real
+  cy = Math.max(10 + h/2, Math.min(cy, window.innerHeight - 10 - h/2));
+  m.style.top = cy + "px";
+  $("#skillX").onclick = closeSkillModal;
+  $("#skillStar").onclick = ()=>{
+    const cur = state.priorities.find(p=>p.kind==="tag" && p.metric===tagKey);
+    if(cur){
+      state.priorities = state.priorities.filter(p=>p!==cur);
+      toast(nice(key)+" unstarred");
+    } else {
+      state.priorities.push({id:"p"+Date.now()+Math.random().toString(36).slice(2,5),
+        label: tagKey==="Combat" ? "Combat" : nice(key),
+        kind:"tag", metric:tagKey, weight:8,
+        createdAt:todayISO(), lastTouched:null, lastValue:null, snoozeUntil:null});
+      toast("⭐ "+nice(key)+" is now a priority — the Scroll will watch it");
+    }
+    save(); renderPriorities(); renderGlance(); renderPrioPicker();
+    openSkillModal(key); // repaint with the new star state
+  };
+  $("#skillBud").onclick = ()=>{
+    closeSkillModal();
+    switchView("ask");
+    const inp = $("#askInput");
+    if(inp){ inp.value = `how do I train ${nice(key).toLowerCase()}?`; inp.focus(); }
+  };
+  // quest click → the planner, charted
+  $$("#skillModal [data-skq]").forEach(b=>b.onclick=()=>{
+    closeSkillModal();
+    state.qpTarget = b.dataset.skq; state.qpHist = []; state.qpSel = null; save();
+    switchView("quests");
+    renderQuestPlanner();
+  });
+}
+function closeSkillModal(){ $("#skillWrap").classList.add("hidden"); }
+$("#skillBack").onclick = closeSkillModal;
+$("#skillsGrid").onclick = (e)=>{
+  const t = e.target.closest("[data-skillinfo]");
+  if(t) openSkillModal(t.dataset.skillinfo);
+};
 $("#qpRefresh").onclick = qpLoad;
 $("#qpSearch").addEventListener("input", ()=>{
   const db=questDB(), t=$("#qpSearch").value.trim().toLowerCase(), el=$("#qpSuggest");
@@ -4097,8 +4734,25 @@ $("#themeBtn").onclick = ()=>{
 };
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.1";
 const PATCH_NOTES = [
+  {v:"1.1", date:"August 7, 2026", title:"Profiles, and a lot of quest detail", notes:[
+    "Added profiles. Each character keeps its own Scroll, goals, priorities, quest progress and notes — loading a different name switches profiles instead of mixing the data together. Themes, fonts and quest data stay shared. Backups include every profile.",
+    "Fixed the activity heatmap reading only the last hour of your history. It now pages through your full stats history, so days you trained weeks ago appear correctly. Existing days are never overwritten by a short refresh.",
+    "Quest rewards now show what you actually receive: quest points, XP per skill, the items handed to you with their pictures, and the unlocks listed separately. Items you can merely equip or buy afterwards are no longer listed as rewards.",
+    "Quest data loads automatically when the app starts, and refreshes itself when it's more than two weeks old. The manual load button only appears if that fails.",
+    "Clicking a quest in the dependency tree now opens a detail panel — full requirements against your levels, the quests it needs, and the quests it opens up — instead of jumping the view. Navigation uses a breadcrumb trail and Escape steps back.",
+    "Recipe for Disaster now plans as a whole, including all ten subquests.",
+    "Plans can be pinned. Pinned plans appear under the goal picker with their progress.",
+    "Skill requirements in a plan expand to show every quest that rewards XP in that skill.",
+    "Home skill tiles open a detail panel: level progress, XP gained this week, a track record of how often you train it, quests that reward it, and a shortcut to ask Bud how to train it.",
+    "Skills can be starred from that panel to make them priorities the Scroll watches.",
+    "Ask Bud answers training questions with the wiki's recommended methods for your level range.",
+    "Priorities can be edited, including their rank.",
+    "Empty days on the heatmap offer a shortcut to log them.",
+    "Added a bug report link in Settings.",
+    "The quest planner no longer reports levels when no character is loaded.",
+  ]},
   {v:"1.0", date:"August 6, 2026", title:"1.0", notes:[
     "Renumbered the version history. Everything before this release is now 0.x; this is 1.0.",
     "Added the Quest planner: pick any quest (or the quest cape) and see the full dependency tree — every prerequisite, including ones already done, with skill requirements, boostable flags, and quest-point gates checked against your stats. XP rewarded by the chain itself is counted when working out which requirements you'll actually be short on.",
@@ -4194,6 +4848,15 @@ $("#sbBackdrop").onclick = closeSidebar;
 // ---- backup / import (merge: current data wins on id clashes) ----
 function mergeImportedState(inc){
   if(!inc || typeof inc !== "object" || Array.isArray(inc)) throw new Error("bad backup");
+  // profile-aware backups carry the other characters too — restore any not already here
+  if(inc.__profiles && inc.__profiles.stash){
+    const p = profStore(), curKey = profKey(profName());
+    Object.keys(inc.__profiles.stash).forEach(k=>{
+      if(k!==curKey && !p.stash[k]) p.stash[k] = inc.__profiles.stash[k];
+    });
+    profSaveStore(p);
+    delete inc.__profiles;
+  }
   const byId=(a,b)=>{ const m=new Map(); [...(a||[]),...(b||[])].forEach(x=>{ if(x&&x.id) m.set(x.id,x); }); return [...m.values()]; };
   state.goals = byId(inc.goals, state.goals);
   state.manual = byId(inc.manual, state.manual);
@@ -4206,7 +4869,7 @@ function mergeImportedState(inc){
   ensure(); save();
 }
 $("#exportBtn").onclick = ()=>{
-  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+  const blob = new Blob([JSON.stringify(Object.assign({}, state, {__profiles: profStore()}), null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "osrs-buddy-backup-"+todayISO()+".json";
@@ -4249,6 +4912,7 @@ if(state.username){
   loadCharacter({live:false, silent:true}).then(()=> loadCharacter({live:true, silent:true}));
 }
 setupRefresh();
+setTimeout(qdbEnsure, 800); // quest data self-loads; slight delay so character stats go first
 </script>
 </body>
 </html>
