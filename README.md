@@ -1,5 +1,7 @@
 # OSRS Buddy
 
+IMPORTANT: To those who get up in arms about vibe coding, I use this app as an opportunity to learn, make manual tweaks when I know what I am doing, and watch the process unfold to better my own knowledge about coding. Hopefully one day I can do all of this alone, but with Claude-Code I have been able to learn more than I ever would have on my own. I do not claim this work as 100% my own, however I have played a significant part in the development process, and am proud of my work. If you see this, enjoy the app. :)
+
 A character companion for **Old School RuneScape** — an activity journal, a quest
 dependency planner, and an assistant that reads the wiki so you don't have to.
 
@@ -20,7 +22,7 @@ never leaves your machine.
 ## What it does
 
 **📜 Scroll** — a daily activity journal. Tag sessions with the skills you trained
-and the heatmap builds itself, colour-coded per skill. Days you actually played
+and the heatmap builds itself, color-coded per skill. Days you actually played
 are filled in automatically from your game stats, so the map is honest even when
 you forget to log. Mark the big days as 🏆 milestones and they get a rainbow ring.
 
