@@ -108,6 +108,23 @@
   .ph-line{flex:1; max-width:180px; height:1px; background:linear-gradient(90deg, transparent, var(--gold-dim))}
   .ph-line.flip{background:linear-gradient(270deg, transparent, var(--gold-dim))}
   .side-foot{display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--border); padding-top:11px}
+  /* update banner — only rendered when a newer release exists */
+  .upd-btn{display:block; text-align:center; text-decoration:none; font-size:12.5px; font-weight:bold;
+    background:var(--gold); color:#151515; border-radius:7px; padding:7px 9px;
+    box-shadow:0 0 12px var(--glow); animation:updPulse 2.4s ease-in-out infinite}
+  .upd-btn:hover{filter:brightness(1.08)}
+  .upd-v{opacity:.7; font-weight:normal}
+  .upd-notes{color:var(--gold-dim)}
+  @keyframes updPulse{0%,100%{box-shadow:0 0 8px var(--glow)} 50%{box-shadow:0 0 16px var(--glow)}}
+  /* roadmap tracks */
+  .track-head{cursor:pointer; user-select:none; margin-bottom:2px}
+  .track-head:hover h3{color:var(--gold2)}
+  .track-caret{color:var(--muted); font-size:11px; margin-left:6px}
+  .track-bar{height:3px; background:var(--inset); border-radius:2px; overflow:hidden; margin:0 0 2px}
+  .track-bar i{display:block; height:100%; background:var(--gold-dim); border-radius:2px}
+  .track.collapsed .track-body{display:none}
+  .track.collapsed{opacity:.72}
+  .track.collapsed:hover{opacity:1}
   /* quest planner */
   .qp-sug{display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin-top:10px}
   .qp-sug button{font-size:12.5px}
@@ -126,12 +143,24 @@
   .qp-tree-wrap{overflow:auto; padding:6px 2px 12px}
   .qp-tree{position:relative}
   .qp-tree svg{position:absolute; inset:0; pointer-events:none; overflow:visible}
-  .qp-node{position:absolute; width:172px; box-sizing:border-box; padding:6px 8px; border-radius:8px;
+  .qp-node{position:absolute; width:176px; box-sizing:border-box; padding:6px 8px; border-radius:8px;
     border:1px solid var(--border); background:var(--panel2); cursor:pointer; font-size:12px; line-height:1.25;
     transition:transform .1s, box-shadow .1s}
   .qp-node:hover{transform:translateY(-1px); box-shadow:var(--shadow); border-color:var(--gold-dim); z-index:3}
-  .qp-node .qn{font-weight:bold; color:var(--text); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .qp-node .qn{font-weight:bold; color:var(--text); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-right:14px}
   .qp-node .qm{color:var(--muted); font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .qp-node .qm.done{color:var(--green)}
+  /* requirement chips: skill icon + level, coloured by whether you meet it */
+  .qreqs{display:flex; flex-wrap:wrap; gap:3px; margin-top:3px}
+  .qreq{display:inline-flex; align-items:center; gap:2px; font-size:10px; line-height:1;
+    padding:1.5px 4px 1.5px 2px; border-radius:4px; background:var(--btnlo); border:1px solid var(--border); color:var(--muted)}
+  .qreq img{width:11px; height:11px; object-fit:contain}
+  .qreq.ok{color:var(--green); border-color:#2f5a28}
+  .qreq.no{color:var(--red); border-color:#5a2f28}
+  .qreq.qp{padding-left:4px; color:var(--gold-dim); border-color:var(--gold3)}
+  .qreq.qp i{font-style:normal; opacity:.7; margin-left:1px}
+  .qreq.more{padding-left:4px}
+  .qreq .bst{font-style:normal; color:#8fd; margin-left:1px; font-weight:bold}
   .qp-node.done{border-color:#2f5a28; background:var(--green-bg)}
   .qp-node.done .qn{color:var(--green)}
   .qp-node.ready{border-color:var(--gold); box-shadow:inset 0 0 0 1px var(--gold-dim)}
@@ -147,6 +176,35 @@
   .qp-tree.hl svg path.lit{opacity:1; stroke:var(--gold); stroke-width:2.5}
   .qp-node.dragging{z-index:5; box-shadow:var(--shadow); cursor:grabbing}
   .qp-node:active{cursor:grabbing}
+  .qp-nav{display:flex; gap:10px; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:6px}
+  .qp-nav button{font-size:12px; max-width:230px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .qp-navacts{display:flex; gap:6px; flex-wrap:wrap; margin-left:auto}
+  .qp-trail{display:flex; gap:4px; align-items:center; flex-wrap:wrap; font-size:12px; min-width:0}
+  .qp-crumb{background:none; border:0; color:var(--muted); font:inherit; cursor:pointer; padding:2px 5px;
+    border-radius:5px; max-width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  button.qp-crumb:hover{color:var(--gold); background:var(--panel2)}
+  .qp-crumb.here{color:var(--text); font-weight:bold; cursor:default}
+  .qp-sep{color:var(--border)}
+  /* click a node for the full picture: every requirement, what gates it, what it opens up */
+  .qp-node.sel{outline:2px solid var(--gold); outline-offset:2px; z-index:4}
+  .qp-detail{border-top:1px solid var(--border); margin-top:10px; padding-top:10px}
+  .qp-detail-empty{color:var(--muted); font-size:12.5px; text-align:center; padding:8px 0}
+  .qpd-head{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:8px}
+  .qpd-head h4{margin:0; font-size:15px; color:var(--gold)}
+  .qpd-acts{display:flex; gap:6px; margin-left:auto; flex-wrap:wrap}
+  .qpd-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px}
+  .qpd-sec h5{margin:0 0 5px; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:bold}
+  .qpd-list{display:flex; flex-direction:column; gap:3px}
+  .qpd-row{display:flex; align-items:center; gap:7px; font-size:12.5px; padding:2px 0}
+  .qpd-row img{width:15px; height:15px; object-fit:contain; flex:none}
+  .qpd-row .want{font-weight:bold}
+  .qpd-row .have{color:var(--muted); font-size:11.5px; margin-left:auto}
+  .qpd-row.ok .want{color:var(--green)} .qpd-row.no .want{color:var(--red,#e0623d)}
+  .qpd-q{display:flex; align-items:center; gap:6px; font-size:12.5px; background:none; border:0; color:var(--text);
+    font-family:inherit; cursor:pointer; text-align:left; padding:3px 5px; border-radius:5px; width:100%}
+  .qpd-q:hover{background:var(--panel2); color:var(--gold)}
+  .qpd-q .dot{flex:none}
+  .qpd-q.done{color:var(--green)} .qpd-q.done:hover{color:var(--green)}
   .qp-legend{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; font-size:11.5px; color:var(--muted); margin-top:4px}
   .qp-legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px}
   .qp-step{display:flex; align-items:center; gap:9px; padding:6px 0; border-top:1px solid var(--border); font-size:13px}
@@ -566,6 +624,7 @@
       </div>
     </div>
     <div class="side-foot">
+      <div id="updBanner" class="hidden"></div>
       <button class="ghost small" id="themeBtn" title="Cycle through themes">🎨 Theme</button>
       <button class="ghost small" id="settingsBtn" title="Settings">⚙️ Settings</button>
       <span class="small muted" id="lastUpdated"></span>
@@ -592,6 +651,13 @@
         <label class="chk small"><input type="checkbox" id="autoRefresh"> Auto-refresh from the hiscores every 5 minutes</label>
         <button class="ghost small" id="rlSyncBtn" style="margin-top:8px">⟲ Sync from RuneLite</button>
         <div class="small muted" id="rlSyncMsg" style="margin-top:4px">Reads your name and worn gear from a running RuneLite client (WikiSync plugin required). Worn Roadmap gear gets ticked automatically.</div>
+      </div>
+      <div class="set-sec">
+        <div class="set-h">Version</div>
+        <div class="row" style="gap:6px; flex-wrap:nowrap; align-items:center">
+          <span class="grow small" id="updStatus">OSRS Buddy v<span id="updCur"></span></span>
+          <button class="ghost small" id="updCheckBtn">Check for updates</button>
+        </div>
       </div>
       <div class="set-sec">
         <div class="set-h">Data</div>
@@ -1303,6 +1369,14 @@ function reqText(reqs){ return Object.entries(reqs||{}).map(([k,v])=>`${v} ${nic
 //   kind:"gear"/"quest" — done is TICKED (state.roadmapDone); reqs only mark the unlock
 // Skill reqs are encoded only where certain; anything murkier lives in the note + wiki link.
 const TRACKS = [
+  {id:"start", title:"🌱 Getting started", blurb:"The first few hours. Skip this if you're past it — it'll fold away once it's done.", items:[
+    {id:"tut", text:"Finish Tutorial Island", kind:"milestone", fn:()=>totalLvl()>=32, wiki:"Tutorial_Island"},
+    {id:"f2pq", text:"Cook's Assistant, Sheep Shearer, Restless Ghost", kind:"task", wiki:"Quests/Free-to-play", note:"Short starter quests, all in the Lumbridge area"},
+    {id:"waterfall", text:"Waterfall Quest", kind:"quest", wiki:"Waterfall_Quest", note:"No requirements, and it hands you 13k Attack and Strength XP"},
+    {id:"base40", text:"40 Attack, Strength and Defence", kind:"milestone", reqs:{attack:40, strength:40, defence:40}, note:"Rune gear becomes wearable"},
+    {id:"cb50", text:"Combat level 50", kind:"milestone", fn:()=>(combatLevel()?.level||0)>=50},
+    {id:"first50", text:"First skill to 50", kind:"milestone", fn:()=>live && SKILL_ORDER.some(s=>lvlOf(s)>=50)},
+  ]},
   {id:"prayer", title:"⚔️ Combat & prayer milestones", items:[
     {id:"pray43", text:"43 Prayer — Protect prayers", kind:"milestone", reqs:{prayer:43}, wiki:"Protect_from_Melee"},
     {id:"pray70", text:"70 Prayer — Piety", kind:"milestone", reqs:{prayer:70}, wiki:"Piety", note:"Also needs King's Ransom + the Knight Waves"},
@@ -1340,6 +1414,47 @@ const TRACKS = [
     {id:"kzulrah", text:"Zulrah", kind:"boss", kc:"zulrah", wiki:"Zulrah"},
     {id:"kvork", text:"Vorkath", kind:"boss", kc:"vorkath", wiki:"Vorkath", note:"Needs Dragon Slayer II"},
   ]},
+  {id:"diaries", title:"🗺️ Achievement diaries", blurb:"Region by region. Each tier unlocks shortcuts, teleports, and better resource yields — tick them as you finish them.", items:[
+    {id:"d_varrock", text:"Varrock diary", kind:"task", wiki:"Varrock_Diary", note:"Easy through Elite"},
+    {id:"d_lumbridge", text:"Lumbridge & Draynor diary", kind:"task", wiki:"Lumbridge_%26_Draynor_Diary"},
+    {id:"d_falador", text:"Falador diary", kind:"task", wiki:"Falador_Diary"},
+    {id:"d_ardougne", text:"Ardougne diary", kind:"task", wiki:"Ardougne_Diary", note:"The hard tier gives the Ardougne cloak — unlimited Monastery teleports"},
+    {id:"d_fremennik", text:"Fremennik diary", kind:"task", wiki:"Fremennik_Diary"},
+    {id:"d_kandarin", text:"Kandarin diary", kind:"task", wiki:"Kandarin_Diary", note:"Hard tier boosts Barbarian fishing XP"},
+    {id:"d_karamja", text:"Karamja diary", kind:"task", wiki:"Karamja_Diary"},
+    {id:"d_desert", text:"Desert diary", kind:"task", wiki:"Desert_Diary"},
+    {id:"d_morytania", text:"Morytania diary", kind:"task", wiki:"Morytania_Diary", note:"Hard tier doubles Barrows runs' reward potential"},
+    {id:"d_wildy", text:"Wilderness diary", kind:"task", wiki:"Wilderness_Diary"},
+    {id:"d_western", text:"Western Provinces diary", kind:"task", wiki:"Western_Provinces_Diary"},
+    {id:"d_kourend", text:"Kourend & Kebos diary", kind:"task", wiki:"Kourend_%26_Kebos_Diary"},
+  ]},
+  {id:"minigames", title:"🎯 Minigames", blurb:"Self-contained content that pays out in gear and unlocks.", items:[
+    {id:"m_wintertodt", text:"Wintertodt", kind:"task", reqs:{firemaking:50}, wiki:"Wintertodt", note:"The standard early Firemaking method, and it pays"},
+    {id:"m_ba", text:"Barbarian Assault — Fighter torso", kind:"gear", wiki:"Barbarian_Assault", note:"Best-in-slot-tier body slot for a long time"},
+    {id:"m_pc", text:"Pest Control — Void knight set", kind:"gear", wiki:"Pest_Control", note:"Needs 42+ in the combat stats and 22 Prayer"},
+    {id:"m_lms", text:"Last Man Standing", kind:"milestone", fn:()=>{const a=live&&live.activities&&live.activities.last_man_standing; return !!(a&&a.score>0);}, wiki:"Last_Man_Standing", note:"Free PvP practice — no risk to your gear"},
+    {id:"m_soulwars", text:"Soul Wars", kind:"milestone", fn:()=>{const a=live&&live.activities&&live.activities.soul_wars_zeal; return !!(a&&a.score>0);}, wiki:"Soul_Wars"},
+    {id:"m_gauntlet", text:"The Gauntlet", kind:"boss", kc:"the_gauntlet", wiki:"The_Gauntlet", note:"Requires Song of the Elves"},
+    {id:"m_firecape", text:"Fight Caves — Fire cape", kind:"gear", wiki:"Fire_cape", note:"The classic solo test"},
+    {id:"m_inferno", text:"The Inferno — Infernal cape", kind:"gear", wiki:"Infernal_cape", note:"One of the hardest things in the game"},
+  ]},
+  {id:"money", title:"💰 Money making", blurb:"Roughly ordered by what your account can handle. Tick what you've tried.", items:[
+    {id:"gp_early", text:"Early GP: Wintertodt, birdhouses, tanning", kind:"task", wiki:"Money_making_guide", note:"Low requirements, steady income"},
+    {id:"gp_farm", text:"Farm runs — herbs and trees", kind:"task", reqs:{farming:32}, wiki:"Farming", note:"A few minutes a day, compounds forever"},
+    {id:"gp_slayer", text:"Slayer as an income source", kind:"task", reqs:{slayer:50}, wiki:"Slayer", note:"Pays while it trains combat"},
+    {id:"gp_bossing", text:"Consistent boss money (Zulrah, Vorkath)", kind:"task", wiki:"Zulrah", note:"Reliable millions per hour once learned"},
+    {id:"gp_raids", text:"Raids for profit", kind:"task", wiki:"Chambers_of_Xeric", note:"The high end of PvM income"},
+    {id:"gp_100m", text:"100M bank", kind:"task", wiki:"Coins", note:"Tick it when you get there — I can't see your bank"},
+  ]},
+  {id:"clues", title:"🗝️ Clues & collecting", blurb:"The long-tail content. Clue completions are read from your stats automatically.", items:[
+    {id:"c_easy", text:"First easy clue", kind:"milestone", fn:()=>{const a=live&&live.activities&&live.activities.clue_scrolls_easy; return !!(a&&a.score>0);}, wiki:"Treasure_Trails"},
+    {id:"c_medium", text:"First medium clue", kind:"milestone", fn:()=>{const a=live&&live.activities&&live.activities.clue_scrolls_medium; return !!(a&&a.score>0);}},
+    {id:"c_hard", text:"First hard clue", kind:"milestone", fn:()=>{const a=live&&live.activities&&live.activities.clue_scrolls_hard; return !!(a&&a.score>0);}},
+    {id:"c_elite", text:"First elite clue", kind:"milestone", fn:()=>{const a=live&&live.activities&&live.activities.clue_scrolls_elite; return !!(a&&a.score>0);}},
+    {id:"c_master", text:"First master clue", kind:"milestone", fn:()=>{const a=live&&live.activities&&live.activities.clue_scrolls_master; return !!(a&&a.score>0);}},
+    {id:"c_50", text:"50 clues completed", kind:"milestone", fn:()=>{const a=live&&live.activities&&live.activities.clue_scrolls_all; return !!(a&&a.score>=50);}},
+    {id:"c_pet", text:"First pet", kind:"task", wiki:"Pets", note:"Whenever the RNG decides"},
+  ]},
   {id:"skilling", title:"📈 Skilling & total level", items:[
     {id:"t900", text:"900 total level", kind:"milestone", fn:()=>totalLvl()>=900},
     {id:"t1000", text:"1,000 total level", kind:"milestone", fn:()=>totalLvl()>=1000},
@@ -1348,6 +1463,14 @@ const TRACKS = [
     {id:"base50", text:"Base 50s — level 50 in every skill", kind:"milestone", fn:()=> live && SKILL_ORDER.every(s=>lvlOf(s)>=50)},
     {id:"agi70", text:"70 Agility", kind:"milestone", reqs:{agility:70}, note:"Most shortcuts open up"},
     {id:"first99", text:"First 99 — any skill", kind:"milestone", fn:()=> live && SKILL_ORDER.some(s=>lvlOf(s)>=99), wiki:"Skill_mastery"},
+  ]},
+  {id:"endgame", title:"👑 Endgame", blurb:"The far horizon. Nothing here is close for most accounts — that's the point.", items:[
+    {id:"e_cox", text:"Chambers of Xeric", kind:"boss", kc:"chambers_of_xeric", wiki:"Chambers_of_Xeric"},
+    {id:"e_tob", text:"Theatre of Blood", kind:"boss", kc:"theatre_of_blood", wiki:"Theatre_of_Blood"},
+    {id:"e_toa", text:"Tombs of Amascut", kind:"boss", kc:"tombs_of_amascut", wiki:"Tombs_of_Amascut"},
+    {id:"e_questcape", text:"Quest cape", kind:"task", wiki:"Quest_point_cape", note:"Every quest in the game — the planner can chart the route"},
+    {id:"e_diarycape", text:"Achievement diary cape", kind:"task", wiki:"Achievement_diary_cape", note:"Every diary, every region, elite tier"},
+    {id:"e_maxcape", text:"Max cape", kind:"milestone", fn:()=>live && SKILL_ORDER.every(s=>lvlOf(s)>=99), wiki:"Max_cape", note:"99 in every skill"},
   ]},
 ];
 function totalLvl(){ return (live && live.skills && live.skills.overall) ? live.skills.overall.level : 0; }
@@ -1395,9 +1518,12 @@ function renderReach(){
     rows.push({it, needs, total: needs.reduce((a,x)=>a+x.need,0)});
   }));
   rows.sort((a,b)=>a.total-b.total);
-  const top = rows.filter(r=>r.total<=12).slice(0,6);
-  $("#reachSub").textContent = top.length ? `${top.length} close` : "";
-  if(!top.length){ el.innerHTML = `<div class="empty">Nothing locked is within easy reach — the tracks below hold the longer arcs.</div>`; return; }
+  // prefer things genuinely close, but never show an empty panel — a brand-new account
+  // has nothing within 12 levels, and "here's what's nearest" still helps them
+  let top = rows.filter(r=>r.total<=12).slice(0,6);
+  if(top.length < 3) top = rows.slice(0,6);
+  $("#reachSub").textContent = top.length ? `${top.length} closest` : "";
+  if(!top.length){ el.innerHTML = `<div class="empty">Nothing with level requirements left — see the tracks below.</div>`; return; }
   el.innerHTML = top.map(({it,needs})=>`
     <div class="item">
       <span class="micon"><span class="ficon" style="display:inline-flex">🔥</span></span>
@@ -1408,10 +1534,28 @@ function renderReach(){
     </div>`).join("");
 }
 
+// Tracks are sorted by where you actually are: what you're mid-way through first,
+// then what's open to you, then things not started, with finished tracks folded away.
+// No account-type setting — your stats do the sorting.
+function trackState(t){
+  const done = t.items.filter(itemDone).length;
+  const total = t.items.length;
+  const open = t.items.some(it=>!itemDone(it) && (!it.reqs || (live && reqMet(it.reqs))));
+  if(done===total) return {done,total,rank:4,label:"complete"};
+  if(done>0)       return {done,total,rank:0,label:"in progress"};
+  if(open)         return {done,total,rank:1,label:"open to you"};
+  return {done,total,rank:2,label:"later"};
+}
 function renderTracks(){
   const wrap = $("#tracksWrap");
-  wrap.innerHTML = TRACKS.map(t=>{
-    const done = t.items.filter(itemDone).length;
+  // within a rank keep the authored order (early game → endgame) rather than sorting by
+  // completion ratio, which could float a random track above "Getting started"
+  const ordered = TRACKS.map((t,i)=>({t, i, s:trackState(t)}))
+    .sort((a,b)=> a.s.rank-b.s.rank || a.i-b.i);
+  wrap.innerHTML = ordered.map(({t,s})=>{
+    const done = s.done;
+    // open what you're mid-way through; fold what you haven't started or have finished
+    const collapsed = (s.done===0 || s.rank===4) && !(state.trackOpen||{})[t.id];
     const rows = t.items.map(it=>{
       const isDone = itemDone(it);
       const auto = it.kind==="milestone" || it.kind==="boss";
@@ -1431,12 +1575,26 @@ function renderTracks(){
         </div>
       </div>`;
     }).join("");
-    return `<div class="panel">
-      <div class="section-title"><h3>${t.title}</h3><span class="small muted">${done}/${t.items.length}</span></div>
-      ${t.blurb?`<p class="muted small" style="margin:0 2px 4px">${t.blurb}</p>`:""}
-      ${rows}
+    const pct = Math.round(done/t.items.length*100);
+    return `<div class="panel track ${collapsed?"collapsed":""}" data-track="${t.id}">
+      <div class="section-title track-head" data-trackhead="${t.id}">
+        <h3>${t.title}</h3>
+        <span class="small muted">${done}/${t.items.length}${s.rank===4?" · complete":s.rank===2?" · later":""}</span>
+        <span class="track-caret">${collapsed?"▸":"▾"}</span>
+      </div>
+      <div class="track-bar"><i style="width:${pct}%"></i></div>
+      <div class="track-body">
+        ${t.blurb?`<p class="muted small" style="margin:4px 2px">${t.blurb}</p>`:""}
+        ${rows}
+      </div>
     </div>`;
   }).join("");
+  $$("#tracksWrap [data-trackhead]").forEach(h=>h.onclick=()=>{
+    const id=h.dataset.trackhead;
+    state.trackOpen = state.trackOpen || {};
+    state.trackOpen[id] = !state.trackOpen[id];
+    save(); renderTracks();
+  });
   $$("#tracksWrap [data-road2]").forEach(cb=>cb.onchange=()=>{
     state.roadmapDone[cb.dataset.road2] = cb.checked;
     const it = TRACKS.flatMap(t=>t.items).find(x=>x.id===cb.dataset.road2);
@@ -1643,6 +1801,26 @@ async function detectLastGain(p){
   }catch(e){ return null; }
 }
 
+let prioEditId=null; // set while the add form is repurposed for editing an existing priority
+function editPriority(id){
+  const p = state.priorities.find(x=>x.id===id); if(!p) return;
+  prioEditId = id;
+  $("#pLabel").value = p.label;
+  $("#pKind").value = p.kind||"none";
+  $("#pKind").dispatchEvent(new Event("change")); // rebuild the metric list for this kind
+  if(p.metric) $("#pMetric").value = p.metric;
+  $("#pLastDid").value = p.lastTouched||"";
+  $("#pWeight").value = p.weight||5; $("#pWeightVal").textContent = p.weight||5;
+  $("#addPrioBtn").textContent = "Save changes";
+  const det = $("#addPrioBtn").closest("details"); if(det) det.open = true;
+  $("#pLabel").focus();
+  $("#pLabel").scrollIntoView({behavior:"smooth", block:"center"});
+}
+function prioFormReset(){
+  prioEditId=null;
+  $("#pLabel").value=""; $("#pLastDid").value="";
+  $("#addPrioBtn").textContent = "Add priority";
+}
 function addPriority(){
   const label = $("#pLabel").value.trim();
   if(!label){ toast("Name the priority first", true); return; }
@@ -1650,6 +1828,27 @@ function addPriority(){
   const metric = kind==="none" ? null : ($("#pMetric").value || null);
   let lastDid = $("#pLastDid").value || null;
   if(lastDid && lastDid > todayISO()) lastDid = todayISO(); // no future touches
+  // editing? update in place — rank changes no longer mean delete-and-recreate
+  if(prioEditId){
+    const p = state.priorities.find(x=>x.id===prioEditId);
+    if(p){
+      const metricChanged = p.kind!==(metric?kind:"none") || p.metric!==metric;
+      p.label=label; p.kind=metric?kind:"none"; p.metric=metric;
+      p.weight=Number($("#pWeight").value)||5;
+      if(lastDid) p.lastTouched=lastDid;
+      if(metricChanged){ // reseed the baseline so the next WOM diff compares like with like
+        p.lastValue=null;
+        if(p.metric && p.kind!=="tag" && live){
+          const e = metricEntry(p.kind, p.metric);
+          if(e) p.lastValue = p.kind==="skill" ? e.experience : p.kind==="boss" ? e.kills : e.score;
+        }
+      }
+      save(); prioFormReset();
+      renderPriorities(); renderGlance(); renderPrioPicker();
+      toast("Priority updated: "+label);
+    } else prioFormReset();
+    return;
+  }
   const p = {id:"p"+Date.now()+Math.random().toString(36).slice(2,5), label,
     kind: metric?kind:"none", metric, weight:Number($("#pWeight").value)||5,
     createdAt:todayISO(), lastTouched:lastDid, lastValue:null, snoozeUntil:null};
@@ -1689,6 +1888,7 @@ function renderPriorities(){
       ${dueBadge(p)}
       <button class="pbtn" data-ptouch="${p.id}" title="Mark as worked on today">✓</button>
       <button class="pbtn" data-psnooze="${p.id}" title="${prioSnoozed(p)?"Unsnooze":"Snooze for 3 days (planned break)"}">💤</button>
+      <button class="pbtn" data-pedit="${p.id}" title="Edit — change rank, tracking, anything">✎</button>
       <button class="pbtn" data-pdel="${p.id}" title="Delete">✕</button>
     </div>`).join("");
   $$("#prioList [data-ptouch]").forEach(b=>b.onclick=()=>{
@@ -1701,9 +1901,11 @@ function renderPriorities(){
     else { const d=new Date(); d.setDate(d.getDate()+3); p.snoozeUntil=isoDate(d); }
     save(); renderPriorities(); renderGlance();
   });
+  $$("#prioList [data-pedit]").forEach(b=>b.onclick=()=>editPriority(b.dataset.pedit));
   $$("#prioList [data-pdel]").forEach(b=>b.onclick=()=>{
     state.priorities = state.priorities.filter(x=>x.id!==b.dataset.pdel);
     logSelPrios.delete(b.dataset.pdel);
+    if(prioEditId===b.dataset.pdel) prioFormReset(); // don't leave the form editing a ghost
     save(); renderPriorities(); renderGlance(); renderPrioPicker();
   });
 }
@@ -2168,7 +2370,9 @@ function openDayPopover(iso, anchor){
       <button class="dp-x dp-edit" data-dpedit="${e.id}" title="Edit this entry">✎</button></div>`;
   }).join("") : "";
   const auto = autoGainsHtml(iso);
-  const inner = (body || auto) ? body+auto : `<div class="muted small" style="padding:4px 0">Nothing logged this day.</div>`;
+  const inner = (body || auto) ? body+auto
+    : `<div class="muted small" style="padding:4px 0">Nothing logged this day.</div>
+       <button class="ghost small" data-dplog="${iso}" style="margin-top:2px">✎ Log what you did</button>`;
   const isMile = entries.some(e=>e.milestone);
   pop.innerHTML = `<div class="dp-head"><span>${isMile?"🏆 ":""}${fmtDay(iso)}</span><button class="dp-x" id="dpX" aria-label="Close">✕</button></div>${inner}`;
   pop.classList.remove("hidden");
@@ -2188,6 +2392,17 @@ function openDayPopover(iso, anchor){
     closeDayPopover();
     switchView("scroll");
     editLogEntry(b.dataset.dpedit);
+    const comp = document.querySelector(".composer");
+    if(comp) comp.scrollIntoView({behavior:"smooth", block:"center"});
+  });
+  // empty day → composer with that date already picked, so a missed day is one click to fill
+  $$("#dayPop [data-dplog]").forEach(b=>b.onclick=(ev)=>{
+    ev.stopPropagation();
+    const iso = b.dataset.dplog;
+    closeDayPopover();
+    switchView("scroll");
+    const d=$("#logDate"); if(d) d.value=iso;
+    const t=$("#logText"); if(t) t.focus();
     const comp = document.querySelector(".composer");
     if(comp) comp.scrollIntoView({behavior:"smooth", block:"center"});
   });
@@ -2788,8 +3003,14 @@ async function budSync(){
 //   1× Optimal quest guide  → canonical order, XP rewards, QP awarded
 //   4× batched page content → requirements, boostable flags, prerequisite quests
 // Cached in state.questDB; refresh is manual (the game adds quests rarely).
-const QDB_VERSION = 1;
+const QDB_VERSION = 2;
 function questDB(){ const d=state.questDB; return (d && d.v===QDB_VERSION) ? d : null; }
+// Recipe for Disaster's subquests are stored under their full wiki title, which is far
+// too long for a tree node — show them as "RFD: Freeing Pirate Pete" instead.
+function qpLabel(n){
+  const m = /^Recipe for Disaster\/(.+)$/.exec(n||"");
+  return m ? "RFD: "+m[1] : (n||"");
+}
 
 function parseOQG(wt){
   const order=[], rewards={}, qpGain={};
@@ -2840,7 +3061,10 @@ function parseQuestPage(wt){
   });
   const diff = (qd[0].match(/\|\s*difficulty\s*=\s*([^\n|]+)/i)||[])[1];
   const len  = (qd[0].match(/\|\s*length\s*=\s*([^\n|]+)/i)||[])[1];
-  return { reqs, boostable, qp, linkDepth,
+  // release number, used to order anything the optimal guide skips.
+  // Recipe for Disaster's subquests are numbered 100.1, 100.2 … so they sort into place.
+  const num  = (wt.match(/\|\s*number\s*=\s*([\d.]+)/i)||[])[1];
+  return { reqs, boostable, qp, linkDepth, number: num?parseFloat(num):null,
            difficulty: diff?diff.trim():null, length: len?len.trim():null };
 }
 
@@ -2858,35 +3082,127 @@ async function buildQuestDB(onProgress){
     cont = j.continue && j.continue.cmcontinue;
     if(!cont) break;
   }
-  const valid = new Set(members.filter(t=>!t.includes(":") && !t.includes("/")));
-  const names = [...new Set(order.filter(n=>valid.has(n)))];
-  const quests={};
-  for(let i=0;i<names.length;i+=50){
-    const batch = names.slice(i, i+50);
-    P(`Reading quest pages… ${Math.min(i+50,names.length)}/${names.length}`);
-    const j = await (await fetch(`${WIKI_API}?action=query&prop=revisions&rvprop=content&rvslots=main&format=json&origin=*&titles=${encodeURIComponent(batch.join("|"))}`)).json();
-    Object.values(j.query.pages||{}).forEach(p=>{
-      if(!p.revisions) return;
+  // Miniquests sit in the same category but award no quest points and don't count
+  // toward the quest cape, so they're tagged and shown separately.
+  const mini = new Set();
+  try{
+    const mj = await (await fetch(`${WIKI_API}?action=query&list=categorymembers&cmtitle=Category:Miniquests&cmlimit=500&format=json&origin=*`)).json();
+    ((mj.query||{}).categorymembers||[]).forEach(m=>{ if(!m.title.includes(":")) mini.add(m.title); });
+  }catch(e){}
+
+  // Two kinds of subpage matter here, so we can't just drop everything with a slash:
+  // the guide links some quests through their guide page ("The Digsite/Quick guide"),
+  // and Recipe for Disaster's ten subquests only exist as subpages of their own.
+  // Everything else is filtered by the page itself — no {{Quest details}}, not a quest.
+  const stripGuide = t => t.replace(/\/(Quick|Full) guide$/i, "").trim();
+  const META  = /^(Quests|Quest items|Miniquests)\//i;
+  const wanted = [...new Set([
+    ...members.filter(t=>!t.includes(":") && !META.test(t)).map(stripGuide),
+    ...order.map(stripGuide),
+  ])];
+
+  // redirects=1 makes the wiki hand back canonical titles, so "The Digsite" and
+  // "The Dig Site" stop counting as two separate quests.
+  const quests={}, canon={};
+  for(let i=0;i<wanted.length;i+=50){
+    const batch = wanted.slice(i, i+50);
+    P(`Reading quest pages… ${Math.min(i+50,wanted.length)}/${wanted.length}`);
+    const j = await (await fetch(`${WIKI_API}?action=query&prop=revisions&rvprop=content&rvslots=main&format=json&origin=*&redirects=1&titles=${encodeURIComponent(batch.join("|"))}`)).json();
+    const qy = j.query || {};
+    (qy.normalized||[]).forEach(r=>canon[r.from]=r.to);
+    (qy.redirects||[]).forEach(r=>canon[r.from]=r.to);
+    Object.values(qy.pages||{}).forEach(p=>{
+      if(!p.revisions || quests[p.title]) return;
       const parsed = parseQuestPage(p.revisions[0].slots.main["*"]||"");
       if(parsed) quests[p.title] = parsed;
     });
   }
+  const resolve = t => { let s=t; for(let i=0;i<4 && canon[s]; i++) s=canon[s]; return s; };
+
+  // XP rewards and QP come keyed by whatever name the guide used — move them onto
+  // the canonical titles before they get attached to quests.
+  const rewardsC={}, qpC={};
+  Object.keys(rewards).forEach(k=>{ rewardsC[resolve(stripGuide(k))] = rewards[k]; });
+  Object.keys(qpGain).forEach(k=>{ qpC[resolve(stripGuide(k))]     = qpGain[k]; });
+
+  // Order follows the optimal guide; anything it skips is appended by release number.
+  const names=[], seen=new Set();
+  order.forEach(n=>{
+    const c = resolve(stripGuide(n));
+    if(quests[c] && !seen.has(c)){ seen.add(c); names.push(c); }
+  });
+  Object.keys(quests).filter(n=>!seen.has(n))
+    .sort((a,b)=>(quests[a].number==null?9e3:quests[a].number)-(quests[b].number==null?9e3:quests[b].number))
+    .forEach(n=>names.push(n));
+
   // direct prerequisites = quest links at the shallowest depth (deeper ones are transitive)
   Object.keys(quests).forEach(n=>{
-    const q = quests[n];
-    const qLinks = Object.keys(q.linkDepth).filter(t=>quests[t] && t!==n);
-    const min = Math.min(...qLinks.map(t=>q.linkDepth[t]), 99);
-    q.prereqs = qLinks.filter(t=>q.linkDepth[t]===min);
+    const q = quests[n], depth={};
+    Object.keys(q.linkDepth).forEach(t=>{
+      const c = resolve(t);
+      if(!quests[c] || c===n) return;
+      if(depth[c]==null || q.linkDepth[t]<depth[c]) depth[c] = q.linkDepth[t];
+    });
+    const qLinks = Object.keys(depth);
+    const min = Math.min(...qLinks.map(t=>depth[t]), 99);
+    q.prereqs = qLinks.filter(t=>depth[t]===min);
     q.allPrereqLinks = qLinks;
     delete q.linkDepth;
-    q.rewards = rewards[n] || {};
-    q.qpGain = qpGain[n] || 0;
+    q.rewards = rewardsC[n] || {};
+    q.qpGain = qpC[n] || 0;
+    q.mini = mini.has(n);
     q.order = names.indexOf(n);
   });
   const db = { v:QDB_VERSION, ts:Date.now(), order:names, quests };
   state.questDB = db; save();
   P(`Done — ${names.length} quests.`);
   return db;
+}
+
+// ---- update check (GitHub Releases) ----
+// Asks GitHub once every 6h whether there's a newer release than this build.
+// Silent when up to date; a gold button appears in the sidebar when there isn't.
+const GH_REPO = "LiquidTwonuh/osrs-buddy";
+function cmpVer(a,b){
+  const pa=String(a||"0").replace(/^v/i,"").split(/[.\-+]/).map(n=>parseInt(n,10)||0);
+  const pb=String(b||"0").replace(/^v/i,"").split(/[.\-+]/).map(n=>parseInt(n,10)||0);
+  for(let i=0;i<Math.max(pa.length,pb.length);i++){
+    const x=pa[i]||0, y=pb[i]||0;
+    if(x!==y) return x-y;
+  }
+  return 0;
+}
+async function checkForUpdate(force){
+  const cached = state.updCheck || {};
+  if(!force && cached.ts && Date.now()-cached.ts < 6*3600e3) return cached;
+  try{
+    const r = await fetch(`https://api.github.com/repos/${GH_REPO}/releases/latest`, {headers:{Accept:"application/vnd.github+json"}});
+    if(!r.ok) return cached;
+    const j = await r.json();
+    const asset = (j.assets||[]).find(a=>/OSRS-Buddy-setup\.exe$/i.test(a.name));
+    const info = { ts:Date.now(), tag:j.tag_name||"", title:j.name||"", page:j.html_url||"",
+                   dl: asset ? asset.browser_download_url : (j.html_url||"") };
+    state.updCheck = info; save();
+    return info;
+  }catch(e){ return cached; }
+}
+function updateAvailable(){
+  const u = state.updCheck;
+  return (u && u.tag && cmpVer(u.tag, APP_VERSION) > 0) ? u : null;
+}
+function renderUpdateBanner(){
+  const el = $("#updBanner"); if(!el) return;
+  const u = updateAvailable();
+  if(!u){ el.innerHTML = ""; el.classList.add("hidden"); return; }
+  el.classList.remove("hidden");
+  el.innerHTML = `<a class="upd-btn" href="${u.dl}" target="_blank" rel="noopener" title="${escapeHtml(u.title||"")}">
+      ⬆ Update available <span class="upd-v">${escapeHtml(u.tag)}</span></a>
+    <div class="small muted" style="text-align:center; margin-top:3px">
+      you're on v${APP_VERSION} · <a href="${u.page}" target="_blank" rel="noopener" class="upd-notes">what's new</a></div>`;
+}
+function startUpdateCheck(){
+  renderUpdateBanner();                       // show a cached result immediately
+  checkForUpdate().then(renderUpdateBanner);  // then refresh in the background
 }
 
 // ---- planner maths ----
@@ -2930,10 +3246,21 @@ function questChain(name, db){
   })(name);
   return out;
 }
+// "Doing Recipe for Disaster" means all ten subquests — the parent page only gates
+// starting it, so planning the parent by itself would draw a two-node tree and hide
+// every requirement that actually matters (the barrows gloves route).
+function qpExpand(target, db){
+  const subs = Object.keys(db.quests).filter(n=>n.indexOf(target+"/")===0);
+  return subs.length ? [target, ...subs.sort((a,b)=>(db.quests[a].order||0)-(db.quests[b].order||0))] : [target];
+}
 // The full plan for a target: what's left, in optimal order, with reward-aware skill gaps.
+// Completed quests stay in `all` so the tree shows the whole graph, ticked off.
 function questPlan(target, db){
-  const chain = questChain(target, db);
-  const all = [...chain, target];
+  const targets = qpExpand(target, db);
+  const seen = new Set(), all = [];
+  const add = n => { if(!seen.has(n)){ seen.add(n); all.push(n); } };
+  targets.forEach(t=>{ questChain(t, db).forEach(add); });
+  targets.forEach(add);
   const remaining = all.filter(n=>!questDone(n))
     .sort((a,b)=>(db.quests[a].order??999)-(db.quests[b].order??999));
   // simulate the run: current xp, add each quest's rewards as you go, flag gates you'd miss
@@ -2962,7 +3289,7 @@ function questPlan(target, db){
   const chainXp={};
   remaining.forEach(n=>Object.entries(db.quests[n].rewards||{}).forEach(([s,a])=>chainXp[s]=(chainXp[s]||0)+a));
   return { target, all, remaining, done: all.filter(questDone), gaps, blockers, chainXp,
-           qpEnd: qpNow, qpNeeded: (db.quests[target]||{}).qp||0 };
+           qpEnd: qpNow, qpNeeded: Math.max(...targets.map(t=>(db.quests[t]||{}).qp||0), 0) };
 }
 // Tier each quest by dependency depth (for the tech-tree columns).
 function questTiers(names, db){
@@ -3031,7 +3358,7 @@ function qpPlanHtml(target, db){
   // "everything" target = all quests; otherwise the chain for one
   const isAll = target==="__ALL__";
   const plan = isAll ? qpAllPlan(db) : questPlan(target, db);
-  const title = isAll ? "🏆 Quest cape" : target;
+  const title = isAll ? "🏆 Quest cape" : qpLabel(target);
   const q = db.quests[target];
   const remaining = plan.remaining;
   const gapRows = Object.entries(plan.gaps).sort((a,b)=>(b[1].need-b[1].have)-(a[1].need-a[1].have)).map(([s,g])=>{
@@ -3050,12 +3377,19 @@ function qpPlanHtml(target, db){
     return after < g.need;
   }).length;
   const steps = remaining.map((n,i)=>{
-    const st = questStatus(n, db), miss = questMissingText(n, db);
+    const st = questStatus(n, db), q = db.quests[n];
+    const reqs = Object.entries(q.reqs||{}).filter(([s])=>SKILL_ORDER.includes(s)).sort((a,b)=>b[1]-a[1]);
+    const chips = reqs.map(([s,l])=>{
+      const ok = lvlOf(s)>=l, boost = q.boostable && q.boostable[s];
+      return `<span class="qreq ${ok?"ok":"no"}" title="${nice(s)} ${l} — you're ${lvlOf(s)}${(!ok&&boost)?" (boostable)":""}"><img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">${l}${(!ok&&boost)?`<i class="bst">+</i>`:""}</span>`;
+    }).join("");
+    const lockedQ = (q.prereqs||[]).filter(p=>!questDone(p));
     return `<div class="qp-step ${st}">
       <span class="n">${i+1}</span>
       <label class="chk"><input type="checkbox" data-qpdone="${escapeHtml(n)}"></label>
-      <span class="grow nm">${n}${db.quests[n].difficulty?` <span class="small muted">· ${db.quests[n].difficulty}</span>`:""}</span>
-      ${st==="ready"?`<span class="qp-tag free">do now</span>`:miss?`<span class="small muted">${escapeHtml(miss)}</span>`:""}
+      <span class="nm">${escapeHtml(qpLabel(n))}</span>
+      <span class="qreqs grow">${chips}${q.qp?`<span class="qreq qp">${q.qp}<i>QP</i></span>`:""}${lockedQ.length?`<span class="qreq no" title="${escapeHtml(lockedQ.join(", "))}">📜${lockedQ.length}</span>`:""}</span>
+      ${st==="ready"?`<span class="qp-tag free">do now</span>`:`<span class="small muted">${q.difficulty||""}</span>`}
     </div>`;
   }).join("");
   return `<div class="panel">
@@ -3073,11 +3407,12 @@ function qpPlanHtml(target, db){
   </div>
   <div class="panel">
     <div class="section-title center"><h3>Dependency tree</h3><span class="small muted">hover to trace · drag to rearrange · click to focus</span></div>
-    <div class="row" style="justify-content:center; margin-bottom:4px"><button class="ghost small" id="qpReset">⟲ Reset layout</button></div>
+    ${qpCrumbs(target)}
     <div class="qp-legend"><span><i style="background:var(--green-bg);border:1px solid #2f5a28"></i>done</span>
       <span><i style="background:var(--panel2);border:1px solid var(--gold)"></i>ready now</span>
       <span><i style="background:var(--panel2);border:1px solid var(--border);opacity:.6"></i>blocked</span></div>
     <div class="qp-tree-wrap">${qpTreeHtml(isAll?remaining.slice(0,60):plan.all, target, db)}</div>
+    <div class="qp-detail" id="qpDetail">${qpDetailHtml(state.qpSel, db)}</div>
   </div>
   <div class="panel">
     <div class="section-title center"><h3>Your route</h3><span class="small muted">${remaining.length} to go, in order</span></div>
@@ -3085,7 +3420,8 @@ function qpPlanHtml(target, db){
   </div>`;
 }
 function qpAllPlan(db){
-  const all = db.order.slice();
+  // miniquests award no quest points and aren't required for the cape
+  const all = db.order.filter(n=>!db.quests[n].mini);
   const remaining = all.filter(n=>!questDone(n));
   const p = { target:"__ALL__", all, remaining, done: all.filter(questDone), gaps:{}, blockers:[], chainXp:{}, qpNeeded:0 };
   const xp={}; SKILL_ORDER.forEach(s=>{ const e=live&&live.skills&&live.skills[s]; xp[s]=e?e.experience:0; });
@@ -3103,8 +3439,12 @@ function qpAllPlan(db){
   });
   return p;
 }
-const QP_COLW=196, QP_ROWH=52, QP_PADX=8, QP_PADY=8, QP_NODEW=172, QP_NODEH=40;
+const QP_COLW=200, QP_ROWH=64, QP_PADX=8, QP_PADY=8, QP_NODEW=176, QP_NODEH=52;
+// Targets you've drilled through, kept in state so a reload doesn't strand you
+// on some quest six levels deep with no way back.
+function qpTrail(){ return (state.qpHist = state.qpHist || []); }
 let qpDrag=false; // true while a node is being dragged (suppresses hover highlight)
+let qpKeyWired=false; // Esc handler is global, so it's only attached once
 let qpPos={};   // live node positions for the drawn tree (drag mutates this)
 let qpEdges=[]; // [{from,to}] so edges can be redrawn/highlighted without a full re-render
 // Order nodes inside each column so connected quests line up — barycenter sweeps,
@@ -3149,15 +3489,121 @@ function qpTreeHtml(names, target, db){
   const edges = qpEdges.map(e=>
     `<path data-ef="${escapeHtml(e.from)}" data-et="${escapeHtml(e.to)}" d="${qpEdgePath(e)}" fill="none" stroke="var(--border)" stroke-width="1.5"/>`).join("");
   const nodes = list.map(n=>{
-    const st=questStatus(n,db), miss=questMissingText(n,db);
+    const st=questStatus(n,db);
     return `<div class="qp-node ${st} ${n===target?"target":""}" style="left:${qpPos[n].x}px; top:${qpPos[n].y}px" data-qpnode="${escapeHtml(n)}" title="${escapeHtml(n)} — drag to move">
       <button class="qp-tick" data-qpdone2="${escapeHtml(n)}" title="Mark done">${st==="done"?"✅":"⬜"}</button>
-      <span class="qn">${n}</span>
-      <span class="qm">${st==="done"?"done":(miss||"ready")}</span>
+      <span class="qn">${escapeHtml(qpLabel(n))}</span>
+      ${qpReqRow(n, db, st)}
     </div>`;
   }).join("");
   return `<div class="qp-tree" style="width:${W}px; height:${H}px">
     <svg width="${W}" height="${H}">${edges}</svg>${nodes}</div>`;
+}
+// Requirement chips: a skill icon + the level, green when you have it, red when you don't.
+// Locked prerequisite quests get counted separately so the node stays compact.
+function qpReqRow(n, db, st){
+  const q = db.quests[n]; if(!q) return "";
+  if(st==="done") return `<span class="qm done">✓ complete</span>`;
+  const reqs = Object.entries(q.reqs||{}).filter(([s])=>SKILL_ORDER.includes(s))
+    .sort((a,b)=>b[1]-a[1]);
+  const chips = reqs.slice(0,5).map(([s,l])=>{
+    const have = lvlOf(s), ok = have>=l;
+    const boost = q.boostable && q.boostable[s];
+    return `<span class="qreq ${ok?"ok":"no"}" title="${nice(s)} ${l}${ok?` — you have ${have}`:` — you're ${have}${boost?", boostable":""}`}">`
+      + `<img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">${l}${(!ok&&boost)?`<i class="bst">+</i>`:""}</span>`;
+  }).join("");
+  const more = reqs.length>5 ? `<span class="qreq more">+${reqs.length-5}</span>` : "";
+  const lockedQ = (q.prereqs||[]).filter(p=>!questDone(p)).length;
+  const qpGate = (q.qp && q.qp>0) ? `<span class="qreq qp" title="${q.qp} quest points required">${q.qp}<i>QP</i></span>` : "";
+  const questChip = lockedQ ? `<span class="qreq no" title="${(q.prereqs||[]).filter(p=>!questDone(p)).join(", ")}">📜${lockedQ}</span>` : "";
+  const body = chips+more+qpGate+questChip;
+  return body ? `<span class="qreqs">${body}</span>` : `<span class="qm">${st==="ready"?"ready to start":"no requirements"}</span>`;
+}
+// Where you are and how you got here, as a clickable path. Replaces the old
+// back/home pair, which hid the trail and left you guessing how far back you were.
+function qpCrumbName(t){ return t==="__ALL__" ? "🏆 Quest cape" : qpLabel(t); }
+function qpCrumbs(target){
+  const trail = qpTrail();
+  const crumbs = trail.map((t,i)=>
+    `<button class="qp-crumb" data-qpcrumb="${i}" title="Back to ${escapeHtml(qpCrumbName(t))}">${escapeHtml(qpCrumbName(t))}</button>`
+  ).join(`<span class="qp-sep">›</span>`);
+  return `<div class="qp-nav">
+    <div class="qp-trail">
+      ${crumbs}${trail.length?`<span class="qp-sep">›</span>`:""}
+      <span class="qp-crumb here">${escapeHtml(qpCrumbName(target))}</span>
+    </div>
+    <div class="qp-navacts">
+      ${trail.length?`<button class="ghost small" id="qpBack" title="Back one step (Esc)">← Back</button>`:""}
+      <button class="ghost small" id="qpTidy" title="Put the boxes back where they started">⟲ Tidy layout</button>
+      <button class="ghost small" id="qpOver" title="Clear the goal and every box you've moved">✕ Start over</button>
+    </div>
+  </div>`;
+}
+// Quests that name this one as a prerequisite. This is how Recipe for Disaster's
+// subquests surface: the tree draws what a quest needs, and they're what it opens up.
+function qpChildren(n, db){
+  return Object.keys(db.quests).filter(t=>(db.quests[t].prereqs||[]).includes(n))
+    .sort((a,b)=>(db.quests[a].order||0)-(db.quests[b].order||0));
+}
+function qpMyQp(db){
+  return Object.keys(db.quests).reduce((a,t)=>a+(questDone(t)?(db.quests[t].qpGain||0):0), 0);
+}
+function qpQuestRow(t, db){
+  const done = questDone(t);
+  return `<button class="qpd-q ${done?"done":""}" data-qpgo="${escapeHtml(t)}" title="Open ${escapeHtml(qpLabel(t))}">
+    <span class="dot">${done?"✅":questStatus(t,db)==="ready"?"🟡":"⬜"}</span>${escapeHtml(qpLabel(t))}</button>`;
+}
+function qpDetailHtml(n, db){
+  if(!n || !db.quests[n])
+    return `<div class="qp-detail-empty">Click any quest in the tree for its full requirements.</div>`;
+  const q = db.quests[n], st = questStatus(n, db);
+  const lvlOf = s => (live && live.skills && live.skills[s]) ? live.skills[s].level : 1;
+  const reqs = Object.entries(q.reqs||{}).sort((a,b)=>b[1]-a[1]);
+  const reqRows = reqs.map(([s,l])=>{
+    const have = lvlOf(s), ok = have>=l, boost = q.boostable && q.boostable[s];
+    return `<div class="qpd-row ${ok?"ok":"no"}">
+      <img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">
+      <span class="want">${l}</span> <span>${nice(s)}</span>
+      ${(!ok&&boost)?`<span class="qp-tag" title="A boost can cover this">boostable</span>`:""}
+      <span class="have">you: ${have}</span></div>`;
+  }).join("");
+  const myQp = qpMyQp(db), qpOk = myQp >= (q.qp||0);
+  const qpRow = q.qp ? `<div class="qpd-row ${qpOk?"ok":"no"}">
+      <span class="want">${q.qp}</span> <span>Quest points</span>
+      <span class="have">you: ${myQp}</span></div>` : "";
+  const prereqs = (q.prereqs||[]);
+  const kids = qpChildren(n, db);
+  // Subquests don't name their parent as a prerequisite, so the relationship has to be
+  // read off the title: "Recipe for Disaster/Freeing Pirate Pete" belongs to "Recipe for Disaster".
+  const subs = qpExpand(n, db).slice(1);
+  const pm = /^(.+)\/[^/]+$/.exec(n);
+  const parent = (pm && db.quests[pm[1]]) ? pm[1] : null;
+  const opens = subs.length ? subs : kids;
+  const opensHead = subs.length ? `Subquests (${subs.length})`
+                                : `Opens up${kids.length?` (${kids.length})`:""}`;
+  const wiki = "https://oldschool.runescape.wiki/w/"+encodeURIComponent(n.replace(/ /g,"_"));
+  return `<div class="qpd-head">
+      <h4>${escapeHtml(qpLabel(n))}</h4>
+      <span class="qp-tag ${st==="ready"?"free":""}">${st==="done"?"complete":st==="ready"?"ready to start":"blocked"}</span>
+      ${parent?`<button class="qpd-q" style="width:auto" data-qpgo="${escapeHtml(parent)}">part of ${escapeHtml(parent)}</button>`:""}
+      ${q.difficulty?`<span class="small muted">${escapeHtml(q.difficulty)}</span>`:""}
+      ${q.length?`<span class="small muted">· ${escapeHtml(q.length)}</span>`:""}
+      <div class="qpd-acts">
+        <button class="ghost small" data-qpdone2="${escapeHtml(n)}">${st==="done"?"✅ Done":"⬜ Mark done"}</button>
+        ${n!==state.qpTarget?`<button class="ghost small" data-qpfocus="${escapeHtml(n)}" title="Chart the route to this quest">🧭 Plan this</button>`:""}
+        <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a>
+      </div>
+    </div>
+    <div class="qpd-grid">
+      <div class="qpd-sec"><h5>Requirements</h5>
+        <div class="qpd-list">${reqRows+qpRow || `<div class="qpd-row"><span class="have" style="margin:0">Nothing required.</span></div>`}</div></div>
+      <div class="qpd-sec"><h5>Needs these quests${prereqs.length?` (${prereqs.filter(p=>!questDone(p)).length} left)`:""}</h5>
+        <div class="qpd-list">${prereqs.length?prereqs.map(t=>qpQuestRow(t,db)).join("")
+          :`<div class="qpd-row"><span class="have" style="margin:0">None — no quests gate this.</span></div>`}</div></div>
+      <div class="qpd-sec"><h5>${opensHead}</h5>
+        <div class="qpd-list">${opens.length?opens.map(t=>qpQuestRow(t,db)).join("")
+          :`<div class="qpd-row"><span class="have" style="margin:0">Nothing depends on this.</span></div>`}</div></div>
+    </div>`;
 }
 function qpEdgePath(e){
   const a=qpPos[e.from], b=qpPos[e.to];
@@ -3170,8 +3616,34 @@ function qpRedrawEdges(){
     p.setAttribute("d", qpEdgePath({from:p.dataset.ef, to:p.dataset.et}));
   });
 }
+// Swaps just the detail panel, so inspecting a quest never moves the tree or the page.
+function qpShowDetail(db){
+  const box = $("#qpDetail");
+  if(box) box.innerHTML = qpDetailHtml(state.qpSel, db);
+  $$("#qpResult .qp-node").forEach(x=>x.classList.toggle("sel", x.dataset.qpnode===state.qpSel));
+  qpWireDetail(db);
+}
+function qpWireDetail(db){
+  // browsing a related quest just moves the panel — it doesn't rebuild the tree
+  $$("#qpDetail [data-qpgo]").forEach(b=>b.onclick=()=>{
+    state.qpSel = b.dataset.qpgo; save(); qpShowDetail(db);
+  });
+  $$("#qpDetail [data-qpfocus]").forEach(b=>b.onclick=()=>{
+    if(state.qpTarget) qpTrail().push(state.qpTarget);
+    state.qpTarget = b.dataset.qpfocus; save(); renderQuestPlanner();
+    $("#view-quests").scrollIntoView({behavior:"smooth", block:"start"});
+  });
+  $$("#qpDetail [data-qpdone2]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    const n = b.dataset.qpdone2;
+    state.questsDone[n] = !state.questsDone[n]; save();
+    renderQuestPlanner(); renderStart();
+  });
+}
 function qpWire(db){
   const tree = document.querySelector("#qpResult .qp-tree");
+  $$("#qpResult .qp-node").forEach(x=>x.classList.toggle("sel", x.dataset.qpnode===state.qpSel));
+  qpWireDetail(db);
   // ---- hover highlight: light this quest's direct connections, fade everything else
   if(tree){
     $$("#qpResult [data-qpnode]").forEach(el=>{
@@ -3217,8 +3689,10 @@ function qpWire(db){
           state.qpLayout[t][n] = {...qpPos[n]};
           save();
         } else {
-          state.qpTarget = n; save(); renderQuestPlanner();
-          $("#view-quests").scrollIntoView({behavior:"smooth", block:"start"});
+          // A click inspects rather than navigates — jumping the whole view on a
+          // half-finished drag was too easy to trigger by accident.
+          state.qpSel = (state.qpSel===n) ? null : n; save();
+          qpShowDetail(db);
         }
       };
       qpDrag = true;
@@ -3226,11 +3700,40 @@ function qpWire(db){
       document.addEventListener("mouseup", up);
     });
   });
-  const rst = $("#qpReset");
-  if(rst) rst.onclick = ()=>{
+  const goBack = ()=>{
+    const trail = qpTrail();
+    if(!trail.length) return;
+    state.qpTarget = trail.pop(); save(); renderQuestPlanner();
+  };
+  const back = $("#qpBack");
+  if(back) back.onclick = goBack;
+  // jump straight to any earlier step, dropping everything after it
+  $$("#qpResult [data-qpcrumb]").forEach(b=>b.onclick=()=>{
+    const i = +b.dataset.qpcrumb, trail = qpTrail();
+    state.qpTarget = trail[i];
+    state.qpHist = trail.slice(0, i);
+    save(); renderQuestPlanner();
+  });
+  const tidy = $("#qpTidy");
+  if(tidy) tidy.onclick = ()=>{
     if(state.qpLayout) delete state.qpLayout[state.qpTarget||"_"];
     save(); renderQuestPlanner();
   };
+  const over = $("#qpOver");
+  if(over) over.onclick = ()=>{
+    state.qpTarget = null; state.qpHist = []; state.qpLayout = {};
+    save(); renderQuestPlanner();
+  };
+  // Esc walks back up the trail
+  if(!qpKeyWired){
+    qpKeyWired = true;
+    document.addEventListener("keydown", e=>{
+      if(e.key!=="Escape") return;
+      if(state.lastView!=="quests" || !qpTrail().length) return;
+      if(/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||"")) return;
+      goBack();
+    });
+  }
   $$("#qpResult [data-qpdone2]").forEach(b=>b.onclick=(e)=>{
     e.stopPropagation();
     const n=b.dataset.qpdone2;
@@ -3550,7 +4053,15 @@ function renderNumSeg(){
     state.exactNums = b.dataset.numOpt==="exact"; save(); renderSkills(); renderNumSeg();
   });
 }
-function openSettings(){ renderFontSeg(); renderNumSeg(); $("#settingsWrap").classList.remove("hidden"); }
+function renderUpdSetting(msg){
+  const cur=$("#updCur"); if(cur) cur.textContent = APP_VERSION;
+  const el=$("#updStatus"); if(!el) return;
+  const u=updateAvailable();
+  if(msg) el.innerHTML = msg;
+  else if(u) el.innerHTML = `v${APP_VERSION} · <b style="color:var(--gold)">${escapeHtml(u.tag)} is available</b> — <a href="${u.dl}" target="_blank" rel="noopener">download</a>`;
+  else el.innerHTML = `OSRS Buddy v${APP_VERSION}${state.updCheck&&state.updCheck.ts?` · up to date`:``}`;
+}
+function openSettings(){ renderFontSeg(); renderNumSeg(); renderUpdSetting(); $("#settingsWrap").classList.remove("hidden"); }
 function closeSettings(){ $("#settingsWrap").classList.add("hidden"); }
 $("#qpRefresh").onclick = qpLoad;
 $("#qpSearch").addEventListener("input", ()=>{
@@ -3559,12 +4070,17 @@ $("#qpSearch").addEventListener("input", ()=>{
   if(t.length<2){ renderQuestPlanner(); return; }
   const hits = db.order.filter(n=>n.toLowerCase().includes(t)).slice(0,8);
   el.innerHTML = hits.length
-    ? `<div class="qp-hits">${hits.map(n=>`<button class="ghost small qp-hit" data-qptarget="${escapeHtml(n)}">${n} <span class="muted">· ${questStatus(n,db)==="done"?"done":questStatus(n,db)==="ready"?"ready now":"blocked"}</span></button>`).join("")}</div>`
+    ? `<div class="qp-hits">${hits.map(n=>`<button class="ghost small qp-hit" data-qptarget="${escapeHtml(n)}">${escapeHtml(qpLabel(n))} <span class="muted">· ${questStatus(n,db)==="done"?"done":questStatus(n,db)==="ready"?"ready now":"blocked"}</span></button>`).join("")}</div>`
     : `<div class="empty">No quest by that name.</div>`;
   $$("#qpSuggest [data-qptarget]").forEach(b=>b.onclick=()=>{
     state.qpTarget=b.dataset.qptarget; save(); $("#qpSearch").value=""; renderQuestPlanner();
   });
 });
+$("#updCheckBtn").onclick = async ()=>{
+  renderUpdSetting("Checking…");
+  await checkForUpdate(true);
+  renderUpdateBanner(); renderUpdSetting();
+};
 $("#settingsBtn").onclick = openSettings;
 $("#rlSyncBtn").onclick = async ()=>{
   $("#rlSyncMsg").innerHTML = "Connecting to RuneLite…";
@@ -3581,56 +4097,68 @@ $("#themeBtn").onclick = ()=>{
 };
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "2.1";
+const APP_VERSION = "1.0";
 const PATCH_NOTES = [
-  {v:"2.1", date:"July 31, 2026", title:"Wise Old Bud & the skill Scroll", notes:[
-    "💬 Ask Bud: a new sidebar page. Ask whether you can do a boss, quest, or item and Bud checks the requirements against your live stats. Anything he doesn't know, he looks up on the wiki and remembers.",
-    "Tell Bud \"I did [quest]\" and he ticks it on your Roadmap. He also understands follow-ups like \"can I kill it now?\".",
-    "🔌 RuneLite sync: with RuneLite running (WikiSync plugin on), say \"sync\" to Bud or use the button in Settings — your name and worn gear are read straight from the game, and worn Roadmap gear ticks itself.",
-    "🎨 The Scroll is now skill-specific. Log entries with skill chips in their own colours — Combat is one chip, plus Questing and Clues for the non-skill days.",
-    "The heatmap has a Skills / Categories palette toggle. Skills mode colours each day by the actual skills you trained, straight from your game data — clue completions included.",
-    "Priorities can track by skill tag — a Sailing priority is touched by your actual Sailing gains, no logging needed.",
-    "✎ Edit any entry from any day: click a heatmap cell, then the pencil next to the entry.",
+  {v:"1.0", date:"August 6, 2026", title:"1.0", notes:[
+    "Renumbered the version history. Everything before this release is now 0.x; this is 1.0.",
+    "Added the Quest planner: pick any quest (or the quest cape) and see the full dependency tree — every prerequisite, including ones already done, with skill requirements, boostable flags, and quest-point gates checked against your stats. XP rewarded by the chain itself is counted when working out which requirements you'll actually be short on.",
+    "The quest database now covers every quest on the wiki, including all ten Recipe for Disaster subquests. Planning Recipe for Disaster includes its subquests automatically. Miniquests are tracked but excluded from the quest cape count.",
+    "Clicking a quest in the tree opens a detail panel: full requirements with your levels, the quests it needs, and the quests it unlocks. Navigation uses a breadcrumb trail; Escape steps back, and Start over clears the view without touching your quest progress.",
+    "Quests marked done anywhere — the planner, the Roadmap, or telling Ask Bud \"I did X\" — are recorded in one shared place and reflected everywhere.",
+    "Rebuilt the Roadmap to cover all parts of the game: getting started, combat, gear, unlock quests, bossing, achievement diaries, minigames, money making, clues, skilling, and endgame. Tracks are sorted by relevance to your account and collapse when untouched.",
+    "The app checks GitHub for new releases and shows an update button when one is available.",
+    "Empty days on the heatmap now offer a shortcut to log that day.",
+    "Priorities can be edited in place, including their rank.",
+    "Rewrote the patch notes in a plainer style.",
   ]},
-  {v:"2.0", date:"July 26, 2026", title:"The app update", notes:[
-    "OSRS Buddy now runs as a Windows app — launch it from the Start Menu or the shortcuts in the OSRS-Buddy folder.",
-    "New activity colours on the Scroll heatmap. Minigames merged into Skilling; Questing is blue, Social is purple, Clues are pink. Old entries updated automatically.",
-    "🏆 Milestone days: mark a log entry as a milestone and that day gets an animated rainbow ring on the heatmap. For the days worth remembering.",
-    "Priorities can now track from your Scroll tags — log a Questing entry and a quest priority mapped to that tag counts as touched. No more false neglect alerts.",
-    "To-dos on the Home overview expand when clicked, so you can check steps off right there.",
-    "Roadmap rebuilt for the mid-game: gear ladder, unlock quests, bossing ladder, skill milestones — plus an \"In reach\" list computed from your live stats.",
-    "New fonts (EB Garamond headings, Segoe UI text) and bolder, more readable numbers.",
-    "⚙️ Settings panel in the sidebar: change the font, switch skill XP between short (1.1m) and exact figures, and find Backup / Import and auto-refresh there.",
+  {v:"0.7", date:"July 31, 2026", title:"Ask Bud and skill-based logging", notes:[
+    "Added Ask Bud: checks whether you meet the requirements for a boss, quest, or item using your live stats. Looks up anything it doesn't know on the wiki and caches the result.",
+    "Ask Bud accepts \"I did [quest]\" to mark a quest complete, and resolves follow-up questions that refer to the previous subject.",
+    "Added RuneLite sync. Reads your character name and worn equipment from a running RuneLite client with the WikiSync plugin enabled. Worn gear on the Roadmap is marked automatically.",
+    "Scroll entries are now tagged by skill instead of by category. Combat is a single tag; Questing and Clues cover non-skill activity.",
+    "Added a Skills / Categories toggle to the activity heatmap. Skills mode colours each day by the skills trained that day, taken from your game stats. Clue completions are included.",
+    "Priorities can be tracked by skill tag. XP gained in that skill marks the priority as worked on.",
+    "Log entries can be edited from the heatmap: click a day, then the edit button on the entry.",
   ]},
-  {v:"1.2", date:"July 16, 2026", title:"Themes, notes, and renames", notes:[
-    "🎨 Theme switcher in the sidebar: Parchment, Crystal, Nature, Shadow, and Ember. Your choice is saved.",
-    "📝 Notes: a sticky-note board. Notes save as you type.",
-    "Goals page redesign: centered layout with a short intro.",
-    "\"Start here\" renamed to \"Roadmap\".",
+  {v:"0.6", date:"July 26, 2026", title:"Windows app", notes:[
+    "OSRS Buddy is now installable as a Windows application, with a Start Menu entry and desktop shortcut.",
+    "Revised the activity colours. Minigames merged into Skilling; Questing is blue, Social is purple, Clues are pink. Existing entries were migrated automatically.",
+    "Added milestone days. Marking a log entry as a milestone highlights that day on the heatmap.",
+    "Priorities can be tracked by Scroll tag, so logging an entry with that tag marks the priority as worked on.",
+    "To-do items on the Home overview expand to show their steps.",
+    "Rebuilt the Roadmap around mid-game progression: gear ladder, unlock quests, bossing ladder, and skill milestones, with an \"In reach\" list based on your current levels.",
+    "Changed the fonts to EB Garamond and Segoe UI, and increased the weight of stat numbers.",
+    "Added a Settings panel containing font selection, XP number format, auto-refresh, and Backup / Import.",
   ]},
-  {v:"1.1", date:"July 16, 2026", title:"Header controls", notes:[
-    "Character switcher (▾) and quick refresh (↻) now live next to your name on Home — and on the sidebar card.",
+  {v:"0.5", date:"July 16, 2026", title:"Themes and notes", notes:[
+    "Added a theme switcher with five themes: Parchment, Crystal, Nature, Shadow, and Ember. The selection is saved.",
+    "Added a Notes page for free-form notes. Notes save as you type.",
+    "Redesigned the Goals page layout.",
+    "Renamed \"Start here\" to \"Roadmap\".",
+  ]},
+  {v:"0.4", date:"July 16, 2026", title:"Header controls", notes:[
+    "Moved the character switcher and refresh button next to the character name on Home and in the sidebar.",
     "Added this patch notes page.",
   ]},
-  {v:"1.0", date:"July 16, 2026", title:"The big redesign", notes:[
-    "Sidebar navigation — Home is now an at-a-glance dashboard, with a proper fancy header.",
-    "Priorities and neglect alerts: rank 1–10, auto-detected from your XP/KC gains, with alerts for anything untouched too long. Thresholds are configurable; snooze for planned breaks.",
-    "Heatmaps resized: full-width Activity widget on Home, larger calendar on Scroll.",
-    "Skills grid now matches the in-game order, and Sailing was added.",
-    "Backup / Import buttons in the sidebar, plus a data-rescue path for the old file location.",
-    "Goals and Add Goal merged into one page. EHP/EHB retired from the stat cards.",
+  {v:"0.3", date:"July 16, 2026", title:"Redesign", notes:[
+    "Replaced the tab bar with sidebar navigation. Home is now a summary dashboard.",
+    "Added priorities and neglect alerts. Priorities are ranked 1-10 and detected from XP and kill-count gains, with alerts for anything untouched past a configurable threshold. Snoozing is supported.",
+    "Resized the heatmaps: a full-width widget on Home and a larger calendar on Scroll.",
+    "Reordered the skills grid to match the in-game layout and added Sailing.",
+    "Added Backup and Import buttons, plus a recovery path for data saved at the previous file location.",
+    "Merged Goals and Add Goal into a single page. Removed EHP and EHB from the stat cards.",
   ]},
-  {v:"0.2", date:"July 15, 2026", title:"Becoming OSRS Buddy", notes:[
-    "Renamed from \"Quest Log\" to OSRS Buddy.",
-    "Scroll: a daily journal with an activity-coded heatmap and streak counter.",
-    "Refresh actually pulls fresh hiscores now (log out in-game to post XP).",
-    "New-player Start Here tab: roadmap, quest finder, combat helper, gear goals.",
+  {v:"0.2", date:"July 15, 2026", title:"Renamed to OSRS Buddy", notes:[
+    "Renamed the app from \"Quest Log\" to OSRS Buddy.",
+    "Added the Scroll: a daily journal with an activity heatmap and streak counter.",
+    "Refresh now pulls current hiscores rather than a cached snapshot. Note that XP only posts to the hiscores after you log out in-game.",
+    "Added a Start Here page for new players, containing a roadmap, quest finder, combat helper, and gear goals.",
   ]},
-  {v:"0.1", date:"July 8, 2026", title:"Humble beginnings", notes:[
-    "Auto-tracked goals wired to the live hiscores (via WiseOldMan).",
-    "Custom to-dos with checkable sub-steps.",
-    "Collection log import from RuneLite.",
-    "Real in-game icons for everything.",
+  {v:"0.1", date:"July 8, 2026", title:"Initial release", notes:[
+    "Added auto-tracked goals that read your live hiscores via WiseOldMan.",
+    "Added custom to-do items with checkable sub-steps.",
+    "Added collection log import from RuneLite.",
+    "Added in-game icons for skills, bosses, and activities.",
   ]},
 ];
 function renderPatchNotes(){
@@ -3713,7 +4241,7 @@ $("#loadBtnHomeGo").onclick = ()=>loadCharacter({live:true, name:$("#usernameHom
 $("#usernameHome").addEventListener("keydown", e=>{ if(e.key==="Enter") loadCharacter({live:true, name:$("#usernameHome").value}); });
 
 // ============ INIT ============
-applyTheme(); applyFont(); renderQuestPlanner(); renderMeta(); renderTodo(); renderClog(); renderQuickAdd(); populateMetricDropdown(); renderStart(); renderScroll(); renderPatchNotes(); renderNotes();
+applyTheme(); applyFont(); startUpdateCheck(); renderQuestPlanner(); renderMeta(); renderTodo(); renderClog(); renderQuickAdd(); populateMetricDropdown(); renderStart(); renderScroll(); renderPatchNotes(); renderNotes();
 switchView("home"); // always land on Home
 if(state.username){
   $("#username").value = state.username;

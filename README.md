@@ -15,7 +15,7 @@ It's a single HTML file with no build step, wrapped as a Windows app with
 [Tauri](https://tauri.app). Your data lives in your browser's local storage and
 never leaves your machine.
 
-![version](https://img.shields.io/badge/version-2.1-e6c35c) ![platform](https://img.shields.io/badge/platform-Windows-6b7d8e)
+![version](https://img.shields.io/badge/version-1.0-e6c35c) ![platform](https://img.shields.io/badge/platform-Windows-6b7d8e)
 
 ## What it does
 
