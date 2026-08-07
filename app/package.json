@@ -1,0 +1,12 @@
+{
+  "name": "osrs-buddy-app",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {
+    "sync": "node -e \"require('fs').copyFileSync('../OSRS-Buddy.html','dist/index.html'); console.log('dist/index.html <- OSRS-Buddy.html')\"",
+    "build": "npm run sync && tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4"
+  }
+}
