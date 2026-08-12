@@ -72,7 +72,9 @@
   .tag{font-size:12px; color:var(--muted); border:1px solid var(--border); padding:2px 8px; border-radius:10px}
 
   /* ===== app shell: sidebar + content ===== */
-  .app{display:flex; min-height:100vh; max-width:1180px; margin:0 auto}
+  /* The shell fills the window. Individual views cap their own content where a wide
+     line would actually hurt (prose), rather than boxing the whole app in. */
+  .app{display:flex; min-height:100vh; margin:0 auto}
   .sidebar{width:214px; flex:0 0 auto; background:var(--panel); border-right:1px solid var(--border);
     padding:16px 12px; display:flex; flex-direction:column; gap:14px; position:sticky; top:0; height:100vh; overflow-y:auto}
   .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); color:var(--gold);
@@ -284,6 +286,167 @@
   .sk-week{font-size:13px}
   .sk-week b{color:var(--green)}
   .sk-acts{display:flex; gap:8px; flex-wrap:wrap; margin-top:4px}
+  /* Recap */
+  .rc-hero{text-align:center; padding:14px 0 6px}
+  .rc-big{font-family:var(--font-display); font-size:clamp(38px,7vw,64px); font-weight:700; color:var(--gold); line-height:1}
+  .rc-cap{font-size:12px; text-transform:uppercase; letter-spacing:.09em; color:var(--muted); margin-top:4px}
+  .rc-delta{font-size:12.5px; margin-top:6px; min-height:18px}
+  .rc-up{color:var(--green)} .rc-down{color:var(--red,#d46a5a)} .rc-flat{color:var(--muted)}
+  .rc-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px; margin-top:12px}
+  .rc-card{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; text-align:center}
+  .rc-card .k{font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
+  .rc-card .v{font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--text); line-height:1.15}
+  .rc-card .v .of{font-size:13px; color:var(--muted); font-weight:400}
+  .rc-card .sub{font-size:11px; color:var(--muted)}
+  .rc-bars{display:flex; flex-direction:column; gap:5px}
+  .rc-bar{display:grid; grid-template-columns:104px 1fr 74px 40px; align-items:center; gap:9px; font-size:12.5px}
+  .rc-name{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .rc-track{height:14px; border-radius:7px; background:var(--inset); overflow:hidden}
+  .rc-track i{display:block; height:100%; border-radius:7px}
+  .rc-val{text-align:right; color:var(--muted)}
+  .rc-pct{text-align:right; color:var(--muted); font-size:11.5px}
+  .rc-miles{display:flex; flex-direction:column; gap:4px; max-width:520px; margin:0 auto}
+  .rc-mile{display:flex; align-items:center; gap:9px; font-size:13px; padding:5px 10px;
+    background:var(--panel2); border:1px solid var(--border); border-radius:8px}
+  .rc-mile b{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  @media(max-width:520px){ .rc-bar{grid-template-columns:84px 1fr 60px} .rc-pct{display:none} }
+  /* Dance Dance RuneScape */
+  .rg-opts{display:flex; gap:14px; justify-content:center; margin-top:12px; flex-wrap:wrap}
+  .rg-opts select{margin-left:6px}
+  /* play screen — same arcade skin as the select screen */
+  .rg-hud{display:flex; gap:26px; align-items:center; padding:6px 4px 12px; max-width:760px; margin:0 auto}
+  .rg-hud .k{font-size:10px; text-transform:uppercase; letter-spacing:.14em; color:#6f93a8}
+  .rg-hud .v{font-family:var(--font-display); font-size:26px; font-weight:700; line-height:1.05;
+    color:#eafcff; text-shadow:0 0 16px rgba(127,216,255,.55)}
+  #rgCombo{color:#d678ff; text-shadow:0 0 18px rgba(214,120,255,.6)}
+  .rg-btn{font-family:inherit; font-size:12px; letter-spacing:.05em; padding:7px 12px; border-radius:8px;
+    cursor:pointer; color:#9fd8ee; background:rgba(140,235,255,.06);
+    border:1px solid rgba(140,235,255,.28); transition:all .15s}
+  .rg-btn:hover{color:#eafcff; border-color:#7fd8ff; background:rgba(140,235,255,.16);
+    box-shadow:0 0 16px rgba(120,215,255,.35)}
+  .rg-wrap{position:relative; width:100%; max-width:760px; margin:0 auto; overflow:hidden;
+    border:1px solid rgba(140,235,255,.28); border-radius:16px; background:#05070c;
+    box-shadow:0 0 50px rgba(90,200,255,.14), 0 0 90px rgba(214,120,255,.07), 0 10px 40px rgba(0,0,0,.6)}
+  #rgCanvas{display:block; width:100%; height:min(72vh, 660px)}
+  .rg-paused{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:8px; cursor:pointer; z-index:2;
+    background:radial-gradient(60% 50% at 50% 50%, rgba(20,50,80,.55), rgba(0,0,0,.78));
+    backdrop-filter:blur(4px)}
+  .rg-paused > div{font-family:var(--font-display); font-size:44px; font-weight:700; letter-spacing:.14em;
+    background:linear-gradient(92deg,#7fd8ff,#eafcff,#d678ff); -webkit-background-clip:text;
+    background-clip:text; color:transparent; filter:drop-shadow(0 0 22px rgba(140,235,255,.45))}
+  .rg-paused span{color:#7d97ab; letter-spacing:.04em}
+  .rg-binds{display:flex; gap:8px; justify-content:center; margin-top:10px; flex-wrap:wrap}
+  .rg-bind{min-width:62px; padding:6px 10px; border-radius:8px; border:1px solid var(--border);
+    background:var(--panel2); color:var(--text); font-family:inherit; font-size:12.5px; cursor:pointer}
+  .rg-bind:hover{border-color:var(--gold-dim)}
+  .rg-bind.listening{border-color:var(--gold); color:var(--gold)}
+  .rg-bind .bl{display:block; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
+  /* song select — arcade cabinet: deep indigo glass, neon cyan and magenta */
+  .rg-select{display:grid; grid-template-columns:minmax(240px,1fr) minmax(280px,1.15fr); gap:16px;
+    align-items:start; margin-top:6px}
+  @media(max-width:720px){ .rg-select{grid-template-columns:1fr} }
+  .rg-listcol{border:1px solid rgba(140,235,255,.16); border-radius:14px; overflow:hidden;
+    background:linear-gradient(180deg,#0b1220,#070c16); box-shadow:0 0 30px rgba(90,200,255,.06) inset}
+  .rg-listhead{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 13px;
+    border-bottom:1px solid rgba(140,235,255,.14); font-size:11px; text-transform:uppercase;
+    letter-spacing:.12em; color:#7fd8ff; background:rgba(140,235,255,.04)}
+  .rg-lib{display:flex; flex-direction:column; max-height:340px; overflow-y:auto}
+  .rg-lib:empty{display:none}
+  .rg-track{display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer;
+    border-bottom:1px solid rgba(255,255,255,.04); border-left:3px solid transparent; transition:background .12s}
+  .rg-track:hover{background:rgba(140,235,255,.06)}
+  .rg-track.sel{border-left-color:#7fd8ff; box-shadow:inset 0 0 26px rgba(90,200,255,.14);
+    background:linear-gradient(90deg, rgba(140,235,255,.15), rgba(214,120,255,.06))}
+  .rg-track.sel .rg-name{color:#eafcff; text-shadow:0 0 12px rgba(140,235,255,.5)}
+  .rg-num{font-family:var(--font-display); font-size:15px; color:#5f7d93; width:22px; flex:none; text-align:right}
+  .rg-name{font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .rg-grade-s{font-family:var(--font-display); font-weight:700; font-size:18px; flex:none; width:22px;
+    text-align:center; filter:drop-shadow(0 0 8px currentColor)}
+  @media (prefers-reduced-motion: reduce){ .rg-dt-title{animation:none} }
+  .rg-del{background:none; border:0; color:var(--muted); cursor:pointer; font-size:13px; padding:2px 4px; flex:none; opacity:0}
+  .rg-track:hover .rg-del{opacity:1}
+  .rg-del:hover{color:var(--red,#e0623d)}
+  .rg-empty{padding:26px 16px; text-align:center; color:var(--muted); font-size:12.5px}
+  .rg-detail{position:relative; border:1px solid rgba(140,235,255,.20); border-radius:14px; padding:22px 18px;
+    text-align:center; overflow:hidden;
+    background:radial-gradient(120% 90% at 50% 0%, rgba(140,235,255,.14), transparent 60%),
+               radial-gradient(90% 80% at 90% 100%, rgba(214,120,255,.12), transparent 60%),
+               linear-gradient(170deg,#0d1626,#070b13);
+    box-shadow:0 0 40px rgba(90,200,255,.10) inset, 0 8px 30px rgba(0,0,0,.45)}
+  .rg-detail::before{content:""; position:absolute; inset:0; pointer-events:none; opacity:.35;
+    background:repeating-linear-gradient(0deg, rgba(140,235,255,.05) 0 1px, transparent 1px 3px)}
+  .rg-dt-title{position:relative; font-family:var(--font-display); font-size:clamp(20px,2.6vw,30px); font-weight:700;
+    line-height:1.15; word-break:break-word; letter-spacing:.01em;
+    background:linear-gradient(92deg,#eafcff,#7fd8ff 40%,#d678ff 75%,#eafcff);
+    background-size:250% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:rgTitleFlow 7s linear infinite; filter:drop-shadow(0 0 16px rgba(120,215,255,.35))}
+  @keyframes rgTitleFlow{to{background-position:250% 0}}
+  .rg-dt-meta{position:relative; font-size:12px; color:#7d97ab; margin-top:6px; letter-spacing:.04em}
+  .rg-dt-best{position:relative; margin-top:12px; font-size:13px; color:#9fb6c6}
+  .rg-dt-best b{font-family:var(--font-display); font-size:22px; filter:drop-shadow(0 0 10px currentColor)}
+  .rg-diffs{position:relative; display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin:16px 0 5px}
+  .rg-diff{padding:11px 4px; border-radius:10px; border:1px solid rgba(255,255,255,.09);
+    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.25));
+    cursor:pointer; font-family:inherit; color:#7d97ab; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.09em; transition:transform .12s, box-shadow .18s}
+  .rg-diff b{display:block; font-family:var(--font-display); font-size:19px; margin-top:2px; color:#c3d6e2}
+  .rg-diff:hover{transform:translateY(-1px); border-color:rgba(140,235,255,.4)}
+  .rg-diff.on{color:currentColor; border-color:currentColor;
+    box-shadow:0 0 0 1px currentColor inset, 0 0 22px -4px currentColor}
+  .rg-diff.on b{color:currentColor; filter:drop-shadow(0 0 8px currentColor)}
+  .rg-diff[data-d="easy"].on{color:#5fe08a} .rg-diff[data-d="normal"].on{color:#7fd8ff}
+  .rg-diff[data-d="hard"].on{color:#ffb347}  .rg-diff[data-d="insane"].on{color:#ff6bd6}
+  .rg-go{position:relative; width:100%; margin-top:14px; font-family:var(--font-display); font-size:21px;
+    letter-spacing:.06em; padding:13px; border-radius:11px; border:0; cursor:pointer; color:#04121b;
+    background:linear-gradient(100deg,#7fd8ff,#eafcff 45%,#d678ff);
+    background-size:200% 100%; box-shadow:0 0 26px rgba(120,215,255,.45), 0 4px 0 rgba(0,0,0,.35);
+    transition:background-position .5s, box-shadow .2s, transform .1s}
+  .rg-go:hover{background-position:100% 0; box-shadow:0 0 42px rgba(160,225,255,.7), 0 4px 0 rgba(0,0,0,.35)}
+  .rg-go:active{transform:translateY(2px); box-shadow:0 0 26px rgba(120,215,255,.4), 0 2px 0 rgba(0,0,0,.35)}
+  .rg-drop{border:2px dashed rgba(140,235,255,.28); border-radius:14px; padding:30px 18px; text-align:center; color:#7d97ab}
+  .rg-drop.over{border-color:#7fd8ff; background:rgba(140,235,255,.08); color:var(--text);
+    box-shadow:0 0 34px rgba(120,215,255,.25) inset}
+  .rg-judge{position:absolute; left:0; right:0; top:38%; text-align:center; pointer-events:none;
+    font-family:var(--font-display); font-size:30px; font-weight:700; opacity:0}
+  .rg-judge.pop{animation:rgPop .5s ease-out}
+  @keyframes rgPop{0%{opacity:0; transform:scale(.7)} 25%{opacity:1; transform:scale(1.1)} 100%{opacity:0; transform:scale(1)}}
+  .rg-keys{text-align:center; margin-top:10px; font-family:var(--font-display); font-size:15px;
+    letter-spacing:.5em; color:#5f8299; text-indent:.5em}
+  .rg-res{text-align:center; padding:18px 0; max-width:520px; margin:0 auto;
+    border:1px solid rgba(140,235,255,.22); border-radius:16px;
+    background:radial-gradient(110% 80% at 50% 0%, rgba(140,235,255,.12), transparent 60%),
+               linear-gradient(170deg,#0d1626,#070b13);
+    box-shadow:0 0 40px rgba(90,200,255,.10) inset}
+  .rg-res h3{font-family:var(--font-display); font-size:32px; margin:6px 0; color:#eafcff;
+    text-shadow:0 0 20px rgba(127,216,255,.5)}
+  .rg-grade{font-family:var(--font-display); font-size:76px; font-weight:700; line-height:1;
+    filter:drop-shadow(0 0 26px currentColor)}
+  .rg-tally{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin:12px 0}
+  .rg-tally div{font-size:13px}
+  .rg-tally b{display:block; font-size:20px; font-family:var(--font-display)}
+  /* milestone celebration */
+  #celebWrap{position:fixed; inset:0; z-index:95; display:flex; align-items:center; justify-content:center}
+  #celebWrap.hidden{display:none}
+  #celebBack{position:absolute; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(2px)}
+  #celebCanvas{position:absolute; inset:0; pointer-events:none}
+  .celeb-card{position:relative; text-align:center; padding:26px 34px; border-radius:16px;
+    background:var(--panel); border:1px solid var(--gold-dim); box-shadow:0 18px 60px rgba(0,0,0,.55);
+    max-width:min(420px, calc(100vw - 40px)); animation:celebPop .45s cubic-bezier(.2,1.3,.4,1)}
+  @keyframes celebPop{from{transform:scale(.82); opacity:0} to{transform:scale(1); opacity:1}}
+  .celeb-icon{font-size:52px; line-height:1; margin-bottom:6px; animation:celebFloat 2.6s ease-in-out infinite}
+  @keyframes celebFloat{0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)}}
+  .celeb-card h2{margin:2px 0 4px; font-size:26px; color:var(--gold)}
+  .celeb-card .celeb-sub{color:var(--muted); font-size:13px}
+  .celeb-card.nn h2{background:linear-gradient(92deg,#ffd23f,#fff8d0,#ffb400,#fff8d0,#ffd23f);
+    background-size:300% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:celebShine 2.4s linear infinite}
+  @keyframes celebShine{to{background-position:300% 0}}
+  .celeb-more{margin-top:12px; display:flex; flex-direction:column; gap:3px; font-size:12.5px; color:var(--muted)}
+  .celeb-btn{margin-top:16px}
+  @media (prefers-reduced-motion: reduce){
+    .celeb-card, .celeb-icon, .celeb-card.nn h2{animation:none}
+  }
   /* settings modal */
   #settingsWrap{position:fixed; inset:0; z-index:80}
   #settingsBack{position:absolute; inset:0; background:rgba(0,0,0,.55)}
@@ -317,9 +480,12 @@
      is a map, not prose — it gets the whole window. */
   /* no transition here: animating between a length and min() leaves the computed
      value stuck in a half-resolved calc() when the view is hidden at toggle time */
-  .content-inner{max-width:880px; margin:0 auto}
-  body[data-wide] .content-inner{max-width:2000px}
-  body[data-wide] .app{max-width:none}  /* the shell caps at 1180 — let the map have the window */
+  .content-inner{max-width:1800px; margin:0 auto}
+  body[data-wide] .content-inner{max-width:2600px}
+  /* Prose stays at a readable measure however wide the window gets — long lines are
+     genuinely harder to read, so text blocks cap themselves instead of the app doing it. */
+  .pn-block, .ask-msg, .empty, .goals-blurb, .qpd-give, .rg-lib{max-width:78ch}
+  .pn-block, .rg-lib{margin-left:auto; margin-right:auto}
   .view > .panel:first-child, .view > details.panel:first-child{margin-top:0}
 
   /* home polish */
@@ -470,7 +636,37 @@
   .stat .v{font-size:24px; color:var(--gold); font-family:var(--font-display); font-weight:700; font-variant-numeric:tabular-nums}
 
   /* skills grid */
-  .skills-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-top:8px}
+  /* Stays 3 columns on purpose: SKILL_ORDER is laid out row-major to mirror the
+     in-game skills tab, so any other column count scrambles that reading order.
+     It just centres itself instead of stretching across a wide window. */
+  .skills-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-top:8px;
+    max-width:720px; margin-left:auto; margin-right:auto}
+  /* Skills keeps its 3-column game layout but is the main event, so it takes the
+     larger share and its tiles grow to fill it. Clues and bosses are short blocks —
+     an even split left the right half mostly empty on a big screen. */
+  .home-cols{display:grid; grid-template-columns:1fr; gap:0}
+  @media(min-width:1180px){
+    /* Skills is the reason you open this page — give it the lion's share. Clues and
+       bosses are a short sidebar, so a modest fixed-ish column suits them better than
+       an equal split, which left a tall empty band under them. */
+    .home-cols{grid-template-columns:minmax(0,1fr) minmax(255px,300px); gap:26px; align-items:start}
+    .home-cols .skills-grid{max-width:none}
+    .home-cols .skill{padding:13px 15px; gap:11px}
+    .home-cols .skill .slvl{font-size:25px}
+    .home-cols .skill .sname{font-size:13px}
+    .home-cols .skill .semoji{width:28px; height:28px}
+    /* the sidebar's own grids shrink to suit the narrower column */
+    .home-cols > div:last-child .skills-grid{grid-template-columns:repeat(2,1fr)}
+    .home-cols .clues-row{flex-wrap:wrap; justify-content:center}
+    /* Alerts and the to-do strip are both short — side by side they fill the row
+       instead of stacking into two half-empty bands. */
+    .home-row2{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start}
+    .home-row2 > .panel{margin-top:0}
+  }
+  /* more room to spare — let the sidebar breathe a little wider */
+  @media(min-width:1560px){
+    .home-cols{grid-template-columns:minmax(0,1fr) minmax(300px,370px); gap:32px}
+  }
   @media(max-width:460px){ .skills-grid{grid-template-columns:repeat(2,1fr)} }
   .skill{display:flex; align-items:center; gap:9px; background:var(--panel2);
     border:1px solid var(--border); border-radius:7px; padding:7px 10px}
@@ -563,7 +759,9 @@
   .act-legend .dot{width:11px; height:11px; border-radius:3px; flex:0 0 auto}
 
   /* heatmap — cell size driven by --cell so Home (small) and Scroll (big) share one renderer */
-  .heatwrap{overflow-x:auto; padding-bottom:6px; --cell:24px; --hgap:4px}
+  /* Cells are sized to fit the panel, so nothing should ever need scrolling —
+     and a scrollbar that flickers in and out reflows the whole grid. */
+  .heatwrap{overflow:hidden; padding-bottom:6px; --cell:24px; --hgap:4px}
   .heatwrap.big{--cell:26px; --hgap:5px}
   .heatgrid{display:flex; flex-direction:column; gap:var(--hgap); width:max-content; margin:0 auto}
   .heat-months{display:flex; gap:var(--hgap); margin-left:26px; height:14px}
@@ -585,13 +783,48 @@
   .heatwrap.mode-calendar .heat-cell:not(.filled){background:var(--inset); opacity:.5}
   .heatwrap .heat-cell.filled:hover{transform:scale(1.2); z-index:2; position:relative}
   /* --- bars mode: a proper bar graph, bars grow from the baseline, height swells with activity --- */
-  .ribbon{display:flex; align-items:flex-end; height:106px; gap:2px; width:max-content; min-width:100%; margin:0 auto; padding:6px 2px 0}
-  .rib-day{flex:1 1 0; min-width:5px; height:100%; display:flex; align-items:flex-end; justify-content:center; cursor:pointer}
+  .ribbon{display:flex; align-items:flex-end; height:106px; gap:2px; width:100%; margin:0 auto; padding:6px 2px 0}
+  .rib-day{flex:1 1 0; min-width:var(--ribmin,5px); height:100%; display:flex; align-items:flex-end; justify-content:center; cursor:pointer}
   .rib-bar{width:100%; border-radius:5px 5px 2px 2px; min-height:4px}
   .mode-bars .rib-day.has .rib-bar{border:1px solid rgba(0,0,0,.4); box-shadow:0 0 6px 0 currentColor}
   .rib-day:hover .rib-bar{filter:brightness(1.3)}
   .rib-day.today .rib-bar{outline:1.5px solid rgba(255,255,255,.6); outline-offset:1px}
   .rib-day.prio .rib-bar{outline:2px solid var(--gold); outline-offset:1px}
+  /* Auto-detected milestone days. Same hollow-ring geometry as the manual 🏆 rainbow
+     below, but the gradient and speed come from the tier: gold (regular), diamond
+     (rare), and nn (a 99 — brightest and fastest, because it's a 99). */
+  .heat-cell.ms{position:relative; outline:none !important}
+  .rib-day.ms .rib-bar{position:relative; outline:none !important}
+  .ms-gold   {--msg:conic-gradient(#a5731a,#ffd76a,#fff4c4,#e8a92b,#a5731a); --mss:4.5s}
+  .ms-diamond{--msg:conic-gradient(#7fd8ff,#ffffff,#bff0ff,#5ec9f5,#eafaff,#7fd8ff); --mss:3s}
+  .ms-nn     {--msg:conic-gradient(#fff8d0,#ffd23f,#ffffff,#ffb400,#fff8d0,#ffe27a,#fff8d0); --mss:1.6s}
+  .heat-cell.ms::after, .rib-day.ms .rib-bar::after{
+    content:""; position:absolute; inset:-2.5px; padding:3px; border-radius:34%; pointer-events:none;
+    background:var(--msg);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    animation:msShimmer var(--mss) ease-in-out infinite}
+  .rib-day.ms .rib-bar::after{border-radius:8px 8px 4px 4px}
+  .heat-cell.ms::before, .rib-day.ms .rib-bar::before{
+    content:""; position:absolute; inset:-4.5px; padding:4px; border-radius:36%; pointer-events:none;
+    background:var(--msg);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    animation:msGlow var(--mss) linear infinite}
+  .rib-day.ms .rib-bar::before{border-radius:10px 10px 5px 5px}
+  /* NEVER transform these: the ring sits outside the cell box, so rotating it grows
+     the page, toggles the scrollbar, reflows, and repeats — the whole grid shakes.
+     Filters and opacity only; they don't touch layout. */
+  @keyframes msShimmer{
+    0%,100%{filter:brightness(1) saturate(1)}
+    50%{filter:brightness(1.4) saturate(1.25)}}
+  @keyframes msGlow{
+    0%,100%{filter:blur(3.5px); opacity:.4}
+    50%{filter:blur(5.5px); opacity:.85}}
+  @media (prefers-reduced-motion: reduce){
+    .heat-cell.ms::after, .heat-cell.ms::before,
+    .rib-day.ms .rib-bar::after, .rib-day.ms .rib-bar::before{animation:none}
+  }
   /* 🏆 milestone days — animated rainbow ring; outshines the gold prio ring and today marker */
   .heat-cell.mile{position:relative; outline:none !important}
   .rib-day.mile .rib-bar{position:relative; outline:none !important}
@@ -658,7 +891,7 @@
   .section-title h3{font-size:17px}
   .hr{height:1px; background:var(--border); margin:14px 0}
 
-  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px}
   @media(max-width:640px){ .grid2{grid-template-columns:1fr} header h1{font-size:21px} }
 
   .toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
@@ -686,6 +919,8 @@
       <button class="navitem" data-view="ask"><span class="ni-ic">💬</span>Ask Bud</button>
       <button class="navitem" data-view="quests"><span class="ni-ic">🧭</span>Quest planner</button>
       <button class="navitem" data-view="clog"><span class="ni-ic">🗂️</span>Collection log</button>
+      <button class="navitem" data-view="recap"><span class="ni-ic">📊</span>Recap</button>
+      <button class="navitem" data-view="rhythm"><span class="ni-ic">🎵</span>DDR</button>
       <button class="navitem" data-view="patch"><span class="ni-ic">📋</span>Patch notes</button>
     </nav>
     <div class="side-char" id="sideChar">
@@ -713,6 +948,11 @@
   </aside>
 
   <!-- settings modal -->
+  <div id="celebWrap" class="hidden">
+    <div id="celebBack"></div>
+    <canvas id="celebCanvas"></canvas>
+    <div class="celeb-card" id="celebCard"></div>
+  </div>
   <div id="skillWrap" class="hidden">
     <div id="skillBack"></div>
     <div id="skillModal"></div>
@@ -756,6 +996,24 @@
       <div class="set-sec">
         <div class="set-h">Feedback</div>
         <a class="ghost small" id="bugBtn" target="_blank" rel="noopener" style="display:inline-block">🐛 Report a bug</a>
+      </div>
+      <div class="set-sec hidden" id="devSec">
+        <div class="set-h">🛠️ Developer</div>
+        <p class="small muted" style="margin:0 0 8px">Preview things that normally need weeks of play. Nothing here changes your stats.</p>
+        <div class="set-h" style="font-size:11px">Celebrations</div>
+        <div class="row" style="gap:6px; flex-wrap:wrap; margin-bottom:8px">
+          <button class="ghost small" data-celebtest="gold">🥇 Gold</button>
+          <button class="ghost small" data-celebtest="diamond">💎 Diamond</button>
+          <button class="ghost small" data-celebtest="nn">🎆 A 99</button>
+          <button class="ghost small" data-celebtest="multi">Several at once</button>
+        </div>
+        <div class="set-h" style="font-size:11px">Milestones</div>
+        <div class="row" style="gap:6px; flex-wrap:wrap">
+          <button class="ghost small" id="devCross">Simulate next crossing</button>
+          <button class="ghost small" id="devRescan">Wipe &amp; re-scan history</button>
+        </div>
+        <div class="small muted" id="devMsInfo" style="margin-top:6px"></div>
+        <button class="ghost small" id="devOff" style="margin-top:10px">Turn off developer mode</button>
       </div>
       <div class="set-sec">
         <div class="set-h">Restore</div>
@@ -801,16 +1059,23 @@
           <span class="pill" id="acctType"></span>
         </div>
         <div class="summary" id="summaryStats"></div>
+        <div class="home-cols">
+        <div>
         <div class="section-title center"><h3>Skills</h3><span class="small muted" id="skillsSub"></span></div>
         <div class="skills-grid" id="skillsGrid"></div>
+        </div>
+        <div>
 
         <div class="section-title center"><h3>Clue scrolls</h3><span class="small muted" id="cluesSub"></span></div>
         <div class="clues-row" id="cluesRow"></div>
 
         <div class="section-title center"><h3>Boss kill counts</h3><span class="small muted" id="bossSub"></span></div>
         <div class="skills-grid" id="bossGrid"></div>
+        </div>
+        </div>
       </div>
 
+      <div class="home-row2">
       <div class="panel">
         <div class="section-title" style="margin-top:0">
           <h3>Alerts</h3>
@@ -822,20 +1087,21 @@
 
       <div class="panel">
         <div class="section-title" style="margin-top:0">
-          <h3>Activity</h3>
-          <span class="small muted" id="heatHomeSub"></span>
-          <button class="ghost small right" id="heatHomeOpen">Open Scroll →</button>
-        </div>
-        <div class="heatwrap"><div id="heatmapHome" class="heatgrid"></div></div>
-      </div>
-
-      <div class="panel">
-        <div class="section-title" style="margin-top:0">
           <h3>To-do overview</h3>
           <span class="small muted" id="homeTodoCount"></span>
           <button class="ghost small right" id="homeTodoAll">View all →</button>
         </div>
         <div id="homeTodoList"></div>
+      </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title" style="margin-top:0">
+          <h3>Activity</h3>
+          <span class="small muted" id="heatHomeSub"></span>
+          <button class="ghost small right" id="heatHomeOpen">Open Scroll →</button>
+        </div>
+        <div class="heatwrap"><div id="heatmapHome" class="heatgrid"></div></div>
       </div>
     </div>
 
@@ -1089,6 +1355,79 @@
   </div>
 
   <!-- VIEW: PATCH NOTES -->
+  <div class="view hidden" id="view-recap">
+    <div class="panel">
+      <div class="section-title center" style="margin-top:0"><h3>📊 Recap</h3><span class="small muted" id="recapSub"></span></div>
+      <div class="seg" id="recapSeg" style="justify-content:center"></div>
+      <div id="recapBody"></div>
+    </div>
+  </div>
+
+  <div class="view hidden" id="view-rhythm">
+    <div class="panel">
+      <div class="section-title center" style="margin-top:0"><h3>🎵 Dance Dance RuneScape</h3><span class="small muted" id="rgSub">bring your own music</span></div>
+      <div id="rgSetup">
+        <input type="file" id="rgFile" accept="audio/*" class="hidden" multiple>
+        <div class="rg-select" id="rgSelect">
+          <div class="rg-listcol">
+            <div class="rg-listhead"><span>Songs</span><button class="ghost small" id="rgPick">+ Add music</button></div>
+            <div class="rg-lib" id="rgLibrary"></div>
+          </div>
+          <div class="rg-detail" id="rgDetail"></div>
+        </div>
+        <div class="small muted" id="rgStatus" style="text-align:center;margin-top:10px"></div>
+        <div class="rg-opts" id="rgOpts">
+          <select id="rgDiff" class="hidden">
+            <option value="easy">Easy</option><option value="normal" selected>Normal</option>
+            <option value="hard">Hard</option><option value="insane">Insane</option>
+          </select>
+          <label class="small muted">Speed
+            <select id="rgSpeed">
+              <option value="0.8">Relaxed</option>
+              <option value="1" selected>Normal</option>
+              <option value="1.35">Fast</option>
+            </select>
+          </label>
+          <label class="small muted">Sync
+            <select id="rgOffset">
+              <option value="-0.06">Notes early −60ms</option>
+              <option value="-0.03">Notes early −30ms</option>
+              <option value="0" selected>No offset</option>
+              <option value="0.03">Notes late +30ms</option>
+              <option value="0.06">Notes late +60ms</option>
+              <option value="0.1">Notes late +100ms</option>
+            </select>
+          </label>
+          <label class="small muted">Keys
+            <select id="rgPreset">
+              <option value="dfjk">D F J K</option>
+              <option value="wasd">W A S D</option>
+              <option value="arrows">Arrow keys</option>
+              <option value="sxmk">S X M K</option>
+              <option value="custom">Custom…</option>
+            </select>
+          </label>
+        </div>
+        <div class="rg-binds" id="rgBinds"></div>
+      </div>
+      <div id="rgStage" class="hidden">
+        <div class="rg-hud">
+          <div><div class="k">Score</div><div class="v" id="rgScore">0</div></div>
+          <div><div class="k">Combo</div><div class="v" id="rgCombo">0</div></div>
+          <div><div class="k">Accuracy</div><div class="v" id="rgAcc">100%</div></div>
+          <button class="rg-btn" id="rgPause" style="margin-left:auto">⏸ Pause</button>
+          <button class="rg-btn" id="rgRestart">⟳ Restart</button>
+          <button class="rg-btn" id="rgQuit">✕ Stop</button>
+        </div>
+        <div class="rg-wrap"><canvas id="rgCanvas"></canvas><div class="rg-judge" id="rgJudge"></div>
+          <div class="rg-paused hidden" id="rgPausedOverlay"><div>PAUSED</div>
+            <span class="small">Space or Esc to resume · click anywhere</span></div></div>
+        <div class="rg-keys" id="rgKeyHint"></div>
+      </div>
+      <div id="rgResults" class="hidden"></div>
+    </div>
+  </div>
+
   <div class="view hidden" id="view-patch">
     <div class="panel">
       <div class="section-title" style="margin-top:0"><h3>📋 Patch notes</h3><span class="small muted" id="pnSub"></span></div>
@@ -2068,8 +2407,9 @@ function editPriority(id){
   prioEditId = id;
   $("#pLabel").value = p.label;
   $("#pKind").value = p.kind||"none";
-  $("#pKind").dispatchEvent(new Event("change")); // rebuild the metric list for this kind
+  populatePrioMetric();            // rebuild the metric list without auto-labelling over their name
   if(p.metric) $("#pMetric").value = p.metric;
+  delete $("#pLabel").dataset.auto;
   $("#pLastDid").value = p.lastTouched||"";
   $("#pWeight").value = p.weight||5; $("#pWeightVal").textContent = p.weight||5;
   $("#addPrioBtn").textContent = "Save changes";
@@ -2080,6 +2420,7 @@ function editPriority(id){
 function prioFormReset(){
   prioEditId=null;
   $("#pLabel").value=""; $("#pLastDid").value="";
+  delete $("#pLabel").dataset.auto;
   $("#addPrioBtn").textContent = "Add priority";
 }
 function addPriority(){
@@ -2401,7 +2742,8 @@ function drawHeatmap(id, WEEKS, tbd){
       const bg=cellBg(c.types);
       const prim=c.types ? heatCol(c.types[0]) : null;
       const title=c.types ? `${fmtDay(c.iso)} — ${c.types.map(t=>heatLabel(t)).join(", ")}` : `${fmtDay(c.iso)} — nothing logged`;
-      return `<div class="heat-cell ${c.types?"filled":""} ${c.isToday?"today":""} ${heatPrioDays.has(c.iso)?"prio":""} ${heatMileDays.has(c.iso)?"mile":""}" data-iso="${c.iso}" title="${escapeHtml(title)}" ${bg?`style="background:${bg};color:${prim}"`:""}></div>`;
+      const mt = heatMsDays[c.iso];
+      return `<div class="heat-cell ${c.types?"filled":""} ${c.isToday?"today":""} ${heatPrioDays.has(c.iso)?"prio":""} ${mt?`ms ms-${mt}`:""} ${heatMileDays.has(c.iso)?"mile":""}" data-iso="${c.iso}" title="${escapeHtml(title)}" ${bg?`style="background:${bg};color:${prim}"`:""}></div>`;
     }).join("")}</div>`).join("")}
   </div>`;
   el.innerHTML = monthsRow + body;
@@ -2599,6 +2941,7 @@ let heatPrioDays = new Set();
 // can't see things like finishing Graceful, so these are always a human call)
 function milestoneDays(){ const s=new Set(); state.scroll.log.forEach(e=>{ if(e.milestone) s.add(e.date); }); return s; }
 let heatMileDays = new Set();
+let heatMsDays = {};   // iso -> tier, for the auto-detected milestone rings
 
 function autoGainsHtml(iso){
   const a=(state.scroll.autoOn!==false && state.scroll.auto) ? state.scroll.auto[iso] : null;
@@ -2638,13 +2981,19 @@ function drawRibbon(id, range, tbd, logBy){
   const weightOf=iso=> (logBy[iso]||[]).length + (tbd[iso]||[]).length;
   const maxW=Math.max(1, ...days.map(weightOf));
   const H=100, base=6, top=H-16;
-  el.innerHTML = `<div class="ribbon">${days.map(iso=>{
+  // Bars have a minimum width, so a long range can demand more room than the panel
+  // has. Shrink the floor (and the gap) to whatever actually fits — never scroll.
+  const wrapW = (el.closest(".heatwrap") || el).clientWidth || 820;
+  const gap = days.length > 120 ? 1 : 2;
+  const minW = Math.max(1, Math.floor((wrapW - 8) / days.length) - gap);
+  el.innerHTML = `<div class="ribbon" style="gap:${gap}px; --ribmin:${minW}px">${days.map(iso=>{
     const types=tbd[iso], w=weightOf(iso);
     const h = w ? Math.round(base + (top-base)*(w/maxW)) : 4;
     const prim = types ? heatCol(types[0]) : null;
     const bg = types ? cellBg(types) : "var(--border)";
     const title = types ? `${fmtDay(iso)} — ${types.map(t=>heatLabel(t)).join(", ")}` : `${fmtDay(iso)} — nothing logged`;
-    return `<div class="rib-day ${iso===todayISO()?"today":""} ${w?"has":""} ${heatPrioDays.has(iso)?"prio":""} ${heatMileDays.has(iso)?"mile":""}" data-iso="${iso}" title="${escapeHtml(title)}"><div class="rib-bar" style="height:${h}px;background:${bg};${prim?`color:${prim}`:""}"></div></div>`;
+    const mt = heatMsDays[iso];
+    return `<div class="rib-day ${iso===todayISO()?"today":""} ${w?"has":""} ${heatPrioDays.has(iso)?"prio":""} ${mt?`ms ms-${mt}`:""} ${heatMileDays.has(iso)?"mile":""}" data-iso="${iso}" title="${escapeHtml(title)}"><div class="rib-bar" style="height:${h}px;background:${bg};${prim?`color:${prim}`:""}"></div></div>`;
   }).join("")}</div>`;
 }
 
@@ -2677,7 +3026,12 @@ function openDayPopover(iso, anchor){
     : `<div class="muted small" style="padding:4px 0">Nothing logged this day.</div>
        <button class="ghost small" data-dplog="${iso}" style="margin-top:2px">✎ Log what you did</button>`;
   const isMile = entries.some(e=>e.milestone);
-  pop.innerHTML = `<div class="dp-head"><span>${isMile?"🏆 ":""}${fmtDay(iso)}</span><button class="dp-x" id="dpX" aria-label="Close">✕</button></div>${inner}`;
+  // why this day has a ring
+  const msKeys = msDayMap()[iso] || [];
+  const msHtml = msKeys.length ? `<div class="dp-auto"><div class="dp-auto-h">${
+      msTierOfDay(iso)==="nn"?"🎆":msTierOfDay(iso)==="diamond"?"💎":"🥇"} Milestone${msKeys.length>1?"s":""}</div>${
+      msKeys.map(k=>{ const i=milestoneInfo(k); return `<div>${i.tier==="nn"?"🎆":i.icon} ${escapeHtml(i.title)}</div>`; }).join("")}</div>` : "";
+  pop.innerHTML = `<div class="dp-head"><span>${isMile?"🏆 ":""}${fmtDay(iso)}</span><button class="dp-x" id="dpX" aria-label="Close">✕</button></div>${inner}${msHtml}`;
   pop.classList.remove("hidden");
   const r=anchor.getBoundingClientRect();
   const pw=Math.min(266, window.innerWidth-20);
@@ -2733,6 +3087,8 @@ function renderHeatmap(){
   const logBy = logByDate();
   heatPrioDays = priorityDoneDays();  // gold-ring days
   heatMileDays = milestoneDays();     // rainbow-ring days (milestone beats gold)
+  heatMsDays = {};                    // auto-detected milestones, by tier
+  Object.keys(msDayMap()).forEach(iso=>{ heatMsDays[iso] = msTierOfDay(iso); });
   const range = state.scroll.range || "3mo";
   const mode = heatMode();
   const sw = $("#heatmap") && $("#heatmap").closest(".heatwrap");
@@ -2747,9 +3103,13 @@ function renderHeatmap(){
     if(sw) sw.className = "heatwrap big mode-calendar";
   } else {
     const weeks = heatWeeksFor(range, tbd);
-    if(sw){ // size cells to fill the panel: chunky for short ranges, compact for long ones
+    if(sw){ // size cells to fill the panel: chunky for short ranges, compact for long ones.
+      // Subtract the REAL gap (--hgap) — using 4 against a 5px gap overflowed by about
+      // a pixel per column, which is what was summoning the scrollbar.
       const width = sw.clientWidth || 820;
-      const cell = Math.max(13, Math.min(34, Math.floor((width - 26) / weeks) - 4));
+      const gap = parseFloat(getComputedStyle(sw).getPropertyValue("--hgap")) || 5;
+      const LABELS = 28; // day-label column + its margin
+      const cell = Math.max(9, Math.min(34, Math.floor((width - LABELS) / weeks) - gap));
       sw.style.setProperty("--cell", cell+"px");
     }
     drawHeatmap("heatmap", weeks, tbd);
@@ -3572,6 +3932,1177 @@ async function buildQuestDB(onProgress){
   state.questDB = db; save();
   P(`Done — ${names.length} quests.`);
   return db;
+}
+
+// ============ MILESTONES ============
+// Every milestone is a stable key ("total:1100", "99:slayer"), so scanning history is
+// idempotent — the first snapshot a key appears in is the day it was earned.
+// Tiers: "gold" (regular), "diamond" (rare), "nn" (a 99 — the game fires fireworks, so do we).
+const MS_TOTAL_BIG = [1000, 1500, 2000, 2277];
+function combatLevel(sk){
+  if(!sk) return 3;
+  const L=k=>(sk[k]&&sk[k].level)||1;
+  const base = 0.25*(L("defence")+L("hitpoints")+Math.floor(L("prayer")/2));
+  const melee = 0.325*(L("attack")+L("strength"));
+  const rng   = 0.325*(Math.floor(L("ranged")/2)+L("ranged"));
+  const mag   = 0.325*(Math.floor(L("magic")/2)+L("magic"));
+  return Math.floor(base + Math.max(melee, rng, mag));
+}
+// The set of milestones true for a given stats snapshot.
+function milestoneKeys(skills){
+  const keys = new Set();
+  if(!skills) return keys;
+  const names = Object.keys(skills).filter(k=>k!=="overall");
+  if(!names.length) return keys;
+  let total=0, min=99, xp=0;
+  names.forEach(k=>{
+    const lvl=skills[k].level||1, e=skills[k].experience;
+    total += lvl;
+    if(lvl<min) min=lvl;
+    if(e>0) xp += e;
+    if(lvl>=99) keys.add("99:"+k);
+  });
+  for(let t=100; t<=total; t+=100) keys.add("total:"+t);
+  [70,80,90].forEach(b=>{ if(min>=b) keys.add("base:"+b); });
+  for(let m=10; m<=Math.floor(xp/1e6); m+=10) keys.add("xp:"+m);
+  const cb = combatLevel(skills);
+  [90,100,110,120,126].forEach(c=>{ if(cb>=c) keys.add("combat:"+c); });
+  return keys;
+}
+function milestoneInfo(key){
+  const [kind, val] = key.split(":");
+  // the game's own wording — anyone who's seen a 99 knows this line
+  if(kind==="99")     return {tier:"nn", icon:"🎆", title:"99 "+nice(val), skill:val,
+                              sub:"Congratulations, you've just advanced your "+nice(val)+" level."};
+  if(kind==="total")  return {tier:MS_TOTAL_BIG.includes(+val)?"diamond":"gold", icon:MS_TOTAL_BIG.includes(+val)?"💎":"🥇",
+                              title:fmt(+val)+" total level", sub:MS_TOTAL_BIG.includes(+val)?"A landmark":"Another hundred"};
+  if(kind==="base")   return {tier:"diamond", icon:"💎", title:"Base "+val, sub:"Every skill at "+val+"+"};
+  if(kind==="xp")     return {tier:"gold",    icon:"🥇", title:val+"m total XP", sub:"Experience milestone"};
+  if(kind==="combat") return {tier:+val>=126?"diamond":"gold", icon:+val>=126?"💎":"🥇",
+                              title:"Combat "+val, sub:+val>=126?"Maxed combat":"Combat milestone"};
+  return {tier:"gold", icon:"🥇", title:key, sub:""};
+}
+function msStore(){ return (state.milestones = state.milestones || {}); }   // key -> iso earned
+function msDayMap(){                                                        // iso -> [keys]
+  const out={};
+  const s=msStore();
+  for(const k in s){ if(s[k]==="pre") continue; (out[s[k]] = out[s[k]] || []).push(k); }
+  return out;
+}
+function msTierOfDay(iso){
+  const keys = msDayMap()[iso]; if(!keys || !keys.length) return null;
+  const tiers = keys.map(k=>milestoneInfo(k).tier);
+  return tiers.includes("nn") ? "nn" : tiers.includes("diamond") ? "diamond" : "gold";
+}
+// Walk the WOM history and date every milestone. Returns keys discovered this pass.
+async function scanMilestones(){
+  if(!state.username) return [];
+  const store = msStore(), fresh = [];
+  const firstRun = !state.msBaselineAt;
+  // first run walks the full history to date things properly; after that the recent
+  // page plus live stats is enough, since everything older is already recorded
+  const snaps = await fetchSnapshots(state.username, firstRun);
+  if(!snaps || !snaps.length) return [];
+  // Anything already true in the oldest snapshot was earned before tracking began —
+  // record it as "pre" so it never re-fires, but don't pin it to a day it didn't happen.
+  milestoneKeys(snaps[0].data && snaps[0].data.skills).forEach(k=>{ if(!store[k]) store[k]="pre"; });
+  snaps.slice(1).forEach(s=>{
+    const iso = isoDate(new Date(s.createdAt));
+    milestoneKeys(s.data && s.data.skills).forEach(k=>{
+      if(store[k]) return;
+      store[k] = iso;
+      fresh.push(k);
+    });
+  });
+  // live stats can be ahead of the last snapshot
+  if(live && live.skills){
+    milestoneKeys(live.skills).forEach(k=>{
+      if(store[k]) return;
+      store[k] = todayISO();
+      fresh.push(k);
+    });
+  }
+  if(firstRun) state.msBaselineAt = Date.now();
+  save();
+  return fresh.map(k=>({key:k, iso:store[k], firstRun}));
+}
+
+// ---- the celebration ----
+// One canvas, two behaviours: confetti drifts down (gold/diamond), fireworks launch
+// and burst (a 99). Stops itself when everything has settled — no idle animation loop.
+const CELEB_PALETTE = {
+  gold:    ["#ffd23f","#ffe27a","#e8a92b","#fff4c4","#c98f18"],
+  diamond: ["#ffffff","#bff0ff","#7fd8ff","#5ec9f5","#eafaff"],
+  nn:      ["#ffd23f","#ffffff","#ff9f1c","#fff8d0","#ffb400","#ffe27a"],
+};
+let celebRAF = null, celebTimer = null;
+function celebStop(){
+  if(celebRAF){ cancelAnimationFrame(celebRAF); celebRAF=null; }
+  if(celebTimer){ clearInterval(celebTimer); celebTimer=null; }
+}
+function celebRun(tier){
+  const cv = $("#celebCanvas"); if(!cv) return;
+  const ctx = cv.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  const W = cv.width = innerWidth*dpr, H = cv.height = innerHeight*dpr;
+  cv.style.width = innerWidth+"px"; cv.style.height = innerHeight+"px";
+  const pal = CELEB_PALETTE[tier] || CELEB_PALETTE.gold;
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const pick = () => pal[(Math.random()*pal.length)|0];
+  const bits = [], rockets = [];
+  let shock = [];
+  const PX = 3;   // particle grid, in CSS px — the chunky-sprite look
+
+  if(tier==="nn"){
+    // Real fireworks: rockets with trails, big multi-stage bursts, shockwave rings,
+    // a screen flash on detonation, and stragglers that crackle a beat later.
+    const burstAt = (x,y,col)=>{
+      shock.push({x, y, r:4*dpr, col, life:1});
+      const ring = reduced ? 30 : 150;
+      for(let i=0;i<ring;i++){
+        const a=(i/ring)*Math.PI*2 + Math.random()*0.05;
+        const sp=(3.4+Math.random()*5.6)*dpr;
+        bits.push({x, y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, r:(2.6+Math.random()*3.4)*dpr,
+          life:1, decay:0.0048+Math.random()*0.004, col:Math.random()<0.22?"#ffffff":col,
+          spark:true, twinkle:Math.random()<0.35});
+      }
+      if(reduced) return;
+      // inner core — slower, denser, gives the burst depth
+      for(let i=0;i<70;i++){
+        const a=Math.random()*Math.PI*2, sp=(0.7+Math.random()*2.8)*dpr;
+        bits.push({x, y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, r:(3+Math.random()*4)*dpr,
+          life:1, decay:0.008+Math.random()*0.007, col:pick(), spark:true, twinkle:Math.random()<0.5});
+      }
+      // long-lived stragglers that drift and crackle after the main burst fades
+      for(let i=0;i<22;i++){
+        const a=Math.random()*Math.PI*2, sp=(5+Math.random()*3.5)*dpr;
+        bits.push({x, y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, r:2.6*dpr,
+          life:1, decay:0.0022, col:"#fff8d0", spark:true, twinkle:true});
+      }
+    };
+    // Slower, statelier arcs — the game's fireworks hang in the air rather than snapping.
+    const launch = (n)=>{ for(let i=0;i<n;i++) rockets.push({
+      x:(0.12+Math.random()*0.76)*W, y:H+10*dpr, vy:-(10.5+Math.random()*3.5)*dpr, vx:(Math.random()-.5)*1.1*dpr,
+      at:(0.16+Math.random()*0.3)*H, col:pick(), delay:Math.random()*26, trail:[] }); };
+    launch(reduced?2:4);
+    // keep launching for as long as the card is open — the show waits for you
+    var keepLaunching = ()=>{ if(!celebRAF) return; launch(2 + ((Math.random()*3)|0)); };
+    var launchTimer = setInterval(()=>{ if(rockets.filter(r=>!r.burst).length < 5) keepLaunching(); }, 620);
+    var doBurst = burstAt;
+  } else {
+    // Confetti keeps falling for as long as the card is open, with sparkles drifting
+    // up through it — a held moment rather than a one-shot burst.
+    const spawn = (n, above)=>{ for(let i=0;i<n;i++) bits.push({
+      x:Math.random()*W, y: above ? -Math.random()*H*0.5 - 20*dpr : -Math.random()*H*0.9,
+      w:(5+Math.random()*7)*dpr, h:(9+Math.random()*11)*dpr,
+      vy:(2+Math.random()*3.4)*dpr, vx:(Math.random()-.5)*2.2*dpr,
+      rot:Math.random()*Math.PI, vr:(Math.random()-.5)*0.3,
+      flip:Math.random()*Math.PI, vf:0.08+Math.random()*0.13,
+      sway:Math.random()*Math.PI, col:pick(),
+      streamer:Math.random()<0.25}); };
+    spawn(tier==="diamond" ? 240 : 170, false);
+    var launchTimer = reduced ? null : setInterval(()=>{
+      if(!celebRAF) return;
+      spawn(tier==="diamond" ? 26 : 18, true);
+      // a few slow motes rising the other way — catches the eye without adding noise
+      for(let i=0;i<4;i++) bits.push({
+        x:Math.random()*W, y:H+10*dpr, vx:(Math.random()-.5)*0.5*dpr, vy:-(0.5+Math.random()*0.9)*dpr,
+        r:(1.6+Math.random()*2.2)*dpr, life:1, decay:0.004, col:pick(), spark:true, twinkle:true});
+    }, 420);
+  }
+
+  let frame = 0;
+  const tick = ()=>{
+    frame++;
+    ctx.clearRect(0,0,W,H);
+
+    if(tier==="nn"){
+      // No full-screen flash: it whited out the room. The game's fireworks are bright
+      // sprites against a dark sky, not a camera bulb.
+      ctx.globalCompositeOperation = "lighter";
+      for(let i=shock.length-1;i>=0;i--){
+        const s=shock[i];
+        s.r += 9*dpr; s.life -= 0.045;
+        if(s.life<=0){ shock.splice(i,1); continue; }
+        ctx.strokeStyle=s.col; ctx.globalAlpha=s.life*0.5; ctx.lineWidth=2*dpr;
+        ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,7); ctx.stroke();
+      }
+      ctx.globalAlpha=1;
+      rockets.forEach(r=>{
+        if(r.delay>0){ r.delay--; return; }
+        if(r.burst) return;
+        r.trail.push({x:r.x, y:r.y});
+        if(r.trail.length>12) r.trail.shift();
+        r.x += r.vx; r.y += r.vy; r.vy += 0.115*dpr;   // lighter gravity = a longer, statelier arc
+        const px = PX*dpr;
+        r.trail.forEach((p,i)=>{
+          const t=i/r.trail.length;
+          ctx.globalAlpha = t*0.55;
+          ctx.fillStyle = r.col;
+          const s = Math.max(px, Math.round(t*2.2*dpr/px)*px);
+          ctx.fillRect(Math.round(p.x/px)*px - s/2, Math.round(p.y/px)*px - s/2, s, s);
+        });
+        ctx.globalAlpha=1;
+        ctx.fillStyle="#fff";
+        ctx.fillRect(Math.round(r.x/px)*px - px, Math.round(r.y/px)*px - px, px*2, px*2);
+        if(r.y<=r.at || r.vy>=0){ r.burst=true; doBurst(r.x, r.y, r.col); }
+      });
+    }
+
+    for(let i=bits.length-1;i>=0;i--){
+      const b=bits[i];
+      if(b.spark){
+        b.x+=b.vx; b.y+=b.vy;
+        b.vy += 0.075*dpr; b.vx*=0.982; b.vy*=0.982;
+        b.life -= b.decay;
+        if(b.life<=0){ bits.splice(i,1); continue; }
+        let a = b.life;
+        if(b.twinkle) a *= 0.55 + 0.45*Math.sin(frame*0.45 + b.x);
+        a = Math.max(0, a);
+        // Chunky pixels on a grid, like the game's own sprites — not smooth glowing
+        // orbs. One restrained halo for depth; the triple-bloom was the flashbang.
+        const px = PX*dpr;
+        const rr = Math.max(px, Math.round(b.r*(0.5+b.life*0.5)/px)*px);
+        const gx = Math.round(b.x/px)*px, gy = Math.round(b.y/px)*px;
+        ctx.fillStyle = b.col;
+        ctx.globalAlpha = a*0.13;
+        ctx.fillRect(gx-rr*1.6, gy-rr*1.6, rr*3.2, rr*3.2);
+        ctx.globalAlpha = a*0.9;
+        ctx.fillRect(gx-rr/2, gy-rr/2, rr, rr);
+      } else {
+        b.sway += 0.05;
+        b.x += b.vx + Math.sin(b.sway)*0.8*dpr;
+        b.y += b.vy; b.vy += 0.022*dpr;
+        b.rot += b.vr; b.flip += b.vf;
+        if(b.y > H+50*dpr){ bits.splice(i,1); continue; }
+        ctx.save();
+        ctx.translate(b.x,b.y); ctx.rotate(b.rot);
+        ctx.scale(1, Math.abs(Math.cos(b.flip))*0.85+0.15);   // tumbling edge-on
+        ctx.fillStyle=b.col;
+        if(b.streamer) ctx.fillRect(-b.w/6, -b.h*1.1, b.w/3, b.h*2.2);
+        else ctx.fillRect(-b.w/2,-b.h/2,b.w,b.h);
+        ctx.restore();
+      }
+    }
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+
+    // The show runs until you dismiss the card — new rockets and confetti keep
+    // arriving on a timer, so there's nothing to "end". Closing stops everything.
+    if(rockets.length > 60) rockets.splice(0, rockets.length-40);   // don't grow forever
+    celebRAF = requestAnimationFrame(tick);
+  };
+  celebStop();
+  celebTimer = launchTimer || null;
+  tick();
+}
+function closeCeleb(){ $("#celebWrap").classList.add("hidden"); celebStop(); }
+
+// ---- developer mode ----
+// Hidden behind five taps on the version badge: celebrations and history scans are
+// impossible to exercise normally without waiting weeks for a real milestone.
+let devTaps = 0, devTapT = null;
+function devOn(){ return !!state.devMode; }
+function renderDevSection(){
+  const sec = $("#devSec"); if(!sec) return;
+  sec.classList.toggle("hidden", !devOn());
+  if(!devOn()) return;
+  const store = msStore(), dated = Object.values(store).filter(v=>v!=="pre").length;
+  const info = $("#devMsInfo");
+  if(info) info.textContent = `${Object.keys(store).length} milestones known · ${dated} dated on the Scroll`;
+}
+// A plausible "next" milestone for this account, so the test looks like the real thing.
+function devNextMilestone(){
+  if(!live || !live.skills) return {key:"total:1200", iso:todayISO()};
+  const names = Object.keys(live.skills).filter(k=>k!=="overall");
+  const total = names.reduce((a,k)=>a+(live.skills[k].level||1),0);
+  return {key:"total:"+(Math.floor(total/100)*100+100), iso:todayISO()};
+}
+function devWireSettings(){
+  $$("#devSec [data-celebtest]").forEach(b=>b.onclick=()=>{
+    const t = b.dataset.celebtest;
+    const best = live && live.skills
+      ? Object.keys(live.skills).filter(k=>k!=="overall").sort((a,b2)=>live.skills[b2].level-live.skills[a].level)[0]
+      : "slayer";
+    closeSettings();
+    const demo = {
+      gold:    [devNextMilestone()],
+      diamond: [{key:"total:2000", iso:todayISO()}],
+      nn:      [{key:"99:"+best, iso:todayISO()}],
+      multi:   [{key:"99:"+best, iso:todayISO()}, devNextMilestone(), {key:"combat:100", iso:todayISO()}],
+    }[t];
+    setTimeout(()=>showCelebration(demo), 180);
+  });
+  const cross = $("#devCross");
+  if(cross) cross.onclick = ()=>{
+    const m = devNextMilestone();
+    if(msStore()[m.key]){ toast("Already recorded — try Wipe & re-scan first", true); return; }
+    msStore()[m.key] = m.iso; save();
+    renderHeatmap(); renderDevSection(); closeSettings();
+    setTimeout(()=>showCelebration([m]), 180);
+  };
+  const rescan = $("#devRescan");
+  if(rescan) rescan.onclick = async ()=>{
+    rescan.disabled = true; rescan.textContent = "Scanning…";
+    state.milestones = {}; delete state.msBaselineAt; save();
+    const fresh = await scanMilestones();
+    renderHeatmap(); renderDevSection();
+    rescan.disabled = false; rescan.textContent = "Wipe & re-scan history";
+    const dated = fresh.filter(f=>f.iso).length;
+    toast(`Re-scanned — ${dated} dated milestone${dated===1?"":"s"} found`);
+  };
+  const off = $("#devOff");
+  if(off) off.onclick = ()=>{ state.devMode=false; save(); renderDevSection(); toast("Developer mode off"); };
+}
+function devTap(){
+  clearTimeout(devTapT);
+  devTaps++;
+  devTapT = setTimeout(()=>{ devTaps=0; }, 1200);
+  if(devTaps>=5){
+    devTaps = 0;
+    state.devMode = !state.devMode; save();
+    renderDevSection();
+    toast(state.devMode ? "🛠️ Developer mode on — see Settings" : "Developer mode off");
+  }
+}
+// `items` = [{key, iso}] crossed since last time. One card, however many milestones.
+function showCelebration(items){
+  if(!items || !items.length) return;
+  const infos = items.map(i=>Object.assign({}, milestoneInfo(i.key), {iso:i.iso}));
+  const rank = {gold:0, diamond:1, nn:2};
+  infos.sort((a,b)=>rank[b.tier]-rank[a.tier]);
+  const top = infos[0], rest = infos.slice(1);
+  const card = $("#celebCard");
+  card.className = "celeb-card "+top.tier;
+  card.innerHTML = `
+    <div class="celeb-icon">${top.tier==="nn" && top.skill ? `<img src="${skillIconUrl(top.skill)}" alt="" style="width:52px;height:52px;object-fit:contain">` : top.icon}</div>
+    <h2>${escapeHtml(top.title)}</h2>
+    <div class="celeb-sub">${escapeHtml(top.sub)}${top.iso&&top.iso!==todayISO()?` · ${fmtDay(top.iso)}`:""}</div>
+    ${rest.length?`<div class="celeb-more">${rest.map(r=>`<div>${r.icon} ${escapeHtml(r.title)}</div>`).join("")}</div>`:""}
+    <button class="primary celeb-btn" id="celebOk">${top.tier==="nn"?"Bask in it":"Nice"}</button>`;
+  $("#celebWrap").classList.remove("hidden");
+  $("#celebOk").onclick = closeCeleb;
+  celebRun(top.tier);
+}
+$("#celebBack").onclick = closeCeleb;
+$("#rgPick").onclick = ()=>$("#rgFile").click();
+$("#rgFile").onchange = e=>{ const fs=[...e.target.files]; if(fs.length) rgAddFiles(fs); e.target.value=""; };
+$("#rgQuit").onclick = rgQuit;
+$("#rgPause").onclick = rgTogglePause;
+$("#rgRestart").onclick = ()=>{ if(RG.buf) rgStart(); };   // same chart, from the top
+$("#rgPausedOverlay").onclick = rgResume;
+$("#rgPreset").onchange = e=>{
+  const p = RG_PRESETS[e.target.value];
+  if(p){ state.rgKeys = p.slice(); save(); }
+  state.rgPreset = e.target.value; save();
+  renderRgBinds(); rgSyncKeyHint();
+};
+
+// ============ DANCE DANCE RUNESCAPE ============
+// Charts any audio file you point it at: decode, measure per-frame energy, find the
+// onsets, and drop notes on them. Lanes come from how bright each hit is, so bass
+// lands left and hats land right. The file is read locally and never leaves the machine.
+const RG = {
+  ctx:null, buf:null, src:null, notes:[], raf:null, playing:false, paused:false, pausedAt:0,
+  startAt:0, score:0, combo:0, best:0, hits:{perfect:0,great:0,good:0,miss:0,bad:0},
+  lanes:4, approach:1.6, offset:0, title:"", held:[false,false,false,false],
+  fx:[], laneFlash:[0,0,0,0], laneMiss:[0,0,0,0], comboPop:0, shake:0,
+};
+// Threshold alone doesn't control difficulty — a busy song blows past every setting.
+// perMin is the real dial: keep only the strongest onsets until the chart hits that
+// density, so Easy is genuinely easy whatever you feed it.
+const RG_DIFF = {
+  easy:   {gap:0.34, thresh:1.55, perMin:80},
+  normal: {gap:0.22, thresh:1.42, perMin:150},
+  hard:   {gap:0.14, thresh:1.32, perMin:240},
+  insane: {gap:0.09, thresh:1.22, perMin:400},
+};
+const RG_WINDOW = {perfect:0.055, great:0.11, good:0.17};
+// Songs live in IndexedDB — audio files are megabytes and localStorage caps out at
+// about five. The blobs never leave the machine; this is just a shelf for them.
+const RG_DB = "osrsbuddy-music", RG_STORE = "tracks";
+function rgIDB(){
+  return new Promise((res, rej)=>{
+    const r = indexedDB.open(RG_DB, 1);
+    r.onupgradeneeded = ()=>{ const db=r.result;
+      if(!db.objectStoreNames.contains(RG_STORE)) db.createObjectStore(RG_STORE, {keyPath:"id"}); };
+    r.onsuccess = ()=>res(r.result);
+    r.onerror = ()=>rej(r.error);
+  });
+}
+async function rgLibAll(){
+  try{
+    const db = await rgIDB();
+    return await new Promise((res)=>{
+      const out=[], cur = db.transaction(RG_STORE).objectStore(RG_STORE).openCursor();
+      cur.onsuccess = e=>{ const c=e.target.result;
+        if(c){ const v=c.value; out.push({id:v.id, name:v.name, size:v.size, addedAt:v.addedAt, best:v.best, plays:v.plays}); c.continue(); }
+        else res(out.sort((a,b)=>b.addedAt-a.addedAt)); };
+      cur.onerror = ()=>res([]);
+    });
+  }catch(e){ return []; }
+}
+async function rgLibGet(id){
+  try{
+    const db = await rgIDB();
+    return await new Promise(res=>{
+      const q = db.transaction(RG_STORE).objectStore(RG_STORE).get(id);
+      q.onsuccess = ()=>res(q.result||null); q.onerror = ()=>res(null);
+    });
+  }catch(e){ return null; }
+}
+async function rgLibPut(rec){
+  const db = await rgIDB();
+  return new Promise((res, rej)=>{
+    const tx = db.transaction(RG_STORE, "readwrite");
+    tx.objectStore(RG_STORE).put(rec);
+    tx.oncomplete = ()=>res(true);
+    tx.onerror = ()=>rej(tx.error);
+  });
+}
+async function rgLibDel(id){
+  try{
+    const db = await rgIDB();
+    await new Promise(res=>{ const tx=db.transaction(RG_STORE,"readwrite");
+      tx.objectStore(RG_STORE).delete(id); tx.oncomplete=res; tx.onerror=res; });
+  }catch(e){}
+}
+const RG_GRADE_COL = {S:"#ffd76a", A:"#5fe08a", B:"#7fd8ff", C:"#ffb347", D:"#d678ff", F:"#ff6b7a"};
+let rgLibCache = [];
+async function renderRgLibrary(){
+  const el = $("#rgLibrary"), det = $("#rgDetail");
+  if(!el || !det) return;
+  const list = rgLibCache = await rgLibAll();
+  if(!list.length){
+    el.innerHTML = "";
+    det.innerHTML = `<div class="rg-drop" id="rgDrop">
+        <div style="font-size:30px">🎵</div>
+        <div style="margin:6px 0 2px; color:var(--text); font-size:14px">Drop a song here</div>
+        <div>or <button class="ghost small" id="rgPick2">choose a file</button></div>
+        <div class="small" style="margin-top:10px">The game listens to the track and builds the chart itself.
+          Your file stays on this machine.</div>
+      </div>`;
+    const p2=$("#rgPick2"); if(p2) p2.onclick=()=>$("#rgFile").click();
+    rgWireDrop();
+    return;
+  }
+  if(!state.rgPick || !list.some(t=>t.id===state.rgPick)) state.rgPick = list[0].id;
+  el.innerHTML = list.map((t,i)=>`
+    <div class="rg-track ${t.id===state.rgPick?"sel":""}" data-pick="${t.id}">
+      <span class="rg-num">${i+1}</span>
+      <div class="grow" style="min-width:0">
+        <div class="rg-name">${escapeHtml(t.name.replace(/\.[^.]+$/,""))}</div>
+        <div class="small muted">${(t.size/1048576).toFixed(1)} MB${t.plays?` · ${t.plays} play${t.plays>1?"s":""}`:""}</div>
+      </div>
+      <span class="rg-grade-s" style="color:${t.best?RG_GRADE_COL[t.best.grade]:"transparent"}">${t.best?t.best.grade:"–"}</span>
+      <button class="rg-del" data-del="${t.id}" title="Remove">✕</button>
+    </div>`).join("");
+  $$("#rgLibrary [data-pick]").forEach(b=>b.onclick=e=>{
+    if(e.target.closest("[data-del]")) return;
+    state.rgPick = b.dataset.pick; save(); renderRgLibrary();
+  });
+  $$("#rgLibrary [data-del]").forEach(b=>b.onclick=async e=>{
+    e.stopPropagation();
+    await rgLibDel(b.dataset.del);
+    if(state.rgPick===b.dataset.del) state.rgPick=null;
+    renderRgLibrary(); toast("Removed from library");
+  });
+  renderRgDetail();
+}
+function renderRgDetail(){
+  const det = $("#rgDetail"); if(!det) return;
+  const t = rgLibCache.find(x=>x.id===state.rgPick);
+  if(!t){ det.innerHTML = `<div class="rg-empty">Pick a song from the list.</div>`; return; }
+  const diff = state.rgDiff || "normal";
+  const DIFFS = [["easy","Easy"],["normal","Normal"],["hard","Hard"],["insane","Insane"]];
+  det.innerHTML = `
+    <div class="rg-dt-title">${escapeHtml(t.name.replace(/\.[^.]+$/,""))}</div>
+    <div class="rg-dt-meta">${(t.size/1048576).toFixed(1)} MB${t.plays?` · played ${t.plays} time${t.plays>1?"s":""}`:" · never played"}</div>
+    ${t.best?`<div class="rg-dt-best">Best <b style="color:${RG_GRADE_COL[t.best.grade]}">${t.best.grade}</b>
+        · ${fmt(t.best.score)} · ${t.best.acc}%</div>`:`<div class="rg-dt-best muted small">No score yet</div>`}
+    <div class="rg-diffs">
+      ${DIFFS.map(([k,label])=>`<button class="rg-diff ${k===diff?"on":""}" data-d="${k}">${label}<b>${RG_DIFF[k].perMin}</b></button>`).join("")}
+    </div>
+    <div class="small muted">notes per minute</div>
+    <button class="rg-go" id="rgGo">▶ Play</button>`;
+  $$("#rgDetail [data-d]").forEach(b=>b.onclick=()=>{
+    state.rgDiff = b.dataset.d; save();
+    const sel=$("#rgDiff"); if(sel) sel.value = b.dataset.d;
+    renderRgDetail();
+  });
+  const sel=$("#rgDiff"); if(sel) sel.value = diff;
+  $("#rgGo").onclick = ()=>rgPlayFromLibrary(state.rgPick);
+}
+// dropping files anywhere on the select screen adds them
+function rgWireDrop(){
+  const zone = $("#rgSelect"); if(!zone || zone.dataset.drop) return;
+  zone.dataset.drop = "1";
+  const stop = e=>{ e.preventDefault(); e.stopPropagation(); };
+  ["dragenter","dragover"].forEach(ev=>zone.addEventListener(ev, e=>{
+    stop(e); const d=$("#rgDrop"); if(d) d.classList.add("over");
+  }));
+  ["dragleave","drop"].forEach(ev=>zone.addEventListener(ev, e=>{
+    stop(e); const d=$("#rgDrop"); if(d) d.classList.remove("over");
+  }));
+  zone.addEventListener("drop", async e=>{
+    const files = [...(e.dataTransfer.files||[])].filter(f=>/^audio\//.test(f.type) || /\.(mp3|ogg|wav|m4a|flac)$/i.test(f.name));
+    if(!files.length){ rgSetStatus("That didn't look like an audio file."); return; }
+    await rgAddFiles(files);
+  });
+}
+async function rgPlayFromLibrary(id){
+  const rec = await rgLibGet(id);
+  if(!rec){ rgSetStatus("That track's missing from the library."); return; }
+  RG.trackId = id;
+  await rgDecodeAndStart(rec.blob, rec.name);
+}
+const RG_PRESETS = {
+  dfjk:   ["KeyD","KeyF","KeyJ","KeyK"],
+  wasd:   ["KeyW","KeyA","KeyS","KeyD"],   // left-to-right, exactly as the label reads
+  arrows: ["ArrowLeft","ArrowDown","ArrowUp","ArrowRight"],
+  sxmk:   ["KeyS","KeyX","KeyM","KeyK"],
+};
+function rgKeys(){ return (state.rgKeys && state.rgKeys.length===4) ? state.rgKeys : RG_PRESETS.dfjk; }
+function rgKeyLabel(code){
+  return String(code||"")
+    .replace(/^Key/,"").replace(/^Digit/,"")
+    .replace("ArrowLeft","←").replace("ArrowRight","→").replace("ArrowUp","↑").replace("ArrowDown","↓")
+    .replace("Space","Space") || "?";
+}
+function rgLaneOf(code){ const i = rgKeys().indexOf(code); return i<0 ? null : i; }
+function renderRgBinds(){
+  const el=$("#rgBinds"); if(!el) return;
+  const custom = $("#rgPreset") && $("#rgPreset").value==="custom";
+  el.style.display = custom ? "flex" : "none";
+  if(!custom) return;
+  const keys = rgKeys();
+  el.innerHTML = keys.map((k,i)=>
+    `<button class="rg-bind" data-bind="${i}"><span class="bl">Lane ${i+1}</span>${escapeHtml(rgKeyLabel(k))}</button>`).join("");
+  $$("#rgBinds [data-bind]").forEach(b=>b.onclick=()=>{
+    $$("#rgBinds .rg-bind").forEach(x=>x.classList.remove("listening"));
+    b.classList.add("listening"); b.lastChild.textContent = "press a key…";
+    rgBinding = +b.dataset.bind;
+  });
+}
+let rgBinding = null;
+function rgSyncKeyHint(){
+  const el=$("#rgKeyHint"); if(!el) return;
+  el.textContent = rgKeys().map(rgKeyLabel).join("  ");
+}
+
+// In-place radix-2 FFT. Needed because raw loudness misses melodic onsets entirely —
+// a new note at the same volume barely moves the energy curve, but it moves the
+// spectrum a lot.
+function rgFFT(re, im){
+  const n = re.length;
+  for(let i=1, j=0; i<n; i++){
+    let bit = n>>1;
+    for(; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if(i < j){ const tr=re[i]; re[i]=re[j]; re[j]=tr; const ti=im[i]; im[i]=im[j]; im[j]=ti; }
+  }
+  for(let len=2; len<=n; len<<=1){
+    const ang = -2*Math.PI/len, wr = Math.cos(ang), wi = Math.sin(ang);
+    for(let i=0;i<n;i+=len){
+      let cr=1, ci=0;
+      for(let k=0;k<(len>>1);k++){
+        const ur=re[i+k], ui=im[i+k];
+        const xr=re[i+k+(len>>1)], xi=im[i+k+(len>>1)];
+        const vr=xr*cr - xi*ci, vi=xr*ci + xi*cr;
+        re[i+k]=ur+vr; im[i+k]=ui+vi;
+        re[i+k+(len>>1)]=ur-vr; im[i+k+(len>>1)]=ui-vi;
+        const nr=cr*wr - ci*wi; ci=cr*wi + ci*wr; cr=nr;
+      }
+    }
+  }
+}
+// Spectral-flux onset detection: per frame, sum how much each frequency bin GREW
+// since the last frame. Rising bins mean new notes; falling ones are just decay.
+// Also returns each onset's spectral centroid, which is a real brightness measure
+// (bass hits sit low, cymbals and leads sit high) for choosing lanes.
+async function rgAnalyse(buf, diff, onProgress){
+  const cfg = RG_DIFF[diff] || RG_DIFF.normal;
+  const sr = buf.sampleRate;
+  // mono mixdown
+  const chs = buf.numberOfChannels, len = buf.length;
+  const mono = new Float32Array(len);
+  for(let c=0;c<chs;c++){ const d=buf.getChannelData(c); for(let i=0;i<len;i++) mono[i]+=d[i]/chs; }
+
+  const N = 1024, HOP = 512, BINS = N>>1;
+  const win = new Float32Array(N);
+  for(let i=0;i<N;i++) win[i] = 0.5 - 0.5*Math.cos(2*Math.PI*i/(N-1));   // Hann
+  const frames = Math.max(0, Math.floor((len - N)/HOP));
+  const flux = new Float32Array(frames), centroid = new Float32Array(frames);
+  const re = new Float64Array(N), im = new Float64Array(N);
+  let prev = new Float32Array(BINS);
+
+  for(let f=0; f<frames; f++){
+    const off = f*HOP;
+    for(let i=0;i<N;i++){ re[i] = mono[off+i]*win[i]; im[i] = 0; }
+    rgFFT(re, im);
+    let sum=0, wsum=0, fx=0;
+    for(let k=1;k<BINS;k++){
+      const mag = Math.sqrt(re[k]*re[k] + im[k]*im[k]);
+      const d = mag - prev[k];
+      if(d > 0) fx += d;                       // half-wave rectified: growth only
+      prev[k] = mag;
+      sum += mag; wsum += mag*k;
+    }
+    flux[f] = fx;
+    centroid[f] = sum > 1e-9 ? (wsum/sum)/BINS : 0;
+    if(onProgress && (f & 1023)===0){
+      onProgress(Math.round(f/frames*100));
+      await new Promise(r=>setTimeout(r,0));   // let the progress text paint
+    }
+  }
+
+  // adaptive threshold: a peak must beat its own neighbourhood, so quiet passages
+  // still chart and loud ones don't flood
+  const W = 24, notes = [];
+  let last = -99;
+  for(let f=1; f<frames-1; f++){
+    let sum=0, c=0;
+    for(let k=Math.max(0,f-W); k<Math.min(frames,f+W); k++){ sum+=flux[k]; c++; }
+    const mean = sum/c;
+    const t = (f*HOP + N/2)/sr;               // centre of the window, not its start
+    if(flux[f] > mean*cfg.thresh && flux[f] >= flux[f-1] && flux[f] > flux[f+1] && flux[f] > 1e-4){
+      if(t - last < cfg.gap) continue;
+      last = t;
+      notes.push({t, b:centroid[f], s:flux[f]/(mean+1e-9)});   // s = how much it stood out
+    }
+  }
+  if(!notes.length) return [];
+  // thin to the difficulty's density, keeping the most prominent hits
+  const minutes = buf.duration/60;
+  const cap = Math.max(8, Math.round(cfg.perMin*minutes));
+  // NB: work on a separate array — clearing `notes` in place would also clear `kept`
+  // when no thinning was needed, since they'd be the same reference.
+  const kept = notes.length > cap
+    ? notes.slice().sort((a,b)=>b.s-a.s).slice(0, cap).sort((a,b)=>a.t-b.t)
+    : notes;
+  // lanes by brightness rank across this song's own range
+  const sorted = kept.map(x=>x.b).sort((a,b)=>a-b);
+  const q = p => sorted[Math.min(sorted.length-1, Math.floor(sorted.length*p))];
+  const q1=q(0.25), q2=q(0.5), q3=q(0.75);
+  let prevLane = -1, run = 0;
+  return kept.map(nt=>{
+    let lane = nt.b<=q1 ? 0 : nt.b<=q2 ? 1 : nt.b<=q3 ? 2 : 3;
+    run = (lane===prevLane) ? run+1 : 0;
+    if(run >= 2){ lane = (lane + 1 + ((Math.random()*3)|0)) % 4; run = 0; }  // no long drills
+    prevLane = lane;
+    return {t:nt.t, lane, hit:false, judged:false};
+  });
+}
+// Chrome: cool cyan-white glass. Notes get a metallic gradient (bright edge, cyan
+// body, dark waist, bright edge again) which reads as polished chrome under glow.
+const RG_CY = "140,235,255", RG_HI = "235,252,255";
+// Straight lanes. A converging highway looked warped at this size — the notes
+// changed size as they fell, which made timing harder to read, not easier.
+function rgLaneGeom(lane, p, W, lanes){
+  const w = W/lanes;
+  return {x:lane*w, w, cx:lane*w + w/2, s:1};
+}
+// One clean disc: soft glow, cyan body, bright rim, white highlight. That's it.
+function rgNote(ctx, cx, cy, r, alpha){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.shadowColor = `rgba(${RG_CY},0.9)`;
+  ctx.shadowBlur = r*0.9;
+  const g = ctx.createRadialGradient(cx, cy-r*0.35, r*0.15, cx, cy, r);
+  g.addColorStop(0,   `rgba(${RG_HI},1)`);
+  g.addColorStop(0.55,`rgba(${RG_CY},0.95)`);
+  g.addColorStop(1,   `rgba(58,150,196,0.9)`);
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = `rgba(${RG_HI},0.95)`;
+  ctx.lineWidth = Math.max(1.2, r*0.11);
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.stroke();
+  ctx.restore();
+}
+function rgSetStatus(msg){ const el=$("#rgStatus"); if(el) el.textContent = msg||""; }
+async function rgDecodeAndStart(blob, name){
+  try{
+    RG.ctx = RG.ctx || new (window.AudioContext||window.webkitAudioContext)();
+    rgSetStatus("Decoding the audio…");
+    // decodeAudioData consumes the buffer, so hand it a copy and keep the blob intact
+    RG.buf = await RG.ctx.decodeAudioData(await blob.arrayBuffer());
+    RG.title = name.replace(/\.[^.]+$/,"");
+    rgSetStatus("Charting the song… 0%");
+    await new Promise(r=>setTimeout(r,30));       // let the message paint
+    RG.notes = await rgAnalyse(RG.buf, $("#rgDiff").value, p=>rgSetStatus(`Charting the song… ${p}%`));
+    if(!RG.notes.length){ rgSetStatus("Couldn't find a beat in that one — try another track."); return; }
+    rgSetStatus("");
+    rgStart();
+  }catch(e){
+    rgSetStatus("Couldn't read that file — try an mp3, ogg or wav.");
+  }
+}
+// Adding music fills the library and selects the newest — it doesn't barge straight
+// into a game, so you can pick a difficulty first.
+async function rgAddFiles(files){
+  let added = 0, lastId = null;
+  for(const f of files){
+    const id = "t"+Date.now()+Math.random().toString(36).slice(2,6);
+    try{
+      await rgLibPut({id, name:f.name, size:f.size, addedAt:Date.now(), blob:f, plays:0, best:null});
+      added++; lastId = id;
+    }catch(e){ rgSetStatus("Couldn't save that one — storage may be full."); }
+  }
+  if(lastId) state.rgPick = lastId;
+  save();
+  await renderRgLibrary();
+  if(added) rgSetStatus(added===1 ? "Added to your library." : `Added ${added} songs.`);
+}
+async function rgLoadFile(file){ return rgAddFiles([file]); }
+function rgStart(){
+  RG.score=0; RG.combo=0; RG.best=0; RG.hits={perfect:0,great:0,good:0,miss:0,bad:0};
+  RG.fx=[]; RG.laneFlash=[0,0,0,0]; RG.laneMiss=[0,0,0,0]; RG.comboPop=0; RG.shake=0;
+  RG.notes.forEach(n=>{ n.hit=false; n.judged=false; });
+  RG.approach = 1.6 / parseFloat($("#rgSpeed").value || "1");
+  RG.offset = parseFloat(($("#rgOffset")||{}).value || "0") || 0;
+  state.rgOffset = RG.offset; save();
+  $("#rgSetup").classList.add("hidden");
+  $("#rgResults").classList.add("hidden");
+  $("#rgStage").classList.remove("hidden");
+  $("#rgSub").textContent = `${RG.title} · ${RG.notes.length} notes`;
+  const cv = $("#rgCanvas");
+  cv.width = cv.clientWidth * Math.min(devicePixelRatio||1,2);
+  cv.height = cv.clientHeight * Math.min(devicePixelRatio||1,2);
+  RG.src = RG.ctx.createBufferSource();
+  RG.src.buffer = RG.buf;
+  RG.src.connect(RG.ctx.destination);
+  RG.startAt = RG.ctx.currentTime + 2.2;          // lead-in so the first notes can fall
+  RG.src.start(RG.startAt);
+  RG.src.onended = ()=>{ if(RG.playing) rgFinish(); };
+  RG.playing = true;
+  rgLoop();
+}
+function rgStop(){
+  RG.playing = false; RG.paused = false;
+  if(RG.raf) cancelAnimationFrame(RG.raf), RG.raf=null;
+  try{ RG.src && (RG.src.onended=null, RG.src.stop()); }catch(e){}
+  const ov=$("#rgPausedOverlay"); if(ov) ov.classList.add("hidden");
+}
+// The offset shifts the judging clock, so a player whose speakers lag can line the
+// notes up with what they actually hear.
+function rgNow(){ return (RG.paused ? RG.pausedAt : RG.ctx.currentTime - RG.startAt) - RG.offset; }
+// A buffer source can't be paused, only stopped — so resuming means starting a fresh
+// one at the offset we left off at, and shifting the clock to match.
+function rgPause(){
+  if(!RG.playing || RG.paused) return;
+  RG.pausedAt = RG.ctx.currentTime - RG.startAt;
+  try{ RG.src.onended=null; RG.src.stop(); }catch(e){}
+  RG.paused = true;
+  $("#rgPausedOverlay").classList.remove("hidden");
+  $("#rgPause").textContent = "▶ Resume";
+}
+function rgResume(){
+  if(!RG.playing || !RG.paused) return;
+  const at = RG.pausedAt;           // negative while still in the lead-in — don't clamp,
+  RG.src = RG.ctx.createBufferSource();  // or resuming early skips the countdown
+  RG.src.buffer = RG.buf;
+  RG.src.connect(RG.ctx.destination);
+  RG.startAt = RG.ctx.currentTime - at;
+  if(at < 0) RG.src.start(RG.startAt);              // hasn't begun yet: schedule it
+  else RG.src.start(RG.ctx.currentTime, at);        // mid-song: resume from the offset
+  RG.src.onended = ()=>{ if(RG.playing && !RG.paused) rgFinish(); };
+  RG.paused = false;
+  $("#rgPausedOverlay").classList.add("hidden");
+  $("#rgPause").textContent = "⏸ Pause";
+}
+function rgTogglePause(){ RG.paused ? rgResume() : rgPause(); }
+function rgJudge(text, colour){
+  const el=$("#rgJudge"); if(!el) return;
+  el.textContent = text; el.style.color = colour;
+  el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop");
+}
+function rgHit(lane){
+  if(!RG.playing || RG.paused) return;
+  const now = rgNow();
+  let best=null, bestDt=99;
+  for(const n of RG.notes){
+    if(n.judged || n.lane!==lane) continue;
+    const dt = Math.abs(n.t - now);
+    if(dt < bestDt){ bestDt = dt; best = n; }
+    if(n.t - now > 0.4) break;
+  }
+  if(!best || bestDt > RG_WINDOW.good){
+    // A press with nothing to hit costs you: otherwise mashing every key hits every
+    // note for free. Combo dies, points come off, and it counts against accuracy.
+    RG.hits.bad++;
+    RG.combo = 0;
+    RG.score = Math.max(0, RG.score - 40);
+    RG.laneMiss[lane] = Math.max(RG.laneMiss[lane], 0.75);
+    RG.laneFlash[lane] = Math.max(RG.laneFlash[lane], 0.3);
+    // a near-miss is a real attempt; a press in empty space is just mashing
+    rgJudge(best && bestDt < 0.42 ? (best.t < now ? "LATE" : "EARLY") : "✕", "#ff7a6e");
+    rgHud();
+    return;
+  }
+  best.judged = true; best.hit = true;
+  let pts, grade;
+  if(bestDt <= RG_WINDOW.perfect){ RG.hits.perfect++; pts=300; grade="perfect"; rgJudge("PERFECT", "#eafcff"); }
+  else if(bestDt <= RG_WINDOW.great){ RG.hits.great++; pts=200; grade="great"; rgJudge("GREAT", "#8ce8ff"); }
+  else { RG.hits.good++; pts=100; grade="good"; rgJudge("GOOD", "#6aa8c8"); }
+  RG.combo++; RG.best = Math.max(RG.best, RG.combo);
+  RG.score += pts + Math.min(RG.combo, 50)*2;
+  RG.laneFlash[lane] = 1;
+  RG.comboPop = 1;
+  rgBurst(lane, grade);
+  // every 25 gets a sweep across the whole board — something to chase
+  if(RG.combo % 25 === 0){
+    RG.fx.push({lane, wave:true, r:0, life:1, decay:0.03});
+    rgJudge(RG.combo+" COMBO", "#eafcff");
+  }
+  rgHud();
+}
+// Sparks off the receptor — the physical "thunk" of a hit. Perfect throws the most.
+function rgBurst(lane, grade){
+  const n = grade==="perfect" ? 18 : grade==="great" ? 12 : 7;
+  const spread = grade==="perfect" ? 1 : 0.7;
+  for(let i=0;i<n;i++){
+    const a = -Math.PI/2 + (Math.random()-0.5)*2.4;
+    const sp = (2.2 + Math.random()*4.5) * spread;
+    RG.fx.push({lane, x:(Math.random()-0.5)*0.7, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp,
+      life:1, decay:0.028+Math.random()*0.02, white:Math.random()<0.5});
+  }
+  if(grade==="perfect") RG.fx.push({lane, ring:true, r:0, life:1, decay:0.055});
+}
+function rgHud(){
+  $("#rgScore").textContent = fmt(RG.score);
+  $("#rgCombo").textContent = RG.combo;
+  // stray presses sit in the denominator, so mashing tanks accuracy
+  const done = RG.hits.perfect+RG.hits.great+RG.hits.good+RG.hits.miss+RG.hits.bad;
+  const acc = done ? ((RG.hits.perfect*100 + RG.hits.great*66 + RG.hits.good*33) / done) : 100;
+  $("#rgAcc").textContent = acc.toFixed(1)+"%";
+}
+function rgLoop(){
+  const cv=$("#rgCanvas"); if(!cv || !RG.playing) return;
+  const ctx=cv.getContext("2d"), W=cv.width, H=cv.height;
+  const dpr=Math.min(devicePixelRatio||1,2);
+  const now = rgNow(), laneW = W/RG.lanes, hitY = H - 92*dpr;
+  const T = RG.paused ? RG.pausedAt : now;
+  ctx.clearRect(0,0,W,H);
+
+  // screen shake on a miss — small, but you feel it
+  ctx.save();
+  if(RG.shake>0){ ctx.translate((Math.random()-.5)*RG.shake*7*dpr, (Math.random()-.5)*RG.shake*5*dpr); RG.shake*=0.86; if(RG.shake<0.02) RG.shake=0; }
+
+  // dark bed, a touch brighter toward the receptors
+  const bg = ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0, "#070b11"); bg.addColorStop(1, "#0b1723");
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+  // lanes
+  for(let i=0;i<RG.lanes;i++){
+    const g = rgLaneGeom(i, 1, W, RG.lanes), f = RG.laneFlash[i];
+    if(f>0 || RG.laneMiss[i]>0){
+      const lg = ctx.createLinearGradient(0,0,0,H);
+      lg.addColorStop(0, `rgba(${RG_CY},0)`);
+      lg.addColorStop(1, `rgba(${RG_CY},${f*0.26})`);
+      ctx.fillStyle = lg; ctx.fillRect(g.x, 0, g.w, H);
+      if(RG.laneMiss[i]>0){ ctx.fillStyle=`rgba(255,86,76,${RG.laneMiss[i]*0.16})`; ctx.fillRect(g.x,0,g.w,H); }
+    }
+    ctx.fillStyle = `rgba(${RG_CY},0.10)`;
+    ctx.fillRect(g.x, 0, 1*dpr, H);
+  }
+  ctx.fillStyle = `rgba(${RG_CY},0.10)`; ctx.fillRect(W-1*dpr, 0, 1*dpr, H);
+
+  // hit line
+  ctx.save();
+  ctx.shadowColor=`rgba(${RG_CY},0.9)`; ctx.shadowBlur=14*dpr;
+  ctx.fillStyle=`rgba(${RG_HI},0.55)`; ctx.fillRect(0, hitY-1*dpr, W, 2*dpr);
+  ctx.restore();
+
+  // combo, ghosted behind the lanes
+  if(RG.combo > 2){
+    ctx.save();
+    const pop = 1 + RG.comboPop*0.35;
+    ctx.globalAlpha = 0.08 + RG.comboPop*0.22;
+    ctx.fillStyle = `rgb(${RG_HI})`;
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.font = `700 ${Math.round(100*pop*dpr/2)*2}px ${getComputedStyle(document.body).getPropertyValue("--font-display")||"serif"}`;
+    ctx.fillText(RG.combo, W/2, H*0.33);
+    ctx.restore();
+  }
+  RG.comboPop *= 0.90; if(RG.comboPop<0.01) RG.comboPop=0;
+
+  // receptors — plain rings, filled with light when struck or held
+  for(let i=0;i<RG.lanes;i++){
+    const g = rgLaneGeom(i, 1, W, RG.lanes), f = RG.laneFlash[i], held = RG.held[i];
+    const r = Math.min(g.w*0.32, 30*dpr);
+    ctx.save();
+    ctx.shadowColor=`rgba(${RG_CY},1)`; ctx.shadowBlur=(8+f*30+(held?12:0))*dpr;
+    ctx.strokeStyle=`rgba(${RG_HI},${0.4+f*0.6})`;
+    ctx.lineWidth=(2+f*2.5)*dpr;
+    ctx.beginPath(); ctx.arc(g.cx, hitY, r*(1+f*0.12), 0, 7); ctx.stroke();
+    if(f>0 || held){
+      ctx.shadowBlur=0;
+      const rg = ctx.createRadialGradient(g.cx, hitY, 0, g.cx, hitY, r);
+      rg.addColorStop(0, `rgba(${RG_HI},${f*0.5 + (held?0.16:0)})`);
+      rg.addColorStop(1, `rgba(${RG_CY},0)`);
+      ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(g.cx, hitY, r, 0, 7); ctx.fill();
+    }
+    ctx.restore();
+    RG.laneFlash[i] *= 0.88; if(RG.laneFlash[i]<0.01) RG.laneFlash[i]=0;
+    RG.laneMiss[i] *= 0.90; if(RG.laneMiss[i]<0.01) RG.laneMiss[i]=0;
+  }
+
+  // notes — same size all the way down, so timing reads honestly
+  for(const n of RG.notes){
+    const dt = n.t - now;
+    if(dt > RG.approach || dt < -0.45) continue;
+    if(!n.judged && dt < -RG_WINDOW.good && !RG.paused){
+      n.judged = true; RG.hits.miss++; RG.combo=0;
+      RG.laneMiss[n.lane]=1; RG.shake=1;
+      rgJudge("MISS", "#ff7a6e"); rgHud();
+    }
+    if(n.hit) continue;
+    const g = rgLaneGeom(n.lane, 1, W, RG.lanes);
+    const y = hitY - (dt/RG.approach)*hitY;
+    const r = Math.min(g.w*0.28, 26*dpr);
+    rgNote(ctx, g.cx, y, r, n.judged ? 0.15 : 1);
+  }
+
+  // hit sparks
+  ctx.save();
+  ctx.globalCompositeOperation="lighter";
+  for(let i=RG.fx.length-1;i>=0;i--){
+    const p=RG.fx[i];
+    p.life-=p.decay;
+    if(p.life<=0){ RG.fx.splice(i,1); continue; }
+    const lg = rgLaneGeom(p.lane, 1, W, RG.lanes), cx = lg.cx;
+    if(p.ring){
+      p.r += 6*dpr;
+      ctx.strokeStyle=`rgba(${RG_HI},${p.life*0.75})`; ctx.lineWidth=2.5*dpr*p.life;
+      ctx.beginPath(); ctx.arc(cx, hitY, p.r, 0, 7); ctx.stroke();
+      continue;
+    }
+    if(p.wave){                                  // combo milestone: a wide sweep of light
+      p.r += 14*dpr;
+      ctx.strokeStyle=`rgba(${RG_HI},${p.life*0.5})`; ctx.lineWidth=3*dpr*p.life;
+      ctx.beginPath(); ctx.ellipse(W/2, hitY, p.r*1.5, p.r*0.55, 0, 0, 7); ctx.stroke();
+      continue;
+    }
+    p.px = (p.px==null ? cx : p.px) + p.vx*dpr*1.6;
+    p.py = (p.py==null ? hitY : p.py) + p.vy*dpr*1.6;
+    p.vy += 0.30;
+    ctx.fillStyle = p.white ? `rgba(${RG_HI},${p.life})` : `rgba(${RG_CY},${p.life})`;
+    const s=(3.2*p.life+1)*dpr;
+    ctx.beginPath(); ctx.arc(p.px, p.py, s/2, 0, 7); ctx.fill();
+  }
+  ctx.restore();
+  ctx.restore();   // shake
+
+  if(!RG.paused && now > RG.buf.duration + 0.4){ rgFinish(); return; }
+  RG.raf = requestAnimationFrame(rgLoop);
+}
+function rgFinish(){
+  rgStop();
+  const h=RG.hits, total=h.perfect+h.great+h.good+h.miss+h.bad || 1;
+  const acc = (h.perfect*100 + h.great*66 + h.good*33)/total;
+  const grade = acc>=95?"S":acc>=88?"A":acc>=78?"B":acc>=65?"C":acc>=50?"D":"F";
+  // remember the run against the library entry
+  if(RG.trackId){
+    rgLibGet(RG.trackId).then(rec=>{
+      if(!rec) return;
+      rec.plays = (rec.plays||0)+1;
+      if(!rec.best || RG.score > rec.best.score) rec.best = {score:RG.score, grade, acc:+acc.toFixed(1)};
+      rgLibPut(rec).then(renderRgLibrary).catch(()=>{});
+    });
+  }
+  const colour = acc>=88?"var(--gold)":acc>=65?"var(--green)":"var(--muted)";
+  $("#rgStage").classList.add("hidden");
+  const el=$("#rgResults"); el.classList.remove("hidden");
+  el.innerHTML = `<div class="rg-res">
+      <div class="rg-grade" style="color:${colour}">${grade}</div>
+      <h3>${fmt(RG.score)}</h3>
+      <div class="muted small">${escapeHtml(RG.title)} · ${acc.toFixed(1)}% · best combo ${RG.best}</div>
+      <div class="rg-tally">
+        <div><b style="color:var(--gold)">${h.perfect}</b>Perfect</div>
+        <div><b style="color:var(--green)">${h.great}</b>Great</div>
+        <div><b style="color:var(--blue)">${h.good}</b>Good</div>
+        <div><b style="color:var(--red)">${h.miss}</b>Miss</div>
+        ${h.bad?`<div><b style="color:var(--red)">${h.bad}</b>Stray</div>`:""}
+      </div>
+      <div class="row" style="justify-content:center; gap:8px">
+        <button class="rg-go" id="rgAgain" style="width:auto; padding:11px 26px; font-size:17px">↻ Again</button>
+        <button class="rg-btn" id="rgNew" style="padding:11px 20px">Another song</button>
+      </div>
+    </div>`;
+  $("#rgAgain").onclick = ()=>{ el.classList.add("hidden"); rgStart(); };
+  $("#rgNew").onclick = ()=>{ el.classList.add("hidden"); $("#rgSetup").classList.remove("hidden");
+    $("#rgSub").textContent="bring your own music"; renderRgLibrary(); };
+}
+function rgQuit(){
+  rgStop();
+  $("#rgStage").classList.add("hidden");
+  $("#rgSetup").classList.remove("hidden");
+  $("#rgSub").textContent = "bring your own music";
+}
+document.addEventListener("keydown", e=>{
+  // rebinding takes priority over everything, including playing
+  if(rgBinding!=null){
+    e.preventDefault();
+    if(e.code!=="Escape"){
+      const keys = rgKeys().slice();
+      keys.forEach((k,i)=>{ if(k===e.code && i!==rgBinding) keys[i]=null; }); // no duplicates
+      keys[rgBinding] = e.code;
+      state.rgKeys = keys.map(k=>k||"");
+      save();
+    }
+    rgBinding = null;
+    renderRgBinds(); rgSyncKeyHint();
+    return;
+  }
+  if(!RG.playing) return;
+  // Esc and Space always pause — checked before lane keys so a preset that uses
+  // them can't swallow it, and before the planner's own Esc handler sees it.
+  if(e.code==="Space" || e.code==="Escape"){ e.preventDefault(); e.stopImmediatePropagation(); rgTogglePause(); return; }
+  if(e.repeat) return;
+  const lane = rgLaneOf(e.code);
+  if(lane==null) return;
+  e.preventDefault();
+  RG.held[lane] = true;
+  rgHit(lane);
+});
+document.addEventListener("keyup", e=>{
+  const lane = rgLaneOf(e.code);
+  if(lane!=null) RG.held[lane] = false;
+});
+
+// ============ RECAP ============
+// Everything here comes from data the Scroll already collects — per-day XP from your
+// game stats, manual log entries, and the milestone record. Nothing new is fetched.
+const RECAP_RANGES = [["week","7 days"],["month","30 days"],["3mo","3 months"],["6mo","6 months"],["all","All time"]];
+function recapWindow(range){
+  const days = rangeDays(range, mergedTypesByDate());
+  return {days, from:days[0], to:days[days.length-1]};
+}
+function recapCollect(dayList){
+  const auto = state.scroll.auto || {};
+  const out = {skills:{}, totalXp:0, activeDays:0, bestDay:null, dow:[0,0,0,0,0,0,0],
+               bosses:0, clues:0, entries:0, milestones:[], streak:0, days:dayList.length};
+  const inRange = new Set(dayList);
+  let run = 0;
+  dayList.forEach(iso=>{
+    const d = auto[iso];
+    let dayXp = 0;
+    if(d){
+      for(const k in (d.skills||{})){
+        const key = reclassOf(iso,k) || skillColorKey(k);
+        const v = d.skills[k];
+        out.skills[key] = (out.skills[key]||0) + v;
+        dayXp += v;
+      }
+      for(const b in (d.bosses||{})) out.bosses += Math.max(0, d.bosses[b]);
+      out.clues += d.clues || 0;
+    }
+    out.totalXp += dayXp;
+    if(dayXp > 0){
+      out.activeDays++;
+      run++;
+      if(run > out.streak) out.streak = run;
+      out.dow[new Date(iso+"T12:00:00").getDay()] += dayXp;
+      if(!out.bestDay || dayXp > out.bestDay.xp) out.bestDay = {iso, xp:dayXp};
+    } else run = 0;
+  });
+  (state.scroll.log||[]).forEach(e=>{ if(inRange.has(e.date)) out.entries++; });
+  const ms = msDayMap();
+  Object.keys(ms).forEach(iso=>{ if(inRange.has(iso)) ms[iso].forEach(k=>out.milestones.push({key:k, iso})); });
+  return out;
+}
+// The window of the same length immediately before this one, for comparison.
+function recapPrev(dayList){
+  if(!dayList.length) return null;
+  const n = dayList.length;
+  const end = new Date(dayList[0]+"T12:00:00"); end.setDate(end.getDate()-1);
+  const days=[];
+  for(let i=n-1;i>=0;i--){ const d=new Date(end); d.setDate(d.getDate()-i); days.push(isoDate(d)); }
+  return recapCollect(days);
+}
+// A plain description of how the time was spread — no jokes, just the shape of it.
+function recapShape(skills, totalXp){
+  const ranked = Object.entries(skills).sort((a,b)=>b[1]-a[1]);
+  if(!ranked.length || !totalXp) return "Nothing recorded in this stretch.";
+  const share = n => ranked.slice(0,n).reduce((a,r)=>a+r[1],0)/totalXp;
+  if(share(1) >= 0.55) return `Almost all of it went into ${ranked[0][0]}.`;
+  if(share(3) >= 0.80) return `Mostly ${ranked.slice(0,3).map(r=>r[0]).join(", ")}.`;
+  return `Spread across ${ranked.length} skills, led by ${ranked[0][0]}.`;
+}
+function recapDelta(now, prev, key){
+  if(!prev || !prev[key]) return "";
+  const a = now[key], b = prev[key];
+  if(!b) return "";
+  const pct = Math.round((a-b)/b*100);
+  if(Math.abs(pct) < 5) return `<span class="rc-flat">about the same as before</span>`;
+  return pct > 0 ? `<span class="rc-up">▲ ${pct}% on the previous ${now.days} days</span>`
+                 : `<span class="rc-down">▼ ${Math.abs(pct)}% on the previous ${now.days} days</span>`;
+}
+function renderRecap(){
+  const el = $("#recapBody"); if(!el) return;
+  const range = state.recapRange || "month";
+  const seg = $("#recapSeg");
+  if(seg) seg.innerHTML = RECAP_RANGES.map(([k,label])=>
+    `<button class="${k===range?"on":""}" data-recaprange="${k}">${label}</button>`).join("");
+  $$("#recapSeg [data-recaprange]").forEach(b=>b.onclick=()=>{
+    state.recapRange = b.dataset.recaprange; save(); renderRecap();
+  });
+
+  const {days, from, to} = recapWindow(range);
+  const d = recapCollect(days);
+  const prev = range==="all" ? null : recapPrev(days);
+  $("#recapSub").textContent = `${fmtDay(from)} – ${fmtDay(to)}`;
+
+  if(!d.totalXp && !d.entries){
+    el.innerHTML = `<div class="empty">Nothing recorded in this window yet. Play a bit and check back.</div>`;
+    return;
+  }
+  const ranked = Object.entries(d.skills).sort((a,b)=>b[1]-a[1]);
+  const top = ranked[0];
+  const maxXp = top ? top[1] : 1;
+  const DOW = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const bestDow = d.dow.indexOf(Math.max(...d.dow));
+
+  el.innerHTML = `
+    <div class="rc-hero">
+      <div class="rc-big">${xpText(d.totalXp)}</div>
+      <div class="rc-cap">experience gained</div>
+      <div class="rc-delta">${recapDelta(d, prev, "totalXp")}</div>
+    </div>
+
+    <div class="rc-cards">
+      <div class="rc-card"><div class="k">Days played</div><div class="v">${d.activeDays}<span class="of">/${d.days}</span></div></div>
+      <div class="rc-card"><div class="k">Longest streak</div><div class="v">${d.streak}<span class="of"> days</span></div></div>
+      ${d.bestDay?`<div class="rc-card"><div class="k">Biggest day</div><div class="v">${xpText(d.bestDay.xp)}</div><div class="sub">${fmtDay(d.bestDay.iso)}</div></div>`:""}
+      ${(d.days>14 && Math.max(...d.dow)>0)?`<div class="rc-card"><div class="k">Best day of week</div><div class="v" style="font-size:20px">${DOW[bestDow]}</div></div>`:""}
+      ${d.bosses?`<div class="rc-card"><div class="k">Boss kills</div><div class="v">${fmt(d.bosses)}</div></div>`:""}
+      ${d.clues?`<div class="rc-card"><div class="k">Clues done</div><div class="v">${fmt(d.clues)}</div></div>`:""}
+      ${d.entries?`<div class="rc-card"><div class="k">Journal entries</div><div class="v">${d.entries}</div></div>`:""}
+    </div>
+
+    ${ranked.length?`
+    <div class="section-title center" style="margin-top:18px"><h3>Where the time went</h3></div>
+    <p class="muted small" style="text-align:center;margin:0 0 10px">${escapeHtml(recapShape(d.skills, d.totalXp))}</p>
+    <div class="rc-bars">
+      ${ranked.map(([k,v])=>`
+        <div class="rc-bar">
+          <span class="rc-name">${escapeHtml(k)}</span>
+          <span class="rc-track"><i style="width:${Math.max(2,(v/maxXp)*100)}%; background:${SKILL_COLOR[k]||SKILL_MUTED}"></i></span>
+          <span class="rc-val">${xpText(v)}</span>
+          <span class="rc-pct">${Math.round(v/d.totalXp*100)}%</span>
+        </div>`).join("")}
+    </div>`:""}
+
+    ${d.milestones.length?`
+    <div class="section-title center" style="margin-top:18px"><h3>Milestones</h3></div>
+    <div class="rc-miles">
+      ${d.milestones.sort((a,b)=>a.iso<b.iso?-1:1).map(m=>{ const i=milestoneInfo(m.key);
+        return `<div class="rc-mile"><span>${i.tier==="nn"?"🎆":i.icon}</span>
+          <b>${escapeHtml(i.title)}</b><span class="muted small">${fmtDay(m.iso)}</span></div>`; }).join("")}
+    </div>`:""}
+  `;
 }
 
 // ---- update check (GitHub Releases) ----
@@ -4741,6 +6272,7 @@ function renderBackups(){
 }
 function openSettings(){
   renderFontSeg(); renderNumSeg(); renderUpdSetting(); renderBackups();
+  renderDevSection(); devWireSettings();
   const bb = $("#bugBtn");
   if(bb){
     const body = encodeURIComponent("**What happened**\n\n\n**What I expected**\n\n\n---\nversion: "+APP_VERSION+"\nbrowser: "+navigator.userAgent);
@@ -4920,8 +6452,18 @@ $("#themeBtn").onclick = ()=>{
 };
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.2";
+const APP_VERSION = "1.3";
 const PATCH_NOTES = [
+  {v:"1.3", date:"August 8, 2026", title:"Milestones, Recap, and a rhythm game", notes:[
+    "Milestones are detected automatically from your stats — every 100 total levels, combat milestones, base levels, and every 99. Crossing one shows a celebration next time you open the app, and the day is marked on the Scroll. Existing milestones in your history are found and marked once, without a celebration.",
+    "Added Recap: your activity summarised over a week, month, three months, six months or all time. Total experience with a comparison against the previous period, days played, longest streak, biggest day, a ranked breakdown of where the time went, and the milestones you hit.",
+    "Added Dance Dance RuneScape. Load your own music and the game charts it by listening to the track — no beatmap needed. Four difficulties set by note density, adjustable scroll speed and sync offset, rebindable keys, pause and restart, and a library that remembers your songs and best scores.",
+    "The whole app now uses the width of your window instead of a fixed column. Home lays out as a dashboard, with skills taking the space they deserve.",
+    "Fixed the activity heatmap showing at most three skills per day and its scrollbar flickering.",
+    "Fixed quest data not loading until you opened the planner. It now loads at startup and refreshes when it's out of date.",
+    "Priorities are named automatically from whatever you choose to track.",
+    "Added a developer mode for previewing celebrations, reachable by tapping the version number.",
+  ]},
   {v:"1.2", date:"August 7, 2026", title:"Backups, a wider planner, and alching", notes:[
     "The app now keeps eight rolling snapshots of your data — taken daily, and before anything risky like importing a backup or deleting a profile. Restore any of them from Settings; restoring is itself undoable. The quest database is excluded because it re-downloads itself.",
     "A failed save no longer passes silently. If storage is full the app says so instead of quietly not persisting your data.",
@@ -5014,7 +6556,11 @@ const PATCH_NOTES = [
 ];
 function renderPatchNotes(){
   const el = $("#patchList"); if(!el) return;
-  $("#verBadge") && ($("#verBadge").textContent = "v"+APP_VERSION);
+  const vb = $("#verBadge");
+  if(vb){
+    vb.textContent = "v"+APP_VERSION;
+    if(!vb.dataset.wired){ vb.dataset.wired="1"; vb.style.cursor="default"; vb.onclick = devTap; }
+  }
   $("#pnSub").textContent = "current: v"+APP_VERSION;
   el.innerHTML = PATCH_NOTES.map(p=>`
     <div class="pn-block">
@@ -5025,7 +6571,7 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"Quest planner", clog:"Collection log", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"Quest planner", clog:"Collection log", recap:"Recap", rhythm:"Dance Dance RuneScape", patch:"Patch notes"};
 function switchView(name){
   if(name==="stats") name="home"; // legacy saved view
   if(!VIEW_TITLES[name]) name="home";
@@ -5038,6 +6584,13 @@ function switchView(name){
   // heatmaps size themselves to their container — refit when their view becomes visible
   if(name==="home" || name==="scroll") renderHeatmap();
   if(name==="quests") qpFitTree();
+  if(name==="recap") renderRecap();
+  if(name==="rhythm"){
+    const sel=$("#rgPreset"); if(sel && state.rgPreset) sel.value = state.rgPreset;
+    const off=$("#rgOffset"); if(off && state.rgOffset!=null) off.value = String(state.rgOffset);
+    const dsel=$("#rgDiff"); if(dsel && state.rgDiff) dsel.value = state.rgDiff;
+    renderRgBinds(); rgSyncKeyHint(); renderRgLibrary(); rgWireDrop();
+  } else if(RG.playing) rgQuit();   // navigating away stops the music
 }
 $$(".navitem").forEach(n=>n.onclick=()=>switchView(n.dataset.view));
 function openSidebar(){ $("#sidebar").classList.add("open"); $("#sbBackdrop").classList.remove("hidden"); }
@@ -5093,7 +6646,19 @@ $("#heatHomeOpen").onclick = ()=>switchView("scroll");
 $("#glanceManage").onclick = ()=>switchView("scroll");
 $("#addPrioBtn").onclick = addPriority;
 $("#pLabel").addEventListener("keydown",e=>{ if(e.key==="Enter") addPriority(); });
-$("#pKind").onchange = populatePrioMetric;
+// Picking what to track names the priority for you — you can still type over it.
+// Without this, choosing Skill → Hunter and hitting Add just scolds you for no name.
+function prioAutoLabel(){
+  const el = $("#pLabel");
+  if(!el || (el.value.trim() && !el.dataset.auto)) return; // never clobber something typed
+  const kind = $("#pKind").value, m = $("#pMetric").value;
+  if(kind==="none" || !m){ if(el.dataset.auto){ el.value=""; delete el.dataset.auto; } return; }
+  el.value = kind==="tag" ? m : nice(m);
+  el.dataset.auto = "1";
+}
+$("#pLabel").addEventListener("input", ()=>{ delete $("#pLabel").dataset.auto; });
+$("#pKind").onchange = ()=>{ populatePrioMetric(); prioAutoLabel(); };
+$("#pMetric").onchange = prioAutoLabel;
 $("#pWeight").oninput = ()=>{ $("#pWeightVal").textContent = $("#pWeight").value; };
 $("#softDays").onchange = savePrioSettings;
 $("#hardDays").onchange = savePrioSettings;
@@ -5114,6 +6679,21 @@ if(state.username){
 }
 setupRefresh();
 backupDaily();               // a restore point for today, before anything can go wrong
+// Milestones: first run backfills history quietly (a summary, not a confetti storm);
+// after that, anything newly crossed gets its celebration.
+setTimeout(async ()=>{
+  try{
+    const fresh = await scanMilestones();
+    renderHeatmap();
+    if(!fresh.length) return;
+    if(fresh[0].firstRun){
+      const dated = fresh.filter(f=>f.iso);
+      if(dated.length) toast(`Found ${dated.length} milestone${dated.length>1?"s":""} in your history — marked on the Scroll`);
+    } else {
+      showCelebration(fresh);
+    }
+  }catch(e){}
+}, 1500);
 setTimeout(qdbEnsure, 800);  // quest data self-loads; slight delay so character stats go first
 </script>
 </body>

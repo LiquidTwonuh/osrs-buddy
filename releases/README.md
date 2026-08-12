@@ -9,6 +9,7 @@ a copy of your data — for that, use ⇓ Backup in Settings.
 
 | File | Released |
 |---|---|
+| `OSRS-Buddy-v1.3.html` | 8 Aug 2026 — auto-milestones, Recap, Dance Dance RuneScape |
 | `OSRS-Buddy-v1.2.html` | 7 Aug 2026 — automatic backups, wider planner, High Alch |
 | `OSRS-Buddy-v1.1.html` | 7 Aug 2026 — profiles, quest reward detail |
 | `OSRS-Buddy-v1.0.html` | 6 Aug 2026 — quest planner, renumbered 1.0 |
