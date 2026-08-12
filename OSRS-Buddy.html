@@ -4601,11 +4601,12 @@ function rgLaneGeom(lane, p, W, lanes){
   return {x:lane*w, w, cx:lane*w + w/2, s:1};
 }
 // One clean disc: soft glow, cyan body, bright rim, white highlight. That's it.
-function rgNote(ctx, cx, cy, r, alpha){
+// shadowBlur is by far the most expensive thing per frame, so only the notes near
+// the receptors get it — the ones far up the lane read fine without.
+function rgNote(ctx, cx, cy, r, alpha, glow){
   ctx.save();
   ctx.globalAlpha = alpha;
-  ctx.shadowColor = `rgba(${RG_CY},0.9)`;
-  ctx.shadowBlur = r*0.9;
+  if(glow){ ctx.shadowColor = `rgba(${RG_CY},0.9)`; ctx.shadowBlur = r*0.9; }
   const g = ctx.createRadialGradient(cx, cy-r*0.35, r*0.15, cx, cy, r);
   g.addColorStop(0,   `rgba(${RG_HI},1)`);
   g.addColorStop(0.55,`rgba(${RG_CY},0.95)`);
@@ -4757,6 +4758,7 @@ function rgHit(lane){
 }
 // Sparks off the receptor — the physical "thunk" of a hit. Perfect throws the most.
 function rgBurst(lane, grade){
+  if(RG.fx.length > 260) return;      // the frame loop is behind; don't pile on
   const n = grade==="perfect" ? 18 : grade==="great" ? 12 : 7;
   const spread = grade==="perfect" ? 1 : 0.7;
   for(let i=0;i<n;i++){
@@ -4776,6 +4778,17 @@ function rgHud(){
   $("#rgAcc").textContent = acc.toFixed(1)+"%";
 }
 function rgLoop(){
+  try{ rgDraw(); }
+  catch(err){
+    // A throw inside the frame loop would otherwise wedge the game silently.
+    rgStop();
+    rgSetStatus("The game hit a problem and stopped — your library is fine.");
+    $("#rgStage").classList.add("hidden");
+    $("#rgSetup").classList.remove("hidden");
+    console.error("[DDR] frame error", err);
+  }
+}
+function rgDraw(){
   const cv=$("#rgCanvas"); if(!cv || !RG.playing) return;
   const ctx=cv.getContext("2d"), W=cv.width, H=cv.height;
   const dpr=Math.min(devicePixelRatio||1,2);
@@ -4860,10 +4873,13 @@ function rgLoop(){
     const g = rgLaneGeom(n.lane, 1, W, RG.lanes);
     const y = hitY - (dt/RG.approach)*hitY;
     const r = Math.min(g.w*0.28, 26*dpr);
-    rgNote(ctx, g.cx, y, r, n.judged ? 0.15 : 1);
+    rgNote(ctx, g.cx, y, r, n.judged ? 0.15 : 1, dt < RG.approach*0.55);
   }
 
-  // hit sparks
+  // hit sparks. Hard cap: if the loop ever stalls (background tab, a slow frame)
+  // particles keep arriving from key presses without being drained, and an unbounded
+  // list would take the renderer down with it.
+  if(RG.fx.length > 260) RG.fx.splice(0, RG.fx.length-260);
   ctx.save();
   ctx.globalCompositeOperation="lighter";
   for(let i=RG.fx.length-1;i>=0;i--){
@@ -6450,9 +6466,13 @@ $("#themeBtn").onclick = ()=>{
 };
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.3.1";
+const APP_VERSION = "1.3.2";
 const PATCH_NOTES = [
-  {v:"1.3.1", date:"August 12, 2026", title:"Home layout fix", notes:[
+  {v:"1.3.2", date:"August 12, 2026", title:"Rhythm game stability", notes:[
+    "Fixed the app closing itself partway through a song. Hit effects had no upper limit, so if the frame rate dipped they accumulated faster than they cleared — each frame then took longer to draw, which made the next dip worse. Effects are now capped, and notes far up the lane skip their glow, which is the most expensive part of drawing a frame.",
+    "An error while drawing a frame now stops the game cleanly and returns you to the song list, rather than freezing it.",
+  ]},
+  {v:"1.3.1", date:"August 12, 2026", title:"Home layout", notes:[
     "Reworked the Home layout. Skills now takes the full width as the main block, with clue scrolls and boss kill counts paired underneath — previously they sat in a side column that left a tall empty gap on a large window.",
   ]},
   {v:"1.3", date:"August 8, 2026", title:"Milestones, Recap, and a rhythm game", notes:[
