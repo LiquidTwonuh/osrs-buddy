@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "OSRS Buddy",
   "mainBinaryName": "OSRS Buddy",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "identifier": "com.joshf.osrsbuddy",
   "build": {
     "frontendDist": "../dist",
