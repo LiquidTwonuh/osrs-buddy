@@ -50,6 +50,31 @@
     --cellbg:#121218; --code:#cabfe6; --ph:#6f6b80; --xp:#837e96; --catbd:#2a2a36;
     --dotdim:#4c4468; --swempty:#363248; --glow:rgba(185,167,232,.15);
   }
+  /* Dark — near-black, no colour cast. Surfaces are only just distinguishable from
+     the background; enough to see a panel edge, not enough to light the room. */
+  body[data-theme="dark"]{
+    --bg:#050505; --bg2:#0a0a0a; --panel:#0d0d0d; --panel2:#151515; --border:#242424;
+    --gold:#e0c068; --gold-dim:#9c8446; --gold2:#c9ab5c; --gold3:#6f5d34;
+    --text:#e8e8e8; --muted:#8f8f8f;
+    --inset:#000000; --active:#242424; --btnlo:#111; --btnhov1:#2a2a2a; --btnhov2:#1a1a1a;
+    --cellbg:#0a0a0a; --code:#d8cfa8; --ph:#5c5c5c; --xp:#7d7d7d; --catbd:#1e1e1e;
+    --dotdim:#454545; --swempty:#242424; --glow:rgba(224,192,104,.12);
+  }
+  /* Pitch black — every surface is #000, so on OLED those pixels are switched off and
+     the screen genuinely looks dark. Only hairline borders and the text are lit. */
+  body[data-theme="black"]{
+    --bg:#000000; --bg2:#000000; --panel:#000000; --panel2:#000000; --border:#1c1c1c;
+    --gold:#e6c35c; --gold-dim:#8f7739; --gold2:#c9a642; --gold3:#5f5227;
+    --text:#ededed; --muted:#8a8a8a;
+    --inset:#000000; --active:#1a1a1a; --btnlo:#000; --btnhov1:#1f1f1f; --btnhov2:#121212;
+    --cellbg:#000000; --code:#d9c98f; --ph:#555; --xp:#767676; --catbd:#171717;
+    --dotdim:#3d3d3d; --swempty:#1c1c1c; --glow:rgba(230,195,92,.10);
+    --shadow:none;
+  }
+  /* Panels would otherwise vanish entirely against a black page — a hairline keeps
+     structure readable without adding brightness. */
+  body[data-theme="black"] .panel{box-shadow:none; border-color:#1c1c1c}
+  body[data-theme="black"] .sidebar{border-right:1px solid #1c1c1c}
   body[data-theme="ember"]{
     --bg:#1a1210; --bg2:#241715; --panel:#251815; --panel2:#31201b; --border:#553527;
     --gold:#f0925c; --gold-dim:#c06a3e; --gold2:#d97b47; --gold3:#8f4a28;
@@ -86,6 +111,10 @@
   .navitem:hover{background:var(--panel2); color:var(--text); border-color:transparent}
   .navitem.active{background:var(--active); color:var(--gold); box-shadow:inset 3px 0 0 var(--gold)}
   .navitem .ni-ic{font-size:16px; width:20px; text-align:center; flex:0 0 auto}
+  /* group labels — the list passed the point where a flat run of items reads well */
+  .nav-sec{font-size:10.5px; font-weight:bold; text-transform:uppercase; letter-spacing:.13em;
+    color:var(--gold2); padding:15px 12px 6px; user-select:none}
+  .nav-sec:first-child{padding-top:2px}
   .side-char{margin-top:auto}
   .side-mini{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:9px 10px; display:flex; align-items:center; gap:9px}
   .side-mini .cb{width:32px; height:32px; border-radius:50%; background:var(--active); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:12px; flex:0 0 auto}
@@ -246,6 +275,9 @@
   .qp-step .n{color:var(--muted); font-size:11px; min-width:20px}
   .qp-step.ready .nm{color:var(--gold); font-weight:bold}
   /* restore points */
+  .st-bar{height:8px; border-radius:5px; background:var(--inset); overflow:hidden; border:1px solid var(--border)}
+  .st-bar i{display:block; height:100%; background:var(--green); transition:width .3s}
+  .st-bar i.warn{background:#e6b23c} .st-bar i.full{background:var(--red,#d46a5a)}
   .bk-list{display:flex; flex-direction:column; gap:4px}
   .bk-row{display:flex; align-items:center; gap:8px; font-size:12px; padding:5px 8px;
     background:var(--panel2); border:1px solid var(--border); border-radius:7px}
@@ -286,6 +318,22 @@
   .sk-week{font-size:13px}
   .sk-week b{color:var(--green)}
   .sk-acts{display:flex; gap:8px; flex-wrap:wrap; margin-top:4px}
+  /* Arcade — a shelf of titles you scroll through, console-style. Adding a game is
+     one entry in ARCADE_GAMES; the layout doesn't change. */
+  .arc-shelf{display:flex; gap:18px; overflow-x:auto; padding:14px 4px 20px; scroll-snap-type:x mandatory}
+  .arc-card{flex:0 0 260px; scroll-snap-align:center; cursor:pointer; border:0; padding:0;
+    background:none; font-family:inherit; text-align:left; transition:transform .18s}
+  .arc-card:hover{transform:translateY(-6px)}
+  .arc-art{position:relative; height:190px; border-radius:16px; overflow:hidden;
+    display:flex; align-items:center; justify-content:center; font-size:74px;
+    border:1px solid rgba(255,255,255,.10); box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  .arc-card:hover .arc-art{border-color:rgba(255,255,255,.28); box-shadow:0 14px 40px rgba(0,0,0,.6)}
+  .arc-art::after{content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px); opacity:.5}
+  .arc-title{font-family:var(--font-display); font-size:17px; font-weight:700; margin-top:11px; color:var(--text)}
+  .arc-meta{font-size:12px; color:var(--muted); margin-top:2px}
+  .arc-soon .arc-art{background:var(--panel2); border-style:dashed; font-size:40px; color:var(--muted); box-shadow:none}
+  .arc-soon{cursor:default} .arc-soon:hover{transform:none}
   /* Recap */
   .rc-hero{text-align:center; padding:14px 0 6px}
   .rc-big{font-family:var(--font-display); font-size:clamp(38px,7vw,64px); font-weight:700; color:var(--gold); line-height:1}
@@ -602,8 +650,8 @@
     .sb-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:39}
   }
 
-  .panel{background:var(--panel); border:1px solid var(--border); border-radius:8px;
-    box-shadow:var(--shadow); padding:16px; margin-top:16px}
+  .panel{background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    box-shadow:var(--shadow); padding:18px; margin-top:18px}
   .row{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
 
   input,select,button,textarea{font-family:inherit; font-size:14px}
@@ -645,6 +693,7 @@
      larger share and its tiles grow to fill it. Clues and bosses are short blocks —
      an even split left the right half mostly empty on a big screen. */
   .home-cols{display:grid; grid-template-columns:1fr; gap:0}
+  .home-row2{margin-top:18px}
   @media(min-width:1180px){
     /* Skills is 8 rows tall; clues and bosses are half a dozen small tiles. Beside
        each other the columns can never balance, which left a tall empty band. So
@@ -660,7 +709,11 @@
     .hc-side .clues-row{flex-wrap:wrap; justify-content:center}
     /* Alerts and the to-do strip are both short — side by side they fill the row
        instead of stacking into two half-empty bands. */
-    .home-row2{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start}
+    /* stretch, not start — two panels of different heights sitting on a shared
+       baseline read as a row; ragged bottoms read as a mistake */
+    .home-row2{display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:stretch}
+    /* the children lose their own top margin so they align with each other — the
+       container has to carry the gap from the panel above, or they sit flush against it */
     .home-row2 > .panel{margin-top:0}
   }
   @media(max-width:460px){ .skills-grid{grid-template-columns:repeat(2,1fr)} }
@@ -714,10 +767,35 @@
   .substep{display:flex; align-items:center; gap:8px; padding:2px 0}
   .substep .chk{font-size:14px}
   /* Home to-do overview: expandable step dropdowns */
-  .home-substeps{margin:2px 0 10px 34px}
+  /* Home to-do rows: tick the goal or its steps without leaving the page */
+  .hg-item{margin-top:7px; border:1px solid var(--border); border-radius:10px;
+    background:var(--panel2); overflow:hidden; transition:border-color .15s}
+  .hg-item:hover{border-color:var(--gold-dim)}
+  .hg-item.open{border-color:var(--gold-dim)}
+  .hg-item > .hg-row{margin-top:0; border:0; border-radius:0; background:none; padding:12px 14px; gap:13px}
+  .hg-ic{flex:0 0 auto; width:26px; height:26px; display:inline-flex; align-items:center;
+    justify-content:center; font-size:15px; border-radius:7px; background:var(--inset)}
+  .hg-sub{flex:0 0 auto; font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums;
+    min-width:44px; text-align:right; margin-right:2px}
+  .hg-tick{flex:0 0 auto; width:26px; height:26px; border-radius:7px; cursor:pointer;
+    border:1px solid var(--border); background:var(--inset); color:var(--muted);
+    font-size:13px; line-height:1; transition:all .15s}
+  .hg-tick:hover{color:var(--green); border-color:#3f6b34; background:var(--green-bg)}
+  .hg-tick.nudge{color:var(--green); border-color:#3f6b34; animation:tickPulse 2.2s ease-in-out infinite}
+  @keyframes tickPulse{0%,100%{box-shadow:0 0 0 0 rgba(111,191,91,.35)} 50%{box-shadow:0 0 0 5px rgba(111,191,91,0)}}
+  .hg-caret{flex:0 0 auto; width:24px; height:26px; border:0; background:none; cursor:pointer;
+    color:var(--muted); font-size:11px}
+  .hg-caret:hover{color:var(--gold)}
+  .home-substeps{padding:2px 12px 10px 46px; border-top:1px solid var(--border); background:var(--inset)}
+  .hg-step{display:flex; align-items:center; gap:9px; padding:6px 0; font-size:13px; cursor:pointer}
+  .hg-step + .hg-step{border-top:1px solid rgba(255,255,255,.04)}
+  .hg-step.done span{text-decoration:line-through; color:var(--muted)}
+  .hg-ready{font-size:11.5px; color:var(--green); padding:6px 0 2px}
+  .bar.ready i{background:var(--green)}
+  .ready-tag{color:var(--green)}
+  .check-badge.nudge{animation:tickPulse 2.2s ease-in-out infinite; border-radius:6px}
   .hg-row.expandable{cursor:pointer; border-radius:6px}
   .hg-row.expandable:hover{background:var(--btnlo)}
-  .hg-caret{flex:0 0 auto; font-size:11px; color:var(--muted); margin-left:4px}
   .substep.done span{text-decoration:line-through; color:var(--muted)}
   .addstep-row{margin-top:6px}
   .addstep{font-size:13px; padding:5px 8px}
@@ -907,17 +985,19 @@
   <aside class="sidebar" id="sidebar">
     <div class="brand"><span>⚔️</span> OSRS Buddy <span class="ver" id="verBadge"></span></div>
     <nav class="nav">
+      <div class="nav-sec">Character</div>
       <button class="navitem active" data-view="home"><span class="ni-ic">🏠</span>Home</button>
       <button class="navitem" data-view="scroll"><span class="ni-ic">📜</span>Scroll</button>
+      <div class="nav-sec">Planning</div>
       <button class="navitem" data-view="goals"><span class="ni-ic">✅</span>Goals</button>
-      <button class="navitem" data-view="notes"><span class="ni-ic">📝</span>Notes</button>
       <button class="navitem" data-view="start"><span class="ni-ic">🗺️</span>Roadmap</button>
-      <button class="navitem" data-view="ask"><span class="ni-ic">💬</span>Ask Bud</button>
       <button class="navitem" data-view="quests"><span class="ni-ic">🧭</span>Quest planner</button>
+      <button class="navitem" data-view="notes"><span class="ni-ic">📝</span>Notes</button>
+      <div class="nav-sec">Tools</div>
+      <button class="navitem" data-view="ask"><span class="ni-ic">💬</span>Ask Bud</button>
       <button class="navitem" data-view="clog"><span class="ni-ic">🗂️</span>Collection log</button>
-      <button class="navitem" data-view="recap"><span class="ni-ic">📊</span>Recap</button>
-      <button class="navitem" data-view="rhythm"><span class="ni-ic">🎵</span>DDR</button>
-      <button class="navitem" data-view="patch"><span class="ni-ic">📋</span>Patch notes</button>
+      <div class="nav-sec">Games</div>
+      <button class="navitem" data-view="arcade"><span class="ni-ic">🕹️</span>Game corner</button>
     </nav>
     <div class="side-char" id="sideChar">
       <div class="side-mini">
@@ -1010,6 +1090,16 @@
         </div>
         <div class="small muted" id="devMsInfo" style="margin-top:6px"></div>
         <button class="ghost small" id="devOff" style="margin-top:10px">Turn off developer mode</button>
+      </div>
+      <div class="set-sec">
+        <div class="set-h">About</div>
+        <button class="ghost small" id="openPatch">📋 What's new</button>
+        <p class="small muted" style="margin:6px 0 0">Patch notes for this and every previous version.</p>
+      </div>
+      <div class="set-sec">
+        <div class="set-h">Storage</div>
+        <div class="st-bar"><i id="stBar"></i></div>
+        <div class="small muted" id="stText" style="margin-top:5px"></div>
       </div>
       <div class="set-sec">
         <div class="set-h">Restore</div>
@@ -1111,6 +1201,23 @@
         <p class="goals-blurb">Your daily journal. Log what you did each session — the heatmap builds itself, and your priorities stay honest.</p>
         <span class="streak-pill hidden" id="scrollStreak"></span>
       </div>
+      <div class="seg" id="scrollModeSeg" style="justify-content:center; margin-top:10px">
+        <button class="on" data-scrollmode="journal">📜 Journal</button>
+        <button data-scrollmode="recap">📊 Recap</button>
+      </div>
+      </div>
+
+      <!-- Recap reads the Scroll's own data, so it lives here as a second view of it -->
+      <div id="scrollRecap" class="hidden">
+        <div class="panel">
+          <div class="section-title center" style="margin-top:0"><h3>📊 Recap</h3><span class="small muted" id="recapSub"></span></div>
+          <div class="seg" id="recapSeg" style="justify-content:center"></div>
+          <div id="recapBody"></div>
+        </div>
+      </div>
+
+      <div id="scrollJournal">
+      <div class="panel">
       <div class="composer">
         <div class="row">
           <input type="text" id="logText" class="grow" placeholder="What did you do today?" style="min-width:220px">
@@ -1200,6 +1307,7 @@
     <div class="panel">
       <div class="section-title center"><h3>Log</h3><span class="small muted" id="logCount"></span></div>
       <div id="logList"></div>
+    </div>
     </div>
   </div>
 
@@ -1353,11 +1461,10 @@
   </div>
 
   <!-- VIEW: PATCH NOTES -->
-  <div class="view hidden" id="view-recap">
+  <div class="view hidden" id="view-arcade">
     <div class="panel">
-      <div class="section-title center" style="margin-top:0"><h3>📊 Recap</h3><span class="small muted" id="recapSub"></span></div>
-      <div class="seg" id="recapSeg" style="justify-content:center"></div>
-      <div id="recapBody"></div>
+      <div class="section-title center" style="margin-top:0"><h3>🕹️ Game corner</h3><span class="small muted" id="arcSub"></span></div>
+      <div class="arc-shelf" id="arcShelf"></div>
     </div>
   </div>
 
@@ -1521,41 +1628,130 @@ let refreshTimer = null;
 function load(){
   try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }catch(e){ return {}; }
 }
-// A silent save failure used to mean data quietly stopped persisting. Say so instead.
+// A silent save failure used to mean data quietly stopped persisting. Say so instead —
+// and before giving up, drop the things we can always rebuild.
 let saveFailed = false;
 function save(){
   try{
     localStorage.setItem(LS_KEY, JSON.stringify(state));
     saveFailed = false;
-  }catch(e){
-    if(!saveFailed){
-      saveFailed = true;
-      try{ toast("Couldn't save — storage may be full. Export a backup from Settings.", true); }catch(_){}
-    }
+    return;
+  }catch(e){}
+  // Out of room. The quest database and wiki cache are ~90% of the payload and both
+  // re-download themselves, so shedding them beats losing a single log entry.
+  try{
+    const db = state.questDB, wc = state.wikiCache;
+    delete state.questDB; delete state.wikiCache;
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    saveFailed = false;
+    toast("Storage was full — cleared the quest cache to make room. It'll reload itself.", true);
+    return;
+  }catch(e2){}
+  if(!saveFailed){
+    saveFailed = true;
+    try{ toast("Couldn't save — storage is full. Export a backup from Settings.", true); }catch(_){}
   }
+}
+// Bud caches every wiki page he reads. Useful, but it only ever grew.
+const WIKI_CACHE_MAX = 120;
+function pruneWikiCache(){
+  const c = state.wikiCache; if(!c) return;
+  const keys = Object.keys(c);
+  if(keys.length <= WIKI_CACHE_MAX) return;
+  keys.map(k=>[k, c[k] && c[k].ts || 0])
+      .sort((a,b)=>a[1]-b[1])
+      .slice(0, keys.length - WIKI_CACHE_MAX)
+      .forEach(([k])=>delete c[k]);
+}
+// How much room the app is actually using, for Settings.
+function storageReport(){
+  let total = 0;
+  const rows = {};
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i), v = localStorage.getItem(k) || "";
+      rows[k] = v.length; total += v.length;
+    }
+  }catch(e){}
+  const s = state || {};
+  const part = k => { try{ return s[k]===undefined ? 0 : JSON.stringify(s[k]).length; }catch(e){ return 0; } };
+  return {
+    total,
+    quota: 5*1024*1024,
+    pct: Math.min(100, total/(5*1024*1024)*100),
+    questDB: part("questDB"),
+    wikiCache: part("wikiCache"),
+    scroll: part("scroll"),
+    backups: 0,                       // snapshots live in IndexedDB now, not here
+    profiles: (rows[PROF_KEY]||0),
+  };
 }
 
 // ============ AUTOMATIC BACKUPS ============
 // Rolling local snapshots so a bad import, a mis-click, or a corrupted write is
 // recoverable. Only irreplaceable data is kept — the quest database and wiki cache
 // are ~96% of the bytes and re-download themselves, so they're excluded.
-const BACKUP_KEY = "osrs_todo_backups_v1";
+const BACKUP_KEY = "osrs_todo_backups_v1";   // legacy home; migrated out on first run
 const BACKUP_KEEP = 8;
 const BACKUP_SKIP = ["questDB","wikiCache","updCheck"];
-function backupList(){ try{ return JSON.parse(localStorage.getItem(BACKUP_KEY))||[]; }catch(e){ return []; } }
-function backupWrite(list){
-  // if space is tight, drop the oldest snapshots rather than fail
-  for(let n=list.length; n>0; n--){
-    try{ localStorage.setItem(BACKUP_KEY, JSON.stringify(list.slice(0,n))); return true; }catch(e){}
-  }
-  return false;
+// Snapshots live in IndexedDB, not localStorage. Keeping eight copies of your data in
+// a 5MB bucket meant the backup system was the thing that would eventually fill it —
+// journal history alone costs ~86KB/year, so the data is fine for decades; nine copies
+// of it are not. IndexedDB has gigabytes.
+const BK_DB = "osrsbuddy-backups", BK_STORE = "snapshots";
+let bkCache = null;                          // in-memory mirror so reads stay instant
+function bkIDB(){
+  return new Promise((res, rej)=>{
+    const r = indexedDB.open(BK_DB, 1);
+    r.onupgradeneeded = ()=>{ const db=r.result;
+      if(!db.objectStoreNames.contains(BK_STORE)) db.createObjectStore(BK_STORE, {keyPath:"ts"}); };
+    r.onsuccess = ()=>res(r.result);
+    r.onerror = ()=>rej(r.error);
+  });
 }
-function snapshotNow(reason){
+async function bkLoad(){
+  if(bkCache) return bkCache;
+  let list = [];
+  try{
+    const db = await bkIDB();
+    list = await new Promise(res=>{
+      const out=[], cur = db.transaction(BK_STORE).objectStore(BK_STORE).openCursor();
+      cur.onsuccess = e=>{ const c=e.target.result; if(c){ out.push(c.value); c.continue(); } else res(out); };
+      cur.onerror = ()=>res([]);
+    });
+  }catch(e){}
+  // one-time migration of anything still sitting in localStorage
+  try{
+    const old = JSON.parse(localStorage.getItem(BACKUP_KEY) || "[]");
+    if(old.length){
+      for(const b of old) if(!list.some(x=>x.ts===b.ts)) list.push(b);
+      await bkSave(list.sort((a,b)=>b.ts-a.ts).slice(0, BACKUP_KEEP));
+      localStorage.removeItem(BACKUP_KEY);
+    }
+  }catch(e){}
+  bkCache = list.sort((a,b)=>b.ts-a.ts);
+  return bkCache;
+}
+async function bkSave(list){
+  bkCache = list.slice(0, BACKUP_KEEP).sort((a,b)=>b.ts-a.ts);
+  try{
+    const db = await bkIDB();
+    await new Promise((res,rej)=>{
+      const tx = db.transaction(BK_STORE,"readwrite"), st = tx.objectStore(BK_STORE);
+      st.clear();
+      bkCache.forEach(b=>st.put(b));
+      tx.oncomplete = res; tx.onerror = ()=>rej(tx.error);
+    });
+    return true;
+  }catch(e){ return false; }
+}
+function backupList(){ return bkCache || []; }     // sync read of the mirror
+async function snapshotNow(reason){
   const slim = {};
   Object.keys(state).forEach(k=>{ if(!BACKUP_SKIP.includes(k)) slim[k] = state[k]; });
-  const list = backupList();
+  const list = await bkLoad();
   list.unshift({ ts:Date.now(), reason:reason||"automatic", state:slim, profiles:profStore() });
-  backupWrite(list.slice(0, BACKUP_KEEP));
+  await bkSave(list);
 }
 function backupStats(b){
   const s = b.state||{};
@@ -1564,10 +1760,10 @@ function backupStats(b){
            quests:Object.keys(s.questsDone||{}).length,
            chars:1+Object.keys((b.profiles&&b.profiles.stash)||{}).length };
 }
-function restoreBackup(i){
+async function restoreBackup(i){
   const b = backupList()[i];
   if(!b) return false;
-  snapshotNow("before restore");   // restoring is itself undoable
+  await snapshotNow("before restore");   // restoring is itself undoable
   const keep = {};
   BACKUP_SKIP.forEach(k=>{ if(state[k]!==undefined) keep[k]=state[k]; });
   state = Object.assign({}, b.state, keep);
@@ -1577,9 +1773,9 @@ function restoreBackup(i){
   return true;
 }
 // once a day is enough to catch "yesterday was fine"
-function backupDaily(){
-  const list = backupList();
-  if(!list.length || Date.now()-list[0].ts > 20*3600e3) snapshotNow("daily");
+async function backupDaily(){
+  const list = await bkLoad();
+  if(!list.length || Date.now()-list[0].ts > 20*3600e3) await snapshotNow("daily");
 }
 
 // ============ PROFILES ============
@@ -3241,8 +3437,11 @@ function goalProgress(g){
     const steps = g.steps||[];
     if(steps.length){
       const d = steps.filter(s=>s.done).length;
+      // Steps are usually prerequisites, not the goal itself — finishing every step
+      // of "Complete Bone Voyage" means you're ready to do it, not that it's done.
+      // So they drive progress; completion stays an explicit tick.
       return {custom:true, hasSteps:true, doneSteps:d, totalSteps:steps.length,
-              pct: d/steps.length*100, done: d===steps.length};
+              pct: d/steps.length*100, done: !!g.done, stepsAllDone: d===steps.length};
     }
     return {custom:true, hasSteps:false, pct: g.done?100:0, done: !!g.done};
   }
@@ -3298,44 +3497,55 @@ function renderHomeTodos(){
   }
   el.innerHTML = top.map(({g,p})=>{
     const icon = p.custom
-      ? `<span class="micon"><span class="ficon" style="display:inline-flex">📝</span></span>`
+      ? `<span class="hg-ic">${p.hasSteps?"🗒️":"📌"}</span>`
       : metricIconHtml(g.kind, g.metric, "micon");
     const sub = p.custom
-      ? (p.hasSteps ? `${p.doneSteps}/${p.totalSteps} steps` : "to-do")
+      ? (p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : "to-do")
       : `${(p.cur==null||p.cur===-1) ? "—" : fmt(p.cur)} / ${fmt(g.target)}`;
     const expandable = p.custom && p.hasSteps;
     const open = expandable && homeOpenTodos.has(g.id);
-    const caret = expandable ? `<span class="hg-caret">${open?"▾":"▸"}</span>` : "";
-    const stepsHtml = open ? `<div class="substeps home-substeps">${(g.steps||[]).map(s=>`
-      <div class="substep ${s.done?"done":""}">
-        <label class="chk grow"><input type="checkbox" ${s.done?"checked":""} data-hstep="${g.id}|${s.id}">
-          <span>${escapeHtml(s.text)}</span></label>
-      </div>`).join("")}</div>` : "";
-    return `<div>
-      <div class="hg-row ${expandable?"expandable":""}" ${expandable?`data-hgoal="${g.id}" title="${open?"Hide steps":"Show steps"}"`:""}>
+    const ready = p.custom && p.hasSteps && p.stepsAllDone;
+    // custom goals can be ticked off right here — no trip to the Goals page
+    const tick = p.custom
+      ? `<button class="hg-tick ${ready?"nudge":""}" data-htoggle="${g.id}" title="${ready?"Every step done — mark it complete":"Mark complete"}">✓</button>`
+      : "";
+    const caret = expandable ? `<button class="hg-caret" data-hgoal="${g.id}" title="${open?"Hide steps":"Show steps"}">${open?"▾":"▸"}</button>` : "";
+    const stepsHtml = open ? `<div class="home-substeps">${(g.steps||[]).map(s=>`
+      <label class="hg-step ${s.done?"done":""}">
+        <input type="checkbox" ${s.done?"checked":""} data-hstep="${g.id}|${s.id}">
+        <span>${escapeHtml(s.text)}</span>
+      </label>`).join("")}
+      ${ready?`<div class="hg-ready">All steps done — tick the goal when you've actually finished it.</div>`:""}
+      </div>` : "";
+    return `<div class="hg-item ${open?"open":""}">
+      <div class="hg-row">
         ${icon}
         <div class="grow" style="min-width:0">
           <div class="hg-name">${escapeHtml(g.label)}</div>
-          <div class="bar" style="margin-top:6px"><i style="width:${p.pct}%"></i></div>
+          <div class="bar ${ready?"ready":""}" style="margin-top:6px"><i style="width:${p.pct}%"></i></div>
         </div>
-        <span class="small muted" style="flex:0 0 auto">${sub}</span>
-        ${caret}
+        <span class="hg-sub">${sub}</span>
+        ${tick}${caret}
       </div>
       ${stepsHtml}
     </div>`;
   }).join("");
-  $$("#homeTodoList [data-hgoal]").forEach(r=>r.onclick=()=>{
-    const id = r.dataset.hgoal;
+  $$("#homeTodoList [data-hgoal]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    const id = b.dataset.hgoal;
     if(homeOpenTodos.has(id)) homeOpenTodos.delete(id); else homeOpenTodos.add(id);
     renderHomeTodos();
   });
-  // Same semantics as the Goals page: step done is stored, goal done is derived
-  // (all steps checked). renderTodo() re-renders both lists and keeps this dropdown
-  // open because expansion lives in homeOpenTodos, not in the DOM.
+  // Steps record progress; the goal itself is only done when you say so.
   $$("#homeTodoList [data-hstep]").forEach(c=>c.onchange=()=>{
     const [gid,sid]=c.dataset.hstep.split("|");
     const g=state.goals.find(x=>x.id===gid); const s=g&&(g.steps||[]).find(x=>x.id===sid);
     if(s){ s.done=c.checked; save(); renderTodo(); }
+  });
+  $$("#homeTodoList [data-htoggle]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    const g=state.goals.find(x=>x.id===b.dataset.htoggle);
+    if(g){ g.done=!g.done; save(); renderTodo(); toast(g.done?`Done: ${g.label}`:`Reopened: ${g.label}`); }
   });
 }
 // Which Home to-dos are expanded — per-session on purpose (a fresh open starts tidy).
@@ -3371,16 +3581,15 @@ function customItemHtml(g,p){
         <span>${escapeHtml(s.text)}</span></label>
       <button class="ghost small danger" data-stepdel="${g.id}|${s.id}" title="Remove step">✕</button>
     </div>`).join("");
+  const ready = p.hasSteps && p.stepsAllDone && !p.done;
   const progressLine = p.hasSteps
     ? `<div class="row small muted" style="gap:8px;margin:5px 0 4px">
          <span>${p.doneSteps}/${p.totalSteps} steps</span><span>·</span><span>${Math.floor(p.pct)}%</span>
+         ${ready?`<span class="ready-tag">every step done — tick it off when you finish</span>`:""}
        </div>
-       <div class="bar ${p.done?"full":""}"><i style="width:${p.pct}%"></i></div>`
+       <div class="bar ${p.done?"full":""} ${ready?"ready":""}"><i style="width:${p.pct}%"></i></div>`
     : "";
-  // Badge is clickable only when there are no steps (with steps, done is derived).
-  const badge = p.hasSteps
-    ? `<span class="check-badge">${p.done?"✅":"⬜"}</span>`
-    : `<span class="check-badge clickable" data-toggle="${g.id}" title="Mark done">${p.done?"✅":"⬜"}</span>`;
+  const badge = `<span class="check-badge clickable ${ready?"nudge":""}" data-toggle="${g.id}" title="${p.done?"Mark as not done":"Mark done"}">${p.done?"✅":"⬜"}</span>`;
   return `<div class="item ${p.done?"done":""}" style="align-items:flex-start">
     <span class="micon"><span class="ficon" style="display:inline-flex">📝</span></span>
     <div class="grow" style="min-width:0">
@@ -3583,6 +3792,8 @@ const THEMES = [
   ["nature","Nature","Nature_rune.png"],
   ["shadow","Shadow","Soul_rune.png"],
   ["ember","Ember","Fire_rune.png"],
+  ["dark","Dark","Coal.png"],
+  ["black","Pitch black","Black_partyhat.png"],
 ];
 const DEFAULT_THEME = "parchment";
 function applyTheme(){
@@ -4986,6 +5197,46 @@ document.addEventListener("keyup", e=>{
   if(lane!=null) RG.held[lane] = false;
 });
 
+// ============ ARCADE ============
+// The shelf of games. Adding one is a single entry here — art, a view to open, and
+// an optional line of stats pulled from wherever that game keeps them.
+const ARCADE_GAMES = [
+  { id:"rhythm", title:"Dance Dance RuneScape", icon:"🎵",
+    art:"linear-gradient(150deg,#12233a,#0a1017 55%,#2a1233)",
+    blurb:"Bring your own music",
+    stats: async ()=>{
+      try{
+        const lib = await rgLibAll();
+        if(!lib.length) return "No songs yet";
+        const best = lib.filter(t=>t.best).sort((a,b)=>b.best.score-a.best.score)[0];
+        return `${lib.length} song${lib.length>1?"s":""}` + (best?` · best ${best.best.grade} on ${best.name.replace(/\.[^.]+$/,"")}`:"");
+      }catch(e){ return ""; }
+    } },
+];
+async function renderArcade(){
+  const el = $("#arcShelf"); if(!el) return;
+  $("#arcSub").textContent = ARCADE_GAMES.length===1 ? "1 game" : `${ARCADE_GAMES.length} games`;
+  el.innerHTML = ARCADE_GAMES.map(g=>`
+    <button class="arc-card" data-arcplay="${g.id}">
+      <div class="arc-art" style="background:${g.art}">${g.icon}</div>
+      <div class="arc-title">${escapeHtml(g.title)}</div>
+      <div class="arc-meta" data-arcstat="${g.id}">${escapeHtml(g.blurb||"")}</div>
+    </button>`).join("")
+    + `<div class="arc-card arc-soon">
+        <div class="arc-art">＋</div>
+        <div class="arc-title" style="color:var(--muted)">More to come</div>
+        <div class="arc-meta">Another one's in the works</div>
+      </div>`;
+  $$("#arcShelf [data-arcplay]").forEach(b=>b.onclick=()=>switchView(b.dataset.arcplay));
+  // stats load after the shelf paints, so a slow read never delays the page
+  for(const g of ARCADE_GAMES){
+    if(!g.stats) continue;
+    const line = await g.stats();
+    const node = el.querySelector(`[data-arcstat="${g.id}"]`);
+    if(node && line) node.textContent = line;
+  }
+}
+
 // ============ RECAP ============
 // Everything here comes from data the Scroll already collects — per-day XP from your
 // game stats, manual log entries, and the milestone record. Nothing new is fetched.
@@ -5901,7 +6152,7 @@ async function wikiLookup(query){
     const pj = await p.json();
     if(!pj.parse) return null;
     const entry = { title: pj.parse.title, ts: Date.now(), ...wikiExtract(pj.parse.wikitext["*"] || "") };
-    state.wikiCache[title] = entry; save();
+    state.wikiCache[title] = entry; pruneWikiCache(); save();
     return entry;
   }catch(e){ return null; }
 }
@@ -6090,7 +6341,7 @@ async function budTrainLadder(sk){
     });
   }catch(e){}
   const out = {ts:Date.now(), title, url, rungs};
-  state.wikiCache = state.wikiCache||{}; state.wikiCache[ck]=out; save();
+  state.wikiCache = state.wikiCache||{}; state.wikiCache[ck]=out; pruneWikiCache(); save();
   return out;
 }
 // Training advice from what the app already knows: your level, the quest XP still on
@@ -6256,7 +6507,8 @@ function renderUpdSetting(msg){
   else if(u) el.innerHTML = `v${APP_VERSION} · <b style="color:var(--gold)">${escapeHtml(u.tag)} is available</b> — <a href="${u.dl}" target="_blank" rel="noopener">download</a>`;
   else el.innerHTML = `OSRS Buddy v${APP_VERSION}${state.updCheck&&state.updCheck.ts?` · up to date`:``}`;
 }
-function renderBackups(){
+async function renderBackups(){
+  await bkLoad();
   const el = $("#backupList"); if(!el) return;
   const list = backupList();
   if(!list.length){ el.innerHTML = `<div class="small muted">No snapshots yet — one is taken each day you open the app.</div>`; return; }
@@ -6274,18 +6526,35 @@ function renderBackups(){
       <button class="ghost small" data-bkrestore="${i}">Restore</button>
     </div>`;
   }).join("");
-  $$("#backupList [data-bkrestore]").forEach(b=>b.onclick=()=>{
+  $$("#backupList [data-bkrestore]").forEach(b=>b.onclick=async ()=>{
     const i = +b.dataset.bkrestore, st = backupStats(backupList()[i]);
     if(!confirm(`Restore this snapshot?\n\n${st.log} log entries · ${st.goals} goals · ${st.quests} quests\n\nYour current data is snapshotted first, so this is undoable.`)) return;
-    if(restoreBackup(i)){
+    if(await restoreBackup(i)){
       renderAll(); renderBackups();
       toast("Restored ✓");
       if(state.username) loadCharacter({name:state.username, live:false, silent:true});
     }
   });
 }
+function renderStorage(){
+  const bar=$("#stBar"), txt=$("#stText");
+  if(!bar||!txt) return;
+  const r = storageReport();
+  const kb = n => n>=1048576 ? (n/1048576).toFixed(1)+" MB" : Math.round(n/1024)+" KB";
+  bar.style.width = Math.max(1.5, r.pct).toFixed(1)+"%";
+  bar.className = r.pct>90 ? "full" : r.pct>70 ? "warn" : "";
+  const bits = [];
+  if(r.questDB)  bits.push(`quest data ${kb(r.questDB)}`);
+  if(r.scroll)   bits.push(`Scroll ${kb(r.scroll)}`);
+  bits.push(`${backupList().length} snapshots (stored separately)`);
+  if(r.profiles) bits.push(`other characters ${kb(r.profiles)}`);
+  if(r.wikiCache)bits.push(`wiki cache ${kb(r.wikiCache)}`);
+  txt.innerHTML = `${kb(r.total)} of about 5 MB used (${r.pct.toFixed(1)}%)`
+    + (bits.length?`<br><span style="opacity:.8">${bits.join(" · ")}</span>`:"")
+    + (r.pct>70?`<br><span style="color:var(--gold)">Songs for the rhythm game are stored separately and don't count toward this.</span>`:"");
+}
 function openSettings(){
-  renderFontSeg(); renderNumSeg(); renderUpdSetting(); renderBackups();
+  renderFontSeg(); renderNumSeg(); renderUpdSetting(); renderBackups(); renderStorage();
   renderDevSection(); devWireSettings();
   const bb = $("#bugBtn");
   if(bb){
@@ -6455,6 +6724,7 @@ $("#rlSyncBtn").onclick = async ()=>{
   $("#rlSyncMsg").innerHTML = "Connecting to RuneLite…";
   $("#rlSyncMsg").innerHTML = await budSync();
 };
+$("#openPatch").onclick = ()=>{ closeSettings(); switchView("patch"); };
 $("#settingsX").onclick = closeSettings;
 $("#settingsBack").onclick = closeSettings;
 
@@ -6466,8 +6736,18 @@ $("#themeBtn").onclick = ()=>{
 };
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.3.2";
+const APP_VERSION = "1.3.3";
 const PATCH_NOTES = [
+  {v:"1.3.3", date:"August 12, 2026", title:"Cleanup", notes:[
+    "Finishing every step of a to-do no longer marks the to-do itself as done. Steps are usually prerequisites — completing them means you're ready to start, not that you've finished. They now drive the progress bar, and you tick the goal off yourself. Anything you previously completed this way will show full progress but untick'd; tick the ones you actually finished.",
+    "To-do items on Home can be ticked off in place, and their steps checked without leaving the page.",
+    "Reorganised the sidebar into sections, and moved the games into a Game corner so more can be added without crowding it.",
+    "Recap moved onto the Scroll page as a Journal / Recap switch, since it reads the same data. Patch notes moved into Settings.",
+    "Added two themes: Dark, and Pitch black for OLED screens.",
+    "Data snapshots moved out of the browser's small storage allowance and into proper local storage. At eight snapshots they were the only thing that would ever have filled it — your journal alone would take decades.",
+    "If storage does fill, the app now clears the quest cache to make room rather than failing to save. Settings shows what's using space.",
+    "Spacing fixes on Home.",
+  ]},
   {v:"1.3.2", date:"August 12, 2026", title:"Rhythm game stability", notes:[
     "Fixed the app closing itself partway through a song. Hit effects had no upper limit, so if the frame rate dipped they accumulated faster than they cleared — each frame then took longer to draw, which made the next dip worse. Effects are now capped, and notes far up the lane skip their glow, which is the most expensive part of drawing a frame.",
     "An error while drawing a frame now stops the game cleanly and returns you to the song list, rather than freezing it.",
@@ -6592,7 +6872,16 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"Quest planner", clog:"Collection log", recap:"Recap", rhythm:"Dance Dance RuneScape", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"Quest planner", clog:"Collection log", arcade:"Game corner", rhythm:"Dance Dance RuneScape", patch:"Patch notes"};
+function applyScrollMode(){
+  const recap = (state.scrollMode||"journal")==="recap";
+  const j=$("#scrollJournal"), r=$("#scrollRecap");
+  if(j) j.classList.toggle("hidden", recap);
+  if(r) r.classList.toggle("hidden", !recap);
+  $$("#scrollModeSeg [data-scrollmode]").forEach(b=>
+    b.classList.toggle("on", b.dataset.scrollmode===(recap?"recap":"journal")));
+  if(recap) renderRecap(); else renderHeatmap();
+}
 function switchView(name){
   if(name==="stats") name="home"; // legacy saved view
   if(!VIEW_TITLES[name]) name="home";
@@ -6605,7 +6894,10 @@ function switchView(name){
   // heatmaps size themselves to their container — refit when their view becomes visible
   if(name==="home" || name==="scroll") renderHeatmap();
   if(name==="quests") qpFitTree();
-  if(name==="recap") renderRecap();
+  if(name==="arcade") renderArcade();
+  if(name==="scroll") applyScrollMode();
+  // Recap and Patch notes lost their nav entries; keep old saved views working
+  if(name==="recap"){ state.scrollMode="recap"; switchView("scroll"); return; }
   if(name==="rhythm"){
     const sel=$("#rgPreset"); if(sel && state.rgPreset) sel.value = state.rgPreset;
     const off=$("#rgOffset"); if(off && state.rgOffset!=null) off.value = String(state.rgOffset);
@@ -6614,6 +6906,9 @@ function switchView(name){
   } else if(RG.playing) rgQuit();   // navigating away stops the music
 }
 $$(".navitem").forEach(n=>n.onclick=()=>switchView(n.dataset.view));
+$$("#scrollModeSeg [data-scrollmode]").forEach(b=>b.onclick=()=>{
+  state.scrollMode = b.dataset.scrollmode; save(); applyScrollMode();
+});
 function openSidebar(){ $("#sidebar").classList.add("open"); $("#sbBackdrop").classList.remove("hidden"); }
 function closeSidebar(){ $("#sidebar").classList.remove("open"); $("#sbBackdrop").classList.add("hidden"); }
 $("#hamb").onclick = openSidebar;
