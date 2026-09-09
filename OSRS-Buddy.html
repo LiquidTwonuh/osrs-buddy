@@ -317,7 +317,113 @@
   .sk-bar i{display:block; height:100%; background:var(--gold); border-radius:4px}
   .sk-week{font-size:13px}
   .sk-week b{color:var(--green)}
+  /* Boss drop checklist — click an item to tick it off */
+  .drop-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:6px}
+  .drop{display:flex; align-items:center; gap:7px; padding:6px 7px; border-radius:9px; cursor:pointer;
+    border:1px solid var(--border); background:var(--panel2); font-family:inherit; text-align:left;
+    color:var(--muted); transition:border-color .12s, background .12s}
+  .drop:hover{border-color:var(--gold-dim)}
+  .drop .di{position:relative; flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center}
+  .drop .di img{max-width:26px; max-height:26px; object-fit:contain; filter:grayscale(1) opacity(.4)}
+  .drop .dn{font-size:11px; line-height:1.25; min-width:0; overflow-wrap:anywhere}
+  .drop.got{color:var(--text); background:var(--inset); border-color:var(--green)}
+  .drop.got .di img{filter:none}
+  .drop.got .di::after{content:"✓"; position:absolute; right:-5px; bottom:-4px; font-size:10px; font-weight:bold;
+    color:#0d1a0d; background:var(--green); border-radius:50%; width:13px; height:13px; line-height:13px; text-align:center}
+  .drop-sum{display:flex; align-items:center; gap:9px; margin-bottom:8px}
+  .drop-sum .bar{flex:1}
+  .bosstile{cursor:pointer}
+  .bosstile .bdrops{font-size:10px; color:var(--muted)}
+  .bosstile .bdrops.full{color:var(--green)}
   .sk-acts{display:flex; gap:8px; flex-wrap:wrap; margin-top:4px}
+  /* Gielinor Survivors */
+  .vs-modes{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; max-width:620px; margin:0 auto}
+  .vs-mode{padding:14px 12px; border-radius:12px; border:1px solid var(--border); background:var(--panel2);
+    cursor:pointer; font-family:inherit; color:var(--muted); text-align:center; transition:all .15s}
+  .vs-mode:hover{border-color:var(--gold-dim); transform:translateY(-2px)}
+  .vs-mode.on{border-color:var(--gold); color:var(--text); box-shadow:0 0 0 1px var(--gold) inset}
+  .vs-mode b{display:block; font-family:var(--font-display); font-size:17px; color:var(--gold); margin-bottom:2px}
+  .vs-best{text-align:center; margin-top:12px; font-size:13px; color:var(--muted); min-height:18px}
+  .vs-go{font-family:var(--font-display); font-size:20px; letter-spacing:.04em; padding:13px 34px;
+    border-radius:11px; border:0; cursor:pointer; color:#1a1206; font-weight:700;
+    background:linear-gradient(100deg,#e8c96a,#fff3c4 45%,#d8a93f); background-size:200% 100%;
+    box-shadow:0 0 26px rgba(230,195,92,.35), 0 4px 0 rgba(0,0,0,.35); transition:background-position .5s, box-shadow .2s, transform .1s}
+  .vs-go:hover{background-position:100% 0; box-shadow:0 0 40px rgba(240,215,130,.55), 0 4px 0 rgba(0,0,0,.35)}
+  .vs-go:active{transform:translateY(2px)}
+  .vs-keys{text-align:center; margin-top:12px; font-size:12px; color:var(--muted); letter-spacing:.03em}
+  .vs-hud{display:flex; align-items:center; gap:16px; max-width:900px; margin:0 auto; padding:2px 4px 8px}
+  .vs-hp{position:relative; flex:1 1 170px; max-width:230px; height:20px; border-radius:10px;
+    background:var(--inset); border:1px solid var(--border); overflow:hidden}
+  .vs-hp i{display:block; height:100%; background:linear-gradient(90deg,#8b1f1f,#d43b3b); transition:width .15s}
+  .vs-hp span{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:11.5px; font-weight:bold; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.8)}
+  .vs-stat .k{font-size:9.5px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted)}
+  .vs-stat .v{font-family:var(--font-display); font-size:20px; font-weight:700; color:var(--text); line-height:1.1}
+  .vs-xpbar{max-width:900px; margin:0 auto 8px; height:6px; border-radius:4px; background:var(--inset);
+    border:1px solid var(--border); overflow:hidden}
+  .vs-xpbar i{display:block; height:100%; background:linear-gradient(90deg,#3d86e8,#7fd8ff); width:0}
+  /* Loadout strip — what you're running, at a glance, without pausing */
+  .vs-load{display:flex; gap:5px; flex-wrap:wrap; justify-content:center; max-width:900px;
+    margin:0 auto 8px; min-height:34px}
+  .vs-slot{position:relative; width:34px; height:34px; border-radius:8px; background:var(--inset);
+    border:1px solid var(--border); display:flex; align-items:center; justify-content:center}
+  .vs-slot.gear{border-color:var(--gold-dim)}
+  .vs-slot img{width:24px; height:24px; object-fit:contain}
+  .vs-slot b{position:absolute; right:-2px; bottom:-3px; font-size:9.5px; line-height:1;
+    padding:1px 3px; border-radius:5px; background:var(--panel); border:1px solid var(--border); color:var(--gold)}
+  .vs-slot.max b{color:#7fd8ff; border-color:#3d86e8}
+  .vs-load .vs-sep{width:1px; align-self:stretch; background:var(--border); margin:2px 4px}
+  /* Pause menu */
+  .vs-menu{position:absolute; inset:0; z-index:3; overflow:auto; padding:18px;
+    background:rgba(4,8,6,.9); backdrop-filter:blur(4px)}
+  .vs-menu-in{max-width:560px; margin:0 auto}
+  .vs-menu h4{font-family:var(--font-display); font-size:30px; color:var(--gold); text-align:center;
+    letter-spacing:.1em; margin:0 0 14px}
+  .vs-menu .vs-tally{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:14px}
+  .vs-menu .vs-tally div{text-align:center}
+  .vs-menu .vs-tally b{display:block; font-family:var(--font-display); font-size:21px; color:var(--text)}
+  .vs-menu .vs-tally span{font-size:11px; color:var(--muted)}
+  .vs-menu h5{font-size:10.5px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted);
+    margin:0 0 7px; text-align:center}
+  .vs-gear{display:grid; grid-template-columns:repeat(auto-fit,minmax(232px,1fr)); gap:7px; margin-bottom:14px}
+  .vs-gear > div{display:flex; gap:9px; align-items:center; padding:7px 9px; border-radius:9px;
+    background:var(--panel2); border:1px solid var(--border)}
+  .vs-gear > div > div{min-width:0}
+  .vs-gear img{width:24px; height:24px; object-fit:contain; flex:none}
+  .vs-gear .nm{font-size:12.5px; font-weight:bold; color:var(--text)}
+  .vs-gear .ds{font-size:10.5px; color:var(--muted)}
+  .vs-gear .lv{margin-left:auto; font-size:11px; color:var(--gold); white-space:nowrap}
+  .vs-menu-btns{display:flex; gap:9px; justify-content:center; flex-wrap:wrap; margin-top:4px}
+  .vs-wrap{position:relative; max-width:900px; margin:0 auto; border:1px solid var(--border);
+    border-radius:14px; overflow:hidden; background:#0b1410; box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  #vsCanvas{display:block; width:100%; height:min(70vh,620px)}
+  .vs-overlay{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:6px; background:rgba(0,0,0,.66); backdrop-filter:blur(3px); cursor:pointer; z-index:3}
+  .vs-overlay > div{font-family:var(--font-display); font-size:40px; font-weight:700; color:var(--gold); letter-spacing:.12em}
+  .vs-levelup{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:14px; background:rgba(4,8,6,.86); backdrop-filter:blur(4px); z-index:4; padding:20px}
+  .vs-lu-h{font-family:var(--font-display); font-size:30px; font-weight:700; color:var(--gold);
+    text-shadow:0 0 22px rgba(230,195,92,.5)}
+  .vs-picks{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px;
+    width:100%; max-width:660px}
+  .vs-pick{padding:14px 12px; border-radius:12px; cursor:pointer; font-family:inherit; text-align:left;
+    border:1px solid var(--border); background:var(--panel2); display:flex; gap:11px; align-items:flex-start;
+    transition:all .14s}
+  .vs-pick:hover{border-color:var(--gold); transform:translateY(-3px); box-shadow:0 8px 22px rgba(0,0,0,.45)}
+  .vs-pick img{width:32px; height:32px; object-fit:contain; flex:none; image-rendering:auto}
+  .vs-pick .nm{font-weight:bold; font-size:14px; color:var(--text)}
+  .vs-pick .ds{font-size:11.5px; color:var(--muted); margin-top:3px; line-height:1.4}
+  .vs-pick .lv{font-size:10.5px; color:var(--gold); text-transform:uppercase; letter-spacing:.07em; margin-top:4px}
+  .vs-res{text-align:center; padding:20px 16px; max-width:520px; margin:0 auto;
+    border:1px solid var(--border); border-radius:16px; background:var(--panel2)}
+  .vs-res h3{font-family:var(--font-display); font-size:30px; margin:8px 0 2px; color:var(--gold)}
+  .vs-res .vs-tally{display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin:14px 0}
+  .vs-res .vs-tally b{display:block; font-size:21px; font-family:var(--font-display); color:var(--text)}
+  .vs-res .vs-tally div{font-size:12px; color:var(--muted)}
+  .vs-loadout{display:flex; gap:7px; justify-content:center; flex-wrap:wrap; margin:10px 0 4px}
+  .vs-loadout span{display:inline-flex; align-items:center; gap:5px; font-size:12px; padding:4px 9px;
+    border-radius:12px; background:var(--inset); border:1px solid var(--border)}
+  .vs-loadout img{width:18px; height:18px; object-fit:contain}
   /* Arcade — a shelf of titles you scroll through, console-style. Adding a game is
      one entry in ARCADE_GAMES; the layout doesn't change. */
   .arc-shelf{display:flex; gap:18px; overflow-x:auto; padding:14px 4px 20px; scroll-snap-type:x mandatory}
@@ -856,6 +962,14 @@
   .heatwrap.mode-calendar .heat-cell.filled{border:1px solid rgba(0,0,0,.4); box-shadow:0 0 5px 0 currentColor}
   .heatwrap.mode-calendar .heat-cell:not(.filled){background:var(--inset); opacity:.5}
   .heatwrap .heat-cell.filled:hover{transform:scale(1.2); z-index:2; position:relative}
+  /* single-skill focus: picker + the light-to-dark intensity key */
+  .heat-focus{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin:8px 0 2px}
+  .heat-focus.hidden{display:none}
+  .hf-sel{font-family:inherit; font-size:12.5px; padding:5px 9px; border-radius:8px; max-width:230px;
+    background:var(--inset); color:var(--text); border:1px solid var(--border)}
+  .hf-sel:focus{outline:none; border-color:var(--gold-dim)}
+  .hf-scale{display:inline-flex; align-items:center; gap:3px}
+  .hf-sw{display:inline-block; width:11px; height:11px; border-radius:3px; border:1px solid rgba(0,0,0,.35)}
   /* --- bars mode: a proper bar graph, bars grow from the baseline, height swells with activity --- */
   .ribbon{display:flex; align-items:flex-end; height:106px; gap:2px; width:100%; margin:0 auto; padding:6px 2px 0}
   .rib-day{flex:1 1 0; min-width:var(--ribmin,5px); height:100%; display:flex; align-items:flex-end; justify-content:center; cursor:pointer}
@@ -1298,6 +1412,7 @@
       <div class="seg" id="heatRange"></div>
       <div class="seg seg-sub" id="heatStyle"></div>
       <div class="seg seg-sub" id="heatPal"></div>
+      <div class="heat-focus" id="heatFocusWrap"></div>
       <div class="heatwrap big"><div id="heatmap" class="heatgrid"></div></div>
       <div class="act-legend" id="actLegend"></div>
       <label class="chk small muted" style="justify-content:center; margin-top:8px"><input type="checkbox" id="autoActivity"> Auto-fill days from my game stats <span class="muted">(via WiseOldMan)</span></label>
@@ -1468,6 +1583,45 @@
     </div>
   </div>
 
+  <div class="view hidden" id="view-survivors">
+    <div class="panel">
+      <div class="section-title center" style="margin-top:0"><h3>⚔️ Gielinor Survivors</h3><span class="small muted" id="vsSub"></span></div>
+
+      <div id="vsSetup">
+        <p class="muted small" style="text-align:center;max-width:560px;margin:0 auto 14px">
+          Survive the hordes of Gielinor. Your gear swings on its own — you just move.
+          Kill things, gather bones, and pick an upgrade every level.
+        </p>
+        <div class="vs-modes" id="vsModes"></div>
+        <div class="vs-best" id="vsBest"></div>
+        <div style="text-align:center;margin-top:16px">
+          <button class="vs-go" id="vsStart">▶ Enter Gielinor</button>
+        </div>
+        <div class="vs-keys">WASD or arrows to move · Esc to pause</div>
+      </div>
+
+      <div id="vsStage" class="hidden">
+        <div class="vs-hud">
+          <div class="vs-hp"><i id="vsHpBar"></i><span id="vsHpText"></span></div>
+          <div class="vs-stat"><div class="k">Time</div><div class="v" id="vsTime">0:00</div></div>
+          <div class="vs-stat"><div class="k">Level</div><div class="v" id="vsLevel">1</div></div>
+          <div class="vs-stat"><div class="k">Kills</div><div class="v" id="vsKills">0</div></div>
+          <button class="rg-btn" id="vsPause" style="margin-left:auto">⏸</button>
+          <button class="rg-btn" id="vsQuit">✕</button>
+        </div>
+        <div class="vs-xpbar"><i id="vsXpBar"></i></div>
+        <div class="vs-load" id="vsLoadout"></div>
+        <div class="vs-wrap">
+          <canvas id="vsCanvas"></canvas>
+          <div class="vs-menu hidden" id="vsPaused"></div>
+          <div class="vs-levelup hidden" id="vsLevelUp"></div>
+        </div>
+      </div>
+
+      <div id="vsResults" class="hidden"></div>
+    </div>
+  </div>
+
   <div class="view hidden" id="view-rhythm">
     <div class="panel">
       <div class="section-title center" style="margin-top:0"><h3>🎵 Dance Dance RuneScape</h3><span class="small muted" id="rgSub">bring your own music</span></div>
@@ -1601,6 +1755,110 @@ const METRIC_FILE = {
   guardians_of_the_rift:"Guardians_of_the_Rift.png", colosseum_glory:"Fortis_Colosseum.png",
   collections_logged:"Collection_log.png"
 };
+// ---- notable boss drops ----
+// The stuff worth chasing: pets, uniques, and gear. Deliberately not the bulk drops —
+// nobody is ticking off raw trout from Tempoross. Keyed by the same boss key the
+// hiscores use, so a boss tile can look its own list up directly.
+const BOSS_DROPS = {
+  abyssal_sire:["Abyssal orphan","Unsired","Abyssal head","Bludgeon spine","Bludgeon claw","Bludgeon axon","Jar of miasma","Abyssal whip","Abyssal dagger"],
+  alchemical_hydra:["Ikkle hydra","Hydra's claw","Hydra tail","Hydra leather","Hydra's eye","Hydra's fang","Hydra's heart","Alchemical hydra heads","Jar of chemicals","Dragon knife","Dragon thrownaxe"],
+  amoxliatl:["Moxi","Glacial temotli","Pendant of ates"],
+  araxxor:["Nid","Noxious point","Noxious blade","Noxious pommel","Araxyte fang","Araxyte head","Jar of venom","Coagulated venom"],
+  artio:["Callisto cub","Voidwaker hilt","Tyrannical ring","Claws of callisto","Dragon pickaxe","Dragon 2h sword"],
+  barrows_chests:["Ahrim's staff","Dharok's greataxe","Guthan's warspear","Karil's crossbow","Torag's hammers","Verac's flail","Bolt rack"],
+  bryophyta:["Bryophyta's essence"],
+  callisto:["Callisto cub","Voidwaker hilt","Tyrannical ring","Claws of callisto","Dragon pickaxe","Dragon 2h sword"],
+  calvarion:["Vet'ion jr.","Voidwaker blade","Ring of the gods","Skull of vet'ion","Skeleton champion scroll"],
+  cerberus:["Hellpuppy","Primordial crystal","Pegasian crystal","Eternal crystal","Smouldering stone","Jar of souls"],
+  chambers_of_xeric:["Olmlet","Twisted bow","Kodai insignia","Elder maul","Dragon claws","Ancestral hat","Ancestral robe top","Ancestral robe bottom","Dinh's bulwark","Dragon hunter crossbow","Twisted buckler","Dexterous prayer scroll","Arcane prayer scroll"],
+  chambers_of_xeric_challenge_mode:["Metamorphic dust","Twisted bow","Kodai insignia","Elder maul","Dragon claws","Twisted buckler"],
+  chaos_elemental:["Pet chaos elemental","Dragon pickaxe","Dragon 2h sword"],
+  chaos_fanatic:["Pet chaos elemental","Odium shard 1","Malediction shard 1","Dragon 2h sword","Dragon pickaxe"],
+  commander_zilyana:["Pet zilyana","Saradomin sword","Armadyl crossbow","Saradomin's light","Saradomin hilt","Godsword shard 1"],
+  corporeal_beast:["Pet dark core","Elysian sigil","Spectral sigil","Arcane sigil","Spirit shield","Holy elixir"],
+  crazy_archaeologist:["Odium shard 2","Malediction shard 2","Fedora"],
+  dagannoth_prime:["Pet dagannoth prime","Seers ring","Mud battlestaff","Dragon axe"],
+  dagannoth_rex:["Pet dagannoth rex","Berserker ring","Warrior ring","Dragon axe"],
+  dagannoth_supreme:["Pet dagannoth supreme","Archers ring","Seercull","Dragon axe"],
+  doom_of_mokhaiotl:["Dom","Avernic treads","Eye of ayak","Mokhaiotl cloth","Demon tear"],
+  duke_sucellus:["Baron","Magus vestige","Eye of the duke","Chromium ingot","Awakener's orb","Virtus mask","Virtus robe top","Virtus robe bottom"],
+  general_graardor:["Pet general graardor","Bandos chestplate","Bandos tassets","Bandos boots","Bandos hilt","Godsword shard 1"],
+  giant_mole:["Baby mole","Mole claw","Mole skin"],
+  grotesque_guardians:["Noon","Granite maul","Black tourmaline core","Granite gloves","Granite ring","Granite hammer","Jar of stone"],
+  hespori:["Bottomless compost bucket","Attas seed","Iasor seed","Kronos seed"],
+  kalphite_queen:["Kalphite princess","Dragon chainbody","Dragon 2h sword","Kq head","Jar of sand"],
+  king_black_dragon:["Prince black dragon","Draconic visage","Dragon pickaxe","Kbd heads"],
+  kraken:["Pet kraken","Kraken tentacle","Trident of the seas (full)","Jar of dirt"],
+  kreearra:["Pet kree'arra","Armadyl helmet","Armadyl chestplate","Armadyl chainskirt","Armadyl hilt","Godsword shard 1"],
+  kril_tsutsaroth:["Pet k'ril tsutsaroth","Zamorakian spear","Staff of the dead","Steam battlestaff","Zamorak hilt","Godsword shard 1"],
+  lunar_chests:["Dual macuahuitl","Blue moon spear","Eclipse atlatl","Blood moon helm","Blue moon helm","Eclipse moon helm"],
+  nex:["Nexling","Ancient hilt","Nihil horn","Zaryte vambraces","Torva full helm","Torva platebody","Torva platelegs"],
+  nightmare:["Little nightmare","Inquisitor's great helm","Inquisitor's hauberk","Inquisitor's plateskirt","Inquisitor's mace","Nightmare staff","Eldritch orb","Harmonised orb","Volatile orb","Jar of dreams","Parasitic egg"],
+  phosanis_nightmare:["Little nightmare","Inquisitor's great helm","Inquisitor's hauberk","Inquisitor's plateskirt","Inquisitor's mace","Nightmare staff","Eldritch orb","Harmonised orb","Volatile orb","Jar of dreams"],
+  obor:["Hill giant club"],
+  phantom_muspah:["Muphin","Venator shard","Ancient icon","Frozen cache"],
+  sarachnis:["Sraracha","Sarachnis cudgel","Jar of eyes","Giant egg sac(full)"],
+  scorpia:["Scorpia's offspring","Odium shard 3","Malediction shard 3"],
+  scurrius:["Scurry","Scurrius' spine"],
+  skotizo:["Skotos","Jar of darkness","Dark totem","Ancient shard"],
+  sol_heredit:["Smol heredit","Dizana's quiver (uncharged)","Sunfire fanatic helm","Sunfire fanatic cuirass","Sunfire fanatic chausses","Tonalztics of ralos","Echo crystal"],
+  spindel:["Venenatis spiderling","Voidwaker gem","Treasonous ring","Fangs of venenatis","Dragon pickaxe"],
+  tempoross:["Tiny tempor","Dragon harpoon","Fish barrel","Tackle box","Tome of water","Big harpoonfish","Spirit angler headband"],
+  the_corrupted_gauntlet:["Youngllef","Enhanced crystal weapon seed","Crystal armour seed","Crystal weapon seed"],
+  the_gauntlet:["Youngllef","Crystal weapon seed","Crystal armour seed","Enhanced crystal weapon seed"],
+  the_hueycoatl:["Huberte","Dragon hunter wand","Tome of earth","Hueycoatl hide","Glacial temotli"],
+  the_leviathan:["Lil'viathan","Venator vestige","Leviathan's lure","Chromium ingot","Awakener's orb"],
+  the_royal_titans:["Bran","Deadeye prayer scroll","Mystic vigour prayer scroll","Fire element staff crown","Ice element staff crown"],
+  the_whisperer:["Wisp","Bellator vestige","Siren's staff","Chromium ingot","Awakener's orb"],
+  theatre_of_blood:["Lil' zik","Scythe of vitur","Ghrazi rapier","Sanguinesti staff","Justiciar faceguard","Justiciar chestguard","Justiciar legguards","Avernic defender hilt"],
+  theatre_of_blood_hard_mode:["Sanguine dust","Holy ornament kit","Scythe of vitur","Ghrazi rapier","Sanguinesti staff","Avernic defender hilt"],
+  thermonuclear_smoke_devil:["Pet smoke devil","Occult necklace","Smoke battlestaff","Dragon chainbody"],
+  tombs_of_amascut:["Tumeken's guardian","Tumeken's shadow","Elidinis' ward","Masori mask","Masori body","Masori chaps","Osmumten's fang","Lightbearer"],
+  tombs_of_amascut_expert:["Tumeken's guardian","Tumeken's shadow","Elidinis' ward","Masori mask","Masori body","Masori chaps","Osmumten's fang","Lightbearer"],
+  tzkal_zuk:["Jal-Nib-Rek","Infernal cape"],
+  tztok_jad:["TzRek-Jad","Fire cape"],
+  vardorvis:["Butch","Ultor vestige","Executioner's axe head","Chromium ingot","Awakener's orb"],
+  venenatis:["Venenatis spiderling","Voidwaker gem","Treasonous ring","Fangs of venenatis","Dragon pickaxe","Dragon 2h sword"],
+  vetion:["Vet'ion jr.","Voidwaker blade","Ring of the gods","Skull of vet'ion"],
+  vorkath:["Vorki","Draconic visage","Skeletal visage","Dragonbone necklace","Vorkath's head","Jar of decay"],
+  wintertodt:["Phoenix","Tome of fire","Bruma torch","Warm gloves","Pyromancer garb","Dragon axe"],
+  yama:["Yami","Oathplate helm","Oathplate chest","Oathplate legs","Soulflame horn","Forgotten lockbox"],
+  zalcano:["Smolcano","Crystal tool seed","Zalcano shard"],
+  zulrah:["Pet snakeling","Tanzanite fang","Magic fang","Serpentine visage","Tanzanite mutagen","Magma mutagen","Uncut onyx","Jar of swamp"],
+};
+// Wiki image names that don't follow "capitalise the first word, underscore the rest" —
+// mostly pets, whose files are named after the follower NPC rather than the item.
+const DROP_FILE = {
+  "Ikkle hydra":"Ikkle_Hydra_(follower,_serpentine).png",
+  "Bolt rack":"Bolt_rack_detail.png",
+  "Vet'ion jr.":"Vet'ion_Jr..png",
+  "Pet chaos elemental":"Chaos_Elemental_Jr..png",
+  "Pet zilyana":"Zilyana_Jr..png",
+  "Pet dagannoth prime":"Dagannoth_Prime_Jr..png",
+  "Pet dagannoth rex":"Dagannoth_Rex_Jr..png",
+  "Pet dagannoth supreme":"Dagannoth_Supreme_Jr..png",
+  "Pet general graardor":"General_Graardor_Jr..png",
+  "Baby mole":"Baby_Mole_(follower).png",
+  "Attas seed":"Attas_seed_detail.png",
+  "Iasor seed":"Iasor_seed_detail.png",
+  "Kronos seed":"Kronos_seed_detail.png",
+  "Kalphite princess":"Kalphite_Princess_(follower,_walking).png",
+  "Prince black dragon":"Prince_Black_Dragon_(follower).png",
+  "Pet kraken":"Pet_Kraken_(follower).png",
+  "Pet kree'arra":"Kree'arra_Jr..png",
+  "Staff of the dead":"Staff_of_the_Dead_detail.png",
+  "Little nightmare":"Little_Nightmare_(follower).png",
+  "Muphin":"Muphin_(follower,_ranged).png",
+  "Smol heredit":"Smol_Heredit.png",
+  "Pet smoke devil":"Smoke_Devil_(follower).png",
+  "Jal-Nib-Rek":"Jal-Nib-Rek_(follower).png",
+  "TzRek-Jad":"TzRek-Jad_(follower).png",
+  "Pet snakeling":"Snakeling.png",
+};
+function dropIconUrl(name){
+  if(DROP_FILE[name]) return WIKI + encodeURI(DROP_FILE[name]);
+  return WIKI + encodeURI(name.charAt(0).toUpperCase() + name.slice(1).replace(/ /g,"_") + ".png");
+}
 const SMALLWORDS = new Set(["of","the","and","in","a"]);
 function metricIconUrl(kind, key){
   if(kind==="skill") return skillIconUrl(key);
@@ -2116,10 +2374,73 @@ function renderActivity(){
     bg.innerHTML = `<div class="empty" style="grid-column:1/-1">No boss kills tracked yet — bosses appear here automatically once you start killing them.</div>`;
     return;
   }
-  bg.innerHTML = bosses.map(([k,e])=>`<div class="skill" title="${nice(k)} — ${fmt(e.kills)} KC">
-    ${metricIconHtml("boss", k, "gicon")}
-    <div style="min-width:0"><div class="sname">${nice(k)}</div><div class="slvl">${fmt(e.kills)}</div><div class="sxp">kc</div></div>
-  </div>`).join("");
+  bg.innerHTML = bosses.map(([k,e])=>{
+    const d = dropProgress(k);
+    return `<div class="skill bosstile" data-bossinfo="${k}" title="${nice(k)} — ${fmt(e.kills)} KC${d?` · ${d.got}/${d.total} drops`:""}">
+      ${metricIconHtml("boss", k, "gicon")}
+      <div style="min-width:0"><div class="sname">${nice(k)}</div><div class="slvl">${fmt(e.kills)}</div>
+        ${d ? `<div class="bdrops${d.got>=d.total?" full":""}">${d.got}/${d.total} drops${d.got>=d.total?" ✅":""}</div>`
+            : `<div class="sxp">kc</div>`}</div>
+    </div>`;
+  }).join("");
+}
+// ---- boss drops ----
+function dropsGot(){ return state.drops || (state.drops = {}); }
+function dropProgress(key){
+  const list = BOSS_DROPS[key];
+  if(!list) return null;
+  const got = dropsGot();
+  return {got: list.filter(n=>got[n]).length, total: list.length};
+}
+function openBossModal(key){
+  const e = live && live.bosses && live.bosses[key];
+  if(!e) return;
+  const list = BOSS_DROPS[key] || [];
+  const got = dropsGot();
+  const have = list.filter(n=>got[n]).length;
+  const pct = list.length ? have/list.length*100 : 0;
+  const drops = list.length
+    ? `<div class="drop-sum">
+         <span class="small"><b style="color:var(--gold)">${have}</b> / ${list.length} collected</span>
+         <div class="bar ${have>=list.length?"full":""}"><i style="width:${pct}%"></i></div>
+       </div>
+       <div class="drop-grid">${list.map(n=>`
+         <button class="drop${got[n]?" got":""}" data-drop="${escapeHtml(n)}">
+           <span class="di"><img src="${dropIconUrl(n)}" alt=""
+             onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'❔'}))"></span>
+           <span class="dn">${escapeHtml(n)}</span>
+         </button>`).join("")}</div>
+       <div class="b-note">Click an item once you've got it. Importing a collection log ticks them for you.</div>`
+    : `<div class="b-note">No drop list for ${nice(key)} yet — the notable-drops table covers the main bosses and raids.</div>`;
+  $("#skillModal").innerHTML = `
+    <div class="dp-head"><span>${metricIconHtml("boss", key, "gicon")} ${nice(key)}</span>
+      <span style="margin-left:auto"><button class="dp-x" id="skillX" aria-label="Close">✕</button></span></div>
+    <div class="sk-hero">
+      <div class="sk-lvl">${fmt(e.kills)}</div>
+      <div class="grow" style="min-width:0">
+        <div class="small muted">kills recorded${e.rank>0?` · rank ${fmt(e.rank)}`:""}</div>
+      </div>
+    </div>
+    <div class="set-sec"><div class="set-h">Notable drops</div>${drops}</div>
+    <div class="set-sec sk-acts">
+      <button class="ghost small" id="bossBud">💬 Ask Bud about it</button>
+      <a class="ghost small" href="https://oldschool.runescape.wiki/w/${encodeURIComponent(nice(key).replace(/ /g,"_"))}" target="_blank" rel="noopener">Wiki ↗</a>
+    </div>`;
+  $("#skillWrap").classList.remove("hidden");
+  placeSkillModal($("#bossGrid"));
+  $("#skillX").onclick = closeSkillModal;
+  $("#bossBud").onclick = ()=>{
+    closeSkillModal(); switchView("ask");
+    const inp = $("#askInput");
+    if(inp){ inp.value = `can I do ${nice(key).toLowerCase()}?`; inp.focus(); }
+  };
+  $$("#skillModal [data-drop]").forEach(b=>b.onclick=()=>{
+    const n = b.dataset.drop;
+    if(got[n]) delete got[n]; else got[n] = true;
+    save();
+    openBossModal(key);          // repaint the tick and the counter
+    renderSkills();              // and the tile's drop count
+  });
 }
 
 // ============ START HERE (new player) ============
@@ -2451,8 +2772,10 @@ function skillColorKey(womKey){
   return womKey.charAt(0).toUpperCase()+womKey.slice(1);
 }
 function heatPalMode(){ return state.scroll.heatPal || "skill"; }
-// date -> skill colour keys, biggest XP first. Bosses weigh in as Combat.
-function skillsByDate(){
+// date -> {skill colour key: weight}. Weight is XP, with an XP-equivalent standing in
+// for bosses and clues so a pure bossing day still reads as Combat. This is the raw
+// material for both the colour ordering and the per-skill intensity fade.
+function skillAmountsByDate(){
   const out={};
   const auto = (state.scroll.autoOn!==false && state.scroll.auto) ? state.scroll.auto : {};
   for(const iso in auto){
@@ -2461,6 +2784,15 @@ function skillsByDate(){
     let kc=0; for(const b in (d.bosses||{})) kc+=Math.max(0,d.bosses[b]);
     if(kc>0) agg["Combat"]=(agg["Combat"]||0)+kc*8000; // rough xp-equivalent so bossing days read red
     if(d.clues>0) agg["Clues"]=(agg["Clues"]||0)+d.clues*3000; // auto-detected clue completions get their pink back
+    if(Object.keys(agg).length) out[iso]=agg;
+  }
+  return out;
+}
+// date -> skill colour keys, biggest XP first. Bosses weigh in as Combat.
+function skillsByDate(){
+  const out={}, amounts=skillAmountsByDate();
+  for(const iso in amounts){
+    const agg=amounts[iso];
     const keys=Object.keys(agg).sort((a,b)=>agg[b]-agg[a]);
     if(keys.length) out[iso]=keys;
   }
@@ -2483,6 +2815,106 @@ function heatCol(id){
 function heatLabel(id){
   if(heatPalMode()==="skill") return id==="Logged" ? "logged (no game data)" : id;
   return ACT[id] ? ACT[id].label : id;
+}
+
+// ---- single-skill focus ----
+// Pick one skill and the map recolours by how much of it you did each day, dark to
+// bright. Levels are quantiles of your OWN active days rather than a fixed XP scale:
+// a fixed scale would give a low-level account five identical-looking shades, and a
+// maxed one nothing but the top shade.
+const HEAT_LEVELS = 5;
+// % of the skill colour at each level. The floor is 30, not 0 — a level-1 day has to
+// read as clearly ON against an empty cell, and dark skill colours (Slayer, Thieving)
+// compress the whole ramp toward the background otherwise.
+const HEAT_LEVEL_MIX = [0, 30, 47, 64, 82, 100];
+function heatFade(col, lv){
+  const pct = HEAT_LEVEL_MIX[lv] != null ? HEAT_LEVEL_MIX[lv] : 100;
+  return `color-mix(in oklab, ${col} ${pct}%, var(--inset))`;
+}
+// What actually happened that day for one skill, in real numbers — the weight used for
+// shading blends in an XP-equivalent for kills, which would be a lie in a tooltip.
+function focusDetail(iso, key){
+  const a = (state.scroll.autoOn!==false && state.scroll.auto) ? state.scroll.auto[iso] : null;
+  const bits=[];
+  if(a){
+    let xp=0;
+    for(const k in (a.skills||{})){ if((reclassOf(iso,k)||skillColorKey(k))===key) xp += a.skills[k]; }
+    if(xp>0) bits.push(`+${fmt(xp)} xp`);
+    if(key==="Combat"){
+      let kc=0; for(const b in (a.bosses||{})) kc+=Math.max(0,a.bosses[b]);
+      if(kc>0) bits.push(`${fmt(kc)} boss kill${kc>1?"s":""}`);
+    }
+    if(key==="Clues" && a.clues>0) bits.push(`${a.clues} clue${a.clues>1?"s":""}`);
+  }
+  if(!bits.length) bits.push("logged by hand");
+  return bits.join(" · ");
+}
+function focusRealXp(iso, key){
+  const a = (state.scroll.autoOn!==false && state.scroll.auto) ? state.scroll.auto[iso] : null;
+  if(!a) return 0;
+  let xp=0;
+  for(const k in (a.skills||{})){ if((reclassOf(iso,k)||skillColorKey(k))===key) xp += a.skills[k]; }
+  return xp;
+}
+// `visible` scopes the day/XP tally to the window actually on screen. The quantile
+// cuts deliberately do NOT use it — they come from all of your history, so the shades
+// mean the same thing whether you're looking at a week or a year.
+function buildHeatFocus(key, visible){
+  if(!key) return null;
+  const amounts = skillAmountsByDate(), weight={};
+  for(const iso in amounts){ const v=amounts[iso][key]; if(v>0) weight[iso]=v; }
+  // hand-tagged days count as activity even when there's no XP behind them
+  state.scroll.log.forEach(e=>{ if((e.skills||[]).includes(key) && weight[e.date]==null) weight[e.date]=0; });
+  const vals = Object.values(weight).filter(v=>v>0).sort((a,b)=>a-b);
+  const cuts=[];
+  for(let i=1;i<HEAT_LEVELS;i++)
+    cuts.push(vals.length ? vals[Math.min(vals.length-1, Math.floor(vals.length*i/HEAT_LEVELS))] : 0);
+  const level={}, isos=Object.keys(weight);
+  isos.forEach(iso=>{
+    const v=weight[iso];
+    if(!(v>0)){ level[iso]=1; return; }        // tagged, no XP — faintest band
+    let lv=1; for(const c of cuts) if(v>=c) lv++;
+    level[iso]=Math.min(HEAT_LEVELS, lv);
+  });
+  const shown = visible ? isos.filter(iso=>visible.has(iso)) : isos;
+  const xpTotal = shown.reduce((a,iso)=>a+focusRealXp(iso,key), 0);
+  return {key, weight, level, cuts, xpTotal, days:shown.length};
+}
+// The exact days each mode puts on screen, so the tally beside the map matches it.
+function visibleIsos(mode, range, tbd){
+  if(mode==="bars") return new Set(rangeDays(range, tbd));
+  const today=new Date(); today.setHours(0,0,0,0);
+  const set=new Set();
+  if(range==="week"){
+    for(let i=6;i>=0;i--){ const d=new Date(today); d.setDate(d.getDate()-i); set.add(isoDate(d)); }
+    return set;
+  }
+  const WEEKS=heatWeeksFor(range, tbd);
+  const start=new Date(today); start.setDate(start.getDate() - today.getDay() - (WEEKS-1)*7);
+  for(let i=0;i<WEEKS*7;i++){
+    const d=new Date(start); d.setDate(start.getDate()+i);
+    if(d<=today) set.add(isoDate(d));
+  }
+  return set;
+}
+let heatFocus = null;   // rebuilt at the top of every renderHeatmap
+function heatFocusKey(){
+  if(heatPalMode()!=="skill") return null;    // focusing a skill makes no sense in category mode
+  return state.scroll.heatFocus || null;
+}
+// One place that decides what a day looks like, so the calendar, the week strip and
+// the bars can't drift apart.
+function cellPaint(iso, types){
+  if(heatFocus){
+    const lv = heatFocus.level[iso];
+    if(!lv) return {bg:"", prim:null, filled:false, title:`${fmtDay(iso)} — no ${heatFocus.key}`};
+    const col = heatCol(heatFocus.key);
+    return {bg:heatFade(col,lv), prim:heatFade(col,Math.max(lv,3)), filled:true,
+            title:`${fmtDay(iso)} — ${heatFocus.key}: ${focusDetail(iso, heatFocus.key)}`};
+  }
+  if(!types || !types.length) return {bg:"", prim:null, filled:false, title:`${fmtDay(iso)} — nothing logged`};
+  return {bg:cellBg(types), prim:heatCol(types[0]), filled:true,
+          title:`${fmtDay(iso)} — ${types.map(t=>heatLabel(t)).join(", ")}`};
 }
 // Log entries: new ones carry skills[], legacy ones carry types[] — render whichever exists
 function entryTagList(e){ return (e.skills && e.skills.length) ? e.skills : (e.types||[]); }
@@ -2796,11 +3228,11 @@ function renderScroll(){
   const dateEl = $("#logDate");
   if(dateEl && !dateEl.value) dateEl.value = todayISO();
   renderActPicker();
-  renderActLegend();
   renderHeatRange();
   renderHeatStyle();
   renderHeatPal();
-  renderHeatmap();
+  renderHeatFocus();
+  renderHeatmap();   // rebuilds the focus, then repaints the legend
   renderLogList();
   renderScrollStats();
   renderPriorities();
@@ -2812,6 +3244,19 @@ function renderScroll(){
 }
 
 function renderActLegend(){
+  if(heatFocus){
+    const col = heatCol(heatFocus.key);
+    const cut = lv => lv===1 ? "quietest days"
+               : lv===HEAT_LEVELS ? `your biggest ${heatFocus.key} days`
+               : `from ${fmt(heatFocus.cuts[lv-2])}`;
+    const sw = lv => `<span class="hf-sw" style="background:${heatFade(col,lv)}" title="${escapeHtml(cut(lv))}"></span>`;
+    const lv = []; for(let i=1;i<=HEAT_LEVELS;i++) lv.push(sw(i));
+    $("#actLegend").innerHTML =
+      `<span class="lg"><span class="dot" style="background:${col}"></span><b>${escapeHtml(heatFocus.key)}</b></span>`
+      + `<span class="lg muted">${fmt(heatFocus.days)} day${heatFocus.days===1?"":"s"}${heatFocus.xpTotal>0?` · ${fmt(heatFocus.xpTotal)} xp`:""}</span>`
+      + `<span class="lg hf-scale">less ${lv.join("")} more</span>`;
+    return;
+  }
   if(heatPalMode()==="skill"){
     // dynamic legend: only the skills actually present, busiest first
     const counts={};
@@ -2933,11 +3378,9 @@ function drawHeatmap(id, WEEKS, tbd){
     <div class="heat-daylabels">${dayLabels.map(l=>`<span>${l}</span>`).join("")}</div>
     ${cols.map(col=>`<div class="heat-col">${col.map(c=>{
       if(c.future) return `<div class="heat-cell" style="visibility:hidden"></div>`;
-      const bg=cellBg(c.types);
-      const prim=c.types ? heatCol(c.types[0]) : null;
-      const title=c.types ? `${fmtDay(c.iso)} — ${c.types.map(t=>heatLabel(t)).join(", ")}` : `${fmtDay(c.iso)} — nothing logged`;
+      const {bg, prim, filled, title} = cellPaint(c.iso, c.types);
       const mt = heatMsDays[c.iso];
-      return `<div class="heat-cell ${c.types?"filled":""} ${c.isToday?"today":""} ${heatPrioDays.has(c.iso)?"prio":""} ${mt?`ms ms-${mt}`:""} ${heatMileDays.has(c.iso)?"mile":""}" data-iso="${c.iso}" title="${escapeHtml(title)}" ${bg?`style="background:${bg};color:${prim}"`:""}></div>`;
+      return `<div class="heat-cell ${filled?"filled":""} ${c.isToday?"today":""} ${heatPrioDays.has(c.iso)?"prio":""} ${mt?`ms ms-${mt}`:""} ${heatMileDays.has(c.iso)?"mile":""}" data-iso="${c.iso}" title="${escapeHtml(title)}" ${bg?`style="background:${bg};color:${prim}"`:""}></div>`;
     }).join("")}</div>`).join("")}
   </div>`;
   el.innerHTML = monthsRow + body;
@@ -2971,11 +3414,9 @@ function drawWeekStrip(id, tbd){
     const d = new Date(today); d.setDate(d.getDate()-i);
     const iso = isoDate(d);
     const types = tbd[iso] || null;
-    const bg = cellBg(types);
-    const prim = types ? heatCol(types[0]) : null;
-    const title = types ? `${fmtDay(iso)} — ${types.map(t=>heatLabel(t)).join(", ")}` : `${fmtDay(iso)} — nothing logged`;
+    const {bg, prim, filled, title} = cellPaint(iso, types);
     cells += `<div class="wday">
-      <div class="heat-cell ${types?"filled":""} ${iso===todayISO()?"today":""} ${heatPrioDays.has(iso)?"prio":""} ${heatMileDays.has(iso)?"mile":""}" data-iso="${iso}" title="${escapeHtml(title)}" ${bg?`style="background:${bg};color:${prim}"`:""}></div>
+      <div class="heat-cell ${filled?"filled":""} ${iso===todayISO()?"today":""} ${heatPrioDays.has(iso)?"prio":""} ${heatMileDays.has(iso)?"mile":""}" data-iso="${iso}" title="${escapeHtml(title)}" ${bg?`style="background:${bg};color:${prim}"`:""}></div>
       <span class="wlbl">${d.toLocaleDateString(undefined,{weekday:"short"})}</span>
     </div>`;
   }
@@ -3006,6 +3447,34 @@ function renderHeatStyle(){
     renderHeatmap(); renderHeatStyle();
   });
 }
+// The focus picker only lists skills you actually have data for — a dropdown of all
+// 23 when you've trained four of them is just noise.
+function renderHeatFocus(){
+  const el=$("#heatFocusWrap"); if(!el) return;
+  if(heatPalMode()!=="skill"){ el.innerHTML=""; el.classList.add("hidden"); return; }
+  el.classList.remove("hidden");
+  const amounts=skillAmountsByDate(), totals={};
+  for(const iso in amounts) for(const k in amounts[iso]) totals[k]=(totals[k]||0)+amounts[iso][k];
+  state.scroll.log.forEach(e=>(e.skills||[]).forEach(k=>{ if(totals[k]==null) totals[k]=0; }));
+  const keys=Object.keys(totals).sort((a,b)=>totals[b]-totals[a]);
+  let cur=state.scroll.heatFocus||"";
+  if(cur && totals[cur]==null){ cur=""; delete state.scroll.heatFocus; save(); }  // skill dropped out of range
+  el.innerHTML = keys.length
+    ? `<span class="small muted">Show</span>
+       <select class="hf-sel" id="heatFocusSel" aria-label="Focus the heatmap on one skill">
+         <option value="">Everything — a colour per skill</option>
+         ${keys.map(k=>`<option value="${escapeHtml(k)}"${k===cur?" selected":""}>${escapeHtml(k)} only</option>`).join("")}
+       </select>
+       ${cur?`<button class="ghost small" id="heatFocusClear">✕ clear</button>`:""}`
+    : "";
+  const sel=$("#heatFocusSel");
+  if(sel) sel.onchange=()=>{
+    if(sel.value) state.scroll.heatFocus=sel.value; else delete state.scroll.heatFocus;
+    save(); renderHeatmap(); renderHeatFocus();
+  };
+  const clr=$("#heatFocusClear");
+  if(clr) clr.onclick=()=>{ delete state.scroll.heatFocus; save(); renderHeatmap(); renderHeatFocus(); };
+}
 const HEAT_PALS = [["skill","🎨 Skills"],["cat","🏷️ Categories"]];
 function renderHeatPal(){
   const el = $("#heatPal"); if(!el) return;
@@ -3013,7 +3482,7 @@ function renderHeatPal(){
   el.innerHTML = HEAT_PALS.map(([id,label])=>`<button class="${id===cur?"on":""}" data-hpal="${id}">${label}</button>`).join("");
   $$("#heatPal [data-hpal]").forEach(b=>b.onclick=()=>{
     state.scroll.heatPal = b.dataset.hpal; save();
-    renderHeatmap(); renderHeatPal(); renderActLegend();
+    renderHeatPal(); renderHeatFocus(); renderHeatmap();
   });
 }
 
@@ -3173,7 +3642,7 @@ function drawRibbon(id, range, tbd, logBy){
   const days=rangeDays(range, tbd);
   // bar thickness = how busy the day was: manual entries + distinct activity types
   const weightOf=iso=> (logBy[iso]||[]).length + (tbd[iso]||[]).length;
-  const maxW=Math.max(1, ...days.map(weightOf));
+  const maxW = heatFocus ? HEAT_LEVELS : Math.max(1, ...days.map(weightOf));
   const H=100, base=6, top=H-16;
   // Bars have a minimum width, so a long range can demand more room than the panel
   // has. Shrink the floor (and the gap) to whatever actually fits — never scroll.
@@ -3181,11 +3650,12 @@ function drawRibbon(id, range, tbd, logBy){
   const gap = days.length > 120 ? 1 : 2;
   const minW = Math.max(1, Math.floor((wrapW - 8) / days.length) - gap);
   el.innerHTML = `<div class="ribbon" style="gap:${gap}px; --ribmin:${minW}px">${days.map(iso=>{
-    const types=tbd[iso], w=weightOf(iso);
+    const types=tbd[iso];
+    const paint = cellPaint(iso, types);
+    // in focus mode the bar height tracks that one skill, not how busy the day was
+    const w = heatFocus ? (heatFocus.level[iso]||0) : weightOf(iso);
     const h = w ? Math.round(base + (top-base)*(w/maxW)) : 4;
-    const prim = types ? heatCol(types[0]) : null;
-    const bg = types ? cellBg(types) : "var(--border)";
-    const title = types ? `${fmtDay(iso)} — ${types.map(t=>heatLabel(t)).join(", ")}` : `${fmtDay(iso)} — nothing logged`;
+    const prim = paint.prim, bg = paint.filled ? paint.bg : "var(--border)", title = paint.title;
     const mt = heatMsDays[iso];
     return `<div class="rib-day ${iso===todayISO()?"today":""} ${w?"has":""} ${heatPrioDays.has(iso)?"prio":""} ${mt?`ms ms-${mt}`:""} ${heatMileDays.has(iso)?"mile":""}" data-iso="${iso}" title="${escapeHtml(title)}"><div class="rib-bar" style="height:${h}px;background:${bg};${prim?`color:${prim}`:""}"></div></div>`;
   }).join("")}</div>`;
@@ -3285,6 +3755,8 @@ function renderHeatmap(){
   Object.keys(msDayMap()).forEach(iso=>{ heatMsDays[iso] = msTierOfDay(iso); });
   const range = state.scroll.range || "3mo";
   const mode = heatMode();
+  // null unless one skill is focused; tally scoped to the days this range shows
+  heatFocus = buildHeatFocus(heatFocusKey(), visibleIsos(mode, range, tbd));
   const sw = $("#heatmap") && $("#heatmap").closest(".heatwrap");
   if(mode==="bars"){
     drawRibbon("heatmap", range, tbd, logBy);
@@ -3316,8 +3788,12 @@ function renderHeatmap(){
   if(hw){ const w=hw.clientWidth||600; hw.style.setProperty("--cell", Math.max(10, Math.min(30, Math.floor((w-26)/hWeeks)-6))+"px"); }
   drawHeatmap("heatmapHome", hWeeks, tbd);
   if(hw) hw.className = "heatwrap mode-calendar";
-  const loggedDays=Object.keys(tbd).length;
-  $("#heatSub").textContent = loggedDays ? `${loggedDays} day${loggedDays>1?"s":""} logged` : "start logging to fill this in";
+  const loggedDays = heatFocus ? heatFocus.days : Object.keys(tbd).length;
+  $("#heatSub").textContent = heatFocus
+    ? `${loggedDays} day${loggedDays===1?"":"s"} of ${heatFocus.key}`
+    : (loggedDays ? `${loggedDays} day${loggedDays>1?"s":""} logged` : "start logging to fill this in");
+  renderActLegend();   // the legend becomes the intensity key while focused
+  renderScrollStats(); // Home's subtitle says which skill it's showing
 }
 let heatResizeT=null;
 window.addEventListener("resize", ()=>{
@@ -3370,8 +3846,9 @@ function renderScrollStats(){
   while(tbd[isoDate(cur)]){ streak++; cur.setDate(cur.getDate()-1); }
   const txt = streak>0 ? `🔥 ${streak}-day streak` : "";
   const sp = $("#scrollStreak");
-  sp.textContent = txt; sp.classList.toggle("hidden", !txt);
-  const hs=$("#heatHomeSub"); if(hs) hs.textContent = txt;
+  if(sp){ sp.textContent = txt; sp.classList.toggle("hidden", !txt); }
+  const hs=$("#heatHomeSub");
+  if(hs) hs.textContent = heatFocus ? `${heatFocus.key} only${txt?` · ${txt}`:""}` : txt;
 }
 
 // ---- Add-goal dropdowns ----
@@ -3694,6 +4171,30 @@ function parseClog(json){
   }
   return {obtained:obtained||0, total:total||0, categories};
 }
+// Walk the same export for item names and tick off any that appear in a boss drop list.
+// Only matching names are kept — storing the whole log would be a few thousand strings
+// for no benefit. Returns how many were newly ticked.
+function tickDropsFromClog(json){
+  const wanted = new Map();
+  Object.values(BOSS_DROPS).flat().forEach(n=> wanted.set(n.toLowerCase(), n));
+  const got = dropsGot();
+  let added = 0;
+  const visit = node=>{
+    if(!node || typeof node!=="object") return;
+    if(Array.isArray(node)){
+      for(const it of node){
+        if(it && typeof it==="object" && typeof it.name==="string"){
+          const hit = wanted.get(it.name.toLowerCase());
+          if(hit && (it.obtained===true || it.quantity>0) && !got[hit]){ got[hit]=true; added++; }
+        } else visit(it);
+      }
+      return;
+    }
+    for(const k in node) visit(node[k]);
+  };
+  visit(json);
+  return added;
+}
 
 // ---- utils ----
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
@@ -3728,8 +4229,11 @@ $("#clogFile").onchange = e=>{
   r.onload = ()=>{
     try{
       const json = JSON.parse(r.result);
-      state.clog = parseClog(json); save(); renderClog();
-      toast("Collection log imported ✓");
+      state.clog = parseClog(json);
+      const ticked = tickDropsFromClog(json);
+      save(); renderClog(); renderSkills();
+      toast(ticked ? `Collection log imported ✓ — ticked ${ticked} boss drop${ticked>1?"s":""}`
+                   : "Collection log imported ✓");
     }catch(err){ toast("Couldn't parse that JSON file", true); }
   };
   r.readAsText(f);
@@ -5197,6 +5701,1168 @@ document.addEventListener("keyup", e=>{
   if(lane!=null) RG.held[lane] = false;
 });
 
+// ============ GIELINOR SURVIVORS ============
+// A horde survival run. Your gear attacks on its own; you only move. Enemies escalate
+// from Lumbridge chickens to endgame bosses, so the difficulty curve tells a story
+// instead of just multiplying numbers.
+const VS_ICON = n => `https://oldschool.runescape.wiki/images/${n}`;
+
+// ---- sprites ----
+// Every fighter is a pixel grid: one character per pixel, mapped through the sprite's
+// own palette. They're baked to an offscreen canvas once and blitted after that, so the
+// per-frame cost is a drawImage no matter how detailed the grid is.
+const VS_BIG_HUMANOID = [
+  ".....kkkkkk.....",
+  "....kssssssk....",
+  "....ksesssek....",
+  "....kssssssk....",
+  ".....kSSSSk.....",
+  "......ksskw.....",
+  "...kkssssssk.ww.",
+  "..kssssssssskww.",
+  "..ks.ssssss.sww.",
+  "..ks.ssssss.skw.",
+  "..kbbbbbbbbbbk..",
+  "..kbbbbbbbbbbk..",
+  "...kbbk..kbbk...",
+  "...kssk..kssk...",
+  "...kssk..kssk...",
+  "...kSSk..kSSk...",
+];
+const VS_SPRITES = {
+  // you: rune platebody, full helm, sword out to the right
+  // you: rune platebody and full helm, sword held up. K is a near-black outline —
+  // without it the whole figure reads as one flat blob against the dark ground.
+  player:{ pal:{L:"#74c4d6",M:"#4a94a8",D:"#2b5f6e",K:"#10242b",s:"#e8b98d",w:"#dfe7ec",g:"#6b4423"}, rows:[
+    "....KKKKKK...w..",
+    "...KMLLLLMK..w..",
+    "...KLssssLK..w..",
+    "...KLKssKLK..w..",
+    "...KLssssLK..w..",
+    "...KKLLLLKK..w..",
+    "....KMMMMK...w..",
+    "..KKLLLLLLKK.w..",
+    ".KMLLLLLLLLMDwD.",
+    ".KMLLLLLLLLMKg..",
+    ".KMDLLDDLLDMK...",
+    ".KMDLLLLLLDMK...",
+    "..KLLLLLLLLK....",
+    "...KDDDDDDK.....",
+    "...KMMK.KMMK....",
+    "...KMMK.KMMK....",
+    "...KMMK.KMMK....",
+    "...KDDK.KDDK....",
+  ]},
+  chicken:{ pal:{w:"#f2efe6",W:"#d6cfbe",r:"#c0392b",y:"#e0a327",e:"#2b2b2b"}, rows:[
+    "....rr......",
+    "...wwww.....",
+    "..wwewwy....",
+    "..wwwwww....",
+    ".wwwwwwww...",
+    ".wwwwwwwwW..",
+    ".wwwwwwwW...",
+    "..wwwwww....",
+    "...y..y.....",
+    "..yy..yy....",
+  ]},
+  rat:{ pal:{b:"#6b5442",B:"#463829",p:"#c98f8f",e:"#d02020",w:"#e8e8e8"}, rows:[
+    ".........BB...",
+    "......bbbbbb..",
+    "...bbbbbbbbbb.",
+    "..bbbbbbbbebb.",
+    "pbbbbbbbbbbbbw",
+    ".pbbbbbbbbbbb.",
+    "..pbbbbbbbbb..",
+    "....BB..BB....",
+    "....BB..BB....",
+  ]},
+  goblin:{ pal:{g:"#6e8f3a",G:"#4f6b28",r:"#a03028",e:"#e8e83a",b:"#7a5a34"}, rows:[
+    "...GG..GG...",
+    "..gggggggg..",
+    "..geggggeg..",
+    "..gggggggg..",
+    "...gGGGGg...",
+    "....gggg....",
+    "..rrrrrrrr..",
+    ".grrrrrrrrg.",
+    ".grrrrrrrrg.",
+    "..bbbbbbbb..",
+    "...gg..gg...",
+    "...gg..gg...",
+    "...GG..GG...",
+  ]},
+  cow:{ pal:{w:"#f0ece2",W:"#cfc8b6",b:"#5a4632",e:"#2b2b2b",p:"#e0989e",h:"#d8cfae"}, rows:[
+    ".........hh...",
+    "..bbbbb..www..",
+    ".wwwwwwwwwwew.",
+    ".wwbbbwwwwwww.",
+    ".wwbbbwwwbwww.",
+    ".wwwwwwwwwww..",
+    "..wwwwwwwww...",
+    "..W..pp..W....",
+    "..bb..bb.b....",
+    "..bb..bb.b....",
+  ]},
+  spider:{ pal:{k:"#2a2320",K:"#161210",r:"#c02020"}, rows:[
+    ".............",
+    ".k.k.....k.k.",
+    "..k.k...k.k..",
+    "...kkkkkkk...",
+    "..kkrkkkrkk..",
+    ".kkkkkkkkkkk.",
+    "..kkkkkkkkk..",
+    "...kkkkkkk...",
+    "..k.k...k.k..",
+    ".k.k.....k.k.",
+  ]},
+  zombie:{ pal:{g:"#8a9c6e",G:"#66784f",d:"#3a2f22",e:"#d8d8b0",b:"#5a4a34"}, rows:[
+    "...gggggg...",
+    "..gggggggg..",
+    "..geggggeg..",
+    "..gggggggg..",
+    "...gddddg...",
+    "....gggg....",
+    ".ggbbbbbbgg.",
+    "gg.bbbbbb.gg",
+    "gg.bbbbbb.gg",
+    "..dbbbbbbd..",
+    "...gg..gg...",
+    "...gg..gg...",
+    "...gg..gg...",
+    "...dd..dd...",
+  ]},
+  skeleton:{ pal:{w:"#e8e4d4",W:"#bdb8a6",k:"#14140f"}, rows:[
+    "...wwwww....",
+    "..wwwwwww...",
+    "..wkwwwkw...",
+    "..wwwwwww...",
+    "...wkwkw....",
+    "....www.....",
+    "..wwwwwww...",
+    ".w.wwwww.w..",
+    "w..w.w.w..w.",
+    "w..wwwww..w.",
+    "...w.w.w....",
+    "...wwwww....",
+    "...ww.ww....",
+    "..www.www...",
+  ]},
+  hillgiant:{ pal:{s:"#c9a077",S:"#9d7752",b:"#6b4f2f",e:"#241a12",w:"#8a6a3a",k:"#3d2b18"}, rows:VS_BIG_HUMANOID },
+  firegiant:{ pal:{s:"#e07a2b",S:"#a8481a",b:"#5a2a10",e:"#ffe27a",w:"#7a4a20",k:"#3a1608"}, rows:VS_BIG_HUMANOID },
+  demon:{ pal:{k:"#231a2b",K:"#3f2f4d",r:"#d42626",R:"#7a1414"}, rows:[
+    "..K........K..",
+    "..KK......KK..",
+    "...kkkkkkkk...",
+    "..kkkkkkkkkk..",
+    "..krkkkkkkrk..",
+    "..kkkkkkkkkk..",
+    "...kkRRRRkk...",
+    "..kkkkkkkkkk..",
+    ".kkkkkkkkkkkk.",
+    ".kkkkkkkkkkkk.",
+    "..kkkkkkkkkk..",
+    "...kkkkkkkk...",
+    "....kk..kk....",
+    "...KK....KK...",
+  ]},
+  // side-on, facing right: wing up and back, neck rising to the head, tail sweeping left
+  bluedragon:{ pal:{b:"#3a6ea8",B:"#26507d",c:"#8fc4e8",e:"#e8d44a",r:"#d0451a"}, rows:[
+    "....BB............",
+    "...BBBB.......bbb.",
+    "..BBBBBB.....bbbbb",
+    "..BBBBBBB....bbebb",
+    "...BBBBBB...bbbbbb",
+    "....BBBB...bbbbbbr",
+    "...bbbbbbbbbbbb...",
+    "..bbbbbbbbbbbb....",
+    ".bbbbbbbbbbbb.....",
+    "Bbbbbbbbbbbb......",
+    "BBccccbbbbb.......",
+    ".B.bb...bb........",
+    "...bb...bb........",
+    "...BB...BB........",
+  ]},
+  zulrah:{ pal:{g:"#2f7a4a",G:"#1d5230",c:"#8ad0a0",e:"#e8d44a"}, rows:[
+    "........gggg........",
+    ".......gggggg.......",
+    "......gge..egg......",
+    "......gggggggg......",
+    ".......gggggg.......",
+    "........gggg........",
+    "........gggg........",
+    "......GGGGGGGG......",
+    "....GGGGGGGGGGGG....",
+    "...GGGcccccccGGGG...",
+    "..GGGGcccccccGGGGG..",
+    "..GGGGGGGGGGGGGGGG..",
+    "...GGGGGGGGGGGGGG...",
+    "....GGGGGGGGGGGG....",
+    "......GGGGGGGG......",
+  ]},
+  jad:{ pal:{o:"#d4661f",O:"#8f3d10",k:"#2b1608",y:"#f0c05a"}, rows:[
+    ".....oooooooo.......",
+    "...oooooooooooo.....",
+    "..oooyoooooyooo.....",
+    "..oooooooooooooo....",
+    "..ookkkkkkkkkkoo....",
+    "..oooooooooooooo....",
+    "...oooooooooooo.....",
+    ".OOOOOOOOOOOOOOOO...",
+    "OOOOOOOOOOOOOOOOOO..",
+    "OOOOOOOOOOOOOOOOOO..",
+    "OOOOOOOOOOOOOOOOOO..",
+    ".OOOOOOOOOOOOOOOO...",
+    "..OO..OO..OO..OO....",
+    "..OO..OO..OO..OO....",
+    "..kk..kk..kk..kk....",
+  ]},
+  vorkath:{ pal:{b:"#3f3f70",B:"#25254a",e:"#4ae0d0",k:"#12122a"}, rows:[
+    "..BB..........BB....",
+    ".BBBB........BBBB...",
+    ".BBBBB..bb..BBBBB...",
+    "BBBBBB.bbbb.BBBBBB..",
+    "BBBBBb.bbbb.bBBBBB..",
+    ".BBBBbbbbbbbbBBBB...",
+    "..BBbbebbbbebbBB....",
+    "...bbbbbbbbbbbb.....",
+    "...bbkkkkkkkkbb.....",
+    "...bbbbbbbbbbbb.....",
+    "....bbbbbbbbbb......",
+    "....bbbbbbbbbb......",
+    ".....bbbbbbbb.......",
+    "....bb......bb......",
+    "....bb......bb......",
+    "....BB......BB......",
+  ]},
+  bones:{ pal:{w:"#efe9d5",W:"#c3bda8"}, rows:[
+    "ww...ww",
+    "Wwwwwww",
+    "wwwwwwW",
+    "ww...ww",
+  ]},
+  cannon:{ pal:{k:"#4a4a52",K:"#2b2b31"}, rows:[
+    "....kk....",
+    "...kkkk...",
+    "..kkkkkk..",
+    "..kkkkkk..",
+    ".KKKKKKKK.",
+    ".KKKKKKKK.",
+    "..K.KK.K..",
+    ".K..KK..K.",
+    "K...KK...K",
+  ]},
+  chinchompa:{ pal:{r:"#b8442c",R:"#8a2f1c",w:"#f0e2cc"}, rows:[
+    "..rrrr..",
+    ".rrrrrr.",
+    "rrwrrwrr",
+    "rrrrrrrr",
+    ".rrrrrr.",
+    "..RRRR..",
+  ]},
+  flame:{ pal:{y:"#ffe27a",o:"#ff9a2a",r:"#e04a10"}, rows:[
+    "...y...",
+    "..yyy..",
+    ".yyoyy.",
+    "yyoooyy",
+    "yoooooy",
+    "rooooor",
+    ".rooor.",
+    "..rrr..",
+  ]},
+};
+const VS_PXCACHE = {};
+// `flash` bakes a white-hot copy used for the hit frame — cheaper and far more readable
+// than fading the sprite out, which just made things look like they were disappearing.
+function vsSprite(name, flash){
+  const key = name + (flash?":f":"");
+  if(VS_PXCACHE[key]) return VS_PXCACHE[key];
+  const def = VS_SPRITES[name]; if(!def) return null;
+  const S = 3, w = def.rows[0].length, h = def.rows.length;
+  const c = document.createElement("canvas");
+  c.width = w*S; c.height = h*S;
+  const x = c.getContext("2d");
+  for(let r=0;r<h;r++){
+    const line = def.rows[r];
+    for(let i=0;i<w;i++){
+      const col = def.pal[line[i]];
+      if(!col) continue;
+      x.fillStyle = flash ? "#fff8e0" : col;
+      x.fillRect(i*S, r*S, S, S);
+    }
+  }
+  return (VS_PXCACHE[key] = c);
+}
+// Draws a sprite centred on a world point, sized so its longest edge spans `span`.
+function vsBlit(ctx, name, x, y, span, flip, flash){
+  const c = vsSprite(name, flash); if(!c) return;
+  const k = span / Math.max(c.width, c.height);
+  const w = c.width*k, h = c.height*k;
+  if(flip){
+    ctx.save(); ctx.translate(x,y); ctx.scale(-1,1);
+    ctx.drawImage(c, -w/2, -h/2, w, h);
+    ctx.restore();
+  } else {
+    ctx.drawImage(c, x-w/2, y-h/2, w, h);
+  }
+}
+
+const VS_MODES = [
+  {id:"short",  label:"Short",    mins:6,  desc:"A coffee break"},
+  {id:"normal", label:"Standard", mins:15, desc:"A proper run"},
+  {id:"endless",label:"Endless",  mins:0,  desc:"Until you fall"},
+];
+// Weapons fire themselves. `fire` spawns whatever that weapon does; level scales it.
+const VS_WEAPONS = [
+  { id:"scim", name:"Bronze scimitar", icon:"Bronze_scimitar.png", max:5,
+    desc:"Slashes in an arc in front of you.",
+    stats:l=>({cd:0.75-l*0.06, dmg:8+l*5, arc:1.5, range:78+l*7}) },
+  { id:"whip", name:"Abyssal whip", icon:"Abyssal_whip.png", max:5,
+    desc:"Lashes everything around you.",
+    stats:l=>({cd:1.05-l*0.09, dmg:14+l*8, range:96+l*11}) },
+  { id:"bow", name:"Magic shortbow", icon:"Magic_shortbow.png", max:5,
+    desc:"Fires arrows at the nearest foe.",
+    stats:l=>({cd:0.68-l*0.06, dmg:11+l*6, shots:1+Math.floor(l/2), speed:430}) },
+  { id:"blast", name:"Fire blast", icon:"Fire_Blast.png", max:5,
+    desc:"A bolt that bursts on impact.",
+    stats:l=>({cd:1.25-l*0.1, dmg:16+l*9, speed:330, blast:34+l*6}) },
+  { id:"cannon", name:"Dwarf multicannon", icon:"Dwarf_multicannon.png", max:4,
+    desc:"Drops a cannon that fires on its own.",
+    stats:l=>({cd:9-l*1.1, life:7+l, rate:0.42, dmg:10+l*5}) },
+  { id:"chin", name:"Red chinchompa", icon:"Red_chinchompa.png", max:4,
+    desc:"Lobs explosives into the crowd.",
+    stats:l=>({cd:2.4-l*0.22, dmg:20+l*11, blast:66+l*13}) },
+  { id:"trident", name:"Trident of the seas", icon:"Trident_of_the_seas.png", max:4,
+    desc:"Chains lightning between enemies.",
+    stats:l=>({cd:1.6-l*0.14, dmg:15+l*8, jumps:2+l, range:150}) },
+  { id:"halberd", name:"Dragon halberd", icon:"Dragon_halberd.png", max:4,
+    desc:"Sweeps a long reach, hitting through ranks.",
+    stats:l=>({cd:1.5-l*0.13, dmg:26+l*14, range:130+l*14, arc:0.9}) },
+];
+const VS_PASSIVES = [
+  { id:"fury",   name:"Amulet of fury",   icon:"Amulet_of_fury.png",   max:5, desc:"+12% damage per level.",  apply:(p,l)=>p.dmgMul=1+0.12*l },
+  { id:"boots",  name:"Boots of lightness",icon:"Boots_of_lightness.png",max:5,desc:"+10% movement per level.",apply:(p,l)=>p.spdMul=1+0.10*l },
+  { id:"ava",    name:"Ava's accumulator",icon:"Ava's_accumulator.png",max:4, desc:"Wider pickup range.",     apply:(p,l)=>p.pickup=70+l*38 },
+  { id:"prayer", name:"Prayer potion",    icon:"Prayer_potion(4).png", max:4, desc:"Heal 1 hp/sec per level.",apply:(p,l)=>p.regen=l },
+  { id:"recoil", name:"Ring of recoil",   icon:"Ring_of_recoil.png",   max:4, desc:"Reflect damage to attackers.", apply:(p,l)=>p.recoil=8+l*7 },
+  { id:"defence",name:"Rune platebody",   icon:"Rune_platebody.png",   max:4, desc:"Take 12% less damage per level.", apply:(p,l)=>p.dr=1-Math.min(0.6,0.12*l) },
+  { id:"rapid",  name:"Rapid restore",    icon:"Super_restore(4).png", max:4, desc:"+10% attack speed per level.", apply:(p,l)=>p.hasteMul=1-Math.min(0.5,0.10*l) },
+  { id:"hp",     name:"Saradomin brew",   icon:"Saradomin_brew(4).png",max:4, desc:"+25 max hitpoints, and heals.", apply:(p,l)=>p.bonusHp=25*l },
+];
+// Tiers unlock over time — Lumbridge fodder first, endgame last.
+// Speeds sit at 50-70% of the player's 150, so you can kite but never simply walk away.
+const VS_ENEMIES = [
+  {spr:"chicken",    name:"Chicken",       hp:12,  spd:78,  dmg:4,  from:0,   xp:1},
+  {spr:"rat",        name:"Giant rat",     hp:18,  spd:88,  dmg:5,  from:0,   xp:1},
+  {spr:"goblin",     name:"Goblin",        hp:26,  spd:84,  dmg:7,  from:30,  xp:2},
+  {spr:"cow",        name:"Cow",           hp:44,  spd:70,  dmg:8,  from:60,  xp:2},
+  {spr:"spider",     name:"Giant spider",  hp:38,  spd:106, dmg:9,  from:95,  xp:3},
+  {spr:"zombie",     name:"Zombie",        hp:70,  spd:76,  dmg:12, from:140, xp:4},
+  {spr:"skeleton",   name:"Skeleton",      hp:88,  spd:92,  dmg:14, from:190, xp:5},
+  {spr:"hillgiant",  name:"Hill giant",    hp:150, spd:72,  dmg:18, from:250, xp:8, big:1.35},
+  {spr:"demon",      name:"Abyssal demon", hp:210, spd:100, dmg:22, from:330, xp:12, big:1.2},
+  {spr:"bluedragon", name:"Blue dragon",   hp:330, spd:84,  dmg:28, from:420, xp:18, big:1.5},
+  {spr:"firegiant",  name:"Fire giant",    hp:420, spd:80,  dmg:32, from:520, xp:24, big:1.5},
+];
+// Bosses are slower than the trash on purpose — you can back off and whittle one down,
+// which is the only way a health pool this big is a fight rather than a wall.
+const VS_BOSSES = [
+  {spr:"zulrah",  name:"Zulrah",    hp:1600, spd:62, dmg:34, at:180, xp:120, big:2.4},
+  {spr:"jad",     name:"TzTok-Jad", hp:4200, spd:52, dmg:46, at:420, xp:260, big:3.0},
+  {spr:"vorkath", name:"Vorkath",   hp:7500, spd:66, dmg:54, at:720, xp:420, big:3.0},
+];
+
+const VS = {
+  on:false, paused:false, raf:null, last:0, t:0, mode:"normal",
+  cv:null, ctx:null, W:0, H:0, dpr:1,
+  p:null, foes:[], shots:[], orbs:[], fx:[], cannons:[],
+  keys:{}, kills:0, level:1, xp:0, xpNext:5, choosing:false,
+  shake:0, spawnAcc:0, bossIdx:0, seed:1,
+};
+function vsRand(){ VS.seed=(VS.seed*1664525+1013904223)>>>0; return VS.seed/4294967296; }
+function vsNewPlayer(){
+  return { x:0, y:0, r:14, hp:100, maxHp:100, spd:150, face:1,
+    dmgMul:1, spdMul:1, hasteMul:1, dr:1, pickup:70, regen:0, recoil:0, bonusHp:0,
+    weapons:{scim:1}, passives:{}, iframe:0 };
+}
+function vsStats(id, lvl){ const w=VS_WEAPONS.find(x=>x.id===id); return w?w.stats(lvl):null; }
+// Weapons first, then passives, each in the order they appear in the tables — so the
+// loadout strip doesn't reshuffle itself every time you pick something up.
+function vsAllOwned(){
+  const p=VS.p, out=[];
+  VS_WEAPONS.forEach(w=>{ if(p.weapons[w.id]) out.push({...w, kind:"weapon", lvl:p.weapons[w.id]}); });
+  VS_PASSIVES.forEach(a=>{ if(p.passives[a.id]) out.push({...a, kind:"passive", lvl:p.passives[a.id]}); });
+  return out;
+}
+function renderVsLoadout(){
+  const el=$("#vsLoadout"); if(!el || !VS.p) return;
+  const items=vsAllOwned();
+  const slot=i=>`<div class="vs-slot${i.kind==="weapon"?" gear":""}${i.lvl>=i.max?" max":""}"
+      title="${escapeHtml(i.name)} — level ${i.lvl}${i.lvl>=i.max?" (max)":""}">
+      <img src="${VS_ICON(i.icon)}" alt="" onerror="this.remove()"><b>${i.lvl}</b></div>`;
+  const w=items.filter(i=>i.kind==="weapon"), a=items.filter(i=>i.kind==="passive");
+  el.innerHTML = w.map(slot).join("") + (w.length&&a.length?`<span class="vs-sep"></span>`:"") + a.map(slot).join("");
+}
+function vsApplyPassives(){
+  const p=VS.p;
+  p.dmgMul=1; p.spdMul=1; p.hasteMul=1; p.dr=1; p.pickup=70; p.regen=0; p.recoil=0; p.bonusHp=0;
+  for(const id in p.passives){
+    const a=VS_PASSIVES.find(x=>x.id===id);
+    if(a) a.apply(p, p.passives[id]);
+  }
+  const newMax = 100 + p.bonusHp;
+  if(newMax>p.maxHp){ p.hp += newMax-p.maxHp; }
+  p.maxHp = newMax;
+}
+// Three picks: weapons you own get upgrades, new gear appears once you have room.
+function vsOffers(){
+  const p=VS.p, pool=[];
+  VS_WEAPONS.forEach(w=>{
+    const lvl=p.weapons[w.id]||0;
+    if(lvl>=w.max) return;
+    if(lvl===0 && Object.keys(p.weapons).length>=6) return;   // cap the loadout
+    pool.push({kind:"weapon", id:w.id, name:w.name, icon:w.icon, desc:w.desc, lvl, next:lvl+1});
+  });
+  VS_PASSIVES.forEach(a=>{
+    const lvl=p.passives[a.id]||0;
+    if(lvl>=a.max) return;
+    if(lvl===0 && Object.keys(p.passives).length>=6) return;
+    pool.push({kind:"passive", id:a.id, name:a.name, icon:a.icon, desc:a.desc, lvl, next:lvl+1});
+  });
+  // shuffle, prefer levelling what you already run so builds actually come together
+  pool.sort((a,b)=> (b.lvl>0) - (a.lvl>0) || vsRand()-0.5);
+  const owned = pool.filter(x=>x.lvl>0), fresh = pool.filter(x=>x.lvl===0);
+  const picks=[];
+  // a run with one weapon and a pile of trinkets can't kill anything — always leave a way out
+  if(Object.keys(p.weapons).length < 2){
+    const guns = pool.filter(x=>x.kind==="weapon");
+    if(guns.length){
+      const g = guns[Math.floor(vsRand()*guns.length)];
+      picks.push(g);
+      [owned,fresh].forEach(a=>{ const i=a.indexOf(g); if(i>=0) a.splice(i,1); });
+    }
+  }
+  while(picks.length<3 && (owned.length||fresh.length)){
+    const takeOwned = owned.length && (picks.length<2 || !fresh.length) && vsRand()<0.65;
+    const src = takeOwned ? owned : (fresh.length?fresh:owned);
+    picks.push(src.splice(Math.floor(vsRand()*src.length),1)[0]);
+  }
+  return picks;
+}
+function vsTake(pick){
+  const p=VS.p;
+  if(pick.kind==="weapon") p.weapons[pick.id]=(p.weapons[pick.id]||0)+1;
+  else { p.passives[pick.id]=(p.passives[pick.id]||0)+1; vsApplyPassives(); }
+  VS.choosing=false;
+  $("#vsLevelUp").classList.add("hidden");
+  renderVsLoadout();
+  VS.last = performance.now();          // don't bank the paused time as one huge frame
+}
+function vsShowLevelUp(){
+  VS.choosing = true;
+  const picks = vsOffers();
+  if(!picks.length){ VS.choosing=false; return; }   // everything maxed
+  const el=$("#vsLevelUp");
+  el.innerHTML = `<div class="vs-lu-h">Level ${VS.level}</div>
+    <div class="vs-picks">${picks.map((p,i)=>`
+      <button class="vs-pick" data-vspick="${i}">
+        <img src="${VS_ICON(p.icon)}" alt="" onerror="this.style.visibility='hidden'">
+        <div>
+          <div class="nm">${escapeHtml(p.name)}</div>
+          <div class="ds">${escapeHtml(p.desc)}</div>
+          <div class="lv">${p.lvl?`Level ${p.lvl} → ${p.next}`:"New"}</div>
+        </div>
+      </button>`).join("")}</div>`;
+  el.classList.remove("hidden");
+  $$("#vsLevelUp [data-vspick]").forEach(b=>b.onclick=()=>vsTake(picks[+b.dataset.vspick]));
+}
+function vsSpawn(){
+  const t=VS.t;
+  const avail = VS_ENEMIES.filter(e=>t>=e.from);
+  if(!avail.length) return;
+  // later tiers get likelier over time so the crowd shifts rather than just growing
+  const weights = avail.map((e,i)=>1 + i*0.6);
+  let total=weights.reduce((a,b)=>a+b,0), roll=vsRand()*total, pick=avail[0];
+  for(let i=0;i<avail.length;i++){ roll-=weights[i]; if(roll<=0){ pick=avail[i]; break; } }
+  const ang=vsRand()*Math.PI*2, dist=Math.max(VS.W,VS.H)/2 + 60;
+  const scale = 1 + t/420;                       // hp creeps up so old tiers stay relevant
+  VS.foes.push({ x:VS.p.x+Math.cos(ang)*dist, y:VS.p.y+Math.sin(ang)*dist,
+    hp:pick.hp*scale, max:pick.hp*scale, spd:pick.spd, dmg:pick.dmg, xp:pick.xp,
+    spr:pick.spr, r:13*(pick.big||1), hit:0, name:pick.name });
+}
+function vsSpawnBoss(){
+  const b=VS_BOSSES[VS.bossIdx]; if(!b) return;
+  VS.bossIdx++;
+  const ang=vsRand()*Math.PI*2, dist=Math.max(VS.W,VS.H)/2 + 80;
+  VS.foes.push({ x:VS.p.x+Math.cos(ang)*dist, y:VS.p.y+Math.sin(ang)*dist,
+    hp:b.hp, max:b.hp, spd:b.spd, dmg:b.dmg, xp:b.xp, spr:b.spr, r:15*b.big, hit:0, boss:true, name:b.name });
+  VS.fx.push({kind:"text", x:VS.p.x, y:VS.p.y-90, life:1, decay:0.4, txt:b.name+" approaches", big:true});
+  VS.shake = 1;
+}
+// Effects are capped. An unbounded particle list is what killed the rhythm game: each
+// frame spawns more than it clears, every frame gets slower, and it spirals.
+const VS_FX_MAX = 260;
+const hexA = (hex, a) => `rgba(${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)},${a})`;
+function vsFx(e){ if(VS.fx.length < VS_FX_MAX) VS.fx.push(e); }
+function vsSparks(x, y, n, dir, spread, col){
+  for(let i=0;i<n;i++){
+    const a = (dir==null ? vsRand()*Math.PI*2 : dir + (vsRand()-0.5)*(spread||1.6));
+    const sp = 70 + vsRand()*150;
+    vsFx({kind:"spark", x, y, dx:Math.cos(a)*sp, dy:Math.sin(a)*sp, life:1, decay:2.6+vsRand()*1.6, col});
+  }
+}
+function vsDamage(f, amount, x, y){
+  f.hp -= amount; f.hit = 0.12;
+  vsFx({kind:"dmg", x:x??f.x, y:y??f.y, life:1, decay:2.2, txt:Math.round(amount), vy:-38});
+  if(f.hp<=0){
+    VS.kills++;
+    for(let i=0;i<(f.boss?12:1);i++)
+      VS.orbs.push({x:f.x+(vsRand()-0.5)*20, y:f.y+(vsRand()-0.5)*20, xp:Math.max(1,Math.round(f.xp/(f.boss?12:1)))});
+    vsFx({kind:"pop", x:f.x, y:f.y, life:1, decay:2.6, r:f.r});
+    vsSparks(f.x, f.y, f.boss?16:4, null, 0, f.boss?"#ffd98a":"#e8dcae");
+    if(f.boss) VS.shake=1;
+    return true;
+  }
+  return false;
+}
+function vsNearest(x,y,maxD){
+  let best=null, bd=(maxD||1e9)**2;
+  for(const f of VS.foes){
+    const d=(f.x-x)**2+(f.y-y)**2;
+    if(d<bd){ bd=d; best=f; }
+  }
+  return best;
+}
+function vsFireWeapons(dt){
+  const p=VS.p;
+  for(const id in p.weapons){
+    const lvl=p.weapons[id], w=VS_WEAPONS.find(x=>x.id===id);
+    if(!w) continue;
+    const s=w.stats(lvl);
+    p._cd = p._cd || {};
+    p._cd[id] = (p._cd[id]||0) - dt;
+    if(p._cd[id] > 0) continue;
+    p._cd[id] = Math.max(0.08, s.cd * p.hasteMul);
+    const dmg = s.dmg * p.dmgMul;
+    if(id==="scim" || id==="halberd"){
+      const target=vsNearest(p.x,p.y,s.range);
+      const dir = target ? Math.atan2(target.y-p.y, target.x-p.x) : (p.face>0?0:Math.PI);
+      // the blade travels across the arc over the effect's life instead of just fading
+      const swing = vsRand()<0.5 ? 1 : -1;
+      // follow:true keeps the swing on the player instead of leaving it behind as he runs
+      vsFx({kind:"slash", follow:true, x:p.x, y:p.y, life:1, decay:4.2, r:s.range, a:dir, w:s.arc,
+            dirn:swing, heavy:id==="halberd"});
+      for(const f of VS.foes){
+        const dx=f.x-p.x, dy=f.y-p.y;
+        if(dx*dx+dy*dy > s.range*s.range) continue;
+        let da=Math.atan2(dy,dx)-dir;
+        while(da>Math.PI) da-=Math.PI*2; while(da<-Math.PI) da+=Math.PI*2;
+        if(Math.abs(da) <= s.arc/2){
+          vsDamage(f, dmg);
+          vsSparks(f.x, f.y, 3, Math.atan2(dy,dx), 1.2, "#fff0c0");
+        }
+      }
+    } else if(id==="whip"){
+      // a lash that whirls out and back, not a plain expanding circle
+      vsFx({kind:"lash", follow:true, x:p.x, y:p.y, life:1, decay:3.4, r:s.range, a:vsRand()*Math.PI*2});
+      for(const f of VS.foes){
+        if((f.x-p.x)**2+(f.y-p.y)**2 <= s.range*s.range){
+          vsDamage(f, dmg);
+          vsSparks(f.x, f.y, 2, null, 0, "#8affc8");
+        }
+      }
+    } else if(id==="bow"){
+      const t=vsNearest(p.x,p.y,700);
+      const base = t?Math.atan2(t.y-p.y,t.x-p.x):vsRand()*Math.PI*2;
+      for(let i=0;i<s.shots;i++){
+        const a = base + (i-(s.shots-1)/2)*0.16;
+        VS.shots.push({x:p.x,y:p.y,vx:Math.cos(a)*s.speed,vy:Math.sin(a)*s.speed,dmg,life:1.5,
+                       kind:"arrow",pierce:1,trail:[]});
+      }
+      vsFx({kind:"muzzle", x:p.x+Math.cos(base)*16, y:p.y+Math.sin(base)*16, a:base, life:1, decay:9, r:15});
+    } else if(id==="blast"){
+      const t=vsNearest(p.x,p.y,800);
+      const a=t?Math.atan2(t.y-p.y,t.x-p.x):vsRand()*Math.PI*2;
+      VS.shots.push({x:p.x,y:p.y,vx:Math.cos(a)*s.speed,vy:Math.sin(a)*s.speed,dmg,life:2,
+                     kind:"blast",blast:s.blast,spin:vsRand()*6,trail:[]});
+      vsFx({kind:"muzzle", x:p.x+Math.cos(a)*16, y:p.y+Math.sin(a)*16, a, life:1, decay:8, r:20, col:"#ff9a2a"});
+    } else if(id==="chin"){
+      const t=vsNearest(p.x,p.y,700) || {x:p.x+80,y:p.y};
+      VS.shots.push({x:p.x,y:p.y,tx:t.x,ty:t.y,dmg,life:1.2,kind:"chin",blast:s.blast,t:0});
+    } else if(id==="trident"){
+      let cur=vsNearest(p.x,p.y,s.range), hitList=[], from={x:p.x,y:p.y};
+      for(let j=0;j<s.jumps && cur;j++){
+        vsDamage(cur, dmg*(1-j*0.12));
+        vsFx({kind:"bolt", x1:from.x,y1:from.y,x2:cur.x,y2:cur.y, life:1, decay:4, seed:vsRand()*1000});
+        vsSparks(cur.x, cur.y, 3, null, 0, "#bfe8ff");
+        hitList.push(cur); from={x:cur.x,y:cur.y};
+        cur = VS.foes.filter(f=>!hitList.includes(f) && (f.x-from.x)**2+(f.y-from.y)**2 < 150**2)
+                     .sort((a,b)=>((a.x-from.x)**2+(a.y-from.y)**2)-((b.x-from.x)**2+(b.y-from.y)**2))[0];
+      }
+    } else if(id==="cannon"){
+      VS.cannons.push({x:p.x, y:p.y, life:s.life, rate:s.rate, cd:0, dmg});
+      vsFx({kind:"pop", x:p.x, y:p.y, life:1, decay:2.2, r:22});
+    }
+  }
+}
+
+// Enemies bunch up into one unreadable blob without this. A coarse grid keeps the
+// separation pass cheap even with a few hundred of them on screen.
+function vsSeparate(){
+  const cell=30, grid=new Map();
+  for(const f of VS.foes){
+    const k=((f.x/cell)|0)+","+((f.y/cell)|0);
+    let b=grid.get(k); if(!b){ b=[]; grid.set(k,b); }
+    b.push(f);
+  }
+  for(const f of VS.foes){
+    const cx=(f.x/cell)|0, cy=(f.y/cell)|0;
+    for(let ox=-1;ox<=1;ox++) for(let oy=-1;oy<=1;oy++){
+      const b=grid.get((cx+ox)+","+(cy+oy)); if(!b) continue;
+      for(const g of b){
+        if(g===f) continue;
+        const dx=g.x-f.x, dy=g.y-f.y, min=f.r+g.r, d2=dx*dx+dy*dy;
+        if(d2>0 && d2<min*min){
+          const d=Math.sqrt(d2), push=(min-d)/d*0.5;
+          f.x-=dx*push; f.y-=dy*push; g.x+=dx*push; g.y+=dy*push;
+        }
+      }
+    }
+  }
+}
+function vsBoom(x,y,radius,dmg){
+  vsFx({kind:"boom", x, y, life:1, decay:2.4, r:radius});
+  vsFx({kind:"shock", x, y, life:1, decay:3.4, r:radius});
+  vsSparks(x, y, 9, null, 0, "#ffb347");
+  VS.shake = Math.min(1, VS.shake + 0.18);
+  for(const f of VS.foes){
+    if((f.x-x)**2+(f.y-y)**2 <= radius*radius) vsDamage(f, dmg, x, y);
+  }
+}
+function vsUpdate(dt){
+  const p=VS.p;
+  VS.t += dt;
+  // ---- movement ----
+  let mx=0, my=0;
+  if(VS.keys.left) mx-=1; if(VS.keys.right) mx+=1;
+  if(VS.keys.up) my-=1;   if(VS.keys.down) my+=1;
+  if(mx||my){
+    const m=Math.hypot(mx,my);
+    p.x += mx/m * p.spd * p.spdMul * dt;
+    p.y += my/m * p.spd * p.spdMul * dt;
+    if(mx) p.face = mx>0?1:-1;
+  }
+  if(p.regen) p.hp = Math.min(p.maxHp, p.hp + p.regen*dt);
+  if(p.iframe>0) p.iframe -= dt;
+
+  // ---- spawning ----
+  const rate = Math.min(13, 1.1 + VS.t/45);      // spawns per second, ramped then capped
+  VS.spawnAcc += dt*rate;
+  while(VS.spawnAcc >= 1){
+    VS.spawnAcc -= 1;
+    if(VS.foes.length < 190) vsSpawn();
+  }
+  const nextBoss = VS_BOSSES[VS.bossIdx];
+  if(nextBoss && VS.t >= nextBoss.at) vsSpawnBoss();
+
+  vsFireWeapons(dt);
+
+  // ---- cannons ----
+  for(let i=VS.cannons.length-1;i>=0;i--){
+    const c=VS.cannons[i];
+    c.life -= dt; c.cd -= dt;
+    if(c.cd<=0){
+      c.cd = c.rate;
+      const t = vsNearest(c.x, c.y, 320);
+      if(t){
+        const a=Math.atan2(t.y-c.y, t.x-c.x);
+        VS.shots.push({x:c.x,y:c.y,vx:Math.cos(a)*470,vy:Math.sin(a)*470,dmg:c.dmg,life:1,kind:"ball",pierce:1,trail:[]});
+        vsFx({kind:"muzzle", x:c.x+Math.cos(a)*12, y:c.y+Math.sin(a)*12, a, life:1, decay:11, r:16});
+      }
+    }
+    if(c.life<=0) VS.cannons.splice(i,1);
+  }
+
+  // ---- projectiles ----
+  for(let i=VS.shots.length-1;i>=0;i--){
+    const s=VS.shots[i];
+    s.life -= dt;
+    if(s.kind==="chin"){
+      s.t = Math.min(1, s.t + dt/0.55);
+      if(s.t>=1){ vsBoom(s.tx, s.ty, s.blast, s.dmg); VS.shots.splice(i,1); continue; }
+    } else {
+      s.x += s.vx*dt; s.y += s.vy*dt;
+      if(s.trail){ s.trail.push(s.x, s.y); if(s.trail.length>12) s.trail.splice(0,2); }
+      if(s.spin!=null) s.spin += dt*14;
+      let gone=false;
+      for(const f of VS.foes){
+        if((f.x-s.x)**2+(f.y-s.y)**2 > (f.r+5)**2) continue;
+        if(s.blast){ vsBoom(s.x, s.y, s.blast, s.dmg); gone=true; }
+        else { vsDamage(f, s.dmg, s.x, s.y); if(--s.pierce<=0) gone=true; }
+        break;
+      }
+      if(gone){ VS.shots.splice(i,1); continue; }
+    }
+    if(s.life<=0) VS.shots.splice(i,1);
+  }
+
+  // ---- enemies ----
+  vsSeparate();
+  const cull = (Math.max(VS.W,VS.H)/2 + 60) * 2.2;   // stragglers you left behind stop counting
+  for(let i=VS.foes.length-1;i>=0;i--){
+    const f=VS.foes[i];
+    if(f.hp<=0){ VS.foes.splice(i,1); continue; }
+    if(f.hit>0) f.hit -= dt;
+    const dx=p.x-f.x, dy=p.y-f.y, d=Math.hypot(dx,dy)||1;
+    if(!f.boss && d > cull){ VS.foes.splice(i,1); continue; }
+    f.x += dx/d * f.spd * dt;
+    f.y += dy/d * f.spd * dt;
+    if(d < f.r + p.r && p.iframe<=0){
+      p.hp -= f.dmg * p.dr;
+      p.iframe = 0.45;
+      VS.shake = Math.min(1, VS.shake+0.45);
+      VS.fx.push({kind:"hurt", life:1, decay:2.6});
+      if(p.recoil) vsDamage(f, p.recoil);
+      if(p.hp<=0){ vsEnd(false); return; }
+    }
+  }
+
+  // ---- xp orbs (bones) ----
+  const pick2 = p.pickup*p.pickup;
+  for(let i=VS.orbs.length-1;i>=0;i--){
+    const o=VS.orbs[i];
+    const dx=p.x-o.x, dy=p.y-o.y, d2=dx*dx+dy*dy;
+    if(d2 < pick2){
+      const d=Math.sqrt(d2)||1, pull=Math.min(560, 130 + (p.pickup-d)*5);
+      o.x += dx/d*pull*dt; o.y += dy/d*pull*dt;
+      if(d < 16){
+        VS.xp += o.xp; VS.orbs.splice(i,1);
+        while(VS.xp >= VS.xpNext){
+          VS.xp -= VS.xpNext; VS.level++;
+          VS.xpNext = Math.round(5 + VS.level*3.4 + Math.pow(VS.level,1.45));
+          VS.pendingLevels = (VS.pendingLevels||0)+1;
+        }
+      }
+    }
+  }
+
+  // ---- effects ----
+  for(let i=VS.fx.length-1;i>=0;i--){
+    const e=VS.fx[i];
+    e.life -= e.decay*dt;
+    if(e.vy){ e.y += e.vy*dt; e.vy += 40*dt; }
+    if(e.kind==="spark"){ e.x += e.dx*dt; e.y += e.dy*dt; e.dx *= 0.90; e.dy = e.dy*0.90 + 90*dt; }
+    if(e.life<=0) VS.fx.splice(i,1);
+  }
+  if(VS.shake>0) VS.shake = Math.max(0, VS.shake - dt*2.6);
+
+  // ---- win ----
+  const limit = (VS_MODES.find(m=>m.id===VS.mode)||{}).mins;
+  if(limit && VS.t >= limit*60){ vsEnd(true); return; }
+
+  if(VS.pendingLevels && !VS.choosing){ VS.pendingLevels--; vsShowLevelUp(); }
+}
+
+function vsDraw(){
+  const ctx=VS.ctx, W=VS.W, H=VS.H, p=VS.p;
+  ctx.setTransform(VS.dpr,0,0,VS.dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle="#0b1410"; ctx.fillRect(0,0,W,H);
+
+  const sx = VS.shake ? (vsRand()-0.5)*10*VS.shake : 0;
+  const sy = VS.shake ? (vsRand()-0.5)*10*VS.shake : 0;
+  const camX = p.x - W/2 + sx, camY = p.y - H/2 + sy;
+  ctx.translate(-camX, -camY);
+
+  // ground grid — the only cue that you're actually moving
+  const g=64;
+  ctx.strokeStyle="rgba(255,255,255,.035)"; ctx.lineWidth=1;
+  ctx.beginPath();
+  for(let x=Math.floor(camX/g)*g; x<camX+W+g; x+=g){ ctx.moveTo(x,camY); ctx.lineTo(x,camY+H); }
+  for(let y=Math.floor(camY/g)*g; y<camY+H+g; y+=g){ ctx.moveTo(camX,y); ctx.lineTo(camX+W,y); }
+  ctx.stroke();
+
+  ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.imageSmoothingEnabled = false;   // keep the pixel art crisp when it's scaled up
+
+  // bones on the floor
+  for(const o of VS.orbs) vsBlit(ctx, "bones", o.x, o.y, 13);
+
+  // cannons — they blink out as their timer runs down
+  for(const c of VS.cannons){
+    ctx.globalAlpha = c.life<1.5 ? 0.35+0.65*Math.abs(Math.sin(c.life*12)) : 1;
+    vsBlit(ctx, "cannon", c.x, c.y, 30);
+    ctx.globalAlpha=1;
+  }
+
+  // effects that sit under the fighters
+  ctx.globalCompositeOperation="lighter";
+  for(const e of VS.fx){
+    if(e.follow){ e.x = p.x; e.y = p.y; }
+    if(e.kind==="slash"){
+      // a crescent that sweeps across the arc, trailing a thinner after-image
+      const t = 1-e.life;                       // 0 at the swing's start
+      const half = e.w/2, lead = e.a + e.dirn*(-half + e.w*t);
+      const rad = e.r*(0.92+0.12*t), tail = e.w*0.55;
+      const g = ctx.createLinearGradient(e.x+Math.cos(lead)*rad, e.y+Math.sin(lead)*rad, e.x, e.y);
+      g.addColorStop(0, `rgba(255,252,235,${e.life*0.95})`);
+      g.addColorStop(1, `rgba(255,214,120,0)`);
+      ctx.strokeStyle = g;
+      ctx.lineCap="round";
+      ctx.lineWidth = (e.heavy?11:7)*(0.5+e.life*0.5);
+      ctx.beginPath();
+      if(e.dirn>0) ctx.arc(e.x, e.y, rad, lead-tail, lead);
+      else         ctx.arc(e.x, e.y, rad, lead, lead+tail);
+      ctx.stroke();
+      // bright leading edge
+      ctx.strokeStyle=`rgba(255,255,255,${e.life})`; ctx.lineWidth=2.5;
+      ctx.beginPath();
+      ctx.moveTo(e.x+Math.cos(lead)*rad*0.55, e.y+Math.sin(lead)*rad*0.55);
+      ctx.lineTo(e.x+Math.cos(lead)*rad*1.04, e.y+Math.sin(lead)*rad*1.04);
+      ctx.stroke();
+      ctx.lineCap="butt";
+    } else if(e.kind==="lash"){
+      // whip: a tapering spiral whirling outward
+      const turns = 1.45, steps = 22, spin = e.a + (1-e.life)*3.4;
+      ctx.lineCap="round";
+      for(let s=0;s<steps;s++){
+        const u0=s/steps, u1=(s+1)/steps;
+        const r0=e.r*(0.25+0.75*u0)*(1.05-e.life*0.1), r1=e.r*(0.25+0.75*u1)*(1.05-e.life*0.1);
+        const a0=spin+u0*turns*Math.PI*2, a1=spin+u1*turns*Math.PI*2;
+        ctx.strokeStyle=`rgba(150,255,205,${e.life*(0.25+0.75*u0)})`;
+        ctx.lineWidth = 1 + 4.5*u0;
+        ctx.beginPath();
+        ctx.moveTo(e.x+Math.cos(a0)*r0, e.y+Math.sin(a0)*r0);
+        ctx.lineTo(e.x+Math.cos(a1)*r1, e.y+Math.sin(a1)*r1);
+        ctx.stroke();
+      }
+      ctx.lineCap="butt";
+      ctx.strokeStyle=`rgba(120,255,190,${e.life*0.28})`; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(e.x,e.y,e.r*(1.06-e.life*0.1),0,Math.PI*2); ctx.stroke();
+    } else if(e.kind==="bolt"){
+      // jagged lightning rather than a straight line, plus a soft glow pass
+      const dx=e.x2-e.x1, dy=e.y2-e.y1, len=Math.hypot(dx,dy)||1;
+      const nx=-dy/len, ny=dx/len, segs=6;
+      const pts=[[e.x1,e.y1]];
+      for(let s=1;s<segs;s++){
+        const u=s/segs;
+        const j=(Math.sin(e.seed+s*2.7)*0.5)*Math.min(22,len*0.22)*Math.sin(u*Math.PI);
+        pts.push([e.x1+dx*u+nx*j, e.y1+dy*u+ny*j]);
+      }
+      pts.push([e.x2,e.y2]);
+      for(const pass of [[8,0.16],[3.5,0.55],[1.4,1]]){
+        ctx.strokeStyle = pass[0]>2 ? `rgba(90,180,255,${e.life*pass[1]})` : `rgba(235,250,255,${e.life*pass[1]})`;
+        ctx.lineWidth = pass[0];
+        ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+        for(let s=1;s<pts.length;s++) ctx.lineTo(pts[s][0],pts[s][1]);
+        ctx.stroke();
+      }
+    } else if(e.kind==="muzzle"){
+      const r=e.r*(1.5-e.life*0.5);
+      const g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,r);
+      g.addColorStop(0, e.col ? `rgba(255,220,150,${e.life})` : `rgba(255,244,210,${e.life})`);
+      g.addColorStop(1, "rgba(255,180,80,0)");
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(e.x,e.y,r,0,Math.PI*2); ctx.fill();
+    } else if(e.kind==="boom"){
+      const r=e.r*(1.15-e.life*0.15);
+      const g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,r);
+      g.addColorStop(0,    `rgba(255,246,214,${e.life*0.9})`);
+      g.addColorStop(0.28, `rgba(255,170,60,${e.life*0.7})`);
+      g.addColorStop(0.62, `rgba(220,80,20,${e.life*0.3})`);
+      g.addColorStop(1,    "rgba(150,30,5,0)");
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(e.x,e.y,r,0,Math.PI*2); ctx.fill();
+    } else if(e.kind==="shock"){
+      ctx.strokeStyle=`rgba(255,220,170,${e.life*0.55})`; ctx.lineWidth=3*e.life;
+      ctx.beginPath(); ctx.arc(e.x,e.y,e.r*(1.7-e.life*0.7),0,Math.PI*2); ctx.stroke();
+    } else if(e.kind==="spark"){
+      ctx.fillStyle = e.col ? hexA(e.col, e.life) : `rgba(255,240,200,${e.life})`;
+      const sz = 1.6+2*e.life;
+      ctx.fillRect(e.x-sz/2, e.y-sz/2, sz, sz);
+    } else if(e.kind==="pop"){
+      ctx.strokeStyle=`rgba(255,255,255,${e.life*0.5})`; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(e.x,e.y,e.r*(1.6-e.life),0,Math.PI*2); ctx.stroke();
+    }
+  }
+  ctx.globalCompositeOperation="source-over";
+
+  // projectiles
+  for(const s of VS.shots){
+    // every projectile drags a fading trail — it reads as speed and direction at a glance
+    if(s.trail && s.trail.length>3){
+      ctx.lineCap="round";
+      for(let i=0;i<s.trail.length-2;i+=2){
+        const u=(i+2)/s.trail.length;
+        ctx.strokeStyle = s.kind==="blast" ? `rgba(255,150,50,${u*0.55})`
+                        : s.kind==="ball"  ? `rgba(190,195,205,${u*0.4})`
+                        :                    `rgba(232,220,174,${u*0.4})`;
+        ctx.lineWidth = u*(s.kind==="arrow"?2.5:4);
+        ctx.beginPath(); ctx.moveTo(s.trail[i],s.trail[i+1]); ctx.lineTo(s.trail[i+2],s.trail[i+3]); ctx.stroke();
+      }
+      ctx.lineCap="butt";
+    }
+    if(s.kind==="chin"){
+      const x=s.x+(s.tx-s.x)*s.t, y=s.y+(s.ty-s.y)*s.t - Math.sin(s.t*Math.PI)*54;
+      ctx.save(); ctx.translate(x,y); ctx.rotate(s.t*10); ctx.translate(-x,-y);
+      vsBlit(ctx, "chinchompa", x, y, 26);
+      ctx.restore();
+      // where it's going to land
+      ctx.strokeStyle=`rgba(255,140,60,${0.25+0.35*s.t})`; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.arc(s.tx, s.ty, s.blast*(0.4+0.6*s.t), 0, Math.PI*2); ctx.stroke();
+    } else if(s.kind==="blast"){
+      ctx.save(); ctx.translate(s.x,s.y); ctx.rotate(Math.sin(s.spin)*0.35); ctx.translate(-s.x,-s.y);
+      vsBlit(ctx, "flame", s.x, s.y, 22+Math.sin(s.spin*2)*3);
+      ctx.restore();
+    } else if(s.kind==="ball"){
+      ctx.fillStyle="#3a3a42"; ctx.beginPath(); ctx.arc(s.x,s.y,4.5,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle="#9aa0ab"; ctx.beginPath(); ctx.arc(s.x-1.2,s.y-1.2,1.8,0,Math.PI*2); ctx.fill();
+    } else {
+      // arrow: shaft, steel head, fletching
+      const a=Math.atan2(s.vy,s.vx), cx=Math.cos(a), cy=Math.sin(a), nx=-cy, ny=cx;
+      ctx.strokeStyle="#8a6a3a"; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(s.x-cx*13, s.y-cy*13); ctx.lineTo(s.x+cx*4, s.y+cy*4); ctx.stroke();
+      ctx.fillStyle="#dfe7ec";
+      ctx.beginPath();
+      ctx.moveTo(s.x+cx*8, s.y+cy*8);
+      ctx.lineTo(s.x+cx*2+nx*2.6, s.y+cy*2+ny*2.6);
+      ctx.lineTo(s.x+cx*2-nx*2.6, s.y+cy*2-ny*2.6);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle="#c9d2d8"; ctx.lineWidth=1.4;
+      ctx.beginPath();
+      ctx.moveTo(s.x-cx*13+nx*3, s.y-cy*13+ny*3); ctx.lineTo(s.x-cx*8, s.y-cy*8);
+      ctx.moveTo(s.x-cx*13-nx*3, s.y-cy*13-ny*3); ctx.lineTo(s.x-cx*8, s.y-cy*8);
+      ctx.stroke();
+    }
+  }
+
+  // enemies — a shadow under each one stops the field reading as floating stickers
+  ctx.fillStyle="rgba(0,0,0,.32)";
+  for(const f of VS.foes){
+    ctx.beginPath(); ctx.ellipse(f.x, f.y+f.r*0.85, f.r*0.75, f.r*0.28, 0, 0, Math.PI*2); ctx.fill();
+  }
+  for(const f of VS.foes){
+    vsBlit(ctx, f.spr, f.x, f.y, f.r*2.5, f.x > p.x, f.hit>0);
+    if(f.boss || f.hp < f.max){
+      const w=f.r*2, h=3;
+      ctx.fillStyle="rgba(0,0,0,.55)"; ctx.fillRect(f.x-w/2, f.y-f.r-9, w, h);
+      ctx.fillStyle = f.boss ? "#e6c35c" : "#d43b3b";
+      ctx.fillRect(f.x-w/2, f.y-f.r-9, w*Math.max(0,f.hp/f.max), h);
+    }
+  }
+
+  // player
+  ctx.fillStyle="rgba(0,0,0,.38)";
+  ctx.beginPath(); ctx.ellipse(p.x, p.y+p.r*0.95, p.r*0.72, p.r*0.26, 0, 0, Math.PI*2); ctx.fill();
+  const bob = Math.sin(VS.t*9)*((VS.keys.left||VS.keys.right||VS.keys.up||VS.keys.down)?1.4:0);
+  ctx.globalAlpha = (p.iframe>0 && Math.floor(p.iframe*20)%2===0) ? 0.5 : 1;
+  vsBlit(ctx, "player", p.x, p.y+bob, p.r*2.7, p.face<0);
+  ctx.globalAlpha = 1;
+
+  // damage numbers and callouts, above everything
+  for(const e of VS.fx){
+    if(e.kind==="dmg"){
+      ctx.font="bold 13px "+getComputedStyle(document.body).fontFamily;
+      ctx.fillStyle=`rgba(255,240,200,${Math.min(1,e.life)})`;
+      ctx.fillText(e.txt, e.x, e.y);
+    } else if(e.kind==="text"){
+      ctx.font="bold 26px "+getComputedStyle(document.body).fontFamily;
+      ctx.fillStyle=`rgba(230,195,92,${Math.min(1,e.life)})`;
+      ctx.fillText(e.txt, e.x, e.y);
+    }
+  }
+
+  ctx.setTransform(VS.dpr,0,0,VS.dpr,0,0);
+  const hurt = VS.fx.find(e=>e.kind==="hurt");
+  if(hurt){ ctx.fillStyle=`rgba(190,30,30,${hurt.life*0.22})`; ctx.fillRect(0,0,W,H); }
+}
+
+function vsHud(){
+  const p=VS.p;
+  const pct = Math.max(0, p.hp/p.maxHp*100);
+  $("#vsHpBar").style.width = pct+"%";
+  $("#vsHpText").textContent = `${Math.max(0,Math.ceil(p.hp))} / ${p.maxHp}`;
+  const limit=(VS_MODES.find(m=>m.id===VS.mode)||{}).mins;
+  const shown = limit ? Math.max(0, limit*60 - VS.t) : VS.t;
+  $("#vsTime").textContent = vsClock(shown);
+  $("#vsLevel").textContent = VS.level;
+  $("#vsKills").textContent = VS.kills;
+  $("#vsXpBar").style.width = (VS.xp/VS.xpNext*100)+"%";
+}
+function vsClock(s){
+  s=Math.max(0,Math.floor(s));
+  return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+}
+function vsFrame(now){
+  if(!VS.on) return;
+  VS.raf = requestAnimationFrame(vsFrame);
+  if(VS.paused || VS.choosing){ VS.last = now; return; }
+  const dt = Math.min(0.05, (now - VS.last)/1000);   // a long stall must not teleport the horde
+  VS.last = now;
+  vsUpdate(dt);
+  if(!VS.on) return;                                  // vsEnd fired inside the update
+  vsDraw();
+  vsHud();
+}
+
+function vsFit(){
+  const cv=VS.cv; if(!cv) return;
+  VS.dpr = Math.min(devicePixelRatio||1, 2);
+  VS.W = cv.clientWidth; VS.H = cv.clientHeight;
+  cv.width = Math.round(VS.W*VS.dpr);
+  cv.height = Math.round(VS.H*VS.dpr);
+}
+function vsStart(){
+  VS.cv = $("#vsCanvas"); VS.ctx = VS.cv.getContext("2d");
+  Object.assign(VS, {
+    on:true, paused:false, t:0, foes:[], shots:[], orbs:[], fx:[], cannons:[],
+    kills:0, level:1, xp:0, xpNext:8, choosing:false, pendingLevels:0,
+    shake:0, spawnAcc:0, bossIdx:0, seed:(Date.now()>>>0)||1, keys:{},
+  });
+  VS.p = vsNewPlayer();
+  vsApplyPassives();
+  $("#vsSetup").classList.add("hidden");
+  $("#vsResults").classList.add("hidden");
+  $("#vsStage").classList.remove("hidden");
+  $("#vsPaused").classList.add("hidden");
+  $("#vsLevelUp").classList.add("hidden");
+  $("#vsSub").textContent = (VS_MODES.find(m=>m.id===VS.mode)||{}).label || "";
+  vsFit();
+  vsHud();
+  renderVsLoadout();
+  VS.last = performance.now();
+  cancelAnimationFrame(VS.raf);
+  VS.raf = requestAnimationFrame(vsFrame);
+}
+function vsMenuHTML(){
+  const p=VS.p, items=vsAllOwned();
+  const limit=(VS_MODES.find(m=>m.id===VS.mode)||{}).mins;
+  const stat=(v,k)=>`<div><b>${v}</b><span>${k}</span></div>`;
+  const row=i=>`<div>
+      <img src="${VS_ICON(i.icon)}" alt="" onerror="this.remove()">
+      <div><div class="nm">${escapeHtml(i.name)}</div><div class="ds">${escapeHtml(i.desc)}</div></div>
+      <div class="lv">${i.lvl >= i.max ? "MAX" : "Lv "+i.lvl}</div>
+    </div>`;
+  const w=items.filter(i=>i.kind==="weapon"), a=items.filter(i=>i.kind==="passive");
+  const nextBoss = VS_BOSSES[VS.bossIdx];
+  return `<div class="vs-menu-in">
+    <h4>PAUSED</h4>
+    <div class="vs-tally">
+      ${stat(vsClock(VS.t), "Survived")}
+      ${limit ? stat(vsClock(Math.max(0, limit*60-VS.t)), "Remaining") : ""}
+      ${stat(VS.level, "Level")}
+      ${stat(VS.kills, "Kills")}
+      ${stat(Math.max(0,Math.ceil(p.hp))+"/"+p.maxHp, "Health")}
+      ${stat(VS.foes.length, "On screen")}
+    </div>
+    ${nextBoss ? `<h5>${escapeHtml(nextBoss.name)} arrives at ${vsClock(nextBoss.at)}</h5>` : ""}
+    ${w.length?`<h5>Weapons</h5><div class="vs-gear">${w.map(row).join("")}</div>`:""}
+    ${a.length?`<h5>Equipment</h5><div class="vs-gear">${a.map(row).join("")}</div>`:""}
+    <div class="vs-menu-btns">
+      <button class="vs-go" id="vsResume">▶ Resume</button>
+      <button class="rg-btn" id="vsRestart">⟳ Restart run</button>
+      <button class="rg-btn" id="vsGiveUp">✕ Give up</button>
+    </div>
+    <div class="vs-keys">WASD or arrows to move · Esc to resume</div>
+  </div>`;
+}
+function vsSetPaused(on){
+  if(!VS.on || VS.choosing) return;
+  VS.paused = on;
+  const el = $("#vsPaused");
+  if(on){
+    el.innerHTML = vsMenuHTML();
+    $("#vsResume").onclick  = ()=>vsSetPaused(false);
+    $("#vsRestart").onclick = ()=>{ VS.paused=false; vsStart(); };
+    $("#vsGiveUp").onclick  = ()=>vsQuit();
+  }
+  el.classList.toggle("hidden", !on);
+  if(!on) VS.last = performance.now();
+}
+function vsStop(){
+  VS.on=false; VS.paused=false; VS.choosing=false;
+  cancelAnimationFrame(VS.raf); VS.raf=null;
+  $("#vsStage").classList.add("hidden");
+  $("#vsLevelUp").classList.add("hidden");
+  $("#vsPaused").classList.add("hidden");
+}
+function vsQuit(){
+  vsStop();
+  $("#vsSetup").classList.remove("hidden");
+  $("#vsSub").textContent = "";
+  renderVsSetup();
+}
+function vsEnd(won){
+  const t=VS.t, kills=VS.kills, level=VS.level, mode=VS.mode, p=VS.p;
+  const loadout = vsAllOwned();
+  vsStop();
+  // a run is "better" by time first, then kills — surviving is the point
+  state.vsBest = state.vsBest || {};
+  const prev = state.vsBest[mode];
+  const better = !prev || t>prev.time+0.5 || (Math.abs(t-prev.time)<=0.5 && kills>prev.kills);
+  if(better) state.vsBest[mode] = {time:Math.round(t), kills, level, won:!!won, at:todayISO()};
+  save();
+  const label=(VS_MODES.find(m=>m.id===mode)||{}).label||"";
+  $("#vsResults").innerHTML = `<div class="vs-res">
+      <div style="font-size:46px;line-height:1">${won?"🏆":"💀"}</div>
+      <h3>${won?"You survived":"You died"}</h3>
+      <div class="small muted">${escapeHtml(label)}${won?"":` · fell at ${vsClock(t)}`}</div>
+      <div class="vs-tally">
+        <div><b>${vsClock(t)}</b>Survived</div>
+        <div><b>${kills}</b>Kills</div>
+        <div><b>${level}</b>Level</div>
+      </div>
+      ${loadout.length?`<div class="small muted" style="margin-top:6px">Final loadout</div>
+      <div class="vs-loadout">${loadout.map(w=>`<span><img src="${VS_ICON(w.icon)}" alt="" onerror="this.remove()">${escapeHtml(w.name)} ${w.lvl}</span>`).join("")}</div>`:""}
+      ${better?`<div style="color:var(--gold);font-weight:bold;margin-top:10px">★ New best</div>`:""}
+      <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="vs-go" id="vsAgain">↻ Run it back</button>
+        <button class="rg-btn" id="vsBack">Back to setup</button>
+      </div>
+    </div>`;
+  $("#vsResults").classList.remove("hidden");
+  $("#vsAgain").onclick = ()=>{ $("#vsResults").classList.add("hidden"); vsStart(); };
+  $("#vsBack").onclick = ()=>{ $("#vsResults").classList.add("hidden"); vsQuit(); };
+}
+$("#vsStart").onclick = vsStart;
+$("#vsPause").onclick = ()=>vsSetPaused(!VS.paused);
+$("#vsQuit").onclick  = vsQuit;
+
+function renderVsSetup(){
+  const wrap=$("#vsModes"); if(!wrap) return;
+  VS.mode = state.vsMode || VS.mode || "normal";
+  wrap.innerHTML = VS_MODES.map(m=>`
+    <button class="vs-mode${m.id===VS.mode?" on":""}" data-vsmode="${m.id}">
+      <b>${escapeHtml(m.label)}</b>
+      ${m.mins?`${m.mins} minutes`:"No limit"}
+      <div class="small" style="opacity:.7;margin-top:2px">${escapeHtml(m.desc)}</div>
+    </button>`).join("");
+  $$("#vsModes [data-vsmode]").forEach(b=>b.onclick=()=>{
+    VS.mode = b.dataset.vsmode; state.vsMode = VS.mode; save(); renderVsSetup();
+  });
+  const best = (state.vsBest||{})[VS.mode];
+  $("#vsBest").innerHTML = best
+    ? `Best: <b style="color:var(--gold)">${vsClock(best.time)}</b> · ${best.kills} kills · level ${best.level}${best.won?" · cleared":""}`
+    : "No runs yet on this length.";
+}
+function vsKeyName(code){
+  if(code==="KeyA"||code==="ArrowLeft") return "left";
+  if(code==="KeyD"||code==="ArrowRight") return "right";
+  if(code==="KeyW"||code==="ArrowUp") return "up";
+  if(code==="KeyS"||code==="ArrowDown") return "down";
+  return null;
+}
+addEventListener("keydown", e=>{
+  if(!VS.on) return;
+  if(e.code==="Escape"){ e.preventDefault(); vsSetPaused(!VS.paused); return; }
+  const k=vsKeyName(e.code);
+  if(k){ e.preventDefault(); VS.keys[k]=true; }
+});
+addEventListener("keyup", e=>{
+  if(!VS.on) return;
+  const k=vsKeyName(e.code);
+  if(k) VS.keys[k]=false;
+});
+addEventListener("blur", ()=>{ VS.keys={}; if(VS.on && !VS.choosing) vsSetPaused(true); });
+addEventListener("resize", ()=>{ if(VS.on) vsFit(); });
+
 // ============ ARCADE ============
 // The shelf of games. Adding one is a single entry here — art, a view to open, and
 // an optional line of stats pulled from wherever that game keeps them.
@@ -5212,13 +6878,26 @@ const ARCADE_GAMES = [
         return `${lib.length} song${lib.length>1?"s":""}` + (best?` · best ${best.best.grade} on ${best.name.replace(/\.[^.]+$/,"")}`:"");
       }catch(e){ return ""; }
     } },
+  { id:"survivors", title:"Gielinor Survivors",
+    // the card shows the actual player sprite rather than a stand-in glyph
+    icon:()=>{ const c=vsSprite("player",false);
+      return c ? `<img src="${c.toDataURL()}" alt="" style="image-rendering:pixelated;height:112px">` : "⚔"; },
+    art:"linear-gradient(150deg,#1a2b18,#0a1410 55%,#2c1a10)",
+    blurb:"Survive the horde",
+    stats: ()=>{
+      const b = state.vsBest || {};
+      const runs = Object.keys(b);
+      if(!runs.length) return "No runs yet";
+      const top = runs.map(k=>b[k]).sort((a,b2)=>b2.time-a.time)[0];
+      return `Best ${vsClock(top.time)} · ${top.kills} kills`;
+    } },
 ];
 async function renderArcade(){
   const el = $("#arcShelf"); if(!el) return;
   $("#arcSub").textContent = ARCADE_GAMES.length===1 ? "1 game" : `${ARCADE_GAMES.length} games`;
   el.innerHTML = ARCADE_GAMES.map(g=>`
     <button class="arc-card" data-arcplay="${g.id}">
-      <div class="arc-art" style="background:${g.art}">${g.icon}</div>
+      <div class="arc-art" style="background:${g.art}">${typeof g.icon==="function"?g.icon():g.icon}</div>
       <div class="arc-title">${escapeHtml(g.title)}</div>
       <div class="arc-meta" data-arcstat="${g.id}">${escapeHtml(g.blurb||"")}</div>
     </button>`).join("")
@@ -6656,15 +8335,7 @@ function openSkillModal(key){
       <a class="ghost small" href="https://oldschool.runescape.wiki/w/${skillWikiPage(key)}" target="_blank" rel="noopener">Wiki ↗</a>
     </div>`;
   $("#skillWrap").classList.remove("hidden");
-  // centre on the skills panel, not the viewport — the sidebar shifts the content column
-  const anchor = $("#skillsGrid").closest(".panel") || $("#skillsGrid");
-  const ar = anchor.getBoundingClientRect(), m = $("#skillModal");
-  m.style.left = (ar.left + ar.width/2) + "px";
-  const vt = Math.max(ar.top, 10), vb = Math.min(ar.bottom, window.innerHeight-10);
-  let cy = (vt + vb) / 2;
-  const h = m.offsetHeight; // rendered above, so height is real
-  cy = Math.max(10 + h/2, Math.min(cy, window.innerHeight - 10 - h/2));
-  m.style.top = cy + "px";
+  placeSkillModal($("#skillsGrid"));
   $("#skillX").onclick = closeSkillModal;
   $("#skillStar").onclick = ()=>{
     const cur = state.priorities.find(p=>p.kind==="tag" && p.metric===tagKey);
@@ -6695,11 +8366,35 @@ function openSkillModal(key){
     renderQuestPlanner();
   });
 }
+// Centre the modal on the grid it belongs to, not the viewport — the sidebar shifts
+// the content column, so viewport-centring lands it off to one side.
+function placeSkillModal(grid){
+  const anchor = (grid && grid.closest(".panel")) || grid;
+  const m = $("#skillModal");
+  // a hidden or unmeasurable anchor gives a zero rect, which would park the modal
+  // half off the left edge — fall back to the viewport in that case
+  const ar = anchor ? anchor.getBoundingClientRect() : null;
+  if(!ar || !ar.width){
+    m.style.left = (window.innerWidth/2) + "px";
+    m.style.top  = (window.innerHeight/2) + "px";
+    return;
+  }
+  m.style.left = (ar.left + ar.width/2) + "px";
+  const vt = Math.max(ar.top, 10), vb = Math.min(ar.bottom, window.innerHeight-10);
+  let cy = (vt + vb) / 2;
+  const h = m.offsetHeight; // rendered above, so the height is real
+  cy = Math.max(10 + h/2, Math.min(cy, window.innerHeight - 10 - h/2));
+  m.style.top = cy + "px";
+}
 function closeSkillModal(){ $("#skillWrap").classList.add("hidden"); }
 $("#skillBack").onclick = closeSkillModal;
 $("#skillsGrid").onclick = (e)=>{
   const t = e.target.closest("[data-skillinfo]");
   if(t) openSkillModal(t.dataset.skillinfo);
+};
+$("#bossGrid").onclick = (e)=>{
+  const t = e.target.closest("[data-bossinfo]");
+  if(t) openBossModal(t.dataset.bossinfo);
 };
 $("#qpRefresh").onclick = qpLoad;
 $("#qpSearch").addEventListener("input", ()=>{
@@ -6736,8 +8431,24 @@ $("#themeBtn").onclick = ()=>{
 };
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.3.3";
+const APP_VERSION = "1.4";
 const PATCH_NOTES = [
+  {v:"1.4", date:"September 9, 2026", title:"Gielinor Survivors and boss drops", notes:[
+    "The heatmap can focus on a single skill. Pick one from the Show dropdown and the map recolours by how much of it you did each day, dark for a quiet session through to full colour for your biggest. It works in all three views — calendar, week and bars — and the legend turns into the intensity key.",
+    "The shading levels come from your own active days rather than a fixed XP scale, so the map has real contrast whether you are getting 5k a day or 500k. Hovering a day gives the actual number.",
+    "Boss tiles on Home are now clickable. Each one opens its kill count, your rank, and a checklist of that boss's notable drops with the real item pictures — pets, uniques and gear, not the bulk drops nobody tracks. Click an item once you've got it; the tile shows how many you're missing.",
+    "Sixty-five bosses and raids are covered, from Obor and Bryophyta up through the Chambers, Theatre, Tombs, the Desert Treasure II bosses, Nex, Yama and Doom of Mokhaiotl.",
+    "Importing a RuneLite collection log now ticks off any boss drops it finds, and tells you how many it ticked.",
+    "New game in the Game corner: Gielinor Survivors. You move, your gear swings on its own, and the map fills with everything from Lumbridge chickens to Vorkath. Pick an upgrade every level and see how long you last.",
+    "Everything is drawn as pixel art — you're a lad in full rune, and the horde is chickens, rats, goblins, cows, giant spiders, zombies, skeletons, hill giants, abyssal demons, blue dragons and fire giants.",
+    "Eight weapons and eight passives, each with several levels — a scimitar that sweeps in front of you, a whip that lashes everything around you, a cannon you drop and leave firing, chinchompas, a trident that chains between targets, and more.",
+    "Three run lengths: six minutes, fifteen minutes, or endless. Each keeps its own best run.",
+    "A strip above the arena shows everything you're running and what level it's at, so you can read your build without stopping.",
+    "Esc opens a proper pause menu: time survived, level, kills, health, how many are on screen, when the next boss turns up, and your full loadout with what each piece does. Resume, restart the run, or give up from there.",
+    "Every weapon has its own effect — the scimitar and halberd sweep a crescent that travels with you, the whip whirls out as a lash, the trident throws forked lightning, arrows have fletching and trails, and chinchompas spin down onto a marked landing circle.",
+    "Zulrah, TzTok-Jad and Vorkath turn up at fixed times. They hit hard but move slower than the crowd, so they're a fight rather than a wall.",
+    "WASD or the arrow keys to move, Esc to pause. Alt-tabbing pauses it for you.",
+  ]},
   {v:"1.3.3", date:"August 12, 2026", title:"Cleanup", notes:[
     "Finishing every step of a to-do no longer marks the to-do itself as done. Steps are usually prerequisites — completing them means you're ready to start, not that you've finished. They now drive the progress bar, and you tick the goal off yourself. Anything you previously completed this way will show full progress but untick'd; tick the ones you actually finished.",
     "To-do items on Home can be ticked off in place, and their steps checked without leaving the page.",
@@ -6872,7 +8583,7 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"Quest planner", clog:"Collection log", arcade:"Game corner", rhythm:"Dance Dance RuneScape", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"Quest planner", clog:"Collection log", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
 function applyScrollMode(){
   const recap = (state.scrollMode||"journal")==="recap";
   const j=$("#scrollJournal"), r=$("#scrollRecap");
@@ -6904,6 +8615,8 @@ function switchView(name){
     const dsel=$("#rgDiff"); if(dsel && state.rgDiff) dsel.value = state.rgDiff;
     renderRgBinds(); rgSyncKeyHint(); renderRgLibrary(); rgWireDrop();
   } else if(RG.playing) rgQuit();   // navigating away stops the music
+  if(name==="survivors"){ if(!VS.on) renderVsSetup(); }
+  else if(VS.on) vsQuit();          // and it stops the horde
 }
 $$(".navitem").forEach(n=>n.onclick=()=>switchView(n.dataset.view));
 $$("#scrollModeSeg [data-scrollmode]").forEach(b=>b.onclick=()=>{

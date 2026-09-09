@@ -9,6 +9,7 @@ a copy of your data — for that, use ⇓ Backup in Settings.
 
 | File | Released |
 |---|---|
+| `OSRS-Buddy-v1.4.html` | 9 Sep 2026 — Gielinor Survivors, boss drop checklists, heatmap skill focus |
 | `OSRS-Buddy-v1.3.3.html` | 12 Aug 2026 — cleanup: to-dos, nav sections, dark themes |
 | `OSRS-Buddy-v1.3.2.html` | 12 Aug 2026 — rhythm game stability |
 | `OSRS-Buddy-v1.3.1.html` | 12 Aug 2026 — Home layout fix |
