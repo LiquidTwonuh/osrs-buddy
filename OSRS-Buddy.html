@@ -582,6 +582,15 @@
   .ca-filter{display:flex; flex-wrap:wrap; gap:4px; margin:8px 0 6px; justify-content:flex-start}
   .ca-filter button{padding:3px 9px; font-size:11px}
   .ca-hide{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--muted); margin:2px 0 8px}
+  /* ticking things by hand */
+  button.ach-chk{padding:0; margin-top:1px; background:transparent; box-shadow:none; cursor:pointer; transition:border-color .12s, box-shadow .12s}
+  button.ach-chk:hover{border-color:var(--gold)}
+  .ach-task.edited .ach-chk{box-shadow:0 0 0 2px color-mix(in oklab, var(--gold) 45%, transparent)}
+  .ach-you{color:var(--gold)}
+  .dy-note{margin:8px 0 0}
+  .ach-link{background:none; border:0; padding:0; box-shadow:none; color:var(--gold); cursor:pointer; font:inherit; text-decoration:underline}
+  .cl-item{position:relative; cursor:pointer}
+  .cl-item.edited::after{content:""; position:absolute; top:7px; right:7px; width:6px; height:6px; border-radius:50%; background:var(--gold)}
   /* boost tooltip in the quest planner */
   [data-boost]{cursor:help}
   .bst-tip{position:fixed; z-index:130; width:max-content; max-width:290px; padding:10px 13px; border-radius:10px; background:var(--panel);
@@ -4894,13 +4903,19 @@ function clogData(){
     const wp = (wiki && wiki.tabs[t]) || {}, pp = plug[t] || {};
     const ppKey = {}; Object.keys(pp).forEach(k=>{ ppKey[low(k)] = k; });
     const used = new Set();
+    const eds = (state.achEdits || {}).clog || {};
     const make = (name, pg, wikiItems)=>{
+      // items marked by hand sit on top of what the plugin captured
+      const pageKey = t + "|" + low(name) + "|";
+      const withEdit = it=>{ const key = pageKey + achNorm(it.name), e = eds[key];
+        return Object.assign(it, {key, base:it.got, edited: e!==undefined, got: e!==undefined ? !!e : it.got}); };
       if(pg){
-        const items = (pg.items||[]).map(i=>({id:i.id, name:String(i.name||""), got:!!i.obtained, hand:!i.obtained && !!hand[low(i.name)]}));
+        const items = (pg.items||[]).map(i=>withEdit({id:i.id, name:String(i.name||""), got:!!i.obtained, hand:!i.obtained && !!hand[low(i.name)]}));
         return {name, tab:t, items, have:items.filter(i=>i.got).length, total:Math.max(pg.total_items||0, items.length), seen:pg.last_scraped||true};
       }
-      const items = (wikiItems||[]).map(([n,pic])=>({name:n, pic, got:false, hand:!!hand[low(n)]}));
-      return {name, tab:t, items, have:0, total:items.length, seen:null};
+      const items = (wikiItems||[]).map(([n,pic])=>withEdit({name:n, pic, got:false, hand:!!hand[low(n)]}));
+      const edited = items.some(i=>i.edited);
+      return {name, tab:t, items, have:items.filter(i=>i.got).length, total:items.length, seen: edited ? true : null};
     };
     const pages = Object.keys(wp).map(wn=>{
       const k = ppKey[low(wn)];
@@ -5007,8 +5022,8 @@ function renderClog(){
       ${page.seen ? "" : `<p class="small muted" style="margin:10px 0 0">Open this page in your in-game collection log with the Character Export plugin running, and your progress on it shows up here.</p>`}
       <div class="cl-grid ${page.seen?"":"unseen"}">${page.items.map(it=>{
         const hit = q && it.name.toLowerCase().includes(q);
-        const tip = it.name + (!page.seen ? "" : it.got ? "" : it.hand ? " (ticked by hand, not in your in-game log yet)" : " (not collected yet)");
-        return `<div class="cl-item ${it.got?"got":""} ${it.hand?"hand":""} ${hit?"hit":""}" title="${escapeHtml(tip)}">
+        const tip = it.name + (it.got ? " (collected" : " (not collected") + (it.edited ? ", set by you" : "") + "). Click to change.";
+        return `<div class="cl-item ${it.got?"got":""} ${it.hand?"hand":""} ${it.edited?"edited":""} ${hit?"hit":""}" data-cledit="${escapeHtml(it.key)}" title="${escapeHtml(tip)}">
           <span class="cl-ic"><img src="${clogIcon(it)}" alt="" loading="lazy" data-alt="${escapeHtml(dropIconUrl(it.name))}"
             onerror="if(this.dataset.alt && this.src!==this.dataset.alt){ this.src=this.dataset.alt; } else { this.style.visibility='hidden'; }"></span>
           <span class="cl-in">${escapeHtml(it.name)}</span>
@@ -5031,6 +5046,13 @@ function renderClog(){
   const cc = $("#clogConnect"); if(cc) cc.onclick = ()=>openRuneLite();
   $$("#clogView [data-cltab]").forEach(btn=>btn.onclick=()=>{ v.tab = btn.dataset.cltab; v.page = null; v.q = ""; renderClog(); });
   $$("#clogView [data-clpage]").forEach(btn=>btn.onclick=()=>{ v.page = btn.dataset.clpage; renderClog(); });
+  $$("#clogView [data-cledit]").forEach(el=>el.onclick=()=>{
+    const it = d.pages.flatMap(pg=>pg.items).find(i=>i.key===el.dataset.cledit); if(!it) return;
+    const all = state.achEdits || (state.achEdits = {}), map = all.clog || (all.clog = {});
+    const next = !it.got;
+    if(next === (it.base === true)) delete map[it.key]; else map[it.key] = next;
+    save(); renderClog();
+  });
   $$("#clogView [data-clsort]").forEach(btn=>btn.onclick=()=>{ v.sort = btn.dataset.clsort; renderClog(); });
   $$("#clogView [data-clgo]").forEach(btn=>btn.onclick=()=>{
     const parts = btn.dataset.clgo.split("|");
@@ -10769,6 +10791,7 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
+    "Tick or untick anything in Achievements by hand: diary tasks, combat achievements and collection log items. Your changes are marked as set by you and stay put through RuneLite syncs. Set something back to match RuneLite and it follows RuneLite again.",
     "In the quest planner, hover over a boostable requirement to see what can boost that skill and by how much, from the OSRS Wiki. Boosts big enough to cover what you're short are highlighted.",
     "Removed the old Sync from RuneLite button in Settings. It needed the WikiSync plugin and only worked in the browser version. Worn gear on the Roadmap now ticks from the Character Export plugin instead, and saying sync to Ask Bud pulls your latest RuneLite data.",
   ]},
@@ -12079,12 +12102,12 @@ function achTaskRow(x){
   }).join("")
     + (x.quests||[]).map(q=>`<span class="qreq ${questDone(q) ? "ok" : "no"}" title="${escapeHtml(q)}${questDone(q) ? ", done" : ", not done"}">${escapeHtml(q)}</span>`).join("")
     + (x.other ? `<span class="ach-other">${escapeHtml(x.other)}</span>` : "");
-  return `<div class="ach-task ${st}">
-      <span class="ach-chk" title="${st==="done" ? "Done" : st==="todo" ? "Not done yet" : "Not loaded from RuneLite"}">${st==="done" ? "✓" : ""}</span>
+  return `<div class="ach-task ${st} ${x.edited ? "edited" : ""}">
+      <button type="button" class="ach-chk" ${x.editAttr || ""} title="${st==="done" ? "Done" : st==="todo" ? "Not done" : "Not loaded from RuneLite"}${x.edited ? ", set by you" : ""}. Click to mark as ${st==="done" ? "not done" : "done"}.">${st==="done" ? "✓" : ""}</button>
       <div class="ach-main">
         <div class="ach-head">${escapeHtml(x.head)}</div>
         ${x.desc ? `<div class="ach-desc">${escapeHtml(x.desc)}</div>` : ""}
-        ${x.meta ? `<div class="ach-meta">${x.meta}</div>` : ""}
+        ${x.meta || x.edited ? `<div class="ach-meta">${x.meta || ""}${x.edited ? `${x.meta ? " · " : ""}<span class="ach-you">Set by you</span>` : ""}</div>` : ""}
         ${chips ? `<div class="ach-reqs">${chips}</div>` : ""}
       </div>
       ${x.right ? `<span class="ach-right">${x.right}</span>` : ""}
@@ -12092,7 +12115,7 @@ function achTaskRow(x){
 }
 
 // ---- Achievement diaries ----
-const ACHDB_VERSION = 2;   // bump when the parsing changes, so cached lists re-download
+const ACHDB_VERSION = 3;   // bump when the parsing changes, so cached lists re-download
 const DIARY_REGIONS = ["Ardougne","Desert","Falador","Fremennik","Kandarin","Karamja","Kourend & Kebos","Lumbridge & Draynor","Morytania","Varrock","Western Provinces","Wilderness"];
 const DIARY_TIERS = ["easy","medium","hard","elite"];
 let diaryDbBusy = false, diaryDbFailed = 0, diaryView = {region:null};
@@ -12186,8 +12209,15 @@ function diaryData(){
       // done); named ticks only when they agree with its count (see ceTierTasks).
       const tt = ceTierTasks(pt);
       if(tt.flags && tt.flags.length===tasks.length){ known = true; flags = tt.flags; }
-      const done = Math.min(tt.done, tasks.length);
-      return {tier:t, tasks, flags, known, counted:tt.counted, mismatch:tt.mismatch, done, total:tasks.length, complete: tasks.length>0 && done===tasks.length};
+      // Ticks set by hand sit on top of whatever RuneLite reports. In a tier RuneLite only has a
+      // count for, the first tick turns the tier into a hand-set list.
+      const baseKnown = known, baseFlags = flags.slice();
+      const ed = ((state.achEdits || {}).diary || {})[r + "|" + t] || {};
+      const edited = Object.keys(ed).length > 0;
+      if(edited){ flags = tasks.map((_,i)=> (i in ed) ? !!ed[i] : (baseKnown ? baseFlags[i]===true : false)); known = true; }
+      const done = known ? flags.filter(Boolean).length : Math.min(tt.done, tasks.length);
+      return {tier:t, tasks, flags, known, baseKnown, baseFlags, edited, edits:ed, pluginDone:Math.min(tt.done, tasks.length),
+              counted:tt.counted, mismatch:tt.mismatch, done, total:tasks.length, complete: tasks.length>0 && done===tasks.length};
     });
     const done = tiers.reduce((a,x)=>a + x.done, 0), total = tiers.reduce((a,x)=>a + x.total, 0);
     return {name:r, tiers, done, total, complete: tiers.every(x=>x.complete)};
@@ -12222,13 +12252,22 @@ function renderDiaries(){
       <span class="cl-pc">${r.done}/${r.total}</span>
       <span class="dy-pips">${r.tiers.map(t=>`<i class="dy-pip ${t.complete ? "done" : t.done ? "part" : ""}" title="${achCap(t.tier)}: ${t.done} of ${t.total}"></i>`).join("")}</span>
     </button>`).join("");
+  const tierNote = t=>{
+    if(t.edited) return `<p class="small muted dy-note">You've set this tier by hand${t.counted ? `. RuneLite counts ${t.pluginDone} done` : ""}. <button type="button" class="ach-link" data-dyreset="${escapeHtml(reg.name)}|${t.tier}">Use RuneLite's ${t.baseKnown ? "ticks" : "count"} again</button></p>`;
+    if(t.known) return "";
+    const why = !d.hasPlugin ? ""
+      : t.mismatch ? `The plugin counts ${t.done} done here, but its task list doesn't agree with that count, so only the count is shown. `
+      : `${t.counted && t.done ? `The plugin counts ${t.done} done here but hasn't loaded which ones. ` : ""}Open the ${escapeHtml(reg.name)} diary journal in game to load these tasks, or `;
+    return `<p class="small muted dy-note">${why}${why.endsWith("or ") ? "tick" : "Tick"} the tasks you've done to set this tier by hand.</p>`;
+  };
   const detail = `<div class="cl-dh"><div><h3>${escapeHtml(reg.name)}</h3><div class="small muted">Achievement diary</div></div>
       <div class="cl-dc"><b>${reg.done}</b> / ${reg.total}</div></div>
     ${reg.tiers.map(t=>`<div class="dy-tier">
         <div class="dy-th"><h4>${achCap(t.tier)}</h4><span class="small ${t.complete ? "dy-ok" : "muted"}">${t.complete ? "Complete" : `${t.done} of ${t.total}`}</span></div>
         <div class="bar ${t.complete ? "full" : ""}"><i style="width:${achPct(t.done,t.total)}%"></i></div>
-        ${d.hasPlugin && !t.known ? `<p class="small muted" style="margin:8px 0 0">${t.mismatch ? `The plugin counts ${t.done} done here, but its task list doesn't agree with that count, so only the count is shown.` : `${t.counted && t.done ? `The plugin counts ${t.done} done here but hasn't loaded which ones. ` : ""}Open the ${escapeHtml(reg.name)} diary journal in game to load these tasks.`}</p>` : ""}
-        <div class="ach-list">${t.tasks.map((task,i)=>achTaskRow({done: d.hasPlugin ? t.flags[i] : null, head: task.text, reqs: task.reqs, quests: task.quests, other: task.other})).join("")}</div>
+        ${tierNote(t)}
+        <div class="ach-list">${t.tasks.map((task,i)=>achTaskRow({done: t.known ? t.flags[i] : null, edited: i in t.edits,
+          editAttr: `data-dyedit="${escapeHtml(reg.name)}|${t.tier}|${i}"`, head: task.text, reqs: task.reqs, quests: task.quests, other: task.other})).join("")}</div>
       </div>`).join("")}`;
   el.innerHTML = `${d.hasPlugin ? "" : achConnectBanner("dyConnect", "tasks")}${stats}
     <div class="cl-body">
@@ -12238,6 +12277,25 @@ function renderDiaries(){
     <p class="cl-foot small muted">Tasks and requirements come from the OSRS Wiki. Which ones you've done comes from the Character Export plugin once you open each diary's journal in game. Its counts can lag behind the game, so your in-game journal has the final say.</p>`;
   const cc = $("#dyConnect"); if(cc) cc.onclick = ()=>openRuneLite();
   $$("#diaryView [data-dyreg]").forEach(b=>b.onclick=()=>{ v.region = b.dataset.dyreg; renderDiaries(); });
+  $$("#diaryView [data-dyedit]").forEach(b=>b.onclick=()=>{
+    const parts = b.dataset.dyedit.split("|"), rn = parts[0], tn = parts[1], i = +parts[2];
+    const tier = ((d.regions.find(x=>x.name===rn) || {}).tiers || []).find(x=>x.tier===tn);
+    if(!tier) return;
+    const all = state.achEdits || (state.achEdits = {}), map = all.diary || (all.diary = {}), key = rn + "|" + tn;
+    const ed = map[key] || (map[key] = {});
+    const next = !(tier.flags[i] === true);
+    const base = tier.baseKnown ? tier.baseFlags[i] === true : false;
+    if(next === base) delete ed[i]; else ed[i] = next;   // back to what RuneLite says means RuneLite leads again
+    if(!Object.keys(ed).length) delete map[key];
+    save(); renderDiaries();
+  });
+  $$("#diaryView [data-dyreset]").forEach(b=>b.onclick=()=>{
+    const parts = b.dataset.dyreset.split("|");
+    if(!confirm(`Clear the ticks you set by hand for ${parts[0]} ${parts[1]}? It goes back to what RuneLite reports.`)) return;
+    const map = (state.achEdits || {}).diary || {};
+    delete map[parts[0] + "|" + parts[1]];
+    save(); renderDiaries();
+  });
 }
 
 // ---- Combat achievements ----
@@ -12256,7 +12314,7 @@ async function caDbEnsure(){
     const r = await fetch(WIKI_API + "?origin=*&format=json&action=bucket&query=" + encodeURIComponent(q));
     const rows = (await r.json()).bucket || [];
     const tasks = rows.filter(x=>x && x.name && CA_TIERS.includes(x.tier))
-      .map(x=>({name:String(x.name), monster:String(x.monster || "Other"), task:achPlain(x.task), tier:x.tier, type:String(x.type || "")}))
+      .map(x=>({id:Number(x.id), name:String(x.name), monster:String(x.monster || "Other"), task:achPlain(x.task), tier:x.tier, type:String(x.type || "")}))
       .sort((a,b)=> CA_TIERS.indexOf(a.tier)-CA_TIERS.indexOf(b.tier) || a.monster.localeCompare(b.monster) || a.name.localeCompare(b.name));
     if(tasks.length > 300){ state.caDB = {v:ACHDB_VERSION, ts:Date.now(), tasks}; save(); ok = true; }
   }catch(e){}
@@ -12267,9 +12325,15 @@ async function caDbEnsure(){
 function caData(){
   const db = caDB(); if(!db) return null;
   const tiers = state.charExport && state.charExport.caTiers;
-  const done = {};
-  if(tiers) Object.values(tiers).forEach(t=>((t && t.tasks) || []).forEach(x=>{ done[achNorm(x.name)] = !!x.complete; }));
-  return {tasks: db.tasks.map(t=>Object.assign({}, t, {done: tiers && (achNorm(t.name) in done) ? done[achNorm(t.name)] : null})), hasPlugin: !!tiers};
+  // Match by the game's task id. The plugin's ids are right but the names it pairs with them are
+  // not (it called Lunar Triplet "Alchemical Speed-Runner"), so its names are never used. Its list
+  // also stops short of the newest tasks, which stay unknown until ticked by hand.
+  const done = {}, ed = (state.achEdits || {}).ca || {};
+  if(tiers) Object.values(tiers).forEach(t=>((t && t.tasks) || []).forEach(x=>{ if(x && Number.isFinite(x.id)) done[x.id] = !!x.complete; }));
+  return {tasks: db.tasks.map(t=>{
+    const key = achNorm(t.name), base = tiers && Number.isFinite(t.id) && (t.id in done) ? done[t.id] : null, edited = key in ed;
+    return Object.assign({}, t, {key, base, edited, done: edited ? !!ed[key] : base});
+  }), hasPlugin: !!tiers};
 }
 function renderCombatAch(){
   const el = $("#caView"); if(!el) return;
@@ -12306,7 +12370,7 @@ function renderCombatAch(){
       <span class="cl-pb"><i style="width:${achPct(b.done,b.total)}%"></i></span></button>`).join("");
   const side = `<input type="text" id="caQ" placeholder="Search tasks or bosses" value="${escapeHtml(v.q)}" autocomplete="off" spellcheck="false">
     <div class="seg ca-filter"><button class="${!v.type?"on":""}" data-catype="">All types</button>${CA_TYPES.map(t=>`<button class="${v.type===t?"on":""}" data-catype="${t}">${t}</button>`).join("")}</div>
-    ${d.hasPlugin ? `<label class="ca-hide"><input type="checkbox" id="caHide" ${v.hideDone?"checked":""}> Hide tasks I've done</label>` : ""}
+    <label class="ca-hide"><input type="checkbox" id="caHide" ${v.hideDone?"checked":""}> Hide tasks I've done</label>
     <div class="cl-list">
       <button class="cl-page ${!v.boss?"on":""}" data-caboss=""><span class="cl-pn">All bosses</span><span class="cl-pc">${pool.length}</span></button>
       ${bossRows || `<div class="empty">No tasks match that.</div>`}
@@ -12314,10 +12378,12 @@ function renderCombatAch(){
   const title = v.boss || (q ? "Search results" : `${v.tier} tasks`);
   const detail = `<div class="cl-dh"><div><h3>${escapeHtml(title)}</h3><div class="small muted">${q ? "Across every tier" : `${CA_POINTS[v.tier]} point${CA_POINTS[v.tier]===1?"":"s"} each`}</div></div>
       <div class="cl-dc">${d.hasPlugin ? `<b>${shown.filter(t=>t.done).length}</b> / ${shown.length}` : `<b>${shown.length}</b> tasks`}</div></div>
-    <div class="ach-list">${shown.map(t=>achTaskRow({done: t.done, head: t.name, desc: t.task,
+    <div class="ach-list">${shown.map(t=>achTaskRow({done: t.done, edited: t.edited, editAttr: `data-caedit="${t.key}"`, head: t.name, desc: t.task,
       meta: `${escapeHtml(t.monster)} · ${escapeHtml(t.type)}${q ? ` · ${escapeHtml(t.tier)}` : ""}`,
       right: `${CA_POINTS[t.tier]} pt${CA_POINTS[t.tier]===1?"":"s"}`})).join("") || `<div class="empty">No tasks match that.</div>`}</div>`;
-  el.innerHTML = `${d.hasPlugin ? "" : achConnectBanner("caConnect", "tasks")}${stats}${tabs}
+  const unk = d.hasPlugin ? d.tasks.filter(t=>t.done===null).length : 0;
+  const unknownNote = unk ? `<p class="small muted" style="margin:0 0 12px">${unk} newer task${unk===1 ? " isn't" : "s aren't"} in the plugin's data yet, so ${unk===1 ? "it shows" : "they show"} as not loaded. Tick any you've done by hand.</p>` : "";
+  el.innerHTML = `${d.hasPlugin ? "" : achConnectBanner("caConnect", "tasks")}${stats}${unknownNote}${tabs}
     <div class="cl-body">
       <div class="panel cl-side">${side}</div>
       <div class="panel cl-detail">${detail}</div>
@@ -12328,6 +12394,13 @@ function renderCombatAch(){
   $$("#caView [data-caboss]").forEach(b=>b.onclick=()=>{ v.boss = b.dataset.caboss || null; renderCombatAch(); });
   $$("#caView [data-catype]").forEach(b=>b.onclick=()=>{ v.type = b.dataset.catype || null; v.boss = null; renderCombatAch(); });
   const hide = $("#caHide"); if(hide) hide.onchange = ()=>{ v.hideDone = hide.checked; renderCombatAch(); };
+  $$("#caView [data-caedit]").forEach(b=>b.onclick=()=>{
+    const t = d.tasks.find(x=>x.key===b.dataset.caedit); if(!t) return;
+    const all = state.achEdits || (state.achEdits = {}), map = all.ca || (all.ca = {});
+    const next = !(t.done === true);
+    if(next === (t.base === true)) delete map[t.key]; else map[t.key] = next;
+    save(); renderCombatAch();
+  });
   const qi = $("#caQ");
   qi.oninput = ()=>{
     v.q = qi.value; v.boss = null;
