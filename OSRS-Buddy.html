@@ -11348,7 +11348,8 @@ const CE_DIARY_IDS = {"Ardougne":"d_ardougne", "Desert":"d_desert", "Falador":"d
   "Morytania":"d_morytania", "Varrock":"d_varrock", "Western Provinces":"d_western", "Wilderness":"d_wildy"};
 function ceDiaryTicks(d){
   const out = [], regions = Object.entries(d||{});
-  const tier = (v,t) => !!(v && v[t] && v[t].complete);
+  // a tier counts only when every named task in it is done; the plugin's "complete" flag is unreliable
+  const tier = (v,t) => { const x = v && v[t]; return !!(x && Array.isArray(x.tasks) && x.tasks.length && x.tasks.every(k=>k.complete)); };
   const rd = state.roadmapDone || {}, pz = state.prestige || {};
   regions.forEach(([r,v])=>{
     const id = CE_DIARY_IDS[r];
@@ -11427,7 +11428,7 @@ function ceBuildPreview(acc){
   }
   if(acc.diaries && acc.diaries.diaries){
     const tiers = [];
-    Object.entries(acc.diaries.diaries).forEach(([r,v])=>Object.entries(v||{}).forEach(([t,x])=>{ if(x && x.complete) tiers.push(r+" "+t); }));
+    Object.entries(acc.diaries.diaries).forEach(([r,v])=>Object.entries(v||{}).forEach(([t,x])=>{ if(x && Array.isArray(x.tasks) && x.tasks.length && x.tasks.every(k=>k.complete)) tiers.push(r+" "+t); }));
     pv.diaries = {tiers, ticks: ceDiaryTicks(acc.diaries.diaries)};
   }
   return pv;
@@ -12154,7 +12155,7 @@ function ceMergeDiaries(oldD, newD){
     Object.entries(tiers || {}).forEach(([t, x])=>{
       const had = oldD && oldD[r] && oldD[r][t];
       const keep = had && Array.isArray(had.tasks) && had.tasks.length && !(x && Array.isArray(x.tasks) && x.tasks.length);
-      out[r][t] = keep ? Object.assign({}, x, {tasks: had.tasks.map(k=>({name:k.name, complete: !!(x && x.complete) || !!k.complete}))}) : x;
+      out[r][t] = keep ? Object.assign({}, x, {tasks: had.tasks.map(k=>({name:k.name, complete: !!k.complete}))}) : x;
     });
   });
   Object.entries(oldD || {}).forEach(([r, t])=>{ if(!out[r]) out[r] = t; });
@@ -12168,8 +12169,9 @@ function diaryData(){
       const tasks = db.regions[r][t] || [];
       const pt = pd && pd[r] && pd[r][t];
       let known = false, flags = tasks.map(()=>null);
-      if(pt && pt.complete){ known = true; flags = tasks.map(()=>true); }
-      else if(pt && Array.isArray(pt.tasks) && pt.tasks.length===tasks.length){ known = true; flags = pt.tasks.map(k=>!!k.complete); }
+      // The plugin's per-tier "complete" flag can't be trusted (it said Karamja easy was complete
+      // with 3 of 10 tasks done), so only its named task list counts.
+      if(pt && Array.isArray(pt.tasks) && pt.tasks.length===tasks.length){ known = true; flags = pt.tasks.map(k=>!!k.complete); }
       const done = known ? flags.filter(Boolean).length : (pt ? Math.min(pt.tasks_done||0, tasks.length) : 0);
       return {tier:t, tasks, flags, known, counted:!!pt, done, total:tasks.length, complete: tasks.length>0 && done===tasks.length};
     });
