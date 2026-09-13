@@ -9,6 +9,7 @@ a copy of your data — for that, use ⇓ Backup in Settings.
 
 | File | Released |
 |---|---|
+| `OSRS-Buddy-v1.5.html` | 13 Sep 2026 — the Scroll upgraded, Trophy cabinet, quest board and route |
 | `OSRS-Buddy-v1.4.html` | 9 Sep 2026 — Gielinor Survivors, boss drop checklists, heatmap skill focus |
 | `OSRS-Buddy-v1.3.3.html` | 12 Aug 2026 — cleanup: to-dos, nav sections, dark themes |
 | `OSRS-Buddy-v1.3.2.html` | 12 Aug 2026 — rhythm game stability |

@@ -1,9 +1,9 @@
 # OSRS Buddy
 
-IMPORTANT: To those who get up in arms about vibe coding, I use this app as an opportunity to learn, make manual tweaks when I know what I am doing, and watch the process unfold to better my own knowledge about coding. Hopefully one day I can do all of this alone, but with Claude-Code I have been able to learn more than I ever would have on my own. I do not claim this work as 100% my own, however I have played a significant part in the development process, and am proud of my work. If you see this, enjoy the app. :)
-
 A character companion for **Old School RuneScape** — an activity journal, a quest
 dependency planner, and an assistant that reads the wiki so you don't have to.
+
+A note on how this was built: I use Claude Code as a pair programmer. I direct the design, review the output, make manual changes where I know what I'm doing, and use the process to learn. It's not 100% hand-written, and I'm not pretending it is, but it's my design, my decisions, and my project. Enjoy the app. :)
 
 ### ⬇️ [**Download OSRS Buddy for Windows**](https://github.com/LiquidTwonuh/osrs-buddy/releases/latest/download/OSRS-Buddy-setup.exe)
 

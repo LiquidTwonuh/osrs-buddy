@@ -112,6 +112,95 @@
   .navitem.active{background:var(--active); color:var(--gold); box-shadow:inset 3px 0 0 var(--gold)}
   .navitem .ni-ic{font-size:16px; width:20px; text-align:center; flex:0 0 auto}
   /* group labels — the list passed the point where a flat run of items reads well */
+  /* Scroll sub-nav in the sidebar, only while the Scroll is open */
+  .nav-sub{display:flex; flex-direction:column; gap:1px; margin:2px 0 4px 10px;
+    padding-left:9px; border-left:1px solid var(--border)}
+  .nav-sub.hidden{display:none}
+  .navsub{display:block; width:100%; text-align:left; cursor:pointer; font-family:inherit;
+    font-size:12.5px; padding:5px 9px; border-radius:7px; border:0; background:none;
+    color:var(--muted); transition:background .12s, color .12s}
+  .navsub:hover{background:var(--inset); color:var(--text)}
+  .navsub.active{color:var(--gold); background:var(--inset); font-weight:bold}
+  /* ---- Scroll banner: kept quiet so it sits with the rest of the page ----
+     Theme colours only, normal-sized type, hairline rods, no glow. */
+  .scroll-hero{position:relative; margin-bottom:14px; padding:18px 56px 16px; border-radius:14px; overflow:hidden;
+    background:linear-gradient(180deg, var(--panel2), var(--panel)); border:1px solid var(--border)}
+  .sh-rod{position:absolute; top:14px; bottom:14px; width:3px; border-radius:3px; opacity:.6;
+    background:linear-gradient(180deg, transparent, var(--gold-dim) 18%, var(--gold-dim) 82%, transparent)}
+  .sh-rod.left{left:22px} .sh-rod.right{right:22px}
+  .sh-rod::before,.sh-rod::after{content:""; position:absolute; left:50%; width:9px; height:3px;
+    transform:translateX(-50%); border-radius:3px; background:var(--gold-dim)}
+  .sh-rod::before{top:0} .sh-rod::after{bottom:0}
+  .sh-inner{position:relative; text-align:center; display:flex; flex-direction:column; align-items:center; gap:5px}
+  .sh-eyebrow{font-size:10px; text-transform:uppercase; letter-spacing:.26em; color:var(--muted); padding-left:.26em}
+  .sh-word{margin:0; font-family:var(--font-display); font-weight:700; text-transform:uppercase; line-height:1;
+    font-size:clamp(24px, 3.4vw, 32px); letter-spacing:.14em; padding-left:.14em; color:var(--gold)}
+  .sh-rule{display:flex; align-items:center; gap:8px; width:min(180px,50%); color:var(--gold-dim); opacity:.7}
+  .sh-rule i{flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--gold-dim),transparent)}
+  .sh-rule b{font-size:8px; font-weight:normal}
+  .sh-blurb{margin:1px 0 0; max-width:480px; font-size:12.5px; line-height:1.55; color:var(--muted)}
+  /* quick entry at the bottom of the Overview */
+  .quick-log{padding:16px 20px}
+  .ql-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:10px}
+  .ql-head h3{margin:0; font-family:var(--font-display); font-size:17px; color:var(--gold)}
+  .ql-more{background:none; border:0; box-shadow:none; padding:0; cursor:pointer; font-family:inherit;
+    font-size:12.5px; font-weight:normal; color:var(--muted); transition:color .15s}
+  .ql-more:hover{color:var(--gold)}
+  .ql-row{display:flex; flex-wrap:wrap; gap:8px}
+  .ql-row input[type=text]{flex:1 1 240px; min-width:0}
+  .ql-row button{flex:none}
+  .ql-note{font-size:11.5px; color:var(--muted); margin-top:7px; min-height:16px}
+  .ql-note.ok{color:var(--green)}
+  /* the log window */
+  .qlm-back{position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:20px;
+    background:rgba(0,0,0,.5); backdrop-filter:blur(3px); animation:qlmFade .15s ease both}
+  .qlm-back.hidden{display:none}
+  .qlm{width:min(660px, 100%); max-height:calc(100vh - 40px); overflow:auto; padding:20px 22px;
+    background:var(--panel); border:1px solid var(--gold-dim); border-radius:16px;
+    box-shadow:0 20px 60px rgba(0,0,0,.55); animation:qlmIn .2s cubic-bezier(.2,.8,.3,1) both}
+  .qlm-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px}
+  .qlm-head h3{margin:0; font-family:var(--font-display); font-size:20px; color:var(--gold)}
+  .qlm-x{background:none; border:0; box-shadow:none; color:var(--muted); font-size:16px; padding:4px 8px}
+  .qlm-x:hover{color:var(--text)}
+  .qlm textarea{width:100%; box-sizing:border-box; resize:vertical; min-height:74px; font-size:15px; line-height:1.5}
+  .qlm-row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:12px}
+  .qlm-lbl{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); display:flex; align-items:center; gap:8px}
+  .qlm-lbl input[type=date]{text-transform:none; letter-spacing:normal}
+  .qlm-sec{margin-top:16px}
+  .qlm-chips{margin-top:8px; justify-content:flex-start}
+  .qlm-auto{text-transform:none; letter-spacing:normal; color:var(--green)}
+  .qlm-foot{display:flex; justify-content:flex-end; gap:8px; margin-top:18px}
+  @keyframes qlmFade{from{opacity:0} to{opacity:1}}
+  @keyframes qlmIn{from{opacity:0; transform:translateY(10px) scale(.98)} to{opacity:1; transform:none}}
+  /* recap panel under the heatmap: centred, the whole thing is the button, theme tokens only */
+  .recap-cta{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+    gap:10px; cursor:pointer; padding:18px 20px; transition:border-color .15s, transform .15s, background .15s}
+  .recap-cta:hover{border-color:var(--gold-dim); transform:translateY(-1px);
+    background:color-mix(in oklab, var(--panel) 90%, var(--gold) 10%)}
+  .recap-cta:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+  .rcta-t{font-family:var(--font-display); font-size:17px; font-weight:700; color:var(--gold)}
+  .rcta-t .ar{display:inline-block; margin-left:4px; transition:transform .15s}
+  .recap-cta:hover .rcta-t .ar{transform:translateX(4px)}
+  .rcta-chips{display:flex; flex-wrap:wrap; justify-content:center; gap:6px; min-height:1px}
+  .rcta-chip{font-size:12px; color:var(--muted); padding:4px 11px; border-radius:999px;
+    background:var(--inset); border:1px solid var(--border); white-space:nowrap}
+  .rcta-chip b{color:var(--text); font-weight:700}
+  @media (max-width:900px){
+    .scroll-hero{padding:16px 40px 14px}
+    .sh-rod.left{left:14px} .sh-rod.right{right:14px}
+  }
+  @media (max-width:480px){ .sh-word{letter-spacing:.1em; padding-left:.1em} }
+  /* the numbers that sit above the heatmap */
+  /* 4 tiles: two rows of two when it's tight, one row of four when there's room.
+     auto-fit kept landing on three and orphaning the fourth. */
+  .heat-stats{display:grid; grid-template-columns:repeat(2,1fr); gap:9px;
+    max-width:900px; margin:0 auto 14px}
+  @media(min-width:900px){ .heat-stats{grid-template-columns:repeat(4,1fr)} }
+  .hs{display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:12px;
+    background:var(--panel2); border:1px solid var(--border)}
+  .hs-i{font-size:19px; line-height:1; flex:none}
+  .hs-v{font-family:var(--font-display); font-size:19px; font-weight:700; color:var(--gold); line-height:1.1}
+  .hs-k{font-size:10.5px; color:var(--muted); margin-top:2px; letter-spacing:.02em}
   .nav-sec{font-size:10.5px; font-weight:bold; text-transform:uppercase; letter-spacing:.13em;
     color:var(--gold2); padding:15px 12px 6px; user-select:none}
   .nav-sec:first-child{padding-top:2px}
@@ -336,6 +425,161 @@
   .bosstile .bdrops{font-size:10px; color:var(--muted)}
   .bosstile .bdrops.full{color:var(--green)}
   .sk-acts{display:flex; gap:8px; flex-wrap:wrap; margin-top:4px}
+  /* ---- Route: the flat do-this-then-this list ---- */
+  .qp-mode{justify-content:center; margin:0 0 10px; align-items:center}
+  .qp-mode button[disabled]{opacity:.4; cursor:not-allowed}
+  .qp-scope{font-size:11px; color:var(--muted); margin-left:8px}
+  .rt-list{display:flex; flex-direction:column; gap:5px; max-width:760px; margin:0 auto}
+  .rt{display:flex; gap:11px; align-items:flex-start; padding:9px 11px; border-radius:10px;
+    background:var(--panel2); border:1px solid var(--border); transition:border-color .13s}
+  .rt-quest{cursor:pointer}
+  .rt-quest:hover{border-color:var(--gold-dim)}
+  .rt-train, .rt-qp{background:var(--inset); border-style:dashed}
+  .rt-n{flex:none; width:26px; height:26px; border-radius:50%; display:flex; align-items:center;
+    justify-content:center; font-size:11.5px; font-weight:bold; font-family:var(--font-display);
+    background:var(--panel); border:1px solid var(--border); color:var(--muted)}
+  .rt-quest .rt-n{color:var(--gold); border-color:var(--gold-dim)}
+  .rt-train .rt-n{color:#e08a3c; border-color:#e08a3c}
+  .rt-qp .rt-n{color:#5aa9e6; border-color:#5aa9e6}
+  .rt-b{flex:1; min-width:0}
+  .rt-h{display:flex; align-items:center; gap:6px; flex-wrap:wrap}
+  .rt-h b{font-size:13px; color:var(--text)}
+  .rt-tag{font-size:9px; text-transform:uppercase; letter-spacing:.08em; padding:1px 5px;
+    border-radius:20px; color:var(--muted); border:1px solid var(--border); white-space:nowrap}
+  .rt-tag.len{opacity:.75}
+  .rt-tag.qp{color:var(--gold); border-color:var(--gold-dim)}
+  .rt-tag.train{color:#e08a3c; border-color:#e08a3c}
+  .rt-tag.mini{color:#a98cd8; border-color:#a98cd8}
+  .rt-sub{font-size:10.5px; color:var(--muted); margin-top:3px; line-height:1.45}
+  .rt-tick{flex:none; align-self:center}
+  .rt-note{text-align:center; font-size:11px; color:var(--muted); margin-top:10px}
+  /* browse-by-status filters */
+  .qp-filters{display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:8px}
+  /* ---- Quest board ---- */
+  .qb-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr)); gap:9px}
+  .qb{display:flex; gap:9px; align-items:flex-start; padding:10px 11px; border-radius:12px; cursor:pointer;
+    background:var(--panel2); border:1px solid var(--border); position:relative;
+    transition:border-color .13s, transform .13s, opacity .13s}
+  .qb::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+    border-radius:12px 0 0 12px; background:var(--qbc,var(--border))}
+  .qb.ready{--qbc:var(--green)}
+  .qb.blocked{--qbc:#e08a3c}
+  .qb.done{--qbc:var(--gold-dim); opacity:.62}
+  .qb:hover{border-color:var(--qbc); transform:translateY(-2px)}
+  .qb.on{border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset}
+  .qp-switch{display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:6px; margin:0 0 12px}
+  .qp-sw{background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:999px;
+    padding:4px 12px; font-size:12.5px; cursor:pointer; transition:border-color .14s, color .14s}
+  .qp-sw:hover{border-color:var(--gold-dim)}
+  .qp-sw.on{border-color:var(--gold); color:var(--gold)}
+  .qp-sw.nav{padding:4px 10px; color:var(--muted)}
+  .qp-top-detail{border-top:0; margin-top:2px; padding-top:0; margin-bottom:12px}
+  .qp-top-detail .qpd-head h4{display:none}
+  .qb.drag{opacity:.4}
+  .qb.over{border-color:var(--gold); border-style:dashed}
+  .qb-grip{flex:none; color:var(--border); font-size:13px; line-height:1.5; cursor:grab; letter-spacing:-2px}
+  .qb:hover .qb-grip{color:var(--muted)}
+  .qb-b{flex:1; min-width:0}
+  .qb-h{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+  .qb-h b{font-size:13.5px; color:var(--text)}
+  .qb-pill{font-size:9px; text-transform:uppercase; letter-spacing:.09em; padding:2px 6px; border-radius:20px;
+    border:1px solid currentColor; white-space:nowrap}
+  .qb-pill.ready{color:var(--green)}
+  .qb-pill.blocked{color:#e08a3c}
+  .qb-pill.done{color:var(--gold-dim)}
+  .qb-bar{height:4px; border-radius:3px; background:var(--inset); overflow:hidden; margin:7px 0 4px}
+  .qb-bar i{display:block; height:100%; background:var(--qbc); border-radius:3px; transition:width .3s}
+  .qb-sub{font-size:10.5px; color:var(--muted); line-height:1.45}
+  .qb-acts{flex:none; display:flex; flex-direction:column; gap:2px}
+  .qb-x{width:20px; height:18px; border-radius:5px; cursor:pointer; font-size:9px; font-family:inherit;
+    background:none; border:1px solid transparent; color:var(--border); padding:0}
+  .qb:hover .qb-x{border-color:var(--border); color:var(--muted)}
+  .qb-x:hover{background:var(--inset); color:var(--text)}
+  /* + button on search results */
+  .qp-hit-row{display:flex; gap:5px; align-items:stretch}
+  .qp-hit-row .grow{flex:1; min-width:0; text-align:left}
+  .qp-pin{flex:none; width:30px; border-radius:8px; cursor:pointer; font-size:13px; font-family:inherit;
+    background:var(--inset); border:1px solid var(--border); color:var(--muted); transition:all .13s}
+  .qp-pin:hover{border-color:var(--gold); color:var(--gold)}
+  .qp-pin.on{color:var(--gold); border-color:var(--gold-dim); cursor:default}
+  /* The fun fact on Home: one quiet line under your name, no bubble, no button */
+  .ff-line{margin:-4px auto 14px; max-width:640px; text-align:center; font-size:12.5px; line-height:1.55;
+    color:var(--muted); font-style:italic}
+  .ff-line.hidden{display:none}
+  /* ---- Highlights: one card per thing worth knowing ---- */
+  .ins-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(248px,1fr)); gap:10px}
+  .ins{display:flex; gap:11px; align-items:flex-start; padding:12px 13px; border-radius:14px;
+    background:var(--panel2); border:1px solid var(--border); position:relative; overflow:hidden;
+    transition:transform .14s, border-color .14s}
+  .ins::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent,var(--gold-dim))}
+  .ins:hover{transform:translateY(-2px); border-color:var(--gold-dim)}
+  .ins-record{--accent:var(--gold)}
+  .ins-trend {--accent:#5aa9e6}
+  .ins-reach {--accent:var(--green)}
+  .ins-fact  {--accent:#a98cd8}
+  .ins-nudge {--accent:#e08a3c}
+  .ins-ic{font-size:22px; line-height:1; flex:none; margin-top:1px}
+  .ins-b{min-width:0}
+  .ins-t{font-family:var(--font-display); font-size:15.5px; font-weight:700; color:var(--text); line-height:1.25}
+  .ins-d{font-size:12px; color:var(--muted); margin-top:3px; line-height:1.45}
+  .ins-act{margin-top:8px}
+
+  /* ---- Wrapped: a dealt deck of five cards ---- */
+  .wrap-bar{display:flex; flex-direction:column; align-items:center; gap:9px; margin-top:14px}
+  .wrap-go{font-family:var(--font-display); font-size:15px; font-weight:700; letter-spacing:.02em;
+    padding:10px 22px; border-radius:999px; border:0; cursor:pointer; color:#fff;
+    background:linear-gradient(100deg,#8e2de2,#f15f79 55%,#f7971e); background-size:200% 100%;
+    box-shadow:0 6px 20px rgba(241,95,121,.3); transition:background-position .5s, transform .12s, box-shadow .2s}
+  .wrap-go:hover{background-position:100% 0; transform:translateY(-1px); box-shadow:0 8px 26px rgba(241,95,121,.45)}
+  .wrap-go:active{transform:translateY(1px)}
+  .wrap-go[disabled]{opacity:.45; cursor:not-allowed; transform:none}
+  .wrap-saved{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center}
+  .wrap-chip{font-family:inherit; font-size:11.5px; padding:4px 10px; border-radius:999px; cursor:pointer;
+    background:var(--inset); border:1px solid var(--border); color:var(--text)}
+  .wrap-chip:hover, .wrap-chip.on{border-color:#f15f79}
+  .wrap-deck{margin-top:14px}
+  .wrap-head{display:flex; align-items:flex-end; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px}
+  .wrap-title{font-family:var(--font-display); font-size:20px; font-weight:700; color:var(--text)}
+  .wrap-acts{display:flex; gap:6px}
+  .wrap-cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:10px}
+  .wc{position:relative; overflow:hidden; border-radius:18px; padding:16px 15px 15px; min-height:150px; color:#fff;
+    background:linear-gradient(145deg,var(--a),var(--b)); display:flex; flex-direction:column; justify-content:flex-end;
+    box-shadow:0 8px 24px rgba(0,0,0,.35); animation:wcIn .45s cubic-bezier(.2,.8,.3,1) both}
+  .wc::after{content:""; position:absolute; right:-40px; top:-40px; width:140px; height:140px; border-radius:50%;
+    background:rgba(255,255,255,.12); pointer-events:none}
+  .wc.hero{grid-column:span 2; min-height:190px}
+  .wc-ic{position:absolute; top:13px; left:15px; font-size:22px; line-height:1}
+  .wc-big{font-family:var(--font-display); font-weight:800; font-size:clamp(34px,5vw,50px); line-height:1;
+    letter-spacing:-.02em; text-shadow:0 2px 12px rgba(0,0,0,.25); overflow-wrap:anywhere}
+  .wc.hero .wc-big{font-size:clamp(44px,7vw,68px)}
+  .wc-head{font-size:14px; font-weight:700; margin-top:5px; line-height:1.3; text-shadow:0 1px 6px rgba(0,0,0,.25)}
+  .wc:not(.has-big) .wc-head{font-size:15px; margin-top:34px}
+  .wc-sub{font-size:11.5px; margin-top:4px; line-height:1.4; opacity:.88}
+  @keyframes wcIn{from{opacity:0; transform:translateY(12px) scale(.97)} to{opacity:1; transform:none}}
+  @media (max-width:520px){ .wc.hero{grid-column:auto} }
+  /* ---- Trophy cabinet ---- */
+  .pz-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:10px}
+  .pz{display:flex; gap:11px; align-items:flex-start; padding:11px 12px; border-radius:14px;
+    background:var(--panel2); border:1px solid var(--border); transition:border-color .14s}
+  .pz:hover{border-color:var(--tier)}
+  .pz.got{background:var(--inset); border-color:color-mix(in oklab, var(--tier) 55%, var(--border))}
+  .pz-ic{flex:none; width:34px; height:34px; display:flex; align-items:center; justify-content:center}
+  .pz-ic img{max-width:34px; max-height:34px; object-fit:contain; filter:grayscale(.75) opacity(.55)}
+  .pz.got .pz-ic img{filter:none}
+  .pz-b{min-width:0; flex:1}
+  .pz-h{display:flex; align-items:center; gap:7px}
+  .pz-h b{font-size:13.5px; color:var(--text)}
+  .pz-tier{font-size:9px; text-transform:uppercase; letter-spacing:.1em; padding:2px 6px; border-radius:20px;
+    color:var(--tier); border:1px solid color-mix(in oklab, var(--tier) 45%, transparent)}
+  .pz-why{font-size:11.5px; color:var(--muted); margin-top:3px; line-height:1.45}
+  .pz-bar{height:4px; border-radius:3px; background:var(--inset); overflow:hidden; margin-top:7px}
+  .pz-bar i{display:block; height:100%; background:var(--tier); border-radius:3px; transition:width .3s}
+  .pz-miss{font-size:10.5px; color:var(--muted); margin-top:5px; opacity:.85}
+  .pz-act{flex:none; align-self:center}
+  .pz-pct{font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--tier)}
+  .pz-tick{width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:13px; font-family:inherit;
+    background:var(--inset); border:1px solid var(--border); color:var(--muted)}
+  .pz-tick.on{background:var(--tier); border-color:var(--tier); color:#12100a; font-weight:bold}
   /* Gielinor Survivors */
   .vs-modes{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; max-width:620px; margin:0 auto}
   .vs-mode{padding:14px 12px; border-radius:12px; border:1px solid var(--border); background:var(--panel2);
@@ -459,6 +703,20 @@
   .rc-track i{display:block; height:100%; border-radius:7px}
   .rc-val{text-align:right; color:var(--muted)}
   .rc-pct{text-align:right; color:var(--muted); font-size:11.5px}
+  .rc-kc{display:flex; flex-direction:column; gap:5px; max-width:660px; margin:0 auto}
+  .rc-kc-row{display:grid; grid-template-columns:24px 150px 1fr 60px 90px; align-items:center; gap:9px; font-size:12.5px}
+  .rc-kc-row .gicon, .rc-clue .gicon{width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center}
+  .rc-kc-row .gicon img, .rc-clue .gicon img{max-width:24px; max-height:24px; object-fit:contain}
+  .rc-kc-row .rc-track i{background:linear-gradient(90deg,#7a1f1f,#d0473b)}
+  .rc-kc-name{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .rc-kc-v{text-align:right; font-weight:bold; color:var(--text)}
+  .rc-kc-tot{text-align:right; color:var(--muted); font-size:11px; white-space:nowrap}
+  .rc-clues{display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:8px; max-width:660px; margin:0 auto}
+  .rc-clue{display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 6px; border-radius:10px;
+    background:var(--panel2); border:1px solid var(--border)}
+  .rc-clue b{font-family:var(--font-display); font-size:21px; color:var(--text); line-height:1.1}
+  .rc-clue span{font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
+  @media(max-width:520px){ .rc-kc-row{grid-template-columns:22px 1fr 56px} .rc-kc-row .rc-track, .rc-kc-tot{display:none} }
   .rc-miles{display:flex; flex-direction:column; gap:4px; max-width:520px; margin:0 auto}
   .rc-mile{display:flex; align-items:center; gap:9px; font-size:13px; padding:5px 10px;
     background:var(--panel2); border:1px solid var(--border); border-radius:8px}
@@ -704,7 +962,8 @@
   .seg-sub{margin-top:-6px}
   .seg-sub button{font-size:11.5px; padding:3px 11px; opacity:.9}
   .heatgrid{margin:0 auto}
-  .week-strip{display:flex; gap:12px; justify-content:center; padding:6px 0}
+  .week-strip{display:flex; gap:12px; justify-content:center; padding:6px 0; max-width:100%}
+  .heatwrap .week-strip{gap:clamp(3px, 1.6vw, 12px)}
   .week-strip .wday{display:flex; flex-direction:column; align-items:center; gap:6px}
   .week-strip .wlbl{font-size:10.5px; color:var(--muted)}
 
@@ -766,6 +1025,18 @@
     border-radius:6px; padding:8px 10px; outline:none}
   input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--gold-dim)}
   input::placeholder{color:var(--ph)}
+  /* Date pickers were the browser's white default. Match the text boxes, keep the native
+     calendar popup dark, and tone the calendar icon down to sit with the theme. */
+  input[type=date]{background:var(--inset); color:var(--text); border:1px solid var(--border);
+    border-radius:6px; padding:7px 10px; outline:none; color-scheme:dark; cursor:pointer;
+    min-height:36px; transition:border-color .15s}
+  input[type=date]:hover{border-color:color-mix(in oklab, var(--gold-dim) 55%, var(--border))}
+  input[type=date]:focus{border-color:var(--gold-dim)}
+  input[type=date]::-webkit-datetime-edit{color:var(--text)}
+  input[type=date]::-webkit-datetime-edit-fields-wrapper{padding:0}
+  input[type=date]::-webkit-calendar-picker-indicator{cursor:pointer; opacity:.55; filter:invert(.85);
+    transition:opacity .15s}
+  input[type=date]:hover::-webkit-calendar-picker-indicator{opacity:.9}
   button{cursor:pointer; background:linear-gradient(var(--active),var(--btnlo)); color:var(--gold);
     border:1px solid var(--border); border-radius:6px; padding:8px 14px; font-weight:bold;
     box-shadow:0 1px 0 #0e0b07}
@@ -944,8 +1215,11 @@
   .heatwrap{overflow:hidden; padding-bottom:6px; --cell:24px; --hgap:4px}
   .heatwrap.big{--cell:26px; --hgap:5px}
   .heatgrid{display:flex; flex-direction:column; gap:var(--hgap); width:max-content; margin:0 auto}
-  .heat-months{display:flex; gap:var(--hgap); margin-left:26px; height:14px}
-  .heat-months .hm{font-size:10px; color:var(--muted); flex:0 0 var(--cell); overflow:visible; white-space:nowrap}
+  /* Labels are wider than the cell they sit over, on purpose. Clip at the container so
+     that overhang can't inflate the grid's scroll width and push the map out of view. */
+  .heat-months{display:flex; gap:var(--hgap); margin-left:26px; height:14px; overflow:hidden}
+  .heat-months .hm{font-size:10px; color:var(--muted); flex:0 0 var(--cell); min-width:0;
+    overflow:visible; white-space:nowrap}
   .heatwrap.big .heat-months .hm{font-size:11px}
   .heat-body{display:flex; gap:var(--hgap)}
   .heat-daylabels{display:flex; flex-direction:column; gap:var(--hgap); margin-right:4px; width:22px}
@@ -955,13 +1229,27 @@
   .heat-cell{width:var(--cell); height:var(--cell); border-radius:3px; background:var(--cellbg);
     border:1px solid var(--bg2); cursor:default}
   .heatwrap.big .heat-cell{border-radius:4px}
-  /* --- calendar mode: rounded glowing cells; tight glow + roomy gaps so colors don't bleed --- */
-  .heat-cell{transition:transform .1s}
+  /* --- calendar mode ---
+     The old look outlined every cell in near-black and gave it a blurred glow, which
+     muddied the colours and read as dated. Now: a soft square, a hairline of the cell's
+     OWN colour instead of black, and a top-edge sheen for a little depth. Hover lifts
+     the cell rather than blowing it up. */
+  .heat-cell{transition:transform .13s cubic-bezier(.2,.8,.3,1), box-shadow .13s, filter .13s}
   .heat-cell[data-iso]{cursor:pointer}
-  .heatwrap.mode-calendar .heat-cell{border-radius:28%; border-color:transparent}
-  .heatwrap.mode-calendar .heat-cell.filled{border:1px solid rgba(0,0,0,.4); box-shadow:0 0 5px 0 currentColor}
-  .heatwrap.mode-calendar .heat-cell:not(.filled){background:var(--inset); opacity:.5}
-  .heatwrap .heat-cell.filled:hover{transform:scale(1.2); z-index:2; position:relative}
+  .heatwrap.mode-calendar .heat-cell{border-radius:30%; border-color:transparent}
+  .heatwrap.mode-calendar .heat-cell.filled{
+    border:1px solid color-mix(in oklab, currentColor 55%, transparent);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 1px 2px rgba(0,0,0,.28)}
+  .heatwrap.mode-calendar .heat-cell:not(.filled){
+    background:color-mix(in oklab, var(--inset) 70%, transparent);
+    border:1px solid color-mix(in oklab, var(--border) 45%, transparent); opacity:1}
+  .heatwrap .heat-cell.filled:hover{
+    transform:translateY(-2px) scale(1.14); z-index:3; position:relative;
+    filter:saturate(1.25) brightness(1.12);
+    box-shadow:0 4px 12px rgba(0,0,0,.45), 0 0 0 1px color-mix(in oklab, currentColor 70%, transparent)}
+  .heatwrap .heat-cell:not(.filled):hover{border-color:var(--border); background:var(--inset)}
+  /* today gets a quiet ring rather than shouting */
+  .heatwrap.mode-calendar .heat-cell.today{box-shadow:0 0 0 1.5px var(--gold-dim), inset 0 1px 0 rgba(255,255,255,.14)}
   /* single-skill focus: picker + the light-to-dark intensity key */
   .heat-focus{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin:8px 0 2px}
   .heat-focus.hidden{display:none}
@@ -971,13 +1259,18 @@
   .hf-scale{display:inline-flex; align-items:center; gap:3px}
   .hf-sw{display:inline-block; width:11px; height:11px; border-radius:3px; border:1px solid rgba(0,0,0,.35)}
   /* --- bars mode: a proper bar graph, bars grow from the baseline, height swells with activity --- */
-  .ribbon{display:flex; align-items:flex-end; height:106px; gap:2px; width:100%; margin:0 auto; padding:6px 2px 0}
-  .rib-day{flex:1 1 0; min-width:var(--ribmin,5px); height:100%; display:flex; align-items:flex-end; justify-content:center; cursor:pointer}
-  .rib-bar{width:100%; border-radius:5px 5px 2px 2px; min-height:4px}
-  .mode-bars .rib-day.has .rib-bar{border:1px solid rgba(0,0,0,.4); box-shadow:0 0 6px 0 currentColor}
-  .rib-day:hover .rib-bar{filter:brightness(1.3)}
-  .rib-day.today .rib-bar{outline:1.5px solid rgba(255,255,255,.6); outline-offset:1px}
-  .rib-day.prio .rib-bar{outline:2px solid var(--gold); outline-offset:1px}
+  .ribbon{display:flex; align-items:flex-end; justify-content:center; height:106px; gap:2px; width:100%; margin:0 auto; padding:6px 2px 0}
+  .heatwrap.mode-bars{overflow-x:auto}
+  .rib-day{flex:0 0 var(--ribcol,8px); min-width:0; height:100%; display:flex; align-items:flex-end; justify-content:center; cursor:pointer}
+  /* slim bars with a small corner (fully round tips on thin bars looked unfortunate), same edge and sheen as the calendar cells */
+  .rib-bar{width:100%; border-radius:3px 3px 1px 1px; min-height:4px;
+    transition:transform .13s cubic-bezier(.2,.8,.3,1), filter .13s}
+  .mode-bars .rib-day.has .rib-bar{border:1px solid color-mix(in oklab, currentColor 55%, transparent);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 2px 6px rgba(0,0,0,.28)}
+  .rib-day:hover .rib-bar{filter:saturate(1.2) brightness(1.15); transform:translateY(-2px)}
+  .rib-cap{text-align:center; font-size:10.5px; color:var(--muted); margin-top:4px; letter-spacing:.04em}
+  .rib-day.today .rib-bar{outline:1.5px solid rgba(255,255,255,.55); outline-offset:2px}
+  .rib-day.prio .rib-bar{outline:1.5px solid var(--gold); outline-offset:2px}
   /* Auto-detected milestone days. Same hollow-ring geometry as the manual 🏆 rainbow
      below, but the gradient and speed come from the tier: gold (regular), diamond
      (rare), and nn (a 99 — brightest and fastest, because it's a 99). */
@@ -992,14 +1285,14 @@
     -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite:xor; mask-composite:exclude;
     animation:msShimmer var(--mss) ease-in-out infinite}
-  .rib-day.ms .rib-bar::after{border-radius:8px 8px 4px 4px}
+  .rib-day.ms .rib-bar::after{border-radius:5px 5px 3px 3px}
   .heat-cell.ms::before, .rib-day.ms .rib-bar::before{
     content:""; position:absolute; inset:-4.5px; padding:4px; border-radius:36%; pointer-events:none;
     background:var(--msg);
     -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite:xor; mask-composite:exclude;
     animation:msGlow var(--mss) linear infinite}
-  .rib-day.ms .rib-bar::before{border-radius:10px 10px 5px 5px}
+  .rib-day.ms .rib-bar::before{border-radius:7px 7px 4px 4px}
   /* NEVER transform these: the ring sits outside the cell box, so rotating it grows
      the page, toggles the scrollbar, reflows, and repeats — the whole grid shakes.
      Filters and opacity only; they don't touch layout. */
@@ -1025,7 +1318,7 @@
     -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite:xor; mask-composite:exclude;
     animation:mileHue 2.6s linear infinite}
-  .rib-day.mile .rib-bar::after{border-radius:8px 8px 4px 4px}
+  .rib-day.mile .rib-bar::after{border-radius:5px 5px 3px 3px}
   /* Breathing glow = the SAME hollow ring, blurred — it hugs the silhouette and
      cannot flood the grid gaps the way a filled halo behind the cell did. */
   .heat-cell.mile::before, .rib-day.mile .rib-bar::before{
@@ -1034,7 +1327,7 @@
     -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite:xor; mask-composite:exclude;
     animation:mileGlow 2.6s linear infinite}
-  .rib-day.mile .rib-bar::before{border-radius:10px 10px 5px 5px}
+  .rib-day.mile .rib-bar::before{border-radius:7px 7px 4px 4px}
   @keyframes mileHue{to{filter:hue-rotate(360deg)}}
   @keyframes mileGlow{
     0%{filter:blur(3.5px) hue-rotate(0deg); opacity:.5}
@@ -1102,6 +1395,7 @@
       <div class="nav-sec">Character</div>
       <button class="navitem active" data-view="home"><span class="ni-ic">🏠</span>Home</button>
       <button class="navitem" data-view="scroll"><span class="ni-ic">📜</span>Scroll</button>
+      <div class="nav-sub hidden" id="navSubScroll"></div>
       <div class="nav-sec">Planning</div>
       <button class="navitem" data-view="goals"><span class="ni-ic">✅</span>Goals</button>
       <button class="navitem" data-view="start"><span class="ni-ic">🗺️</span>Roadmap</button>
@@ -1142,6 +1436,32 @@
     <div id="celebBack"></div>
     <canvas id="celebCanvas"></canvas>
     <div class="celeb-card" id="celebCard"></div>
+  </div>
+  <!-- Log window: opened from Quick entry -->
+  <div class="qlm-back hidden" id="qlmBack">
+    <div class="qlm" role="dialog" aria-modal="true" aria-labelledby="qlmTitle">
+      <div class="qlm-head">
+        <h3 id="qlmTitle">Log a session</h3>
+        <button class="qlm-x" id="qlmX" type="button" aria-label="Close">✕</button>
+      </div>
+      <textarea id="qlmText" rows="3" maxlength="300" placeholder="What did you do?"></textarea>
+      <div class="qlm-row">
+        <label class="qlm-lbl">Date <input type="date" id="qlmDate"></label>
+        <span class="act-chip mile-chip" id="qlmMile" title="Big day. It gets a rainbow ring on the heatmap.">Milestone day</span>
+      </div>
+      <div class="qlm-sec">
+        <div class="qlm-lbl">Skills <span class="qlm-auto" id="qlmAuto"></span></div>
+        <div class="act-picker qlm-chips" id="qlmSkills"></div>
+      </div>
+      <div class="qlm-sec" id="qlmPrioSec">
+        <div class="qlm-lbl">Priorities this moved forward</div>
+        <div class="act-picker qlm-chips" id="qlmPrios"></div>
+      </div>
+      <div class="qlm-foot">
+        <button class="ghost" id="qlmCancel" type="button">Cancel</button>
+        <button class="primary" id="qlmSave" type="button">Save entry</button>
+      </div>
+    </div>
   </div>
   <div id="skillWrap" class="hidden">
     <div id="skillBack"></div>
@@ -1258,6 +1578,7 @@
           </div>
           <span class="pill" id="acctType"></span>
         </div>
+        <p class="ff-line hidden" id="funFact"></p>
         <div class="summary" id="summaryStats"></div>
         <div class="home-cols">
         <div class="hc-skills">
@@ -1303,34 +1624,81 @@
           <span class="small muted" id="heatHomeSub"></span>
           <button class="ghost small right" id="heatHomeOpen">Open Scroll →</button>
         </div>
+        <div class="seg seg-sub" id="homeHeatRange"></div>
+        <div class="seg seg-sub" id="homeHeatStyle"></div>
         <div class="heatwrap"><div id="heatmapHome" class="heatgrid"></div></div>
       </div>
     </div>
 
   <!-- VIEW: SCROLL (daily journal) -->
   <div class="view hidden" id="view-scroll">
-    <div class="panel">
-      <div class="goals-head">
-        <h2>📜 Scroll</h2>
-        <p class="goals-blurb">Your daily journal. Log what you did each session — the heatmap builds itself, and your priorities stay honest.</p>
+    <div class="scroll-hero">
+      <span class="sh-rod left" aria-hidden="true"></span>
+      <span class="sh-rod right" aria-hidden="true"></span>
+      <div class="sh-inner">
+        <div class="sh-eyebrow" id="scrollEyebrow">Overview</div>
+        <h2 class="sh-word">Scroll</h2>
+        <div class="sh-rule" aria-hidden="true"><i></i><b>✦</b><i></i></div>
+        <p class="sh-blurb">Your daily journal. Log what you did each session, and the heatmap builds itself.</p>
         <span class="streak-pill hidden" id="scrollStreak"></span>
       </div>
-      <div class="seg" id="scrollModeSeg" style="justify-content:center; margin-top:10px">
-        <button class="on" data-scrollmode="journal">📜 Journal</button>
-        <button data-scrollmode="recap">📊 Recap</button>
-      </div>
+
+    </div>
+
+    <!-- Sections. The heatmap leads because it's the reason anyone opens this page. -->
+    <div class="scroll-sec" data-ssec="heat">
+    <div class="panel">
+      <div class="section-title center" style="margin-top:0"><h3>Activity heatmap</h3><span class="small muted" id="heatSub"></span></div>
+      <div class="heat-stats" id="heatStats"></div>
+      <div class="seg" id="heatRange"></div>
+      <div class="seg seg-sub" id="heatStyle"></div>
+      <div class="seg seg-sub" id="heatPal"></div>
+      <div class="heat-focus" id="heatFocusWrap"></div>
+      <div class="heatwrap big"><div id="heatmap" class="heatgrid"></div></div>
+      <div class="act-legend" id="actLegend"></div>
+      <label class="chk small muted" style="justify-content:center; margin-top:8px"><input type="checkbox" id="autoActivity"> Auto-fill days from my game stats <span class="muted">(via WiseOldMan)</span></label>
+    </div>
+      <!-- Recap isn't a tab. It's a look back over everything, so it gets its own panel under the map. -->
+      <div class="panel recap-cta" id="recapCta" role="button" tabindex="0" title="Open your recap">
+        <div class="rcta-t">Click for your personalized recap <span class="ar">›</span></div>
+        <div class="rcta-chips" id="recapCtaSub"></div>
       </div>
 
-      <!-- Recap reads the Scroll's own data, so it lives here as a second view of it -->
-      <div id="scrollRecap" class="hidden">
-        <div class="panel">
-          <div class="section-title center" style="margin-top:0"><h3>📊 Recap</h3><span class="small muted" id="recapSub"></span></div>
-          <div class="seg" id="recapSeg" style="justify-content:center"></div>
-          <div id="recapBody"></div>
+      <div class="panel">
+        <div class="section-title center" style="margin-top:0"><h3>✨ Highlights</h3><span class="small muted" id="insightSub"></span></div>
+        <div class="ins-grid" id="insightGrid"></div>
+        <div class="wrap-bar" id="wrapBar"></div>
+        <div id="wrapStage"></div>
+      </div>
+
+
+      <!-- Quick entry: type a line, then the log window opens with the skills picked out of it. -->
+      <div class="panel quick-log">
+        <div class="ql-head">
+          <h3>Quick entry</h3>
+          <button class="ql-more" id="qlMore" type="button">Open journal ›</button>
         </div>
+        <div class="ql-row">
+          <input type="text" id="qlText" placeholder="What did you do today? e.g. questing and a slayer task" autocomplete="off" maxlength="300">
+          <button class="primary" id="qlGo" type="button">Log it</button>
+        </div>
+        <div class="ql-note" id="qlNote">Opens the full entry, with skills picked out from what you type.</div>
+      </div>
+    </div>
+
+    <div class="scroll-sec hidden" data-ssec="trophies">
+      <div class="panel">
+        <div class="section-title center" style="margin-top:0"><h3>🏆 Trophy cabinet</h3><span class="small muted" id="prestigeSub"></span></div>
+        <div class="small muted" style="text-align:center;max-width:520px;margin:0 auto 12px">
+          Milestones that matter, closest to done first. These are the achievements that actually build an account up.
+        </div>
+        <div class="pz-grid" id="prestigeGrid"></div>
+        <div style="text-align:center;margin-top:10px"><button class="ghost small" id="prestigeToggle"></button></div>
       </div>
 
-      <div id="scrollJournal">
+    </div>
+
+    <div class="scroll-sec hidden" data-ssec="journal">
       <div class="panel">
       <div class="composer">
         <div class="row">
@@ -1339,7 +1707,7 @@
         </div>
         <div class="act-picker" id="actPicker"></div>
         <div style="text-align:center">
-          <span class="act-chip mile-chip" id="logMile" title="Mark this day as a big milestone — it gets a rainbow ring on the heatmap">🏆 Milestone day</span>
+          <span class="act-chip mile-chip" id="logMile" title="Mark this day as a big milestone. It gets a rainbow ring on the heatmap.">🏆 Milestone day</span>
         </div>
         <div id="logPrioWrap" class="hidden" style="text-align:center">
           <span class="small muted">Priorities touched</span>
@@ -1352,8 +1720,13 @@
         </div>
       </div>
     </div>
+    <div class="panel">
+      <div class="section-title center"><h3>Log</h3><span class="small muted" id="logCount"></span></div>
+      <div id="logList"></div>
+    </div>
+    </div>
 
-    <!-- priorities -->
+    <div class="scroll-sec hidden" data-ssec="prio">
     <div class="panel">
       <div class="section-title center" style="margin-top:0"><h3>Priorities</h3><span class="small muted" id="prioSub"></span></div>
       <p class="muted small" style="margin:0 auto 8px; max-width:560px; text-align:center">
@@ -1382,7 +1755,7 @@
           </div>
         </div>
         <div>
-          <label class="small muted">When did you last work on it? <span class="muted">(optional — blank = unknown)</span></label><br>
+          <label class="small muted">When did you last work on it? <span class="muted">(optional, blank = unknown)</span></label><br>
           <input type="date" id="pLastDid" style="width:100%">
         </div>
       </div>
@@ -1405,24 +1778,16 @@
       </details>
       </div>
     </div>
-
-    <!-- heatmap -->
-    <div class="panel">
-      <div class="section-title center"><h3>Activity heatmap</h3><span class="small muted" id="heatSub"></span></div>
-      <div class="seg" id="heatRange"></div>
-      <div class="seg seg-sub" id="heatStyle"></div>
-      <div class="seg seg-sub" id="heatPal"></div>
-      <div class="heat-focus" id="heatFocusWrap"></div>
-      <div class="heatwrap big"><div id="heatmap" class="heatgrid"></div></div>
-      <div class="act-legend" id="actLegend"></div>
-      <label class="chk small muted" style="justify-content:center; margin-top:8px"><input type="checkbox" id="autoActivity"> Auto-fill days from my game stats <span class="muted">(via WiseOldMan)</span></label>
     </div>
 
-    <!-- entries list -->
-    <div class="panel">
-      <div class="section-title center"><h3>Log</h3><span class="small muted" id="logCount"></span></div>
-      <div id="logList"></div>
-    </div>
+    <!-- Recap reads the Scroll's own data, so it lives here as another view of it -->
+    <div class="scroll-sec hidden" data-ssec="recap">
+        <div class="panel">
+          <div class="section-title" style="margin-top:0"><h3>📊 Recap</h3><span class="small muted" id="recapSub"></span>
+            <button class="ghost small right" id="recapBack">← Back</button></div>
+          <div class="seg" id="recapSeg" style="justify-content:center"></div>
+          <div id="recapBody"></div>
+        </div>
     </div>
   </div>
 
@@ -1467,8 +1832,8 @@
     <div class="panel">
       <div class="goals-head">
         <h2>🧭 Quest planner</h2>
-        <p class="goals-blurb">Pick what you're working toward and see the whole dependency chain — what's done, what's next,
-        and exactly what it costs you. Requirements come straight from the wiki.</p>
+        <p class="goals-blurb">Pick what you're working toward and see the whole dependency chain: what's done, what's next,
+        and what you still need. Requirements come straight from the wiki.</p>
         <span class="small muted" id="qpSub"></span>
       </div>
       <div id="qpSetup"></div>
@@ -1478,6 +1843,8 @@
       </div>
       <div id="qpSuggest"></div>
     </div>
+
+    <div id="qpBoardWrap"></div>
     <div id="qpResult"></div>
   </div>
 
@@ -2585,12 +2952,15 @@ function renderStart(){
 }
 
 function itemDone(it){
+  // bosses and milestones tick themselves from your stats, and you can tick them by hand too
   if(it.kind==="boss"){
+    if(state.roadmapDone[it.id]) return true;
     if(it.fn) return !!(live && it.fn());
     const b = live && live.bosses && live.bosses[it.kc];
     return !!(b && b.kills>0);
   }
   if(it.kind==="milestone"){
+    if(state.roadmapDone[it.id]) return true;
     if(it.fn) return !!(live && it.fn());
     return !!(live && reqMet(it.reqs));
   }
@@ -2659,9 +3029,7 @@ function renderTracks(){
       const tags=[];
       if(it.reqs && !auto) tags.push(`<span class="tg ${ready?"ok":(live?"locked":"")}">${it.kind==="gear"?"wield at ":""}${reqText(it.reqs)}${ready?" ✓":""}</span>`);
       if(auto) tags.push(`<span class="tg">${it.kind==="boss"?"auto — first kill":"auto"}</span>`);
-      const box = auto
-        ? `<span class="check-badge">${isDone?"✅":"⬜"}</span>`
-        : `<label class="chk"><input type="checkbox" ${isDone?"checked":""} data-road2="${it.id}"></label>`;
+      const box = `<label class="chk"><input type="checkbox" ${isDone?"checked":""} data-road2="${it.id}"></label>`;
       return `<div class="qitem ${isDone?"qdone":""}">
         ${box}
         <div class="grow" style="min-width:0">
@@ -2694,7 +3062,10 @@ function renderTracks(){
   $$("#tracksWrap [data-road2]").forEach(cb=>cb.onchange=()=>{
     state.roadmapDone[cb.dataset.road2] = cb.checked;
     const it = TRACKS.flatMap(t=>t.items).find(x=>x.id===cb.dataset.road2);
-    if(it && it.kind==="quest" && it.wiki) setQuestDone(canonQuestName(it.wiki), cb.checked);
+    if(it && it.kind==="quest" && it.wiki){
+      const also = setQuestDone(canonQuestName(it.wiki), cb.checked);
+      if(also.length) toast(`Also ticked ${also.length} prerequisite${also.length===1?"":"s"}: ${also.slice(0,3).map(qpLabel).join(", ")}${also.length>3?` +${also.length-3} more`:""}`);
+    }
     save(); renderStart(); renderQuestPlanner();
   });
 }
@@ -2904,7 +3275,7 @@ function heatFocusKey(){
 }
 // One place that decides what a day looks like, so the calendar, the week strip and
 // the bars can't drift apart.
-function cellPaint(iso, types){
+function cellPaint(iso, types, angle, maxBands){
   if(heatFocus){
     const lv = heatFocus.level[iso];
     if(!lv) return {bg:"", prim:null, filled:false, title:`${fmtDay(iso)} — no ${heatFocus.key}`};
@@ -2913,7 +3284,7 @@ function cellPaint(iso, types){
             title:`${fmtDay(iso)} — ${heatFocus.key}: ${focusDetail(iso, heatFocus.key)}`};
   }
   if(!types || !types.length) return {bg:"", prim:null, filled:false, title:`${fmtDay(iso)} — nothing logged`};
-  return {bg:cellBg(types), prim:heatCol(types[0]), filled:true,
+  return {bg:cellBg(types, angle, maxBands), prim:heatCol(types[0]), filled:true,
           title:`${fmtDay(iso)} — ${types.map(t=>heatLabel(t)).join(", ")}`};
 }
 // Log entries: new ones carry skills[], legacy ones carry types[] — render whichever exists
@@ -3228,6 +3599,9 @@ function renderScroll(){
   const dateEl = $("#logDate");
   if(dateEl && !dateEl.value) dateEl.value = todayISO();
   renderActPicker();
+  renderInsights();
+  renderPrestige();
+  renderHeatStats();
   renderHeatRange();
   renderHeatStyle();
   renderHeatPal();
@@ -3341,9 +3715,9 @@ function typesByDate(){
 // A day can involve plenty of skills — three bands was dropping the rest silently.
 // Equal bands, not proportional: a day is a day, regardless of where the XP landed.
 const HEAT_MAX_BANDS = 6;
-function cellBg(typeIds){
+function cellBg(typeIds, angle, maxBands){
   if(!typeIds || !typeIds.length) return "";
-  const c = typeIds.slice(0, HEAT_MAX_BANDS).map(id=>heatCol(id));
+  const c = typeIds.slice(0, maxBands || HEAT_MAX_BANDS).map(id=>heatCol(id));
   if(c.length===1) return c[0];
   const seam="rgba(0,0,0,.55)", w=".8px"; // crisp dark divider so colours don't bleed
   const step = 100/c.length, parts=[];
@@ -3352,7 +3726,7 @@ function cellBg(typeIds){
     parts.push(`${col} ${i===0?"0":`calc(${a}% + ${w})`} ${i===c.length-1?"100%":`calc(${b}% - ${w})`}`);
     if(i<c.length-1) parts.push(`${seam} calc(${b}% - ${w}) calc(${b}% + ${w})`);
   });
-  return `linear-gradient(135deg, ${parts.join(", ")})`;
+  return `linear-gradient(${angle||"135deg"}, ${parts.join(", ")})`;
 }
 
 // Draws one calendar grid into a container. Same data everywhere; size comes from the wrapper's --cell.
@@ -3394,11 +3768,12 @@ function homeHeatWeeks(){
 }
 
 // Scroll heatmap ranges. Week gets its own single-row layout; the rest use the calendar grid.
-const HEAT_RANGES = [["week","Week"],["month","Month"],["3mo","3 months"],["6mo","6 months"],["all","All time"]];
+const HEAT_RANGES = [["week","Week"],["month","Month"],["3mo","3 months"],["6mo","6 months"],["1y","1 year"],["all","All time"]];
 function heatWeeksFor(range, tbd){
   if(range==="month") return 5;
   if(range==="3mo")   return 13;
   if(range==="6mo")   return 26;
+  if(range==="1y")    return 53;
   if(range==="all"){
     const dates = Object.keys(tbd).sort();
     if(!dates.length) return 26;
@@ -3422,9 +3797,31 @@ function drawWeekStrip(id, tbd){
   }
   el.innerHTML = `<div class="week-strip">${cells}</div>`;
 }
+// Home's own range and display switches. Same options as the Scroll, stored separately.
+function renderHomeHeatControls(){
+  const r = $("#homeHeatRange"), m = $("#homeHeatStyle");
+  if(r){
+    const cur = state.scroll.homeRange || "all";
+    r.innerHTML = HEAT_RANGES.map(([id,label])=>
+      `<button class="${id===cur?"on":""}" data-hrange="${id}">${label}</button>`).join("");
+    $$("#homeHeatRange [data-hrange]").forEach(b=>b.onclick=()=>{
+      state.scroll.homeRange = b.dataset.hrange; save();
+      renderHeatmap(); renderHomeHeatControls();
+    });
+  }
+  if(m){
+    const cur = state.scroll.homeMode || "calendar";
+    m.innerHTML = HEAT_MODES.map(([id,label])=>
+      `<button class="${id===cur?"on":""}" data-hmode2="${id}">${label}</button>`).join("");
+    $$("#homeHeatStyle [data-hmode2]").forEach(b=>b.onclick=()=>{
+      state.scroll.homeMode = b.dataset.hmode2; save();
+      renderHeatmap(); renderHomeHeatControls();
+    });
+  }
+}
 function renderHeatRange(){
   const el = $("#heatRange"); if(!el) return;
-  const cur = state.scroll.range || "3mo";
+  const cur = state.scroll.range || "all";
   el.innerHTML = HEAT_RANGES.map(([id,label])=>`<button class="${id===cur?"on":""}" data-range="${id}">${label}</button>`).join("");
   $$("#heatRange [data-range]").forEach(b=>b.onclick=()=>{
     state.scroll.range = b.dataset.range; save();
@@ -3462,7 +3859,7 @@ function renderHeatFocus(){
   el.innerHTML = keys.length
     ? `<span class="small muted">Show</span>
        <select class="hf-sel" id="heatFocusSel" aria-label="Focus the heatmap on one skill">
-         <option value="">Everything — a colour per skill</option>
+         <option value="">Everything, a colour per skill</option>
          ${keys.map(k=>`<option value="${escapeHtml(k)}"${k===cur?" selected":""}>${escapeHtml(k)} only</option>`).join("")}
        </select>
        ${cur?`<button class="ghost small" id="heatFocusClear">✕ clear</button>`:""}`
@@ -3522,7 +3919,7 @@ function deriveAutoDays(snaps){
     const A=snaps[i-1].data||{}, B=snaps[i].data||{};
     const iso=isoDate(new Date(snaps[i].createdAt));
     const fromIso=isoDate(new Date(snaps[i-1].createdAt));
-    const d=out[iso]||(out[iso]={types:new Set(), skills:{}, bosses:{}, clues:0, minis:0, spanFrom:fromIso});
+    const d=out[iso]||(out[iso]={types:new Set(), skills:{}, bosses:{}, clues:0, clueTiers:{}, minis:0, spanFrom:fromIso});
     if(fromIso<d.spanFrom) d.spanFrom=fromIso;
     for(const k in (B.skills||{})){ if(k==="overall") continue;
       const g=val(B.skills,k,"experience")-val(A.skills,k,"experience");
@@ -3532,10 +3929,25 @@ function deriveAutoDays(snaps){
       if(g>0){ d.bosses[k]=(d.bosses[k]||0)+g; d.types.add("combat"); } }
     for(const k in (B.activities||{})){
       const g=val(B.activities,k,"score")-val(A.activities,k,"score");
-      if(g>0){ if(k.startsWith("clue")){ d.clues+=g; d.types.add("clue"); } else { d.minis+=g; d.types.add("skilling"); } } }
+      if(g<=0) continue;
+      if(k.startsWith("clue")){
+        // The hiscores list every clue twice: under its tier and again in the all-clues
+        // total. Adding both is how one hard clue used to show up as two. Count the
+        // total, and keep the tiers separately for the breakdown.
+        if(k==="clue_scrolls_all") d.clues+=g;
+        else { const t=k.replace("clue_scrolls_",""); d.clueTiers[t]=(d.clueTiers[t]||0)+g; }
+        d.types.add("clue");
+      } else { d.minis+=g; d.types.add("skilling"); }
+    }
   }
   const res={};
-  for(const iso in out){ const d=out[iso]; d.types=ACTIVITIES.filter(a=>d.types.has(a.id)).map(a=>a.id); if(d.types.length) res[iso]=d; }
+  for(const iso in out){
+    const d=out[iso];
+    // if the all-clues total wasn't ranked but a tier was, the tiers are the count
+    if(!d.clues){ d.clues = Object.values(d.clueTiers).reduce((a,b)=>a+b,0); }
+    d.types=ACTIVITIES.filter(a=>d.types.has(a.id)).map(a=>a.id);
+    if(d.types.length) res[iso]=d;
+  }
   return res;
 }
 async function refreshAutoActivity(){
@@ -3544,14 +3956,25 @@ async function refreshAutoActivity(){
   // back-scan only runs when there's no history yet or it's a day old — paging
   // eight times every five minutes is what gets an IP rate-limited.
   const s = state.scroll;
-  const deep = !s.autoDeepTs || !Object.keys(s.auto||{}).length || (Date.now()-s.autoDeepTs > 86400e3);
+  const AUTO_V = 2;   // 2: clues no longer double-counted, tiers kept
+  const deep = !s.autoDeepTs || !Object.keys(s.auto||{}).length || (Date.now()-s.autoDeepTs > 86400e3)
+            || (s.autoV||0) < AUTO_V;
   const snaps=await fetchSnapshots(state.username, deep);
   if(snaps && deep){ s.autoDeepTs = Date.now(); }
   if(!snaps) return;
   // MERGE, never replace: a short fetch (rate limit, or WOM ageing out old snapshots)
   // must not erase days we already derived. Newer derivation wins per day.
   const fresh = deriveAutoDays(snaps);
-  state.scroll.auto = Object.assign({}, state.scroll.auto||{}, fresh);
+  const prior = state.scroll.auto||{};
+  if(deep && (s.autoV||0) < AUTO_V){
+    // Days WOM has already aged out can't be re-derived. They were counted as tier plus
+    // total, so halving them gives the true number.
+    for(const iso in prior){
+      if(!fresh[iso] && prior[iso].clues && !prior[iso].clueTiers) prior[iso].clues = Math.round(prior[iso].clues/2);
+    }
+    s.autoV = AUTO_V;
+  }
+  state.scroll.auto = Object.assign({}, prior, fresh);
   save();
   renderScroll();
 }
@@ -3630,7 +4053,7 @@ function autoGainsHtml(iso){
 // Day list for the ribbon window, oldest → newest.
 function rangeDays(range, tbd){
   const today=new Date(); today.setHours(0,0,0,0);
-  let n = range==="week"?7 : range==="month"?30 : range==="3mo"?90 : range==="6mo"?180 : 0;
+  let n = range==="week"?7 : range==="month"?30 : range==="3mo"?90 : range==="6mo"?180 : range==="1y"?365 : 0;
   if(!n){ const ds=Object.keys(tbd).sort(); n = ds.length ? Math.min(400, dayDiff(ds[0], todayISO())+1) : 60; }
   const days=[];
   for(let i=n-1;i>=0;i--){ const d=new Date(today); d.setDate(d.getDate()-i); days.push(isoDate(d)); }
@@ -3640,25 +4063,63 @@ function rangeDays(range, tbd){
 function drawRibbon(id, range, tbd, logBy){
   const el=$("#"+id); if(!el) return;
   const days=rangeDays(range, tbd);
-  // bar thickness = how busy the day was: manual entries + distinct activity types
   const weightOf=iso=> (logBy[iso]||[]).length + (tbd[iso]||[]).length;
-  const maxW = heatFocus ? HEAT_LEVELS : Math.max(1, ...days.map(weightOf));
   const H=100, base=6, top=H-16;
-  // Bars have a minimum width, so a long range can demand more room than the panel
-  // has. Shrink the floor (and the gap) to whatever actually fits — never scroll.
-  const wrapW = (el.closest(".heatwrap") || el).clientWidth || 820;
-  const gap = days.length > 120 ? 1 : 2;
-  const minW = Math.max(1, Math.floor((wrapW - 8) / days.length) - gap);
-  el.innerHTML = `<div class="ribbon" style="gap:${gap}px; --ribmin:${minW}px">${days.map(iso=>{
-    const types=tbd[iso];
-    const paint = cellPaint(iso, types);
-    // in focus mode the bar height tracks that one skill, not how busy the day was
-    const w = heatFocus ? (heatFocus.level[iso]||0) : weightOf(iso);
-    const h = w ? Math.round(base + (top-base)*(w/maxW)) : 4;
-    const prim = paint.prim, bg = paint.filled ? paint.bg : "var(--border)", title = paint.title;
-    const mt = heatMsDays[iso];
-    return `<div class="rib-day ${iso===todayISO()?"today":""} ${w?"has":""} ${heatPrioDays.has(iso)?"prio":""} ${mt?`ms ms-${mt}`:""} ${heatMileDays.has(iso)?"mile":""}" data-iso="${iso}" title="${escapeHtml(title)}"><div class="rib-bar" style="height:${h}px;background:${bg};${prim?`color:${prim}`:""}"></div></div>`;
-  }).join("")}</div>`;
+  // Measure the chart's own box, not the outer wrapper, or a long range comes out a
+  // little too wide for the space and puts a scrollbar under it.
+  const box = el.getBoundingClientRect().width || (el.closest(".heatwrap") || el).clientWidth || 820;
+  const avail = Math.max(40, box - 8);
+  // A bar needs about 8px to carry its stacked colours, edge and sheen. Below that (six
+  // months or a year on a normal window) a bar per day turns to noise, so group the days
+  // into weeks and keep the same look instead of flattening it.
+  const weekly = avail / days.length < 8;
+  const buckets = [];
+  if(weekly){
+    // group back from today so the newest week is always complete up to now
+    for(let end = days.length; end > 0; end -= 7) buckets.unshift(days.slice(Math.max(0, end-7), end));
+  } else days.forEach(d=>buckets.push([d]));
+
+  // Every bar gets a set width and an even gap, and the group sits in the middle. Letting
+  // columns stretch to fill the panel is what spread a week's seven bars edge to edge.
+  const n = buckets.length;
+  const cap = n <= 10 ? 28 : n <= 45 ? 14 : 9;
+  const per = avail / n;                                   // room each bar has, gap included
+  let barW = cap, gap = Math.round(cap * 0.5);
+  if(barW + gap > per){                                    // tighter range: shrink to fit
+    barW = Math.max(1, Math.floor(per * 0.66));
+    gap  = Math.max(0, Math.floor(per) - barW);
+  }
+
+  const DOW = d => new Date(d+"T12:00:00");
+  const bars = buckets.map(b=>{
+    const active = b.filter(d=> tbd[d] && tbd[d].length);
+    // most frequent keys first, so a week's stack reads like its days did
+    const freq = {};
+    active.forEach(d=> tbd[d].forEach((k,pos)=>{ freq[k] = (freq[k]||0) + (tbd[d].length - pos); }));
+    const types = Object.keys(freq).sort((x,y)=>freq[y]-freq[x]);
+    const w = heatFocus ? Math.max(0, ...b.map(d=>heatFocus.level[d]||0))
+                        : b.reduce((a,d)=>a+weightOf(d), 0);
+    let paint;
+    if(b.length===1) paint = cellPaint(b[0], tbd[b[0]], "180deg");
+    else if(heatFocus){
+      const col = heatCol(heatFocus.key);
+      paint = w ? {bg:heatFade(col,w), prim:heatFade(col,Math.max(w,3)), filled:true} : {bg:"", prim:null, filled:false};
+    } else paint = types.length ? {bg:cellBg(types, "180deg"), prim:heatCol(types[0]), filled:true} : {bg:"", prim:null, filled:false};
+    const label = b.length===1 ? null
+      : `Week of ${DOW(b[0]).toLocaleDateString(undefined,{month:"short",day:"numeric"})}: ${active.length} day${active.length===1?"":"s"} active${types.length?`, ${types.slice(0,4).map(t=>heatLabel(t)).join(", ")}`:""}`;
+    const mts = b.map(d=>heatMsDays[d]).filter(Boolean);
+    return {b, w, paint, title: label || paint.title,
+      today: b.includes(todayISO()), prio: b.some(d=>heatPrioDays.has(d)),
+      mt: mts.length ? mts.sort().pop() : null, mile: b.some(d=>heatMileDays.has(d)),
+      // clicking a week opens its busiest day
+      iso: active.length ? active.reduce((x,y)=> weightOf(y) > weightOf(x) ? y : x) : b[b.length-1]};
+  });
+  const maxW = heatFocus ? HEAT_LEVELS : Math.max(1, ...bars.map(x=>x.w));
+  el.innerHTML = `<div class="ribbon" style="gap:${gap}px; --ribcol:${barW}px">${bars.map(x=>{
+    const h = x.w ? Math.round(base + (top-base)*(x.w/maxW)) : 4;
+    const bg = x.paint.filled ? x.paint.bg : "var(--border)";
+    return `<div class="rib-day ${x.today?"today":""} ${x.w?"has":""} ${x.prio?"prio":""} ${x.mt?`ms ms-${x.mt}`:""} ${x.mile?"mile":""}" data-iso="${x.iso}" title="${escapeHtml(x.title||"")}"><div class="rib-bar" style="height:${h}px;background:${bg};${x.paint.prim?`color:${x.paint.prim}`:""}"></div></div>`;
+  }).join("")}</div>${weekly?`<div class="rib-cap">Each bar is one week</div>`:""}`;
 }
 
 // Gold "priority touched" pills for an entry that advanced a priority.
@@ -3753,7 +4214,7 @@ function renderHeatmap(){
   heatMileDays = milestoneDays();     // rainbow-ring days (milestone beats gold)
   heatMsDays = {};                    // auto-detected milestones, by tier
   Object.keys(msDayMap()).forEach(iso=>{ heatMsDays[iso] = msTierOfDay(iso); });
-  const range = state.scroll.range || "3mo";
+  const range = state.scroll.range || "all";
   const mode = heatMode();
   // null unless one skill is focused; tally scoped to the days this range shows
   heatFocus = buildHeatFocus(heatFocusKey(), visibleIsos(mode, range, tbd));
@@ -3763,31 +4224,67 @@ function renderHeatmap(){
     $("#heatmap").className = "";
     if(sw) sw.className = "heatwrap big mode-bars";
   } else if(range==="week"){
-    if(sw) sw.style.setProperty("--cell","42px");
+    // seven cells plus gaps have to fit the panel; 42px is a ceiling, not a promise
+    if(sw){
+      const w = sw.clientWidth || 820;
+      sw.style.setProperty("--cell", Math.max(18, Math.min(42, Math.floor(w/7) - 10))+"px");
+    }
     drawWeekStrip("heatmap", tbd);
     $("#heatmap").className = "";
     if(sw) sw.className = "heatwrap big mode-calendar";
   } else {
-    const weeks = heatWeeksFor(range, tbd);
+    let weeks = heatWeeksFor(range, tbd);
     if(sw){ // size cells to fill the panel: chunky for short ranges, compact for long ones.
       // Subtract the REAL gap (--hgap) — using 4 against a 5px gap overflowed by about
       // a pixel per column, which is what was summoning the scrollbar.
       const width = sw.clientWidth || 820;
       const gap = parseFloat(getComputedStyle(sw).getPropertyValue("--hgap")) || 5;
       const LABELS = 28; // day-label column + its margin
-      const cell = Math.max(9, Math.min(34, Math.floor((width - LABELS) / weeks) - gap));
+      const cell = Math.max(5, Math.min(34, Math.floor((width - LABELS) / weeks) - gap));
       sw.style.setProperty("--cell", cell+"px");
+      // the wrap clips, so drop weeks rather than draw past the edge on a narrow screen
+      weeks = Math.max(4, Math.min(weeks, Math.floor((width - LABELS) / (cell + gap))));
     }
     drawHeatmap("heatmap", weeks, tbd);
     $("#heatmap").className = "heatgrid";
     if(sw) sw.className = "heatwrap big mode-calendar";
   }
-  // Home widget: fixed ~6-month window, cells sized to fill the panel width (never scrolls)
+  // Home widget: its own range and display mode. It's a different shape of space to the
+  // Scroll's, so it keeps its own two settings rather than inheriting them. Palette and
+  // skill focus stay shared, because those are about how you read colour.
+  const hRange = state.scroll.homeRange || "all";
+  const hMode  = state.scroll.homeMode  || "calendar";
   const hw = $("#heatmapHome") && $("#heatmapHome").closest(".heatwrap");
-  const hWeeks = 26;
-  if(hw){ const w=hw.clientWidth||600; hw.style.setProperty("--cell", Math.max(10, Math.min(30, Math.floor((w-26)/hWeeks)-6))+"px"); }
-  drawHeatmap("heatmapHome", hWeeks, tbd);
-  if(hw) hw.className = "heatwrap mode-calendar";
+  const hEl = $("#heatmapHome");
+  if(hEl){
+    if(hMode==="bars"){
+      drawRibbon("heatmapHome", hRange, tbd, logBy);
+      hEl.className = "";
+      if(hw) hw.className = "heatwrap mode-bars";
+    } else if(hRange==="week"){
+      if(hw){
+        const w = hw.clientWidth || 600;
+        hw.style.setProperty("--cell", Math.max(16, Math.min(40, Math.floor(w/7) - 8))+"px");
+        hw.className = "heatwrap mode-calendar";
+      }
+      drawWeekStrip("heatmapHome", tbd);
+      hEl.className = "";
+    } else {
+      let hWeeks = heatWeeksFor(hRange, tbd);
+      if(hw){
+        const w = hw.clientWidth || 600;
+        const gap = parseFloat(getComputedStyle(hw).getPropertyValue("--hgap")) || 4;
+        // The wrap clips what it can't fit, so never let the grid be wider than it.
+        // Shrink the cells first; only drop weeks once they're at the legible floor.
+        const cell = Math.max(5, Math.min(30, Math.floor((w-28)/hWeeks) - gap));
+        hw.style.setProperty("--cell", cell+"px");
+        hWeeks = Math.max(4, Math.min(hWeeks, Math.floor((w-28)/(cell+gap))));
+      }
+      drawHeatmap("heatmapHome", hWeeks, tbd);
+      hEl.className = "heatgrid";
+      if(hw) hw.className = "heatwrap mode-calendar";
+    }
+  }
   const loggedDays = heatFocus ? heatFocus.days : Object.keys(tbd).length;
   $("#heatSub").textContent = heatFocus
     ? `${loggedDays} day${loggedDays===1?"":"s"} of ${heatFocus.key}`
@@ -4651,7 +5148,7 @@ async function buildQuestDB(onProgress){
 // Every milestone is a stable key ("total:1100", "99:slayer"), so scanning history is
 // idempotent — the first snapshot a key appears in is the day it was earned.
 // Tiers: "gold" (regular), "diamond" (rare), "nn" (a 99 — the game fires fireworks, so do we).
-const MS_TOTAL_BIG = [1000, 1500, 2000, 2277];
+const MS_TOTAL_BIG = [1000, 1500, 2000, SKILL_ORDER.length * 99];
 function combatLevel(sk){
   if(!sk) return 3;
   const L=k=>(sk[k]&&sk[k].level)||1;
@@ -6927,7 +7424,7 @@ function recapWindow(range){
 function recapCollect(dayList){
   const auto = state.scroll.auto || {};
   const out = {skills:{}, totalXp:0, activeDays:0, bestDay:null, dow:[0,0,0,0,0,0,0],
-               bosses:0, clues:0, entries:0, milestones:[], streak:0, days:dayList.length};
+               bosses:0, bossKc:{}, clues:0, clueTiers:{}, entries:0, milestones:[], streak:0, days:dayList.length};
   const inRange = new Set(dayList);
   let run = 0;
   dayList.forEach(iso=>{
@@ -6940,8 +7437,14 @@ function recapCollect(dayList){
         out.skills[key] = (out.skills[key]||0) + v;
         dayXp += v;
       }
-      for(const b in (d.bosses||{})) out.bosses += Math.max(0, d.bosses[b]);
+      for(const b in (d.bosses||{})){
+        const g = Math.max(0, d.bosses[b]);
+        if(!g) continue;
+        out.bosses += g;
+        out.bossKc[b] = (out.bossKc[b]||0) + g;
+      }
       out.clues += d.clues || 0;
+      for(const t in (d.clueTiers||{})) out.clueTiers[t] = (out.clueTiers[t]||0) + d.clueTiers[t];
     }
     out.totalXp += dayXp;
     if(dayXp > 0){
@@ -6983,6 +7486,85 @@ function recapDelta(now, prev, key){
   if(Math.abs(pct) < 5) return `<span class="rc-flat">about the same as before</span>`;
   return pct > 0 ? `<span class="rc-up">▲ ${pct}% on the previous ${now.days} days</span>`
                  : `<span class="rc-down">▼ ${Math.abs(pct)}% on the previous ${now.days} days</span>`;
+}
+// Kill counts for the window, biggest first, with the all-time count beside each.
+// Three chips to draw you into the recap. Every candidate gets a score for how much
+// it stands out: growth on the month before beats a flat total, a long streak beats
+// a short one, and a big boss count beats a single kill. A little randomness keeps
+// it from reading the same every visit, and the pick is held for the day so it isn't
+// reshuffling while you use the page.
+let recapTeaseCache = null;
+function recapTeaseStats(){
+  let m, prev;
+  try{ const days = recapWindow("month").days; m = recapCollect(days); prev = recapPrev(days); }catch(e){ return []; }
+  const c = [];
+  const add = (group, score, html) => c.push({group, score, html});
+  if(m.totalXp){
+    add("xp", 2, `<b>${xpText(m.totalXp)}</b> xp`);
+    if(prev && prev.totalXp){
+      const pct = Math.round((m.totalXp-prev.totalXp)/prev.totalXp*100);
+      if(pct >= 15) add("trend", 3 + Math.min(pct,200)/100, `<b>up ${pct}%</b> on the month before`);
+    }
+  }
+  if(m.bestDay && m.bestDay.xp >= 20000) add("best", 2.4, `best day <b>${xpText(m.bestDay.xp)}</b> xp`);
+  const top = Object.entries(m.skills).sort((a,b)=>b[1]-a[1])[0];
+  if(top && m.totalXp){
+    const share = Math.round(top[1]/m.totalXp*100);
+    add("skill", share >= 40 ? 2.2 : 1.4, `<b>${share}%</b> into ${escapeHtml(top[0])}`);
+  }
+  if(m.streak >= 3) add("streak", 1.5 + Math.min(m.streak,30)/10, `<b>${m.streak}-day</b> streak`);
+  if(m.activeDays) add("days", m.activeDays >= 20 ? 1.8 : 1, `<b>${m.activeDays}</b> day${m.activeDays===1?"":"s"} played`);
+  const kc = Object.entries(m.bossKc||{}).sort((a,b)=>b[1]-a[1]);
+  if(kc.length){
+    add("boss", 1.6 + Math.min(m.bosses,200)/100, `<b>${fmt(m.bosses)}</b> boss kill${m.bosses===1?"":"s"}`);
+    if(kc[0][1] >= 5) add("boss", 1.8 + Math.min(kc[0][1],100)/100, `<b>${fmt(kc[0][1])}</b> ${escapeHtml(nice(kc[0][0]))} kills`);
+  }
+  if(m.clues) add("clue", 1.3 + Math.min(m.clues,20)/20, `<b>${fmt(m.clues)}</b> clue${m.clues===1?"":"s"}`);
+  if(m.milestones.length) add("mile", 3.2, `<b>${m.milestones.length}</b> milestone${m.milestones.length===1?"":"s"}`);
+  // jitter, then best first, one chip per group
+  c.forEach(x => x.score *= 0.8 + Math.random()*0.4);
+  c.sort((a,b)=>b.score-a.score);
+  const seen = new Set(), out = [];
+  for(const x of c){ if(seen.has(x.group)) continue; seen.add(x.group); out.push(x.html); if(out.length===3) break; }
+  return out;
+}
+function renderRecapTease(){
+  const el = $("#recapCtaSub"); if(!el) return;
+  const key = todayISO() + "|" + Object.keys(state.scroll.auto||{}).length;
+  if(!recapTeaseCache || recapTeaseCache.key !== key) recapTeaseCache = {key, chips: recapTeaseStats()};
+  const chips = recapTeaseCache.chips;
+  el.innerHTML = chips.length ? chips.map(h=>`<span class="rcta-chip">${h}</span>`).join("")
+    : `<span class="rcta-chip">A look back at your last 30 days</span>`;
+}
+function recapKcHtml(d){
+  const rows = Object.entries(d.bossKc||{}).sort((a,b)=>b[1]-a[1]);
+  if(!rows.length) return "";
+  const max = rows[0][1];
+  const allTime = k => (live && live.bosses && live.bosses[k] && live.bosses[k].kills>0) ? live.bosses[k].kills : 0;
+  return `<div class="section-title center" style="margin-top:18px"><h3>Boss kill counts</h3>
+      <span class="small muted">${fmt(d.bosses)} kill${d.bosses===1?"":"s"} across ${rows.length} boss${rows.length===1?"":"es"}</span></div>
+    <div class="rc-kc">${rows.map(([k,v])=>`
+      <div class="rc-kc-row">
+        ${metricIconHtml("boss", k, "gicon")}
+        <span class="rc-kc-name">${escapeHtml(nice(k))}</span>
+        <span class="rc-track"><i style="width:${Math.max(3, v/max*100)}%"></i></span>
+        <span class="rc-kc-v">+${fmt(v)}</span>
+        <span class="rc-kc-tot">${allTime(k) ? fmt(allTime(k))+" total" : ""}</span>
+      </div>`).join("")}
+    </div>`;
+}
+const RECAP_CLUE_TIERS = [["beginner","Beginner"],["easy","Easy"],["medium","Medium"],["hard","Hard"],["elite","Elite"],["master","Master"]];
+function recapCluesHtml(d){
+  if(!d.clues) return "";
+  const tiers = RECAP_CLUE_TIERS.filter(([t])=>(d.clueTiers||{})[t]);
+  return `<div class="section-title center" style="margin-top:18px"><h3>Clue scrolls</h3>
+      <span class="small muted">${fmt(d.clues)} completed</span></div>
+    ${tiers.length ? `<div class="rc-clues">${tiers.map(([t,label])=>`
+      <div class="rc-clue">
+        ${metricIconHtml("activity", "clue_scrolls_"+t, "gicon")}
+        <b>${fmt(d.clueTiers[t])}</b><span>${label}</span>
+      </div>`).join("")}</div>`
+      : `<div class="small muted" style="text-align:center">No tier breakdown saved for these days.</div>`}`;
 }
 function renderRecap(){
   const el = $("#recapBody"); if(!el) return;
@@ -7038,6 +7620,9 @@ function renderRecap(){
           <span class="rc-pct">${Math.round(v/d.totalXp*100)}%</span>
         </div>`).join("")}
     </div>`:""}
+
+    ${recapKcHtml(d)}
+    ${recapCluesHtml(d)}
 
     ${d.milestones.length?`
     <div class="section-title center" style="margin-top:18px"><h3>Milestones</h3></div>
@@ -7129,10 +7714,36 @@ function matchQuestName(text){
   return best;
 }
 function questDone(name){ return !!(state.questsDone && state.questsDone[name]); }
+// Ticking a quest also ticks everything it requires, since you can't have done Jungle
+// Potion without Druidic Ritual. Returns the prerequisites that were newly ticked.
+// Unticking does not cascade: saying you haven't done a quest says nothing about
+// what came before it.
 function setQuestDone(name, val){
-  if(!name) return;
+  if(!name) return [];
   state.questsDone = state.questsDone || {};
-  if(val) state.questsDone[name] = true; else delete state.questsDone[name];
+  if(!val){ delete state.questsDone[name]; return []; }
+  state.questsDone[name] = true;
+  const db = questDB(), added = [];
+  if(!db || !db.quests[name]) return added;
+  const seen = new Set([name]);
+  const walk = n => (db.quests[n] && db.quests[n].prereqs || []).forEach(p=>{
+    if(seen.has(p)) return;
+    seen.add(p);
+    if(!state.questsDone[p] && db.quests[p]){ state.questsDone[p] = true; added.push(p); }
+    walk(p);
+  });
+  walk(name);
+  return added;
+}
+// Tick or untick from anywhere in the planner, and say what came along with it.
+function qpTick(name, val){
+  const added = setQuestDone(name, val);
+  save();
+  if(added.length){
+    const shown = added.slice(0,3).map(qpLabel).join(", ");
+    toast(`Also ticked ${added.length} prerequisite${added.length===1?"":"s"}: ${shown}${added.length>3?` +${added.length-3} more`:""}`);
+  }
+  renderQuestPlanner(); renderStart();
 }
 
 // Every prerequisite of `target`, transitively.
@@ -7244,22 +7855,48 @@ function renderQuestPlanner(){
   const target = state.qpTarget;
   sug.innerHTML = `<div class="qp-sug">${QP_SUGGEST.filter(q=>db.quests[q]).map(q=>
     `<button class="ghost small ${q===target?"on":""}" data-qptarget="${escapeHtml(q)}">${q}</button>`).join("")}
-    <button class="ghost small" data-qptarget="__ALL__">🏆 Quest cape (everything)</button></div>
-    ${qpSavedHtml(db, target)}`;
+    <button class="ghost small" data-qptarget="__ALL__">🏆 Quest cape (everything)</button>
+    <button class="qp-pin" data-qbadd="__ALL__" title="Pin the quest cape to the board">+</button></div>
+    ${qpFilterHtml(db)}`;
   $$("#qpSuggest [data-qptarget]").forEach(b=>b.onclick=()=>{ state.qpTarget=b.dataset.qptarget; save(); renderQuestPlanner(); });
-  // saved-plan chips: click loads the plan fresh (own context, so the trail resets); ✕ unpins
-  $$("#qpSuggest [data-qpplan]").forEach(ch=>ch.onclick=(e)=>{
-    if(e.target.closest("[data-qpunsave]")) return;
-    state.qpTarget = ch.dataset.qpplan; state.qpHist = []; save(); renderQuestPlanner();
+  $$("#qpSuggest [data-qpfilter]").forEach(b=>b.onclick=()=>{
+    state.qpFilter = b.dataset.qpfilter || null; save(); renderQuestPlanner();
   });
-  $$("#qpSuggest [data-qpunsave]").forEach(x=>x.onclick=(e)=>{
-    e.stopPropagation();
-    state.qpSaved = (state.qpSaved||[]).filter(t=>t!==x.dataset.qpunsave);
-    save(); renderQuestPlanner();
+  $("#qpBoardWrap").innerHTML = qpBoardHtml(db, target);
+  qpWireBoard(db);
+  // Scope: whatever you've charted, or your whole board if you haven't charted anything.
+  const scope = target || (qpBoard().length ? "__BOARD__" : null);
+  const mode = state.qpMode === "route" ? "route" : "tree";
+  const modeBar = scope ? `<div class="seg seg-sub qp-mode">
+      <button class="${mode==="tree"?"on":""}" data-qpmode="tree" ${target?"":"disabled title='Chart a quest to see its tree'"}>🌳 Tree</button>
+      <button class="${mode==="route"?"on":""}" data-qpmode="route">🧾 Route</button>
+      ${!target && qpBoard().length ? `<span class="qp-scope">everything on your board</span>` : ""}
+    </div>` : "";
+  const bodyHtml = mode==="route"
+    ? (scope ? qpRouteHtml(scope, db) : "")
+    : (target ? qpPlanHtml(target, db) : `<div class="panel"><div class="empty">Pick a goal above, or search for any quest.</div></div>`);
+  res.innerHTML = qpSwitchHtml(db, target) + modeBar + (bodyHtml || `<div class="panel"><div class="empty">Pin a quest to the board, or search for one.</div></div>`);
+  $$("#qpResult [data-qpswitch]").forEach(b=>b.onclick=()=>{
+    state.qpTarget = b.dataset.qpswitch; state.qpHist = []; state.qpSel = null; save(); renderQuestPlanner();
   });
-  res.innerHTML = target ? qpPlanHtml(target, db) : `<div class="panel"><div class="empty">Pick a goal above, or search for any quest.</div></div>`;
-  if(target){ qpWire(db); qpFitTree(); }
+  $$("#qpResult [data-qpmode]").forEach(b=>b.onclick=()=>{
+    if(b.disabled) return;
+    state.qpMode = b.dataset.qpmode; save(); renderQuestPlanner();
+  });
+  if(mode==="route"){
+    // ticking from the route re-plans everything below it, which is the point
+    $$("#qpResult .rt-tick").forEach(b=>b.onclick=e=>{
+      e.stopPropagation();
+      qpTick(b.dataset.qpdone2, true);
+    });
+    $$("#qpResult [data-rtq]").forEach(row=>row.onclick=e=>{
+      if(e.target.closest("button")) return;
+      state.qpTarget = row.dataset.rtq; state.qpMode = "tree"; state.qpHist = []; save(); renderQuestPlanner();
+    });
+  }
+  if(mode==="tree" && target){ qpWire(db); qpFitTree(); }
   else if(qpPopped){ qpPopped=false; document.body.style.overflow=""; } // no tree to fill the screen with
+  qpWirePinButtons();
 }
 function qpLoad(){
   const setup=$("#qpSetup");
@@ -7288,6 +7925,392 @@ async function qdbEnsure(){
   qdbBuilding = false;
   renderQuestPlanner();
 }
+
+
+// ---- the route ----
+// A flat "do these in this order" list, which is what people actually want from a quest
+// guide. The tree shows you the shape of the problem; the route tells you what to do on
+// Tuesday night.
+//
+// It walks forward through time rather than sorting once: take everything you can start
+// right now, do the most useful of them, bank the XP it pays out, and look again. That
+// matters because quest rewards carry you through later requirements, so the order you
+// pick changes what you're able to do next. When nothing is startable, the thing in the
+// way IS the next step, so training and quest-point gates get their own entries.
+const QP_ROUTE_CAP = 600;
+// Every quest in `names`, plus everything they depend on, transitively.
+function qpClosure(names, db){
+  const seen = new Set(), out = [];
+  const visit = n => {
+    if(seen.has(n) || !db.quests[n]) return;
+    seen.add(n);
+    (db.quests[n].prereqs||[]).forEach(visit);
+    out.push(n);
+  };
+  names.forEach(visit);
+  return out;
+}   // safety net; the loop always makes progress, but never trust that blindly
+
+function qpRoute(scope, db){
+  const base = scope==="__ALL__" ? db.order.filter(n=>!db.quests[n].mini)
+             : scope==="__BOARD__" ? qpRoutePoolFromBoard(db)
+             : (questPlan(scope, db).all || []);
+  // Pull in every prerequisite, miniquests included. The cape doesn't count miniquests
+  // so they're left out of the headline list, but plenty of quests require one, and
+  // leaving them out made those chains permanently unsatisfiable.
+  const pool = qpClosure(base, db);
+  const inPool = new Set(pool);
+  const done = new Set(pool.filter(questDone));
+  const xp = {}; SKILL_ORDER.forEach(s=>{ xp[s] = liveSkillXp(s) || 0; });
+  // quest points come from every quest you've done, not only the ones in this pool
+  let qpNow = db.order.filter(questDone).reduce((a,n)=>a+(db.quests[n].qpGain||0), 0);
+
+  // how many pool quests each one stands in front of, for picking between equals
+  const unblocks = {};
+  pool.forEach(n=>{
+    (db.quests[n].prereqs||[]).forEach(p=>{ if(inPool.has(p)) unblocks[p] = (unblocks[p]||0)+1; });
+  });
+
+  const lvl = s => levelFromXp(xp[s]||0);
+  const skillGaps = n => Object.entries(db.quests[n].reqs||{})
+    .filter(([s,l])=> SKILL_ORDER.includes(s) && lvl(s) < l)
+    .map(([s,l])=>({s, need:l, have:lvl(s)}));
+  const qpGap = n => Math.max(0, (db.quests[n].qp||0) - qpNow);
+  const prereqsMet = n => (db.quests[n].prereqs||[]).every(p=>done.has(p) || questDone(p));
+
+  const steps = [];
+  let guard = 0;
+  while(guard++ < QP_ROUTE_CAP){
+    const left = pool.filter(n=>!done.has(n));
+    if(!left.length) break;
+    const ready = left.filter(n=>prereqsMet(n) && !skillGaps(n).length && !qpGap(n));
+    if(ready.length){
+      // most unblocked first, then the game's own progression order
+      ready.sort((a,b)=> (unblocks[b]||0)-(unblocks[a]||0) || (db.quests[a].order??999)-(db.quests[b].order??999));
+      const n = ready[0], q = db.quests[n];
+      Object.entries(q.rewards||{}).forEach(([s,v])=>{ if(SKILL_ORDER.includes(s)) xp[s] = (xp[s]||0) + v; });
+      qpNow += q.qpGain||0;
+      done.add(n);
+      steps.push({kind:"quest", n, qp:q.qpGain||0, difficulty:q.difficulty, length:q.length,
+                  mini:!!q.mini, rewards:q.rewards||{}, unlocks:q.unlocks||[], items:q.items||[]});
+      continue;
+    }
+    // Nothing startable. Whatever is in the way is the next thing to do.
+    const startable = left.filter(prereqsMet);
+    const blocked = startable.length ? startable : left;
+    // count how many quests each individual skill requirement is holding up
+    const tally = {};
+    blocked.forEach(n=> skillGaps(n).forEach(g=>{
+      const k = g.s+"@"+g.need;
+      (tally[k] || (tally[k] = {s:g.s, need:g.need, have:g.have, n:0, quests:[]})).n++;
+      tally[k].quests.push(n);
+    }));
+    const gates = Object.values(tally);
+    if(gates.length){
+      // clear the one holding up the most, and among equals the cheapest to reach
+      gates.sort((a,b)=> b.n-a.n || (xpForLevel(a.need)-xp[a.s]) - (xpForLevel(b.need)-xp[b.s]));
+      const g = gates[0];
+      steps.push({kind:"train", skill:g.s, from:g.have, to:g.need,
+                  xp: Math.max(0, xpForLevel(g.need) - (xp[g.s]||0)),
+                  unlocks:g.quests.slice(0,4), more:Math.max(0, g.quests.length-4)});
+      xp[g.s] = Math.max(xp[g.s]||0, xpForLevel(g.need));
+      continue;
+    }
+    // only a quest-point wall left
+    const qpNeeds = blocked.map(qpGap).filter(v=>v>0);
+    if(qpNeeds.length){
+      const need = Math.min(...qpNeeds);
+      steps.push({kind:"qp", need: (qpNow + need), have: qpNow, gain: need,
+                  unlocks: blocked.filter(n=>qpGap(n)>0 && qpGap(n)<=need).slice(0,4)});
+      qpNow += need;
+      continue;
+    }
+    break;   // circular prereqs or data we can't satisfy; stop rather than spin
+  }
+  // Consecutive training in the same skill reads as two chores when it's one trip.
+  for(let i=steps.length-1; i>0; i--){
+    const a2 = steps[i-1], b2 = steps[i];
+    if(a2.kind==="train" && b2.kind==="train" && a2.skill===b2.skill){
+      a2.to = Math.max(a2.to, b2.to);
+      a2.xp = Math.max(0, xpForLevel(a2.to) - xpForLevel(a2.from));
+      a2.unlocks = [...new Set([...a2.unlocks, ...b2.unlocks])].slice(0,4);
+      steps.splice(i,1);
+    }
+  }
+  const questSteps = steps.filter(s=>s.kind==="quest");
+  return {steps, quests:questSteps.length,
+          trains:steps.filter(s=>s.kind==="train").length,
+          qpEarned:questSteps.reduce((a,s)=>a+s.qp,0),
+          alreadyDone:pool.filter(questDone).length, poolSize:pool.length,
+          unreachable: pool.filter(n=>!done.has(n))};
+}
+// Board mode: every quest pinned to the board, plus everything they depend on.
+function qpRoutePoolFromBoard(db){
+  const out=[], seen=new Set();
+  qpBoard().forEach(t=>{
+    const names = t==="__ALL__" ? db.order.filter(n=>!db.quests[n].mini) : (questPlan(t, db).all||[]);
+    names.forEach(n=>{ if(!seen.has(n)){ seen.add(n); out.push(n); } });
+  });
+  return out;
+}
+// One line saying why a quest is worth doing, from the reward data we already have.
+function qpWhyBother(step, db){
+  const bits = [];
+  const rw = Object.entries(step.rewards||{}).filter(([s,v])=>SKILL_ORDER.includes(s) && v>0)
+    .sort((a,b)=>b[1]-a[1]);
+  if(rw.length) bits.push(rw.slice(0,3).map(([s,v])=>`${fmt(v)} ${nice(s)}`).join(", "));
+  const un = (step.unlocks||[]).filter(Boolean).slice(0,2);
+  if(un.length) bits.push(un.join(", "));
+  return bits.join(" · ");
+}
+function qpRouteHtml(scope, db){
+  const r = qpRoute(scope, db);
+  if(!r.steps.length){
+    return `<div class="panel"><div class="empty">
+      ${r.poolSize ? "Everything here is already done. Pin something else to the board."
+                   : "Nothing to route yet. Pin a quest to the board, or pick a goal above."}
+    </div></div>`;
+  }
+  let qn = 0;
+  const rows = r.steps.map(st=>{
+    if(st.kind==="train"){
+      return `<div class="rt rt-train">
+        <div class="rt-n">⚒</div>
+        <div class="rt-b">
+          <div class="rt-h"><b>Train ${escapeHtml(nice(st.skill))} to ${st.to}</b>
+            <span class="rt-tag train">${fmt(st.xp)} xp</span></div>
+          <div class="rt-sub">You're ${st.from}. Opens ${escapeHtml(st.unlocks.join(", "))}${st.more?` +${st.more} more`:""}.</div>
+        </div></div>`;
+    }
+    if(st.kind==="qp"){
+      return `<div class="rt rt-qp">
+        <div class="rt-n">★</div>
+        <div class="rt-b">
+          <div class="rt-h"><b>Reach ${st.need} quest points</b>
+            <span class="rt-tag train">+${st.gain} needed</span></div>
+          <div class="rt-sub">You're on ${st.have}. Any quests will do; these are waiting on it: ${escapeHtml(st.unlocks.join(", "))}.</div>
+        </div></div>`;
+    }
+    qn++;
+    const why = qpWhyBother(st, db);
+    return `<div class="rt rt-quest" data-rtq="${escapeHtml(st.n)}">
+      <div class="rt-n">${qn}</div>
+      <div class="rt-b">
+        <div class="rt-h"><b>${escapeHtml(qpLabel(st.n))}</b>
+          ${st.mini?`<span class="rt-tag mini">Miniquest</span>`:""}
+          ${st.difficulty?`<span class="rt-tag">${escapeHtml(st.difficulty)}</span>`:""}
+          ${st.length?`<span class="rt-tag len">${escapeHtml(st.length)}</span>`:""}
+          ${st.qp?`<span class="rt-tag qp">+${st.qp} qp</span>`:""}</div>
+        ${why?`<div class="rt-sub">${escapeHtml(why)}</div>`:""}
+      </div>
+      <button class="qp-tick rt-tick" data-qpdone2="${escapeHtml(st.n)}" title="Mark done">⬜</button>
+    </div>`;
+  }).join("");
+  const stuck = r.unreachable.length
+    ? `<div class="rt-note">${r.unreachable.length} quest${r.unreachable.length===1?"":"s"} couldn't be placed. That usually means the wiki data is missing a requirement.</div>`
+    : "";
+  return `<div class="panel">
+    <div class="section-title" style="margin-top:0"><h3>🧾 Route</h3>
+      <span class="small muted">${r.quests} quest${r.quests===1?"":"s"}${r.trains?` · ${r.trains} training step${r.trains===1?"":"s"}`:""}${r.alreadyDone?` · ${r.alreadyDone} already done`:""}</span>
+    </div>
+    <div class="small muted" style="text-align:center;max-width:560px;margin:0 auto 12px">
+      Top to bottom. XP from each quest is banked as you go, so the requirements further down account for what the ones above pay you.
+    </div>
+    <div class="rt-list">${rows}</div>${stuck}
+  </div>`;
+}
+
+// ---- the quest board ----
+// Search a quest, pin it, and it stays on the board until you take it down. This grew
+// out of the old pinned-plan chips rather than sitting beside them, so there's still
+// only one list of "quests I care about"; a card just says a lot more than a chip did.
+const QP_BOARD_MAX = 30;
+function qpBoard(){
+  if(!Array.isArray(state.qpBoard)){
+    // the chips became the board, so bring them across
+    state.qpBoard = Array.isArray(state.qpSaved) ? state.qpSaved.slice() : [];
+  }
+  return state.qpBoard;
+}
+function qpBoardHas(n){ return qpBoard().indexOf(n) !== -1; }
+function qpBoardAdd(n){
+  const b = qpBoard();
+  if(b.indexOf(n) !== -1){ toast(qpCrumbName(n)+" is already on the board"); return false; }
+  if(b.length >= QP_BOARD_MAX){ toast(`The board holds ${QP_BOARD_MAX}. Take something down first.`, true); return false; }
+  b.push(n);
+  state.qpSaved = b.slice();   // keep the old key in step for anything still reading it
+  save();
+  return true;
+}
+function qpBoardRemove(n){
+  state.qpBoard = qpBoard().filter(x=>x!==n);
+  state.qpSaved = state.qpBoard.slice();
+  save();
+}
+// One move function, so drag and the arrow buttons can't disagree about what happened.
+function qpBoardMove(from, to){
+  const b = qpBoard();
+  if(from<0 || from>=b.length) return false;
+  to = Math.max(0, Math.min(b.length-1, to));
+  if(to===from) return false;
+  b.splice(to, 0, b.splice(from,1)[0]);
+  state.qpSaved = b.slice();
+  save();
+  return true;
+}
+// Everything the board needs to know about one entry, worked out once per render.
+function qpBoardCard(n, db){
+  if(n==="__ALL__"){
+    const plan = qpAllPlan(db);
+    return {n, name:"Quest cape", all:plan.all.length, done:plan.done.length,
+            status: plan.remaining.length ? "blocked" : "done",
+            missing: "",
+            everything:true};
+  }
+  if(!db.quests[n]) return {n, name:qpCrumbName(n), missing:"not in the quest data", status:"blocked", all:0, done:0};
+  const plan = questPlan(n, db);
+  const st = questStatus(n, db);
+  return {n, name:qpLabel(n), all:plan.all.length, done:plan.done.length, status:st,
+          missing: st==="done" ? "" : questMissingText(n, db)};
+}
+// Your pinned quests as a row of tabs above the chart, so swapping between them
+// doesn't mean scrolling back up to the board.
+function qpSwitchHtml(db, target){
+  const b = qpBoard().filter(n => n==="__ALL__" || db.quests[n]);
+  if(b.length < 2) return "";
+  const i = b.indexOf(target);
+  const prev = b[i<=0 ? b.length-1 : i-1], next = b[i<0 || i>=b.length-1 ? 0 : i+1];
+  return `<div class="qp-switch">
+    <button class="qp-sw nav" data-qpswitch="${escapeHtml(prev)}" title="Previous pinned quest">‹</button>
+    ${b.map(n=>`<button class="qp-sw ${n===target?"on":""}" data-qpswitch="${escapeHtml(n)}">${escapeHtml(n==="__ALL__"?"Quest cape":qpLabel(n))}</button>`).join("")}
+    <button class="qp-sw nav" data-qpswitch="${escapeHtml(next)}" title="Next pinned quest">›</button>
+  </div>`;
+}
+function qpBoardHtml(db, target){
+  const b = qpBoard().filter(n => n==="__ALL__" || db.quests[n]);
+  const sortReady = !!state.qpBoardSort;
+  let cards = b.map((n,i)=>({...qpBoardCard(n, db), i}));
+  if(sortReady){
+    const rank = {ready:0, blocked:1, done:2};
+    cards = cards.slice().sort((x,y)=> (rank[x.status]-rank[y.status]) || (x.i-y.i));
+  }
+  const readyN = cards.filter(c=>c.status==="ready").length;
+  const doneN  = cards.filter(c=>c.status==="done").length;
+  const head = `<div class="section-title" style="margin-top:0">
+      <h3>📌 Quest board</h3>
+      <span class="small muted">${b.length ? `${b.length} pinned · ${readyN} ready now${doneN?` · ${doneN} done`:""}` : "nothing pinned yet"}</span>
+      ${b.length>1?`<button class="ghost small right" id="qpBoardSort">${sortReady?"↕ Manual order":"⚡ Ready first"}</button>`:""}
+    </div>`;
+  if(!b.length){
+    return `<div class="panel">${head}
+      <div class="empty">Search above and hit + to pin a quest here. The board keeps your shortlist between visits.</div></div>`;
+  }
+  const body = cards.map(c=>{
+    const pct = c.all ? Math.round(c.done/c.all*100) : 0;
+    const pill = c.status==="done" ? `<span class="qb-pill done">✓ Done</span>`
+               : c.status==="ready" ? `<span class="qb-pill ready">Ready now</span>`
+               : `<span class="qb-pill blocked">Blocked</span>`;
+    return `<div class="qb ${c.status} ${c.n===target?"on":""}" data-qbcard="${escapeHtml(c.n)}" draggable="true">
+      <div class="qb-grip" title="Drag to reorder">⋮⋮</div>
+      <div class="qb-b">
+        <div class="qb-h">${c.everything?"🏆 ":""}<b>${escapeHtml(c.name)}</b>${pill}</div>
+        ${c.all > 1 ? `<div class="qb-bar"><i style="width:${pct}%"></i></div>` : ""}
+        <div class="qb-sub">${
+          c.status==="done" ? "Complete"
+          : c.all > 1 ? `${c.done}/${c.all} in the chain done${c.missing?` · needs ${escapeHtml(c.missing)}`:""}`
+          : c.missing ? `Needs ${escapeHtml(c.missing)}`
+          : "No requirements left. Go and do it."
+        }</div>
+      </div>
+      <div class="qb-acts">
+        <button class="qb-x" data-qbup="${escapeHtml(c.n)}" title="Move up">▲</button>
+        <button class="qb-x" data-qbdown="${escapeHtml(c.n)}" title="Move down">▼</button>
+        <button class="qb-x" data-qbdel="${escapeHtml(c.n)}" title="Take off the board">✕</button>
+      </div>
+    </div>`;
+  }).join("");
+  return `<div class="panel">${head}<div class="qb-grid" id="qbGrid">${body}</div></div>`;
+}
+// The + button shows up in search results and next to the quest-cape shortcut.
+function qpWirePinButtons(){
+  $$("[data-qbadd]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    if(qpBoardAdd(b.dataset.qbadd)){
+      toast("📌 "+qpCrumbName(b.dataset.qbadd)+" pinned to the board");
+      renderQuestPlanner();
+    }
+  });
+}
+function qpWireBoard(db){
+  const grid = $("#qbGrid");
+  $$("#qpBoardWrap [data-qbdel]").forEach(x=>x.onclick=e=>{
+    e.stopPropagation(); qpBoardRemove(x.dataset.qbdel); renderQuestPlanner();
+  });
+  const bump = (n, dir)=>{
+    const b = qpBoard(), i = b.indexOf(n);
+    if(qpBoardMove(i, i+dir)){ state.qpBoardSort = false; renderQuestPlanner(); }
+  };
+  $$("#qpBoardWrap [data-qbup]").forEach(x=>x.onclick=e=>{ e.stopPropagation(); bump(x.dataset.qbup, -1); });
+  $$("#qpBoardWrap [data-qbdown]").forEach(x=>x.onclick=e=>{ e.stopPropagation(); bump(x.dataset.qbdown, +1); });
+  // clicking the card body charts that quest below the board
+  $$("#qpBoardWrap [data-qbcard]").forEach(c=>c.onclick=e=>{
+    if(e.target.closest("button")) return;
+    state.qpTarget = c.dataset.qbcard; state.qpHist = []; save(); renderQuestPlanner();
+  });
+  const sortBtn = $("#qpBoardSort");
+  if(sortBtn) sortBtn.onclick = ()=>{ state.qpBoardSort = !state.qpBoardSort; save(); renderQuestPlanner(); };
+  // drag to reorder. The arrows above and this both go through qpBoardMove.
+  if(grid){
+    let dragging = null;
+    $$("#qbGrid [data-qbcard]").forEach(card=>{
+      card.ondragstart = e=>{ dragging = card.dataset.qbcard; card.classList.add("drag");
+        try{ e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", dragging); }catch(err){} };
+      card.ondragend   = ()=>{ card.classList.remove("drag"); $$("#qbGrid .over").forEach(el=>el.classList.remove("over")); dragging=null; };
+      card.ondragover  = e=>{ e.preventDefault(); if(dragging && dragging!==card.dataset.qbcard) card.classList.add("over"); };
+      card.ondragleave = ()=> card.classList.remove("over");
+      card.ondrop      = e=>{
+        e.preventDefault(); card.classList.remove("over");
+        const from = qpBoard().indexOf(dragging), to = qpBoard().indexOf(card.dataset.qbcard);
+        if(from>=0 && to>=0 && qpBoardMove(from, to)){ state.qpBoardSort = false; renderQuestPlanner(); }
+      };
+    });
+  }
+}
+// Search results now offer both things you'd want: pin it, or chart it straight away.
+// "Show me everything I could start tonight" is a different question to search, and
+// it's the one people actually ask. Filters the whole quest list, not the search hits.
+const QP_FILTERS = [["ready","⚡ Ready now"],["blocked","🔒 Blocked"],["done","✅ Done"]];
+function qpFilterHtml(db){
+  const f = state.qpFilter;
+  const chips = QP_FILTERS.map(([id,label])=>{
+    const n = db.order.filter(q=>questStatus(q,db)===id).length;
+    return `<button class="ghost small ${f===id?"on":""}" data-qpfilter="${id}">${label} <span class="muted">${n}</span></button>`;
+  }).join("");
+  if(!f) return `<div class="qp-filters">${chips}</div>`;
+  const list = db.order.filter(q=>questStatus(q,db)===f)
+    .sort((a,b)=>(db.quests[a].order??999)-(db.quests[b].order??999));
+  return `<div class="qp-filters">${chips}
+      <button class="ghost small" data-qpfilter="">✕ Clear</button></div>
+    ${list.length ? qpSearchHtml(list.slice(0,60), db) +
+        (list.length>60?`<div class="small muted" style="text-align:center;margin-top:6px">Showing 60 of ${list.length}. Search to narrow it down.</div>`:"")
+      : `<div class="empty">Nothing in that state.</div>`}`;
+}
+function qpSearchHtml(hits, db){
+  if(!hits.length) return `<div class="empty">No quest by that name.</div>`;
+  return `<div class="qp-hits">${hits.map(n=>{
+    const st = questStatus(n, db);
+    const on = qpBoardHas(n);
+    return `<div class="qp-hit-row">
+      <button class="qp-hit grow" data-qptarget="${escapeHtml(n)}" title="Chart the route to this quest">
+        ${escapeHtml(qpLabel(n))}
+        <span class="muted">· ${st==="done"?"done":st==="ready"?"ready now":"blocked"}</span>
+      </button>
+      <button class="qp-pin ${on?"on":""}" data-qbadd="${escapeHtml(n)}"
+        title="${on?"Already on the board":"Pin to the board"}">${on?"📌":"+"}</button>
+    </div>`;
+  }).join("")}</div>`;
+}
+
 // Pinned plans, with live progress — the way back to anything you're working toward.
 function qpSavedHtml(db, target){
   const saved = (state.qpSaved||[]).filter(t=>t==="__ALL__" || db.quests[t]);
@@ -7352,15 +8375,16 @@ function qpPlanHtml(target, db){
     </div>`;
   }).join("");
   return `<div class="panel">
-    <div class="section-title center"><h3>${escapeHtml(title)}</h3>${q&&q.difficulty?`<span class="small muted">${q.difficulty}</span>`:""}
-      <button class="ghost small" id="qpPin">${(state.qpSaved||[]).includes(target)?"📌 Pinned ✓":"📌 Pin this plan"}</button></div>
+    <div class="section-title center"><h3>${escapeHtml(title)}</h3>
+      <button class="ghost small" id="qpPin">${qpBoardHas(target)?"📌 On your board":"📌 Pin to board"}</button></div>
+    ${isAll?"":`<div class="qp-detail qp-top-detail" id="qpTopDetail">${qpDetailHtml(target, db)}</div>`}
     <div class="qp-sum">
       <div class="qp-stat"><div class="k">Quests left</div><div class="v">${remaining.length}</div></div>
       <div class="qp-stat"><div class="k">Already done</div><div class="v">${plan.done.length}</div></div>
       <div class="qp-stat"><div class="k">Skills to train</div><div class="v">${realGaps}</div></div>
       ${plan.qpNeeded?`<div class="qp-stat"><div class="k">QP needed</div><div class="v">${plan.qpNeeded}</div></div>`:""}
     </div>
-    ${gapRows?`<div class="section-title center" style="margin-top:6px"><h3>What it costs you</h3></div>
+    ${gapRows?`<div class="section-title center" style="margin-top:6px"><h3>What you still need</h3></div>
       ${live?`<p class="muted small" style="text-align:center;margin:0 0 4px">Levels checked at the moment you'd reach each quest — XP the chain hands you along the way is already counted.</p>`
             :`<p class="small" style="text-align:center;margin:0 0 4px;color:var(--gold)">⚠ No character stats loaded — showing requirements only. Hit ↻ to load your stats, then come back.</p>`}
       ${gapRows}`:`<div class="empty">No skill requirements standing in your way.</div>`}
@@ -7595,6 +8619,7 @@ function qpDetailHtml(n, db){
       <div class="qpd-acts">
         <button class="ghost small" data-qpdone2="${escapeHtml(n)}">${st==="done"?"✅ Done":"⬜ Mark done"}</button>
         ${n!==state.qpTarget?`<button class="ghost small" data-qpfocus="${escapeHtml(n)}" title="Chart the route to this quest">🧭 Plan this</button>`:""}
+        ${qpBoardHas(n)?"":`<button class="ghost small" data-qbadd="${escapeHtml(n)}" title="Pin to the board">📌 Pin</button>`}
         <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a>
       </div>
     </div>
@@ -7641,9 +8666,19 @@ function qpWireDetail(db){
   $$("#qpDetail [data-qpdone2]").forEach(b=>b.onclick=e=>{
     e.stopPropagation();
     const n = b.dataset.qpdone2;
-    state.questsDone[n] = !state.questsDone[n]; save();
-    renderQuestPlanner(); renderStart();
+    qpTick(n, !questDone(n));
   });
+  // the details at the top belong to the charted quest, so a related quest there charts that one
+  $$("#qpTopDetail [data-qpgo]").forEach(b=>b.onclick=()=>{
+    if(state.qpTarget) qpTrail().push(state.qpTarget);
+    state.qpTarget = b.dataset.qpgo; state.qpSel = null; save(); renderQuestPlanner();
+  });
+  $$("#qpTopDetail [data-qpdone2]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    const n = b.dataset.qpdone2;
+    qpTick(n, !questDone(n));
+  });
+  qpWirePinButtons();
 }
 function qpWire(db){
   const tree = document.querySelector("#qpResult .qp-tree");
@@ -7731,11 +8766,10 @@ function qpWire(db){
   };
   const pin = $("#qpPin");
   if(pin) pin.onclick = ()=>{
-    const t = state.qpTarget, saved = (state.qpSaved = state.qpSaved||[]);
-    const i = saved.indexOf(t);
-    if(i>=0){ saved.splice(i,1); toast("Plan unpinned"); }
-    else { saved.push(t); toast("Pinned — it'll be waiting under Your plans"); }
-    save(); renderQuestPlanner();
+    const t = state.qpTarget;
+    if(qpBoardHas(t)){ qpBoardRemove(t); toast(qpCrumbName(t)+" taken off the board"); }
+    else if(qpBoardAdd(t)) toast("📌 "+qpCrumbName(t)+" pinned to the board");
+    renderQuestPlanner();
   };
   const goBack = ()=>{
     const trail = qpTrail();
@@ -7776,12 +8810,10 @@ function qpWire(db){
   $$("#qpResult [data-qpdone2]").forEach(b=>b.onclick=(e)=>{
     e.stopPropagation();
     const n=b.dataset.qpdone2;
-    state.questsDone[n] = !state.questsDone[n]; save();
-    renderQuestPlanner(); renderStart();
+    qpTick(n, !questDone(n));
   });
   $$("#qpResult [data-qpdone]").forEach(c=>c.onchange=()=>{
-    state.questsDone[c.dataset.qpdone] = c.checked; save();
-    renderQuestPlanner(); renderStart();
+    qpTick(c.dataset.qpdone, c.checked);
   });
 }
 
@@ -8079,10 +9111,12 @@ function reldoAnswer(q){
     // any of the 156 quests by name first, then Bud's own KB, then "it/that"
     const named = matchQuestName(t);
     if(named && !askMatch(t)){
-      setQuestDone(named, true); save(); renderStart(); renderQuestPlanner();
+      const also = setQuestDone(named, true); save(); renderStart(); renderQuestPlanner();
       const kb = ASK_KB.find(x=>x.label===named); if(kb) askLastEntity = kb;
       const syncN = mentionsSync ? `<div class="small muted" style="margin-top:4px">(I can't read the WikiSync cloud — the wiki asked developers not to. Say <i>sync</i> for your RuneLite gear instead.)</div>` : "";
-      return `Noted — <b>${named}</b> is ticked off. The quest planner and Roadmap both know.${syncN}`;
+      const alsoN = also.length===1 ? ` So is ${qpLabel(also[0])}, since you can't do it without that.`
+                  : also.length ? ` So are its ${also.length} prerequisites, since you can't have done it without them.` : "";
+      return `Noted, <b>${named}</b> is ticked off.${alsoN} The quest planner and Roadmap both know.${syncN}`;
     }
     let target = askMatch(t) || askLastEntity;
     // "I did that quest" right after asking about a boss/item: they mean its gate quest,
@@ -8098,11 +9132,15 @@ function reldoAnswer(q){
       const orig = askMatch(t) || askLastEntity;
       askLastEntity = (orig && orig.kind!=="quest") ? orig : target;
       // write to the shared record so the planner and Roadmap both see it
-      setQuestDone(target.label, true);
-      if(target.wiki) setQuestDone(canonQuestName(target.wiki), true);
+      const also = [...new Set([
+        ...setQuestDone(target.label, true),
+        ...(target.wiki ? setQuestDone(canonQuestName(target.wiki), true) : []),
+      ])];
       if(target.roadId) state.roadmapDone[target.roadId] = true;
       save(); renderStart(); renderQuestPlanner();
-      return `Noted — <b>${target.label}</b> is ticked off. The Roadmap and quest planner know too.${syncNote}`;
+      const alsoN = also.length===1 ? ` So is ${qpLabel(also[0])}, since you can't do it without that.`
+                  : also.length ? ` So are its ${also.length} prerequisites, since you can't have done it without them.` : "";
+      return `Noted, <b>${target.label}</b> is ticked off.${alsoN} The Roadmap and quest planner know too.${syncNote}`;
     }
     if(target) return `Nice one. I can only track quest completions for now, though.${syncNote}`;
     return `Which quest? Say it like — <i>I did Priest in Peril</i>.${syncNote}`;
@@ -8401,12 +9439,23 @@ $("#qpSearch").addEventListener("input", ()=>{
   const db=questDB(), t=$("#qpSearch").value.trim().toLowerCase(), el=$("#qpSuggest");
   if(!db) return;
   if(t.length<2){ renderQuestPlanner(); return; }
-  const hits = db.order.filter(n=>n.toLowerCase().includes(t)).slice(0,8);
-  el.innerHTML = hits.length
-    ? `<div class="qp-hits">${hits.map(n=>`<button class="ghost small qp-hit" data-qptarget="${escapeHtml(n)}">${escapeHtml(qpLabel(n))} <span class="muted">· ${questStatus(n,db)==="done"?"done":questStatus(n,db)==="ready"?"ready now":"blocked"}</span></button>`).join("")}</div>`
-    : `<div class="empty">No quest by that name.</div>`;
+  state.qpFilter = null;   // searching and filtering are two answers to the same question
+  const hits = db.order.filter(n=>n.toLowerCase().includes(t)).slice(0,10);
+  el.innerHTML = qpSearchHtml(hits, db);
   $$("#qpSuggest [data-qptarget]").forEach(b=>b.onclick=()=>{
     state.qpTarget=b.dataset.qptarget; save(); $("#qpSearch").value=""; renderQuestPlanner();
+  });
+  // pinning keeps the search open so you can add several in one go
+  $$("#qpSuggest [data-qbadd]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    const n2 = b.dataset.qbadd;
+    if(qpBoardAdd(n2)){
+      toast("📌 "+qpCrumbName(n2)+" pinned to the board");
+      const db2 = questDB();
+      $("#qpBoardWrap").innerHTML = qpBoardHtml(db2, state.qpTarget);
+      qpWireBoard(db2);
+      b.classList.add("on"); b.textContent = "📌"; b.title = "Already on the board";
+    }
   });
 });
 $("#updCheckBtn").onclick = async ()=>{
@@ -8430,9 +9479,952 @@ $("#themeBtn").onclick = ()=>{
   save(); applyTheme();
 };
 
+// ============ INSIGHTS ENGINE ============
+// One place that reads your stats, history and goals and works out what's worth saying.
+// Generators are pure: they take a context and return insight cards. Nothing renders in
+// here — the Scroll draws them, and later features (the GP hub, quest detection) can ask
+// the same engine rather than each growing their own copy of "what's interesting".
+//
+// An insight is {id, kind, icon, title, body, weight, act?}. Weight sorts them; the
+// Scroll shows the strongest few. `act` is an optional {label, go} button.
+
+const XP_99 = 13034431;      // xp for level 99 — the yardstick everything gets measured in
+const XP_200M = 200000000;
+
+// The levels people actually care about hitting, in the order they'd brag about them.
+const NOTABLE_LEVELS = [30,40,50,60,70,75,80,85,90,92,95,99];
+
+function currentStreak(){
+  const auto = state.scroll.auto || {};
+  const logged = typesByDate();
+  const active = iso => (auto[iso] && Object.keys(auto[iso].skills||{}).length) || logged[iso];
+  let n = 0, cur = new Date(); cur.setHours(0,0,0,0);
+  if(!active(isoDate(cur))) cur.setDate(cur.getDate()-1);   // today not logged yet is fine
+  while(active(isoDate(cur))){ n++; cur.setDate(cur.getDate()-1); }
+  return n;
+}
+// XP still owed to reach `lvl` in `key`, or null if already there / no data.
+function xpTo(key, lvl){
+  const xp = liveSkillXp(key);
+  if(xp==null) return null;
+  const need = xpForLevel(lvl);
+  return xp >= need ? null : need - xp;
+}
+function insightCtx(){
+  const win = r => recapWindow(r).days;
+  const weekDays = win("week"), monthDays = win("month");
+  return {
+    all:       recapCollect(win("all")),
+    month:     recapCollect(monthDays),
+    week:      recapCollect(weekDays),
+    prevWeek:  recapPrev(weekDays),
+    prevMonth: recapPrev(monthDays),
+    streak:    currentStreak(),
+    hasStats:  !!(live && live.skills && Object.keys(live.skills).length),
+  };
+}
+
+// ---- generators ----
+// Each returns an insight, an array of them, or null. Keep them honest: if the data
+// isn't there, say nothing rather than guessing.
+const INSIGHT_GENS = [
+
+  // --- how you're doing right now ---
+  function streak(c){
+    if(c.streak < 2) return null;
+    const best = c.all.streak;
+    const isBest = c.streak >= best && best > 2;
+    return {id:"streak", kind:"record", icon:"🔥",
+      title:`${c.streak}-day streak`,
+      body: isBest ? "That's your longest run yet. Don't look down."
+                   : `Your best is ${best} days.`,
+      weight: 90 + Math.min(c.streak, 20)};
+  },
+
+  function weekVsLast(c){
+    const now = c.week.totalXp, prev = c.prevWeek ? c.prevWeek.totalXp : 0;
+    if(!now && !prev) return null;
+    if(!prev) return {id:"week-xp", kind:"trend", icon:"📈",
+      title:`${fmt(now)} xp this week`, body:"First week on the board.", weight:70};
+    const pct = Math.round((now-prev)/prev*100);
+    const up = pct >= 0;
+    return {id:"week-xp", kind:"trend", icon: up ? "📈" : "📉",
+      title:`${fmt(now)} xp this week`,
+      body: Math.abs(pct) < 5 ? "About the same as last week."
+          : `${up?"Up":"Down"} ${Math.abs(pct)}% on last week (${fmt(prev)}).`,
+      weight: 78};
+  },
+
+  function bestDay(c){
+    const b = c.all.bestDay;
+    if(!b || !b.xp) return null;
+    const recent = dayDiff(b.iso, todayISO()) <= 30;
+    return {id:"best-day", kind:"record", icon:"🏅",
+      title:`Best day: ${fmt(b.xp)} xp`,
+      body:`${fmtDay(b.iso)}${recent ? ", and that was this month." : "."}`,
+      weight: recent ? 74 : 46};
+  },
+
+  function busiestDay(c){
+    const d = c.all.dow;
+    const total = d.reduce((a,b)=>a+b,0);
+    if(!total) return null;
+    const i = d.indexOf(Math.max(...d));
+    const share = Math.round(d[i]/total*100);
+    if(share < 20) return null;   // evenly spread — nothing to say
+    const name = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][i];
+    return {id:"busiest-dow", kind:"fact", icon:"📅",
+      title:`${name} is your day`,
+      body:`${share}% of everything you've earned landed on a ${name}.`,
+      weight: 40};
+  },
+
+  // --- what's nearly in your hands ---
+  function closestLevel(c){
+    if(!c.hasStats) return null;
+    let best = null;
+    SKILL_ORDER.forEach(k=>{
+      const lvl = lvlOf(k);
+      const next = NOTABLE_LEVELS.find(n => n > lvl);
+      if(!next) return;
+      const need = xpTo(k, next);
+      if(need==null) return;
+      if(!best || need < best.need) best = {k, next, need};
+    });
+    if(!best || best.need > 400000) return null;
+    return {id:"closest-level", kind:"reach", icon:"🎯",
+      title:`${fmt(best.need)} xp from ${best.next} ${nice(best.k)}`,
+      body:"Closest notable level you've got.",
+      weight: 85, act:{label:"Make it a goal", go:()=>quickGoalSkill(best.k, best.next)}};
+  },
+
+  function closest99(c){
+    if(!c.hasStats) return null;
+    let best = null;
+    SKILL_ORDER.forEach(k=>{
+      const need = xpTo(k, 99);
+      if(need==null) return;                       // already 99
+      if(!best || need < best.need) best = {k, need};
+    });
+    if(!best) return {id:"all-99", kind:"record", icon:"👑",
+      title:"Every skill at 99", body:"There is nothing left to say.", weight:99};
+    const pct = Math.round((XP_99 - best.need)/XP_99*100);
+    return {id:"closest-99", kind:"reach", icon:"🏆",
+      title:`${nice(best.k)} is your closest 99`,
+      body:`${pct}% of the way. ${fmt(best.need)} xp to go.`,
+      weight: best.need < 2000000 ? 80 : 50,
+      act:{label:"Make it a goal", go:()=>quickGoalSkill(best.k, 99)}};
+  },
+
+  function totalLevel(c){
+    if(!c.hasStats) return null;
+    const t = totalLvl();
+    if(!t) return null;
+    const next = Math.ceil((t+1)/50)*50;
+    const away = next - t;
+    if(away > 25) return null;
+    return {id:"total-level", kind:"reach", icon:"📊",
+      title:`${away} level${away===1?"":"s"} from ${fmt(next)} total`,
+      body:`You're on ${fmt(t)}.`,
+      weight: 68};
+  },
+
+  function combatNext(c){
+    if(!c.hasStats) return null;
+    const cb = combatLevel();
+    if(!cb || !cb.level || cb.level >= 126) return null;
+    return {id:"combat", kind:"fact", icon:"⚔️",
+      title:`Combat level ${cb.level}`,
+      body: cb.level >= 100 ? "Comfortably into the endgame bracket."
+          : cb.level >= 70  ? "Most of the game's content is open to you."
+          : "Plenty of doors still to unlock.",
+      weight: 34};
+  },
+
+  // --- the shape of your month ---
+  function monthInXp(c){
+    const xp = c.month.totalXp;
+    if(xp < 50000) return null;
+    const frac = xp / XP_99;
+    const body = frac >= 1
+      ? `Enough for ${frac.toFixed(1)} of the ${fmt(XP_99)} xp a single 99 takes.`
+      : `A single 99 takes ${fmt(XP_99)} xp. This month was ${Math.round(frac*100)}% of that, spread across your skills.`;
+    return {id:"month-xp", kind:"fact", icon:"💡",
+      title:`${fmt(xp)} xp in 30 days`, body, weight: 62};
+  },
+
+  function spread(c){
+    const n = Object.keys(c.month.skills).length;
+    if(!n) return null;
+    return {id:"spread", kind:"fact", icon:"🎨",
+      title: n === 1 ? "One skill, all month" : `${n} skills this month`,
+      body: n === 1 ? "Focused. Possibly to a fault."
+          : n >= 8  ? "You're spreading it around nicely."
+          : "A steady handful.",
+      weight: 36};
+  },
+
+  function topSkill(c){
+    const e = Object.entries(c.month.skills).sort((a,b)=>b[1]-a[1])[0];
+    if(!e || !c.month.totalXp) return null;
+    const share = Math.round(e[1]/c.month.totalXp*100);
+    return {id:"top-skill", kind:"fact", icon:"⭐",
+      title:`${e[0]} is eating your month`,
+      body:`${share}% of your XP, or ${fmt(e[1])}.`,
+      weight: 55};
+  },
+
+  function neglected(c){
+    if(!c.prevMonth) return null;
+    const was = Object.entries(c.prevMonth.skills).sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>x[0]);
+    const gone = was.filter(k => !c.month.skills[k]);
+    if(!gone.length) return null;
+    return {id:"neglected", kind:"nudge", icon:"🕸️",
+      title:`${gone[0]} has gone quiet`,
+      body: gone.length > 1
+        ? `Nothing this month, and the same for ${gone.length-1} other skill${gone.length>2?"s":""} you were on.`
+        : "You were on it last month and haven't touched it since.",
+      weight: 58};
+  },
+
+  function bossing(c){
+    if(!c.month.bosses) return null;
+    return {id:"bossing", kind:"fact", icon:"💀",
+      title:`${fmt(c.month.bosses)} boss kills this month`,
+      body: c.prevMonth && c.prevMonth.bosses
+        ? `Last month: ${fmt(c.prevMonth.bosses)}.` : "Keep the drops coming.",
+      weight: 48};
+  },
+
+  function clues(c){
+    if(!c.month.clues) return null;
+    return {id:"clues", kind:"fact", icon:"📜",
+      title:`${c.month.clues} clue${c.month.clues===1?"":"s"} this month`,
+      body:"Treasure trails are the cheapest gamble in the game.", weight: 38};
+  },
+
+  function journalHabit(c){
+    const e = c.month.entries;
+    if(!e) return {id:"journal", kind:"nudge", icon:"✍️",
+      title:"Nothing written down this month",
+      body:"The heatmap fills itself, but the notes are what you'll actually reread.",
+      weight: 30};
+    if(e < 4) return null;
+    return {id:"journal", kind:"fact", icon:"✍️",
+      title:`${e} journal entries this month`,
+      body:"Future you will appreciate it.", weight: 32};
+  },
+];
+
+// Run every generator, flatten, drop nulls, strongest first.
+function buildInsights(){
+  const c = insightCtx();
+  const out = [];
+  INSIGHT_GENS.forEach(g=>{
+    let r = null;
+    try{ r = g(c); }catch(e){ r = null; }   // one bad generator must not blank the page
+    if(!r) return;
+    (Array.isArray(r) ? r : [r]).forEach(i=>{ if(i) out.push(i); });
+  });
+  return out.sort((a,b)=> b.weight - a.weight);
+}
+
+// Insight buttons that create a goal, so a suggestion is one click from being tracked.
+// addGoal already saves, re-renders and toasts — don't do any of it twice.
+function quickGoalSkill(key, lvl){
+  if((state.goals||[]).some(g=>g.kind==="skill" && g.metric===key && +g.target===lvl)){
+    toast(`Already tracking ${lvl} ${nice(key)}`); return;
+  }
+  addGoal({kind:"skill", metric:key, targetType:"level", target:lvl,
+           note:"Suggested from your Scroll"});
+}
+
+
+// ---- the one fun fact on Home ----
+// Loading-screen style: a single line, picked at random when the app starts, and it
+// stays put for the rest of the session so it isn't flickering while you use the page.
+// Every generator returns a string or null, so a fact only ever appears when the data
+// behind it genuinely exists.
+// Experience that actually counts toward a target level. XP past the target is real,
+// but it doesn't bring you any closer, so it's capped. Every '% of the way' figure
+// should go through this: levels are not evenly spaced (92 is only half of a 99), XP is.
+function xpToward(skill, level){
+  const need = xpForLevel(level);
+  return need ? Math.min(Math.max(0, liveSkillXp(skill)||0), need) : 0;
+}
+function maxCapeXp(){ return SKILL_ORDER.reduce((a,k)=>a + xpToward(k, 99), 0); }
+// Derived, not hardcoded: Sailing took the game from 23 skills to 24 and the old
+// constants quietly kept counting 23.
+const XP_MAX_TOTAL = SKILL_ORDER.length * 13034431;   // every skill at 99
+const MAX_TOTAL_LEVEL = SKILL_ORDER.length * 99;
+
+function ffTopSkillAllTime(c){
+  const e = Object.entries(c.all.skills).sort((a,b)=>b[1]-a[1])[0];
+  if(!e || !c.all.totalXp) return null;
+  const pct = Math.round(e[1]/c.all.totalXp*100);
+  if(pct < 15) return null;
+  return `${pct}% of every point of experience you've logged went into ${e[0]}.`;
+}
+function ffBestDayPace(c){
+  const b = c.all.bestDay;
+  if(!b || b.xp < 20000 || !c.hasStats) return null;
+  let target = null;
+  SKILL_ORDER.forEach(k=>{ const n = xpTo(k,99); if(n!=null && (!target || n < target.n)) target = {k, n}; });
+  if(!target) return null;
+  const days = Math.ceil(target.n / b.xp);
+  if(days > 900) return null;
+  return `Your best day was ${fmt(b.xp)} xp. Repeat that every day and ${nice(target.k)} would hit 99 in ${fmt(days)} days.`;
+}
+function ffNinetyNines(c){
+  if(!c.hasStats) return null;
+  const n = SKILL_ORDER.filter(k=>lvlOf(k)>=99).length;
+  if(!n) return null;
+  return n === SKILL_ORDER.length ? "Every single skill is 99. There is genuinely nothing left."
+    : `You have ${n} of ${SKILL_ORDER.length} skills at 99.`;
+}
+function ffTotalLevel(c){
+  if(!c.hasStats) return null;
+  const t = totalLvl();
+  if(!t) return null;
+  const pct = maxCapeXp()/XP_MAX_TOTAL*100;
+  return `Total level ${fmt(t)} of ${fmt(MAX_TOTAL_LEVEL)}. Measured in experience, that's ${pct<10?pct.toFixed(1):Math.round(pct)}% of a max cape.`;
+}
+function ffMaxProgress(c){
+  if(!c.hasStats) return null;
+  const counted = maxCapeXp();
+  if(counted < 1000000) return null;
+  const pct = counted/XP_MAX_TOTAL*100;
+  return `${fmt(counted)} of the ${fmt(XP_MAX_TOTAL)} xp a max cape takes is already done. That's ${pct<1?pct.toFixed(2):Math.round(pct)}%.`;
+}
+function ffSpread(c){
+  if(!c.hasStats) return null;
+  const lv = SKILL_ORDER.map(k=>({k, l:lvlOf(k)})).sort((a,b)=>b.l-a.l);
+  const hi = lv[0], lo = lv[lv.length-1];
+  if(!hi || hi.l - lo.l < 20) return null;
+  return `Your highest skill is ${nice(hi.k)} at ${hi.l} and your lowest is ${nice(lo.k)} at ${lo.l}. That's ${hi.l-lo.l} levels between them.`;
+}
+function ffMonthIn99s(c){
+  const xp = c.month.totalXp;
+  if(xp < 200000) return null;
+  const frac = xp / XP_99;
+  return frac >= 1
+    ? `You've earned ${fmt(xp)} xp in the last 30 days. A single 99 takes ${fmt(XP_99)}, so that's ${frac.toFixed(1)} of them.`
+    : `The last 30 days came to ${fmt(xp)} xp, spread across your skills. A single 99 takes ${fmt(XP_99)}, so that's ${Math.round(frac*100)}% of one.`;
+}
+function ffWeekday(c){
+  const d = c.all.dow, total = d.reduce((a,b)=>a+b,0);
+  if(!total) return null;
+  const i = d.indexOf(Math.max(...d));
+  const share = Math.round(d[i]/total*100);
+  if(share < 20) return null;
+  const name = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][i];
+  return `${name} does the heavy lifting. ${share}% of everything you've ever earned landed on a ${name}.`;
+}
+function ffConsistency(c){
+  const days = c.all.days, active = c.all.activeDays;
+  if(!days || active < 5) return null;
+  const one = Math.round(days/active*10)/10;
+  return `You've been active on ${fmt(active)} of the last ${fmt(days)} days, which is roughly one day in every ${one}.`;
+}
+function ffLongestStreak(c){
+  if(c.all.streak < 4) return null;
+  return `Your longest run without missing a day is ${c.all.streak} days.`;
+}
+function ffBosses(c){
+  const n = c.all.bosses;
+  if(!n) return null;
+  const per = c.all.activeDays ? Math.round(n/c.all.activeDays) : 0;
+  return per >= 2
+    ? `${fmt(n)} boss kills on record, averaging ${fmt(per)} on every day you played.`
+    : `${fmt(n)} boss kills on record.`;
+}
+function ffBiggestBoss(c){
+  if(!live || !live.bosses) return null;
+  const e = Object.entries(live.bosses).filter(x=>x[1]&&x[1].kills>0).sort((a,b)=>b[1].kills-a[1].kills)[0];
+  if(!e || e[1].kills < 25) return null;
+  return `${nice(e[0])} has died ${fmt(e[1].kills)} times at your hands. More than anything else you fight.`;
+}
+function ffClues(c){
+  const n = c.all.clues;
+  if(!n) return null;
+  return `${fmt(n)} clue scroll${n===1?"":"s"} completed while you've been keeping this journal.`;
+}
+function ffQuestsLeft(c){
+  const db = questDB(); if(!db) return null;
+  const all = db.order.filter(n=>!/^(Miniquests?)\//i.test(n));
+  if(!all.length) return null;
+  const left = all.filter(n=>!questDone(n)).length;
+  if(!left) return "Every quest in the game is done. The cape is yours.";
+  return `${fmt(left)} quest${left===1?"":"s"} stand between you and the quest cape.`;
+}
+function ffNextNinetyNine(c){
+  if(!c.hasStats) return null;
+  let best = null;
+  SKILL_ORDER.forEach(k=>{ const n = xpTo(k,99); if(n!=null && (!best || n < best.n)) best = {k, n}; });
+  if(!best) return null;
+  const perDay = c.month.totalXp / 30;
+  if(perDay < 1000) return `${nice(best.k)} is your closest 99, ${fmt(best.n)} xp away.`;
+  const days = Math.ceil(best.n / perDay);
+  if(days > 3650) return `${nice(best.k)} is your closest 99, ${fmt(best.n)} xp away.`;
+  return `At your pace over the last month, ${nice(best.k)} reaches 99 in about ${fmt(days)} days.`;
+}
+function ffJournal(c){
+  const n = (state.scroll.log||[]).length;
+  if(n < 3) return null;
+  return `You've written ${fmt(n)} journal entr${n===1?"y":"ies"}. Future you will be glad of them.`;
+}
+function ffMilestones(c){
+  const n = c.all.milestones.length;
+  if(!n) return null;
+  return `${fmt(n)} milestone${n===1?"":"s"} recorded on your heatmap.`;
+}
+function ffSkillsTouched(c){
+  const n = Object.keys(c.all.skills).length;
+  if(n < 3) return null;
+  return `You've put experience into ${n} different skill${n===1?"":"s"} while this journal has been running.`;
+}
+function ffCombat(c){
+  if(!c.hasStats) return null;
+  const cb = combatLevel();
+  if(!cb || !cb.level) return null;
+  return `Combat level ${cb.level} out of a possible 126.`;
+}
+const FUN_FACTS = [
+  ffTopSkillAllTime, ffBestDayPace, ffNinetyNines, ffTotalLevel, ffMaxProgress, ffSpread,
+  ffMonthIn99s, ffWeekday, ffConsistency, ffLongestStreak, ffBosses, ffBiggestBoss,
+  ffClues, ffQuestsLeft, ffNextNinetyNine, ffJournal, ffMilestones, ffSkillsTouched, ffCombat,
+];
+
+let funFactCache = null;   // picked once per launch, held for the session
+function pickFunFact(){
+  let c;
+  try{ c = insightCtx(); }catch(e){ return null; }
+  const pool = [];
+  FUN_FACTS.forEach(f=>{
+    let r = null;
+    try{ r = f(c); }catch(e){ r = null; }   // a broken fact shouldn't cost you the whole strip
+    if(r) pool.push(r);
+  });
+  if(!pool.length) return null;
+  // don't hand back the same line two launches running if there's anything else to say
+  const fresh = pool.length > 1 ? pool.filter(t => t !== state.lastFact) : pool;
+  const pick = (fresh.length ? fresh : pool)[Math.floor(Math.random() * (fresh.length ? fresh.length : pool.length))];
+  if(state.lastFact !== pick){ state.lastFact = pick; save(); }
+  return pick;
+}
+function renderFunFact(reroll){
+  const el = $("#funFact"); if(!el) return;
+  if(reroll) funFactCache = null;
+  if(funFactCache === null) funFactCache = pickFunFact();
+  if(!funFactCache){ el.classList.add("hidden"); el.textContent = ""; return; }
+  el.classList.remove("hidden");
+  el.textContent = funFactCache;
+}
+
+// ============ THE TROPHY CABINET ============
+// Milestones the community actually respects, as opposed to a progression checklist —
+// the Roadmap already does that. These are the things people put in their bio. Curated
+// on purpose: "what's impressive" is a judgement call, not something to scrape.
+// reqs = skill levels; quests = quest names as the planner knows them; fn = anything else.
+const PRESTIGE = [
+  {id:"barrows-gloves", name:"Barrows gloves", icon:"Barrows_gloves.png", tier:"mid",
+   why:"Best-in-slot gloves for almost everything, and the reason anyone does Recipe for Disaster.",
+   quests:["Recipe for Disaster"], wiki:"Barrows_gloves"},
+  {id:"quest-cape", name:"Quest point cape", icon:"Quest_point_cape.png", tier:"hard",
+   why:"Every quest in the game. The single most respected non-combat cape.",
+   fn:()=>qpCapeDone(), wiki:"Quest_point_cape"},
+  {id:"fire-cape", name:"Fire cape", icon:"Fire_cape.png", tier:"mid",
+   why:"The Fight Caves. A rite of passage, and still a solid cape.",
+   fn:()=>bossKc("tztok_jad")>0, wiki:"Fire_cape"},
+  {id:"infernal-cape", name:"Infernal cape", icon:"Infernal_cape.png", tier:"elite",
+   why:"The hardest solo PvM challenge in the game. Universally respected.",
+   fn:()=>bossKc("tzkal_zuk")>0, wiki:"Infernal_cape"},
+  {id:"quiver", name:"Dizana's quiver", icon:"Dizana's_quiver_(uncharged)_detail.png", tier:"elite",
+   why:"Clearing the Fortis Colosseum. The ranged answer to the infernal cape.",
+   fn:()=>bossKc("sol_heredit")>0, wiki:"Dizana's_quiver"},
+  {id:"void", name:"Full void", icon:"Void_knight_top.png", tier:"early",
+   why:"Cheap, effective, and the first real set most accounts earn.",
+   reqs:{attack:42, strength:42, defence:42, ranged:42, magic:42, hitpoints:42, prayer:22}, wiki:"Void_Knight_equipment"},
+  {id:"graceful", name:"Full graceful", icon:"Graceful_top.png", tier:"early",
+   why:"Weight reduction and run restore. You will wear it for the rest of your account's life.",
+   wiki:"Graceful_outfit"},
+  {id:"base60", name:"Base 60s", icon:"Stats_icon.png", tier:"early",
+   why:"Every skill at 60. The point where an account stops feeling new.",
+   base:60, wiki:"Skills"},
+  {id:"base70", name:"Base 70s", icon:"Stats_icon.png", tier:"mid",
+   why:"Every skill at 70. The classic 'my account is respectable now' line.",
+   base:70, wiki:"Skills"},
+  {id:"base80", name:"Base 80s", icon:"Stats_icon.png", tier:"hard",
+   why:"Every skill at 80. A serious amount of time in every corner of the game.",
+   base:80, wiki:"Skills"},
+  {id:"base90", name:"Base 90s", icon:"Stats_icon.png", tier:"elite",
+   why:"Every skill at 90. Very few accounts get here.",
+   base:90, wiki:"Skills"},
+  {id:"first99", name:"First 99", icon:"Attack_cape.png", tier:"mid",
+   why:"Your first skillcape. Nothing else feels quite like it.",
+   fn:()=>SKILL_ORDER.some(s=>lvlOf(s)>=99), wiki:"Skill_mastery"},
+  {id:"maxed", name:"Max cape", icon:"Max_cape.png", tier:"elite",
+   why:"99 in every skill. The big one.",
+   fn:()=>SKILL_ORDER.every(s=>lvlOf(s)>=99), wiki:"Max_cape"},
+  {id:"total2000", name:"2,000 total level", icon:"Stats_icon.png", tier:"hard",
+   why:"A milestone people announce.", fn:()=>totalLvl()>=2000, wiki:"Total_level"},
+  {id:"piety", name:"Piety", icon:"Piety.png", tier:"mid",
+   why:"The melee prayer that changes how combat feels.",
+   reqs:{prayer:70, defence:70}, quests:["King's Ransom"], wiki:"Piety"},
+  {id:"rigour", name:"Rigour", icon:"Rigour.png", tier:"hard",
+   why:"The ranged prayer. Needs a scroll from the Chambers.",
+   reqs:{prayer:74, defence:70}, wiki:"Rigour"},
+  {id:"augury", name:"Augury", icon:"Augury.png", tier:"hard",
+   why:"The magic prayer, and the other Chambers scroll.",
+   reqs:{prayer:77, defence:70}, wiki:"Augury"},
+  {id:"barrows-runs", name:"Barrows", icon:"Dharok's_greataxe.png", tier:"early",
+   why:"Everyone's first proper money maker.",
+   fn:()=>bossKc("barrows_chests")>0, wiki:"Barrows"},
+  {id:"gwd", name:"A God Wars general", icon:"Bandos_chestplate.png", tier:"mid",
+   why:"Your first taste of real group PvM gear.",
+   fn:()=>["general_graardor","kril_tsutsaroth","commander_zilyana","kreearra"].some(k=>bossKc(k)>0),
+   wiki:"God_Wars_Dungeon"},
+  {id:"zulrah", name:"Zulrah", icon:"Tanzanite_fang.png", tier:"mid",
+   why:"The money-maker that teaches you to actually learn a boss.",
+   fn:()=>bossKc("zulrah")>0, wiki:"Zulrah"},
+  {id:"vorkath", name:"Vorkath", icon:"Vorkath's_head.png", tier:"mid",
+   why:"Consistent, learnable, and pays for the rest of your account.",
+   fn:()=>bossKc("vorkath")>0, wiki:"Vorkath"},
+  {id:"cox", name:"Chambers of Xeric", icon:"Twisted_bow.png", tier:"hard",
+   why:"Your first raid.", fn:()=>bossKc("chambers_of_xeric")>0, wiki:"Chambers_of_Xeric"},
+  {id:"tob", name:"Theatre of Blood", icon:"Scythe_of_Vitur_(uncharged)_detail.png", tier:"elite",
+   why:"The hardest of the three raids to learn with a team.",
+   fn:()=>bossKc("theatre_of_blood")>0, wiki:"Theatre_of_Blood"},
+  {id:"toa", name:"Tombs of Amascut", icon:"Tumeken's_shadow.png", tier:"hard",
+   why:"The most soloable raid, and the most forgiving entry point.",
+   fn:()=>bossKc("tombs_of_amascut")>0, wiki:"Tombs_of_Amascut"},
+  {id:"dt2", name:"A Desert Treasure II boss", icon:"Virtus_mask.png", tier:"hard",
+   why:"The awakened-era bosses, and the best solo gear grind going.",
+   fn:()=>["duke_sucellus","the_leviathan","the_whisperer","vardorvis"].some(k=>bossKc(k)>0),
+   wiki:"Desert_Treasure_II_-_The_Fallen_Empire"},
+  {id:"diary-easy", name:"All easy diaries", icon:"Achievement_Diaries.png", tier:"early",
+   why:"Cheap, quick, and the rewards are quietly excellent.", wiki:"Achievement_Diary"},
+  {id:"diary-elite", name:"An elite diary", icon:"Achievement_Diaries.png", tier:"hard",
+   why:"Elite diaries gate some of the best quality-of-life in the game.", wiki:"Achievement_Diary"},
+  {id:"dragon-slayer-2", name:"Dragon Slayer II", icon:"Dragon_Slayer_II.png", tier:"mid",
+   why:"The best quest in the game, and it opens Vorkath and the myths' guild.",
+   quests:["Dragon Slayer II"], wiki:"Dragon_Slayer_II"},
+  {id:"song-of-elves", name:"Song of the Elves", icon:"Crystal_armour_seed.png", tier:"mid",
+   why:"Prifddinas: Zalcano, crystal gear, and the best agility course.",
+   quests:["Song of the Elves"], wiki:"Song_of_the_Elves"},
+  {id:"monkey-madness-2", name:"Monkey Madness II", icon:"Heavy_ballista.png", tier:"mid",
+   why:"Gates the demonic gorillas and a lot of slayer progression.",
+   quests:["Monkey Madness II"], wiki:"Monkey_Madness_II"},
+  {id:"sins-of-the-father", name:"Sins of the Father", icon:"Blisterwood_flail.png", tier:"mid",
+   why:"Opens Vyrewatch and the blisterwood flail.",
+   quests:["Sins of the Father"], wiki:"Sins_of_the_Father"},
+  {id:"collection-100", name:"100 collection log slots", icon:"Collection_log.png", tier:"mid",
+   why:"The log is the long game.",
+   fn:()=>!!(state.clog && state.clog.obtained>=100), wiki:"Collection_log"},
+];
+const PRESTIGE_TIER = {
+  early:{label:"Early",  color:"var(--green)"},
+  mid:  {label:"Mid",    color:"var(--gold)"},
+  hard: {label:"Hard",   color:"#e08a3c"},
+  elite:{label:"Elite",  color:"#d34ba8"},
+};
+
+// --- helpers the prestige predicates lean on ---
+function bossKc(key){ const b = live && live.bosses && live.bosses[key]; return (b && b.kills>0) ? b.kills : 0; }
+function allSkillsAt(n){ return !!(live && live.skills) && SKILL_ORDER.every(s=>lvlOf(s)>=n); }
+function qpCapeDone(){
+  const db = questDB();
+  if(!db) return false;
+  const all = db.order.filter(n=>!/^(Miniquests?)\//i.test(n));
+  return all.length>0 && all.every(n=>questDone(n));
+}
+
+// How close you are to a prestige milestone, and what's missing.
+// Returns {done, pct, missing:[...]} — pct is deliberately coarse; it's a nudge, not a metric.
+function prestigeState(p){
+  const missing = [];
+  let met = 0, total = 0;
+  // base-N: every skill counts as its own requirement, so the bar shows how far in you are
+  if(p.base && live && live.skills){
+    // one unit, filled by how much of the combined XP for every skill at that level you have
+    total++;
+    const needAll = SKILL_ORDER.length * xpForLevel(p.base);
+    met += needAll ? SKILL_ORDER.reduce((a,k)=>a + xpToward(k, p.base), 0) / needAll : 0;
+    SKILL_ORDER.forEach(k=>{ if(lvlOf(k) < p.base) missing.push(nice(k)); });
+    const short = SKILL_ORDER.filter(k=>lvlOf(k) < p.base);
+    if(short.length && short.length <= 3){
+      missing.length = 0;
+      short.forEach(k=>missing.push(`${p.base} ${nice(k)} (you have ${lvlOf(k)})`));
+    }
+  } else if(p.base){
+    return {done:false, pct:0, missing:["load your stats first"], manual:false, binary:true};
+  }
+  if(p.reqs) for(const k in p.reqs){
+    total++;
+    const have = lvlOf(k), need = xpForLevel(p.reqs[k]);
+    // partial credit by XP: 70 Prayer toward 74 is 67% of the way, not "not yet"
+    met += need ? xpToward(k, p.reqs[k]) / need : 0;
+    if(have < p.reqs[k]) missing.push(`${p.reqs[k]} ${nice(k)} (you have ${have})`);
+  }
+  if(p.quests) p.quests.forEach(q=>{
+    total++;
+    if(questDone(q)) met++; else missing.push(q);
+  });
+  // A predicate-only milestone is binary — you've either killed Jad or you haven't.
+  // A percentage and a progress bar would both be theatre, so mark it and show neither.
+  let binary = false;
+  if(p.fn){
+    total++;
+    if(!p.reqs && !p.quests) binary = true;
+    let ok = false; try{ ok = !!p.fn(); }catch(e){ ok = false; }
+    if(ok) met++;
+  }
+  // Nothing checkable (graceful, diaries — the hiscores can't see them): let the user tick it.
+  const forced = !!(state.prestige||{})[p.id];
+  if(!total) return {done:forced, pct:forced?100:0, missing:[], manual:true, binary:true};
+  const done = forced || met >= total - 1e-9;
+  // never show 100% on something that isn't done yet
+  const pct = done ? 100 : Math.min(99, Math.floor(met/total*100));
+  return {done, pct, missing, manual:false, binary};
+}
+
+
+// ---- rendering the engine's output ----
+let insightActs = {};   // id -> the click handler for that card's button
+function renderInsights(){
+  const el = $("#insightGrid"); if(!el) return;
+  const all = buildInsights();
+  insightActs = {};
+  $("#insightSub").textContent = all.length ? `${all.length} thing${all.length===1?"":"s"} worth knowing` : "";
+  if(!all.length){
+    el.innerHTML = `<div class="empty" style="grid-column:1/-1">Load your character and log a few days. The interesting bits appear on their own.</div>`;
+  } else {
+    el.innerHTML = all.slice(0, 6).map(i=>{
+      if(i.act) insightActs[i.id] = i.act.go;
+      return `<div class="ins ins-${i.kind}">
+        <div class="ins-ic">${i.icon}</div>
+        <div class="ins-b">
+          <div class="ins-t">${escapeHtml(i.title)}</div>
+          <div class="ins-d">${escapeHtml(i.body)}</div>
+          ${i.act?`<button class="ghost small ins-act" data-ins="${escapeHtml(i.id)}">${escapeHtml(i.act.label)}</button>`:""}
+        </div>
+      </div>`;
+    }).join("");
+    $$("#insightGrid [data-ins]").forEach(b=>b.onclick=()=>{
+      const go = insightActs[b.dataset.ins];
+      if(go) go();
+    });
+  }
+  renderWrap();
+}
+
+// ---- Wrapped ----
+// A deck of five cards dealt at random from everything that stands out in your history:
+// big-number stats, the Highlights, and the fun facts. Every deal is different. A deck
+// you like can be saved, and a saved deck is a snapshot, so it keeps the numbers it had
+// on the day even after your stats move on.
+const WRAP_SIZE = 5;
+const WRAP_KEEP = 20;
+const WRAP_PALETTES = [
+  ["#ff5f6d","#ffc371"], ["#7f53ac","#647dee"], ["#11998e","#38ef7d"], ["#fc466b","#3f5efb"],
+  ["#f7971e","#ffd200"], ["#00b4db","#0083b0"], ["#b24592","#f15f79"], ["#43cea2","#185a9d"],
+  ["#e65c00","#f9d423"], ["#8e2de2","#4a00e0"], ["#c31432","#240b36"], ["#1d976c","#2c3e50"],
+];
+function wrapNum(n){
+  if(n >= 1e9) return (n/1e9).toFixed(1).replace(/\.0$/,"")+"b";
+  if(n >= 1e6) return (n/1e6).toFixed(1).replace(/\.0$/,"")+"m";
+  if(n >= 1e4) return Math.round(n/1e3)+"k";
+  return fmt(n);
+}
+// Big-number cards. Each returns {icon, big, head, sub} or null when the data isn't there.
+const WRAP_STATS = [
+  c => c.all.totalXp >= 1000 && {icon:"⚡", big:wrapNum(c.all.totalXp), head:"xp logged",
+       sub:`across ${fmt(c.all.activeDays)} days you played`},
+  c => c.all.activeDays >= 3 && {icon:"📆", big:fmt(c.all.activeDays), head:"days you played",
+       sub:`out of the last ${fmt(c.all.days)}`},
+  c => c.all.streak >= 3 && {icon:"🔥", big:fmt(c.all.streak), head:"days in a row, your best run",
+       sub: c.streak>=2 ? `You're on ${c.streak} right now.` : ""},
+  c => c.all.bestDay && c.all.bestDay.xp >= 5000 && {icon:"🏅", big:wrapNum(c.all.bestDay.xp), head:"xp in a single day",
+       sub:`Your biggest, on ${fmtDay(c.all.bestDay.iso)}.`},
+  c => {
+    const e = Object.entries(c.all.skills).sort((a,b)=>b[1]-a[1])[0];
+    if(!e || !c.all.totalXp) return null;
+    return {icon:"⭐", big:Math.round(e[1]/c.all.totalXp*100)+"%", head:`of your xp went to ${e[0]}`,
+            sub:`${fmt(e[1])} xp in total.`};
+  },
+  c => c.month.totalXp >= 1000 && {icon:"🗓️", big:wrapNum(c.month.totalXp), head:"xp in the last 30 days",
+       sub:`A single 99 takes ${fmt(XP_99)} xp, so that's ${Math.round(c.month.totalXp/XP_99*100)}% of one.`},
+  c => {
+    const now = c.week.totalXp, prev = c.prevWeek ? c.prevWeek.totalXp : 0;
+    if(!now || !prev) return null;
+    const pct = Math.round((now-prev)/prev*100);
+    return {icon: pct>=0?"📈":"📉", big:(pct>=0?"+":"")+pct+"%", head:"on the week before",
+            sub:`${fmt(now)} xp this week, ${fmt(prev)} last week.`};
+  },
+  c => Object.keys(c.month.skills).length >= 2 && {icon:"🎨", big:fmt(Object.keys(c.month.skills).length),
+       head:"skills trained this month", sub:""},
+  c => c.all.bosses >= 1 && {icon:"💀", big:fmt(c.all.bosses), head:"boss kills logged", sub:""},
+  c => {
+    if(!live || !live.bosses) return null;
+    const e = Object.entries(live.bosses).filter(x=>x[1]&&x[1].kills>0).sort((a,b)=>b[1].kills-a[1].kills)[0];
+    return e && {icon:"⚔️", big:fmt(e[1].kills), head:`${nice(e[0])} kills`, sub:"More than any other boss."};
+  },
+  c => c.hasStats && totalLvl() && {icon:"📊", big:fmt(totalLvl()), head:"total level",
+       sub:`Out of ${fmt(MAX_TOTAL_LEVEL)}. By experience, ${Math.round(maxCapeXp()/XP_MAX_TOTAL*100)}% of a max cape.`},
+  c => {
+    if(!c.hasStats) return null;
+    const n = SKILL_ORDER.filter(k=>lvlOf(k)>=99).length;
+    return n>0 && {icon:"🏆", big:fmt(n), head:`skill${n===1?"":"s"} at 99`, sub:""};
+  },
+  c => {
+    if(!c.hasStats) return null;
+    let best = null;
+    SKILL_ORDER.forEach(k=>{ const n = xpTo(k,99); if(n!=null && (!best || n<best.n)) best = {k, n}; });
+    return best && {icon:"🎯", big:Math.round((XP_99-best.n)/XP_99*100)+"%", head:`of the way to 99 ${nice(best.k)}`,
+                    sub:`${fmt(best.n)} xp to go.`};
+  },
+  c => {
+    const d = c.all.dow, total = d.reduce((a,b)=>a+b,0);
+    if(!total) return null;
+    const i = d.indexOf(Math.max(...d));
+    const name = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][i];
+    return {icon:"📅", big:name, head:"is your busiest day",
+            sub:`${Math.round(d[i]/total*100)}% of everything you've earned.`};
+  },
+  c => {
+    const d = c.all.dow, total = d.reduce((a,b)=>a+b,0);
+    if(!total) return null;
+    const pct = Math.round((d[0]+d[6])/total*100);
+    return {icon:"🛋️", big:pct+"%", head:"of your xp came on weekends", sub:""};
+  },
+  c => c.all.activeDays >= 3 && {icon:"🧮", big:wrapNum(Math.round(c.all.totalXp/c.all.activeDays)),
+       head:"xp on an average day you play", sub:""},
+  c => {
+    const db = questDB(); if(!db) return null;
+    const all = db.order.filter(n=>!db.quests[n].mini);
+    const done = all.filter(questDone).length;
+    return done>0 && {icon:"🧭", big:`${done}/${all.length}`, head:"quests complete", sub:""};
+  },
+  c => {
+    const got = PRESTIGE.filter(p=>prestigeState(p).done).length;
+    return got>0 && {icon:"🏆", big:fmt(got), head:"trophies claimed", sub:`Out of ${PRESTIGE.length} in the cabinet.`};
+  },
+  c => c.all.clues >= 1 && {icon:"📜", big:fmt(c.all.clues), head:`clue${c.all.clues===1?"":"s"} completed`, sub:""},
+  c => (state.scroll.log||[]).length >= 1 && {icon:"✍️", big:fmt(state.scroll.log.length),
+       head:`journal entr${state.scroll.log.length===1?"y":"ies"}`, sub:""},
+  // the single biggest day any one skill has had
+  c => {
+    const auto = state.scroll.auto || {};
+    let best = null;
+    for(const iso in auto){
+      const agg = {};
+      for(const k in (auto[iso].skills||{})){
+        const key = reclassOf(iso,k) || skillColorKey(k);
+        agg[key] = (agg[key]||0) + auto[iso].skills[k];
+      }
+      for(const k in agg) if(!best || agg[k] > best.xp) best = {k, xp:agg[k], iso};
+    }
+    return best && best.xp >= 5000 && {icon:"🚀", big:wrapNum(best.xp), head:`${best.k} xp in one day`,
+                                       sub:`${fmtDay(best.iso)}.`};
+  },
+];
+// Everything a deck can be dealt from, each card tagged with where it came from so a
+// deal can keep some variety in it.
+function wrapPool(){
+  let c; try{ c = insightCtx(); }catch(e){ return []; }
+  const pool = [];
+  WRAP_STATS.forEach((g,i)=>{
+    let r = null; try{ r = g(c); }catch(e){ r = null; }
+    if(r) pool.push({...r, src:"stat", key:"s"+i});
+  });
+  buildInsights().forEach(i=> pool.push({icon:i.icon, head:i.title, sub:i.body, src:"insight", key:"i:"+i.id}));
+  FUN_FACTS.forEach((f,i)=>{
+    let r = null; try{ r = f(c); }catch(e){ r = null; }
+    if(r) pool.push({icon:"💡", head:r, sub:"", src:"fact", key:"f"+i});
+  });
+  return pool;
+}
+function wrapShuffle(a){
+  for(let i=a.length-1; i>0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; }
+  return a;
+}
+// Lead with a big number, then fill the rest at random, holding back anything the last
+// deal showed so pressing the button again actually feels like a new deck.
+function dealWrap(){
+  const pool = wrapPool();
+  if(!pool.length) return null;
+  const recent = new Set(wrapDeck && !wrapDeck.saved ? wrapDeck.cards.map(x=>x.key) : []);
+  const fresh = pool.filter(x=>!recent.has(x.key));
+  const src = fresh.length >= WRAP_SIZE ? fresh : pool;
+  const stats = wrapShuffle(src.filter(x=>x.src==="stat"));
+  const rest  = wrapShuffle(src.filter(x=>x.src!=="stat"));
+  const cards = [];
+  if(stats.length) cards.push(stats.shift());
+  // roughly half big numbers, half sentences
+  while(cards.length < WRAP_SIZE && (stats.length || rest.length)){
+    const wantStat = stats.length && (!rest.length || Math.random() < 0.5);
+    cards.push((wantStat ? stats : rest).shift());
+  }
+  const pals = wrapShuffle(WRAP_PALETTES.slice());
+  cards.forEach((x,i)=>{ x.pal = pals[i % pals.length]; });
+  return {id:"w"+Date.now().toString(36), at:Date.now(), cards, saved:false};
+}
+let wrapDeck = null;   // the deck on screen, dealt or opened from the saved list
+function wrapSaved(){ return (state.scroll.wraps = state.scroll.wraps || []); }
+function renderWrap(){
+  const bar = $("#wrapBar"), stage = $("#wrapStage");
+  if(!bar || !stage) return;
+  const saved = wrapSaved();
+  const canDeal = !!(live && live.skills) || Object.keys(state.scroll.auto||{}).length > 0;
+  bar.innerHTML = `
+    <button class="wrap-go" id="wrapGo" ${canDeal?"":"disabled"}>${wrapDeck && !wrapDeck.saved ? "Deal another" : "Generate your Wrapped"}</button>
+    ${saved.length ? `<div class="wrap-saved">
+      <span class="small muted">Saved</span>
+      ${saved.map(w=>`<button class="wrap-chip ${wrapDeck&&wrapDeck.id===w.id?"on":""}" data-wrapopen="${w.id}"
+        title="Open this deck">${new Date(w.at).toLocaleDateString(undefined,{month:"short",day:"numeric"})}
+        <span class="muted">${new Date(w.at).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})}</span></button>`).join("")}
+    </div>` : ""}`;
+  $("#wrapGo").onclick = ()=>{
+    wrapDeck = dealWrap();
+    if(!wrapDeck) toast("Not enough history to deal from yet", true);
+    renderWrap();
+  };
+  $$("#wrapBar [data-wrapopen]").forEach(b=>b.onclick=()=>{
+    const w = wrapSaved().find(x=>x.id===b.dataset.wrapopen);
+    wrapDeck = (wrapDeck && wrapDeck.id===w.id) ? null : {...w, saved:true};   // click again to close
+    renderWrap();
+  });
+  if(!wrapDeck){ stage.innerHTML = ""; return; }
+  const d = wrapDeck;
+  stage.innerHTML = `<div class="wrap-deck">
+    <div class="wrap-head">
+      <div><div class="wrap-title">Your Scroll, wrapped</div>
+        <div class="small muted">${d.saved?"Saved":"Dealt"} ${new Date(d.at).toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})}</div></div>
+      <div class="wrap-acts">
+        ${d.saved
+          ? `<button class="ghost small" id="wrapDel">Delete</button>`
+          : `<button class="ghost small" id="wrapSave">Save this one</button>`}
+        <button class="ghost small" id="wrapClose">✕ Close</button>
+      </div>
+    </div>
+    <div class="wrap-cards">${d.cards.map((x,i)=>`
+      <div class="wc ${x.big?"has-big":""} ${i===0?"hero":""}" style="--a:${x.pal[0]};--b:${x.pal[1]};animation-delay:${i*70}ms">
+        <div class="wc-ic">${x.icon}</div>
+        ${x.big ? `<div class="wc-big">${escapeHtml(String(x.big))}</div>` : ""}
+        <div class="wc-head">${escapeHtml(x.head)}</div>
+        ${x.sub ? `<div class="wc-sub">${escapeHtml(x.sub)}</div>` : ""}
+      </div>`).join("")}
+    </div>
+  </div>`;
+  const sv = $("#wrapSave");
+  if(sv) sv.onclick = ()=>{
+    const list = wrapSaved();
+    list.unshift({id:d.id, at:d.at, cards:d.cards.map(({icon,big,head,sub,pal,key,src})=>({icon,big,head,sub,pal,key,src}))});
+    if(list.length > WRAP_KEEP) list.length = WRAP_KEEP;
+    save();
+    wrapDeck = {...list[0], saved:true};
+    toast(list.length >= WRAP_KEEP ? `Saved. Only the newest ${WRAP_KEEP} are kept.` : "Saved");
+    renderWrap();
+  };
+  const dl = $("#wrapDel");
+  if(dl) dl.onclick = ()=>{
+    state.scroll.wraps = wrapSaved().filter(x=>x.id!==d.id);
+    save(); wrapDeck = null; renderWrap();
+  };
+  $("#wrapClose").onclick = ()=>{ wrapDeck = null; renderWrap(); };
+}
+
+function renderPrestige(){
+  const el = $("#prestigeGrid"); if(!el) return;
+  const rows = PRESTIGE.map(p=>({p, s:prestigeState(p)}));
+  const done = rows.filter(r=>r.s.done);
+  // closest first; binary ones have no percentage to sort on, so fall back to difficulty
+  const TIER_ORDER = {early:0, mid:1, hard:2, elite:3};
+  const todo = rows.filter(r=>!r.s.done)
+    .sort((a,b)=> (b.s.pct - a.s.pct) || (TIER_ORDER[a.p.tier] - TIER_ORDER[b.p.tier]));
+  $("#prestigeSub").textContent = `${done.length} of ${rows.length} claimed`;
+  const showDone = !!state.scroll.prestigeDone;
+  const list = showDone ? done : todo;
+  if(!list.length){
+    el.innerHTML = `<div class="empty" style="grid-column:1/-1">${showDone?"Nothing claimed yet.":"Everything on the list is yours. Genuinely well done."}</div>`;
+  } else {
+    el.innerHTML = list.map(({p,s})=>{
+      const t = PRESTIGE_TIER[p.tier] || PRESTIGE_TIER.mid;
+      const miss = s.missing.length
+        ? `<div class="pz-miss">${p.base && s.missing.length>3
+             ? `${s.missing.length} skill${s.missing.length===1?"":"s"} still short`
+             : `Needs: ${escapeHtml(s.missing.slice(0,3).join(" · "))}${s.missing.length>3?` +${s.missing.length-3} more`:""}`}</div>`
+        : "";
+      return `<div class="pz ${s.done?"got":""}" style="--tier:${t.color}">
+        <div class="pz-ic"><img src="${WIKI + encodeURI(p.icon)}" alt=""
+          onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🏆'}))"></div>
+        <div class="pz-b">
+          <div class="pz-h"><b>${escapeHtml(p.name)}</b><span class="pz-tier">${t.label}</span></div>
+          <div class="pz-why">${escapeHtml(p.why)}</div>
+          ${(s.done||s.binary)?"":`<div class="pz-bar"><i style="width:${s.pct}%"></i></div>`}
+          ${s.done?"":miss}
+        </div>
+        <div class="pz-act">
+          ${s.manual||s.done
+            ? `<button class="pz-tick ${s.done?"on":""}" data-pz="${escapeHtml(p.id)}"
+                 title="${s.done?"Claimed. Click to untick.":"The hiscores can't see this one. Tick it yourself."}">${s.done?"✓":"○"}</button>`
+            : `<span class="pz-pct">${s.binary?"–":s.pct+"%"}</span>`}
+        </div>
+      </div>`;
+    }).join("");
+  }
+  $$("#prestigeGrid [data-pz]").forEach(b=>b.onclick=()=>{
+    state.prestige = state.prestige || {};
+    if(state.prestige[b.dataset.pz]) delete state.prestige[b.dataset.pz];
+    else state.prestige[b.dataset.pz] = true;
+    save(); renderPrestige();
+  });
+  const tog = $("#prestigeToggle");
+  if(tog){
+    tog.textContent = showDone ? `← Show what's left (${todo.length})` : `Show claimed (${done.length}) →`;
+    tog.onclick = ()=>{ state.scroll.prestigeDone = !showDone; save(); renderPrestige(); };
+  }
+}
+
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.4";
+const APP_VERSION = "1.5";
 const PATCH_NOTES = [
+  {v:"1.5", date:"September 13, 2026", title:"The Scroll, upgraded", notes:[
+    "The Scroll opens with Highlights, cards drawn from your own history. Streaks and personal records, this week against last, which skill is eating your month, one that's gone quiet, and how close you are to the next level worth having. Suggestions come with a button that turns them into a tracked goal.",
+    "Added the Trophy cabinet: milestones that matter, sorted by how close you are. Barrows gloves, the quest cape, fire and infernal capes, base 60s through 90s, the raids, Piety and Rigour, and more, each with real item art, what it needs, and what you're still short on. Things the hiscores can't see, like graceful and diaries, you tick yourself.",
+    "The heatmap got a visual pass. Cells are outlined in their own colour instead of near-black, with a soft sheen and a lift on hover, replacing the old blurred glow that muddied the colours.",
+    "Base-level milestones show real progress, so you get 'Base 60s, 96%, needs 60 Sailing' rather than a yes or no.",
+    "The Overview ends with a Quick entry box. Type what you did and press Log it (or Enter), and a log window opens with the date, skills, milestone and priorities. It picks skills out of what you typed, so 'questing and a slayer task' already has Questing and Slayer ticked. Untick anything it guessed wrong. Ctrl+Enter saves, Esc closes.",
+    "Date pickers match the rest of the app now, in your theme's colours, instead of the browser's white box.",
+    "Both heatmaps, on the Scroll and on Home, open on All time every time you go to them. Pick another range and it holds while you stay on that page. There's also a new 1 year option.",
+    "Long ranges on the bar chart stay readable. When there isn't room for a full bar per day, as at six months or a year on a normal window, each bar becomes one week in the same style, and the chart says so underneath. Hovering a week shows its dates and skills, and clicking it opens its busiest day.",
+    "The bar chart is slimmer. On short ranges each bar used to stretch across its whole column, so a month came out as thirty wide blocks. Bars are now capped to a slim width with the gap as spacing, and days with several skills show them as stacked bands instead of diagonal stripes.",
+    "The recap now lists kill counts for every boss you fought in the window, with each boss's all-time count beside it, and breaks your clues down by tier.",
+    "Fixed clue scrolls being counted twice. The hiscores list each clue under its tier and again in the all-clues total, and both were being added. Recent days are rebuilt from your stats history on the next refresh, and older days are corrected.",
+    "The Scroll has a proper title banner, and the row of section tabs is gone from the top of the page. Switch sections from the sidebar, which already listed them. Recap is no longer a tab. It has its own panel under the heatmap: click anywhere on it. It shows three of your standout numbers from the last 30 days, chosen by how much they stand out, and a Back button inside the recap takes you out again.",
+    "The XP tile above the heatmap says 'xp this week' and 'xp in 3 months' rather than 'xp over week'.",
+    "Fixed percentages that were worked out from levels instead of experience. Levels are not evenly spaced, so level 92 is only half the XP of a 99. Total level progress, trophy progress and max cape progress now all measure XP, and a trophy like Rigour shows how much of the Prayer XP you have rather than one requirement out of two.",
+    "Sailing is now counted in max cape and max total level figures, which were still assuming 23 skills.",
+    "Reworded the monthly XP fact to make clear the XP is spread across all your skills and is being compared to the 13,034,431 XP a single 99 takes.",
+    "The Show all button under Highlights is now Generate your Wrapped. It deals five cards at random from everything that stands out in your history: big numbers like your best single day and the share of your XP that went to one skill, plus Highlights and fun facts. Every deal is different and avoids repeating the last one. Save the decks you like; a saved deck keeps its numbers from the day it was dealt, and the newest 20 are kept.",
+    "Ticking a quest done now ticks everything it requires too, since you can't have finished Jungle Potion without Druidic Ritual. A note tells you what came along with it. This works from the tree, the detail panel, the route, the Roadmap and Ask Bud. Unticking a quest leaves its prerequisites alone.",
+    "The quest planner has a Route view: a flat, numbered do-this-then-this list instead of a dependency map. It works forward through time rather than sorting once, so XP from each quest is banked as it goes and later requirements account for what the earlier ones paid you. When nothing is startable, the thing in the way becomes the next step, so you get entries like 'Train Mining to 68' and 'Reach 200 quest points' in the order you actually hit them.",
+    "Every quest in the route says why it is worth doing, pulled from its real rewards and unlocks, along with its difficulty, length and quest points.",
+    "Route works over a single quest, everything on your board at once, or the whole quest cape. Ticking a quest off replans everything below it.",
+    "Added status filters to the planner. Ready now, Blocked and Done, each with a count, listing every quest in that state so you can see what you could start tonight without searching for it.",
+    "Fixed quests that require a miniquest being impossible to route. Miniquests are excluded from the quest cape, so they were being left out of the plan entirely, which made eleven quests permanently unreachable. Required miniquests are now pulled in and labelled.",
+    "The quest planner has a board. Search any quest, hit + to pin it, and it stays there between visits. Each card shows whether you can start it now, how far through its chain you are, and what is still in the way. Drag them into whatever order you want, or flip to Ready first to float the ones you can actually do.",
+    "The old pinned-plan chips grew into that board rather than sitting next to it, so there is still only one list of quests you care about. Anything you had pinned carries over.",
+    "Fixed the quest planner not refreshing when you navigate to it. It was showing whatever it worked out at launch, so quest and level changes made elsewhere did not appear until you reloaded.",
+    "Home shows one fun fact from your own history, as a quiet line under your character name. It changes every time you open Home and never repeats the one before.",
+    "Roadmap milestones and bosses still tick themselves from your stats, and now you can tick them by hand as well.",
+    "Pin to board on a charted quest now adds it to your quest board. Before, it said pinned but the quest never showed up. Any quest's details also have a Pin button.",
+    "With two or more quests pinned, a row of tabs above the chart lets you switch between them, with arrows to step through in order.",
+    "A charted quest's details (requirements, the quests it needs, what it opens up, rewards) now sit at the top of the plan instead of under the tree.",
+    "The Activity section on Home now has the same range and display controls as the Scroll, so you can put it on bars instead of the calendar. Home keeps its own two settings, since it's a different shape of space.",
+    "Fixed the heatmap being silently cut off on narrow windows. Month labels were overriding their own column width, the bar chart ran out of room for its gaps before its bars, and the week strip assumed a cell size that did not always fit. All three are sized to the space now, and the bar chart scrolls rather than clipping when a range genuinely cannot fit.",
+    "The Scroll is split into sections now: Overview, Trophies, Journal, Priorities and Recap, with sub-tabs in the sidebar. The heatmap leads, because it's the reason anyone opens the page, and it sits under a row of numbers: streak, active days, XP in range, best single day.",
+  ]},
   {v:"1.4", date:"September 9, 2026", title:"Gielinor Survivors and boss drops", notes:[
     "The heatmap can focus on a single skill. Pick one from the Show dropdown and the map recolours by how much of it you did each day, dark for a quiet session through to full colour for your biggest. It works in all three views — calendar, week and bars — and the legend turns into the intensity key.",
     "The shading levels come from your own active days rather than a fixed XP scale, so the map has real contrast whether you are getting 5k a day or 500k. Hovering a day gives the actual number.",
@@ -8584,14 +10576,192 @@ function renderPatchNotes(){
 
 // sidebar nav / views
 const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"Quest planner", clog:"Collection log", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
+// ---- Scroll sections ----
+// The page got big enough that one long scroll stopped working. Same data, five
+// sections, heatmap first because that's what people open the page for.
+const SCROLL_SECTIONS = [
+  {id:"heat",     label:"Overview",   icon:"🔥"},
+  {id:"trophies", label:"Trophies",   icon:"🏆"},
+  {id:"journal",  label:"Journal",    icon:"📜"},
+  {id:"prio",     label:"Priorities", icon:"⭐"},
+  {id:"recap",    label:"Recap",      icon:"📊", nav:false},   // opened from the banner seal
+];
+function scrollSec(){
+  const s = state.scrollSec;
+  if(s && SCROLL_SECTIONS.some(x=>x.id===s)) return s;
+  return "heat";
+}
+function setScrollSec(id){
+  state.scrollSec = id;
+  delete state.scrollMode;
+  save();
+  applyScrollMode();
+  renderNavSub();
+  window.scrollTo(0,0);
+}
 function applyScrollMode(){
-  const recap = (state.scrollMode||"journal")==="recap";
-  const j=$("#scrollJournal"), r=$("#scrollRecap");
-  if(j) j.classList.toggle("hidden", recap);
-  if(r) r.classList.toggle("hidden", !recap);
-  $$("#scrollModeSeg [data-scrollmode]").forEach(b=>
-    b.classList.toggle("on", b.dataset.scrollmode===(recap?"recap":"journal")));
-  if(recap) renderRecap(); else renderHeatmap();
+  const cur = scrollSec();
+  $$("#view-scroll .scroll-sec").forEach(el=> el.classList.toggle("hidden", el.dataset.ssec !== cur));
+  // The sidebar is the tab bar now. The banner just says where you are.
+  const meta = SCROLL_SECTIONS.find(x=>x.id===cur);
+  const eb = $("#scrollEyebrow"); if(eb) eb.textContent = meta ? meta.label : "";
+  const back = ()=> setScrollSec(state.scrollSecPrev && state.scrollSecPrev!=="recap" ? state.scrollSecPrev : "heat");
+  const cta = $("#recapCta");
+  if(cta){
+    const go = ()=>{ state.scrollSecPrev = cur; setScrollSec("recap"); };
+    cta.onclick = go;
+    cta.onkeydown = e=>{ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); go(); } };
+    renderRecapTease();
+  }
+  const rb = $("#recapBack"); if(rb) rb.onclick = back;
+  // only the visible section needs painting, and the heatmap must size to a laid-out panel
+  if(cur==="recap") renderRecap();
+  else if(cur==="heat"){ renderHeatmap(); renderHeatStats(); renderInsights(); wireQuickLog(); }
+  else if(cur==="trophies") renderPrestige();
+}
+// Sidebar sub-nav, shown only while you're actually on the Scroll.
+function renderNavSub(){
+  const el = $("#navSubScroll"); if(!el) return;
+  const on = state.lastView === "scroll";
+  el.classList.toggle("hidden", !on);
+  if(!on){ el.innerHTML = ""; return; }
+  const cur = scrollSec();
+  el.innerHTML = SCROLL_SECTIONS.filter(s=>s.nav!==false).map(s=>
+    `<button class="navsub${(s.id===cur || (cur==="recap" && s.id==="heat"))?" active":""}" data-ssec-nav="${s.id}">${s.icon} ${s.label}</button>`).join("");
+  $$("#navSubScroll [data-ssec-nav]").forEach(b=> b.onclick = ()=>{
+    setScrollSec(b.dataset.ssecNav);
+    closeSidebar();
+  });
+}
+// The numbers that belong above a heatmap: how long you've kept it up, and how much
+// of the window you actually filled in.
+// ---- Quick entry and the log window ----
+// Words that mean a skill (or one of the non-skill tags). Checked against what you type,
+// so "questing and a slayer task" ticks Questing and Slayer before you touch anything.
+const QL_WORDS = {
+  "Questing":     /\bquest(s|ing|ed)?\b/i,
+  "Clues":        /\bclues?\b|treasure trails?/i,
+  "High Alch":    /\balch(ing|ed|es)?\b/i,
+  "Combat":       /\bcombat\b|\bbossing\b|\bbosses\b|\bpvm\b|\battack\b|\bstrength\b|\bdefen[cs]e\b|\branged?\b|\bmagic\b|\bhitpoints\b|\bcb\b/i,
+  "Slayer":       /\bslay(er|ers|ing|ed)?\b|\bslayer tasks?\b/i,
+  "Prayer":       /\bpray(er|ing|ed)?\b|\bbones\b/i,
+  "Firemaking":   /\bfiremak(e|ing)\b|\bfm\b|\bwintertodt\b/i,
+  "Runecraft":    /\brunecraft(ing)?\b|\brc\b|\bgotr\b/i,
+  "Crafting":     /\bcraft(s|ing|ed)?\b/i,
+  "Hunter":       /\bhunt(er|s|ing|ed)?\b/i,
+  "Construction": /\bconstruction\b|\bcon\b|\bpoh\b/i,
+  "Woodcutting":  /\bwoodcut(ting)?\b|\bwc\b|\bchopp(ed|ing)\b/i,
+  "Farming":      /\bfarm(s|ing|ed)?\b|\bherb runs?\b|\bbirdhouses?\b/i,
+  "Herblore":     /\bherblore\b|\bpotions?\b/i,
+  "Fletching":    /\bfletch(es|ing|ed)?\b/i,
+  "Sailing":      /\bsail(s|ing|ed)?\b/i,
+  "Fishing":      /\bfish(es|ing|ed)?\b|\btempoross\b/i,
+  "Agility":      /\bagility\b|\brooftops?\b/i,
+  "Mining":       /\bmin(e|es|ed|ing)\b/i,
+  "Smithing":     /\bsmith(s|ing|ed)?\b/i,
+  "Cooking":      /\bcook(s|ing|ed)?\b/i,
+  "Thieving":     /\bthiev(e|es|ed|ing)\b|\bthief\b|\bpickpocket(s|ing|ed)?\b/i,
+};
+function qlDetect(text){
+  return Object.keys(QL_WORDS).filter(k => SKILL_COLOR[k] && QL_WORDS[k].test(text||""));
+}
+const QL_HINT = "Opens the full entry, with skills picked out from what you type.";
+let qlm = null;   // {skills:Set, off:Set, prios:Set, milestone:bool} while the window is open
+
+function openQuickLog(){
+  const text = ($("#qlText").value || "").trim();
+  qlm = {skills:new Set(qlDetect(text)), off:new Set(), prios:new Set(), milestone:false};
+  $("#qlmText").value = text;
+  $("#qlmDate").value = todayISO();
+  $("#qlmMile").classList.remove("on");
+  renderQuickLogChips();
+  $("#qlmBack").classList.remove("hidden");
+  const ta = $("#qlmText"); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+}
+function closeQuickLog(){
+  $("#qlmBack").classList.add("hidden");
+  qlm = null;
+}
+function renderQuickLogChips(){
+  if(!qlm) return;
+  const auto = qlDetect($("#qlmText").value);
+  $("#qlmAuto").textContent = auto.length ? `picked up: ${auto.join(", ")}` : "";
+  $("#qlmSkills").innerHTML = Object.keys(SKILL_COLOR).map(k=>
+    `<span class="act-chip ${qlm.skills.has(k)?"on":""}" data-qlsk="${escapeHtml(k)}" style="--c:${SKILL_COLOR[k]}"><span class="dot" style="background:${SKILL_COLOR[k]}"></span>${escapeHtml(k)}</span>`).join("");
+  $$("#qlmSkills [data-qlsk]").forEach(c=>c.onclick=()=>{
+    const k = c.dataset.qlsk;
+    if(qlm.skills.has(k)){ qlm.skills.delete(k); qlm.off.add(k); } else { qlm.skills.add(k); qlm.off.delete(k); }
+    renderQuickLogChips();
+  });
+  const prios = state.priorities || [];
+  $("#qlmPrioSec").classList.toggle("hidden", !prios.length);
+  $("#qlmPrios").innerHTML = prios.map(p=>
+    `<span class="act-chip ${qlm.prios.has(p.id)?"on":""}" data-qlpr="${escapeHtml(p.id)}">★ ${escapeHtml(p.label)}</span>`).join("");
+  $$("#qlmPrios [data-qlpr]").forEach(c=>c.onclick=()=>{
+    const id = c.dataset.qlpr;
+    if(qlm.prios.has(id)) qlm.prios.delete(id); else qlm.prios.add(id);
+    renderQuickLogChips();
+  });
+}
+function saveQuickLog(){
+  if(!qlm) return;
+  const text = $("#qlmText").value.trim();
+  const date = $("#qlmDate").value || todayISO();
+  const skills = [...qlm.skills], prios = [...qlm.prios];
+  if(!text && !skills.length){ toast("Add a note or pick a skill", true); $("#qlmText").focus(); return; }
+  state.scroll.log = state.scroll.log || [];
+  state.scroll.log.push({id:"l"+Date.now()+Math.random().toString(36).slice(2,5), date, text, skills, prios,
+                         milestone:qlm.milestone, createdAt:Date.now()});
+  // tagging a priority on an entry counts as working on it, same as the Journal form
+  prios.forEach(id=>{ const p = state.priorities.find(x=>x.id===id); if(p) touchPriority(p, date); });
+  const milestone = qlm.milestone;
+  save();
+  closeQuickLog();
+  $("#qlText").value = "";
+  const note = $("#qlNote");
+  if(note){
+    note.textContent = `${milestone?"Milestone logged":"Logged"} to ${date===todayISO()?"today":fmtDay(date)}${skills.length?`: ${skills.join(", ")}`:""}.`;
+    note.classList.add("ok");
+    clearTimeout(saveQuickLog._t);
+    saveQuickLog._t = setTimeout(()=>{ note.textContent = QL_HINT; note.classList.remove("ok"); }, 3500);
+  }
+  renderScroll();
+}
+function wireQuickLog(){
+  const go = $("#qlGo"), inp = $("#qlText"), more = $("#qlMore");
+  if(go) go.onclick = openQuickLog;
+  if(inp) inp.onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); openQuickLog(); } };
+  if(more) more.onclick = ()=>{ setScrollSec("journal"); renderNavSub(); };
+  if(wireQuickLog.done) return;          // the window's handlers only need attaching once
+  wireQuickLog.done = true;
+  $("#qlmX").onclick = closeQuickLog;
+  $("#qlmCancel").onclick = closeQuickLog;
+  $("#qlmSave").onclick = saveQuickLog;
+  $("#qlmBack").onclick = e=>{ if(e.target.id==="qlmBack") closeQuickLog(); };
+  $("#qlmMile").onclick = ()=>{ if(!qlm) return; qlm.milestone = !qlm.milestone; $("#qlmMile").classList.toggle("on", qlm.milestone); };
+  // typing adds skills it recognises, but never re-adds one you've unticked
+  $("#qlmText").oninput = ()=>{
+    if(!qlm) return;
+    qlDetect($("#qlmText").value).forEach(k=>{ if(!qlm.off.has(k)) qlm.skills.add(k); });
+    renderQuickLogChips();
+  };
+  $("#qlmText").onkeydown = e=>{ if(e.key==="Enter" && (e.ctrlKey||e.metaKey)){ e.preventDefault(); saveQuickLog(); } };
+  addEventListener("keydown", e=>{ if(qlm && e.key==="Escape"){ e.preventDefault(); closeQuickLog(); } });
+}
+function renderHeatStats(){
+  const el = $("#heatStats"); if(!el) return;
+  const range = state.scroll.range || "all";
+  const days = rangeDays(range, mergedTypesByDate());
+  const d = recapCollect(days);
+  const pct = days.length ? Math.round(d.activeDays/days.length*100) : 0;
+  const cells = [
+    ["🔥", currentStreak(), `day${currentStreak()===1?"":"s"} running`],
+    ["📆", `${d.activeDays}/${days.length}`, `active days (${pct}%)`],
+    ["⚡", fmt(d.totalXp), `xp ${({week:"this week", month:"in the last month", "3mo":"in 3 months", "6mo":"in 6 months", "1y":"in the last year", all:"all time"})[range] || "in this range"}`],
+    ["🏅", d.bestDay ? fmt(d.bestDay.xp) : "0", "best single day"],
+  ];
+  el.innerHTML = cells.map(([i,v,k])=>
+    `<div class="hs"><div class="hs-i">${i}</div><div><div class="hs-v">${v}</div><div class="hs-k">${escapeHtml(k)}</div></div></div>`).join("");
 }
 function switchView(name){
   if(name==="stats") name="home"; // legacy saved view
@@ -8603,12 +10773,22 @@ function switchView(name){
   document.body.toggleAttribute("data-wide", name==="quests");
   closeSidebar(); window.scrollTo(0,0);
   // heatmaps size themselves to their container — refit when their view becomes visible
+  // Both heatmaps open on All time each time you come to them. Pick another range and it
+  // holds while you're on the page, but a saved choice from last time no longer wins.
+  if(name==="scroll"){ state.scroll.range = "all"; renderHeatRange(); }
+  if(name==="home") state.scroll.homeRange = "all";
   if(name==="home" || name==="scroll") renderHeatmap();
-  if(name==="quests") qpFitTree();
+  if(name==="home"){ renderHomeHeatControls(); renderFunFact(true); }
+  // the board shows live status against your stats and quest progress, so it has to be
+  // rebuilt on entry rather than left as whatever it was at launch
+  if(name==="quests"){ renderQuestPlanner(); qpFitTree(); }
   if(name==="arcade") renderArcade();
-  if(name==="scroll") applyScrollMode();
+  // the recap is something you open and close, not a place, so coming back to the Scroll
+  // always lands on the Overview
+  if(name==="scroll"){ if(state.scrollSec==="recap") state.scrollSec = "heat"; applyScrollMode(); }
+  renderNavSub();
   // Recap and Patch notes lost their nav entries; keep old saved views working
-  if(name==="recap"){ state.scrollMode="recap"; switchView("scroll"); return; }
+  if(name==="recap"){ switchView("scroll"); return; }
   if(name==="rhythm"){
     const sel=$("#rgPreset"); if(sel && state.rgPreset) sel.value = state.rgPreset;
     const off=$("#rgOffset"); if(off && state.rgOffset!=null) off.value = String(state.rgOffset);
@@ -8619,9 +10799,7 @@ function switchView(name){
   else if(VS.on) vsQuit();          // and it stops the horde
 }
 $$(".navitem").forEach(n=>n.onclick=()=>switchView(n.dataset.view));
-$$("#scrollModeSeg [data-scrollmode]").forEach(b=>b.onclick=()=>{
-  state.scrollMode = b.dataset.scrollmode; save(); applyScrollMode();
-});
+
 function openSidebar(){ $("#sidebar").classList.add("open"); $("#sbBackdrop").classList.remove("hidden"); }
 function closeSidebar(){ $("#sidebar").classList.remove("open"); $("#sbBackdrop").classList.add("hidden"); }
 $("#hamb").onclick = openSidebar;
@@ -8699,7 +10877,8 @@ $("#loadBtnHomeGo").onclick = ()=>loadCharacter({live:true, name:$("#usernameHom
 $("#usernameHome").addEventListener("keydown", e=>{ if(e.key==="Enter") loadCharacter({live:true, name:$("#usernameHome").value}); });
 
 // ============ INIT ============
-applyTheme(); applyFont(); startUpdateCheck(); renderQuestPlanner(); renderMeta(); renderTodo(); renderClog(); renderQuickAdd(); populateMetricDropdown(); renderStart(); renderScroll(); renderPatchNotes(); renderNotes();
+state.scroll = state.scroll || {}; state.scroll.range = "all"; state.scroll.homeRange = "all";
+applyTheme(); applyFont(); startUpdateCheck(); renderHomeHeatControls(); renderFunFact(); renderQuestPlanner(); renderMeta(); renderTodo(); renderClog(); renderQuickAdd(); populateMetricDropdown(); renderStart(); renderScroll(); renderPatchNotes(); renderNotes();
 switchView("home"); // always land on Home
 if(state.username){
   $("#username").value = state.username;
