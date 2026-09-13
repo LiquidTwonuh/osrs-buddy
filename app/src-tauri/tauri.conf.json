@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "OSRS Buddy",
   "mainBinaryName": "OSRS Buddy",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "identifier": "com.joshf.osrsbuddy",
   "build": {
     "frontendDist": "../dist",
@@ -10,6 +10,7 @@
     "beforeBuildCommand": "npm run sync"
   },
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
         "title": "OSRS Buddy",

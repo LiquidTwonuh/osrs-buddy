@@ -254,6 +254,12 @@
   button.su-danger{background:var(--red); color:#fff; border-color:var(--red)}
   @media (max-width:560px){ .su-body{padding:18px 16px 8px} .su-dot span{display:none} .su-title{font-size:25px} }
   .qp-tag.prog{color:var(--gold); border-color:var(--gold-dim)}
+  .su-single-h{font-family:var(--font-display); color:var(--gold); font-size:19px; font-weight:700; flex:1}
+  .ce-ok{padding:10px 13px; border-radius:10px; background:var(--inset); font-size:12.5px; line-height:1.55; color:var(--text);
+    border:1px solid color-mix(in oklab, var(--green) 45%, var(--border)); margin:0 0 10px; overflow-wrap:anywhere}
+  .ce-ok .ce-badge{color:var(--green); font-weight:700; margin-right:4px}
+  .ce-ok.paused{border-color:var(--gold-dim)}
+  .ce-ok.paused .ce-badge{color:var(--gold)}
   .qb-pill.prog{color:var(--gold)}
   /* recap panel under the heatmap: centred, the whole thing is the button, theme tokens only */
   .recap-cta{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
@@ -489,6 +495,90 @@
   .sk-bar i{display:block; height:100%; background:var(--gold); border-radius:4px}
   .sk-week{font-size:13px}
   .sk-week b{color:var(--green)}
+  /* ---- Collection log page ---- */
+  .cl-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:12px}
+  .cl-stat{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px 15px}
+  .cl-stat .k{font-size:10.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted)}
+  .cl-stat .v{font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--gold); margin:4px 0 8px; line-height:1.1}
+  .cl-stat .v span{font-size:15px; color:var(--muted); font-weight:600}
+  .cl-stat .v.sm{font-size:19px; margin-bottom:5px}
+  .cl-sub{font-size:12px; color:var(--muted)}
+  .cl-close{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:0 0 12px}
+  .cl-lbl{font-size:10.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-right:4px}
+  .cl-chip{font-size:12.5px; padding:5px 12px; border-radius:999px; background:var(--panel); border:1px solid var(--border);
+    color:var(--text); cursor:pointer; box-shadow:none; font-family:inherit}
+  .cl-chip b{color:var(--gold); font-weight:600; margin-left:4px}
+  .cl-chip:hover{border-color:var(--gold-dim)}
+  .cl-tabs{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px}
+  .cl-tab{flex:1 1 120px; display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:9px 13px; border-radius:11px;
+    background:var(--panel); border:1px solid var(--border); color:var(--muted); cursor:pointer; box-shadow:none; text-align:left; font-family:inherit}
+  .cl-tab span{font-size:13px; font-weight:600}
+  .cl-tab b{font-size:11.5px; font-weight:500; color:var(--muted)}
+  .cl-tab:hover{border-color:var(--gold-dim); color:var(--text)}
+  .cl-tab.on{border-color:var(--gold); color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset}
+  .cl-body{display:grid; grid-template-columns:minmax(230px, 300px) 1fr; gap:12px; align-items:start}
+  .cl-side{padding:12px; position:sticky; top:12px; margin:0}
+  .cl-side input{width:100%; box-sizing:border-box}
+  .cl-sort{justify-content:flex-start; margin:8px 0}
+  .cl-sort button{padding:3px 9px; font-size:11.5px}
+  .cl-list{display:flex; flex-direction:column; gap:3px; max-height:calc(100vh - 250px); overflow:auto; margin:0 -4px; padding:0 4px}
+  .cl-page{display:grid; grid-template-columns:1fr auto; gap:4px 8px; align-items:center; padding:7px 9px; border-radius:9px; background:transparent;
+    border:1px solid transparent; color:var(--text); cursor:pointer; text-align:left; box-shadow:none; font-family:inherit}
+  .cl-page:hover{background:var(--inset)}
+  .cl-page.on{background:var(--inset); border-color:var(--gold-dim)}
+  .cl-pn{font-size:13px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .cl-pn i{font-style:normal; color:var(--muted); font-size:11px; margin-left:6px}
+  .cl-pc{font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+  .cl-page.full .cl-pc{color:var(--green)}
+  .cl-pb{grid-column:1 / -1; height:3px; border-radius:3px; background:var(--border); overflow:hidden}
+  .cl-pb i{display:block; height:100%; background:var(--gold-dim)}
+  .cl-page.full .cl-pb i{background:var(--green)}
+  .cl-detail{padding:16px 18px; min-height:300px; margin:0}
+  .cl-dh{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:10px}
+  .cl-dh h3{margin:0 0 2px; font-family:var(--font-display); font-size:22px; color:var(--gold)}
+  .cl-dc{font-size:14px; color:var(--muted); white-space:nowrap}
+  .cl-dc b{font-family:var(--font-display); font-size:26px; color:var(--text)}
+  .cl-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(92px,1fr)); gap:8px; margin:14px 0 8px}
+  .cl-item{display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 6px 9px; border-radius:11px; background:var(--inset);
+    border:1px solid var(--border); text-align:center; transition:border-color .12s, transform .12s}
+  .cl-item:hover{transform:translateY(-1px); border-color:var(--gold-dim)}
+  .cl-ic{height:34px; display:flex; align-items:center; justify-content:center}
+  .cl-ic img{max-height:34px; max-width:40px; object-fit:contain; filter:grayscale(1) brightness(.55) opacity(.5)}
+  .cl-in{font-size:11px; line-height:1.25; color:var(--muted); overflow-wrap:anywhere}
+  .cl-item.got{border-color:color-mix(in oklab, var(--gold) 55%, var(--border)); background:color-mix(in oklab, var(--inset) 88%, var(--gold) 12%)}
+  .cl-item.got .cl-ic img{filter:drop-shadow(0 1px 0 rgba(0,0,0,.45))}
+  .cl-item.got .cl-in{color:var(--text)}
+  .cl-item.hand{border-style:dashed; border-color:var(--gold-dim)}
+  .cl-item.hit{box-shadow:0 0 0 2px var(--gold)}
+  .cl-empty{text-align:center; padding:30px 24px}
+  .cl-empty h3{font-family:var(--font-display); color:var(--gold); margin:0 0 8px; font-size:22px}
+  .cl-empty p{max-width:520px; margin:0 auto; line-height:1.6}
+  .cl-foot{text-align:center; margin:12px 0 0}
+  /* boost tooltip in the quest planner */
+  [data-boost]{cursor:help}
+  .bst-tip{position:fixed; z-index:130; width:max-content; max-width:290px; padding:10px 13px; border-radius:10px; background:var(--panel);
+    border:1px solid var(--gold-dim); box-shadow:0 12px 32px rgba(0,0,0,.5); font-size:12.5px; line-height:1.45; pointer-events:none}
+  .bst-tip.hidden{display:none}
+  .bt-h{font-family:var(--font-display); color:var(--gold); font-size:14.5px; margin-bottom:3px}
+  .bt-need{color:var(--muted); font-size:11.5px; margin-bottom:7px}
+  .bt-row{display:flex; justify-content:space-between; gap:14px; padding:2px 0; color:var(--muted)}
+  .bt-row b{color:var(--text); font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .bt-row.ok span{color:var(--text)}
+  .bt-row.ok b{color:var(--green)}
+  .bt-row i{font-style:normal; font-size:10.5px; opacity:.7; margin-left:5px}
+  .bt-more{margin-top:6px; font-size:11px; color:var(--muted)}
+  .cl-tab em{font-style:normal; font-size:11px; color:var(--muted); opacity:.8}
+  .cl-page.unseen .cl-pn{color:var(--muted)}
+  .cl-page.unseen .cl-pc{font-size:10.5px; opacity:.8}
+  .cl-tagline{display:inline-block; margin-left:8px; font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:2px 8px;
+    border-radius:999px; border:1px solid var(--border); color:var(--muted); vertical-align:middle}
+  .cl-grid.unseen .cl-item{opacity:.75}
+  .cl-grid.unseen .cl-ic img{filter:grayscale(.6) opacity(.7)}
+  .cl-banner{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:0 0 12px; padding:12px 16px;
+    border-radius:12px; background:var(--panel); border:1px solid var(--gold-dim)}
+  .cl-banner p{margin:0; font-size:13px; line-height:1.5; color:var(--muted); max-width:620px}
+  .cl-banner p b{color:var(--text)}
+  @media (max-width:900px){ .cl-body{grid-template-columns:1fr} .cl-side{position:static} .cl-list{max-height:260px} .cl-stats{grid-template-columns:1fr 1fr} }
   /* Boss drop checklist — click an item to tick it off */
   .drop-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(112px,1fr)); gap:6px}
   .drop{display:flex; align-items:center; gap:7px; padding:6px 7px; border-radius:9px; cursor:pointer;
@@ -1587,8 +1677,10 @@
       <div class="set-sec">
         <div class="set-h">Stats</div>
         <label class="chk small"><input type="checkbox" id="autoRefresh"> Auto-refresh from the hiscores every 5 minutes</label>
-        <button class="ghost small" id="rlSyncBtn" style="margin-top:8px">⟲ Sync from RuneLite</button>
-        <div class="small muted" id="rlSyncMsg" style="margin-top:4px">Reads your name and worn gear from a running RuneLite client (WikiSync plugin required). Worn Roadmap gear gets ticked automatically.</div>
+      </div>
+      <div class="set-sec">
+        <div class="set-h">RuneLite data</div>
+        <div id="ceSetting"></div>
       </div>
       <div class="set-sec">
         <div class="set-h">Version</div>
@@ -2018,18 +2110,18 @@
 
   <!-- VIEW: COLLECTION LOG -->
   <div class="view hidden" id="view-clog">
-    <div class="panel">
-      <h3>Collection Log import (RuneLite)</h3>
-      <p class="muted small">
-        In RuneLite, install the <b>Collection Log</b> plugin, open your collection log in-game so it populates,
-        then use its <i>Export</i> option to save a JSON file. Load that file here.
-      </p>
-      <div class="row" style="margin-top:8px">
-        <input type="file" id="clogFile" accept="application/json,.json">
-        <button class="ghost small danger" id="clearClog">Clear</button>
+    <div class="scroll-hero">
+      <span class="sh-rod left" aria-hidden="true"></span>
+      <span class="sh-rod right" aria-hidden="true"></span>
+      <div class="sh-inner">
+        <div class="sh-eyebrow" id="clogEyebrow">Collection log</div>
+        <h2 class="sh-word">Collection log</h2>
+        <div class="sh-rule" aria-hidden="true"><i></i><b>✦</b><i></i></div>
+        <p class="sh-blurb" id="clogBlurb">Every unique you've collected, page by page, from your in-game log.</p>
       </div>
-      <div id="clogView"></div>
     </div>
+    <div id="clogView"></div>
+    <input type="file" id="clogFile" accept="application/json,.json" class="hidden">
   </div>
 
   <!-- VIEW: NOTES (free-form stickies) -->
@@ -2369,7 +2461,7 @@ function save(){
   // re-download themselves, so shedding them beats losing a single log entry.
   try{
     const db = state.questDB, wc = state.wikiCache;
-    delete state.questDB; delete state.wikiCache;
+    delete state.questDB; delete state.wikiCache; delete state.clogDB; delete state.boostDB;
     localStorage.setItem(LS_KEY, JSON.stringify(state));
     saveFailed = false;
     toast("Storage was full — cleared the quest cache to make room. It'll reload itself.", true);
@@ -2421,7 +2513,7 @@ function storageReport(){
 // are ~96% of the bytes and re-download themselves, so they're excluded.
 const BACKUP_KEY = "osrs_todo_backups_v1";   // legacy home; migrated out on first run
 const BACKUP_KEEP = 8;
-const BACKUP_SKIP = ["questDB","wikiCache","updCheck"];
+const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB"];
 // Snapshots live in IndexedDB, not localStorage. Keeping eight copies of your data in
 // a 5MB bucket meant the backup system was the thing that would eventually fill it —
 // journal history alone costs ~86KB/year, so the data is fine for decades; nine copies
@@ -2512,7 +2604,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone"];
+const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -4721,27 +4813,205 @@ function wireTodoEvents(){
 }
 
 // ---- Collection log import ----
+// The page reads the Character Export plugin's collection_log.json (kept in state.charExport.clog
+// by Setup, the desktop sync, or a file loaded here). Only pages opened in game are in it.
+const CLOG_TABS = ["Bosses","Raids","Clues","Minigames","Other"];
+const CLOG_SORTS = [["close","Closest to done"],["most","Most collected"],["az","A to Z"]];
+let clogView = {tab:null, page:null, sort:"close", q:""};   // view only, not saved
+// The full list of pages and items comes from the wiki's Collection log article (one request,
+// cached two weeks, like the quest data). Progress comes from the plugin, which only knows the
+// pages you've opened in game, so a page it hasn't seen is "not opened", never "0 collected".
+const CLOGDB_VERSION = 1;
+let clogDbBusy = false;
+function clogDB(){ const d = state.clogDB; return (d && d.v===CLOGDB_VERSION && d.tabs) ? d : null; }
+async function clogDbEnsure(){
+  const d = clogDB();
+  if(clogDbBusy || (d && Date.now()-d.ts < 14*86400e3)) return;
+  clogDbBusy = true;
+  try{
+    const r = await fetch(WIKI_API + "?origin=*&format=json&action=parse&page=Collection_log&prop=wikitext");
+    const wt = (await r.json()).parse.wikitext["*"];
+    const tabs = {};
+    let tab = null, page = null;
+    wt.split("\n").forEach(line=>{
+      let m;
+      if((m = /^==\s*([^=].*?)\s*==\s*$/.exec(line))){ tab = CLOG_TABS.includes(m[1]) ? m[1] : null; page = null; return; }
+      if((m = /^===\s*([^=].*?)\s*===\s*$/.exec(line))){ page = m[1]; if(tab) tabs[tab] = Object.assign(tabs[tab]||{}, {[page]:[]}); return; }
+      if(!tab || !page) return;
+      const re = /\{\{plink\|([^|}]+)((?:\|[^}]*)?)\}\}/g;
+      let x;
+      while((x = re.exec(line))){
+        const pic = /pic=([^|}]+)/.exec(x[2]||"");
+        tabs[tab][page].push(pic ? [x[1].trim(), pic[1].trim()] : [x[1].trim()]);
+      }
+    });
+    const pages = Object.values(tabs).reduce((n,t)=>n+Object.keys(t).length, 0);
+    if(pages > 50){ state.clogDB = {v:CLOGDB_VERSION, ts:Date.now(), tabs}; save(); renderClog(); }
+  }catch(e){ /* offline or the wiki changed shape: the page falls back to what the plugin has */ }
+  clogDbBusy = false;
+}
+function clogData(){
+  const wiki = clogDB(), plug = (state.charExport && state.charExport.clog) || {};
+  if(!wiki && !Object.keys(plug).length) return null;
+  const hand = {};
+  Object.keys(state.drops||{}).forEach(k=>{ if(state.drops[k]) hand[k.toLowerCase()] = true; });
+  const low = x => String(x).toLowerCase();
+  const tabNames = CLOG_TABS.filter(t=>(wiki && wiki.tabs[t]) || plug[t])
+    .concat(Object.keys(plug).filter(t=>!CLOG_TABS.includes(t)));
+  const d = {tabs:[], pages:[], have:0, total:0, done:0, seen:0, source: wiki ? "wiki" : "plugin"};
+  tabNames.forEach(t=>{
+    const wp = (wiki && wiki.tabs[t]) || {}, pp = plug[t] || {};
+    const ppKey = {}; Object.keys(pp).forEach(k=>{ ppKey[low(k)] = k; });
+    const used = new Set();
+    const make = (name, pg, wikiItems)=>{
+      if(pg){
+        const items = (pg.items||[]).map(i=>({id:i.id, name:String(i.name||""), got:!!i.obtained, hand:!i.obtained && !!hand[low(i.name)]}));
+        return {name, tab:t, items, have:items.filter(i=>i.got).length, total:Math.max(pg.total_items||0, items.length), seen:pg.last_scraped||true};
+      }
+      const items = (wikiItems||[]).map(([n,pic])=>({name:n, pic, got:false, hand:!!hand[low(n)]}));
+      return {name, tab:t, items, have:0, total:items.length, seen:null};
+    };
+    const pages = Object.keys(wp).map(wn=>{
+      const k = ppKey[low(wn)];
+      if(k) used.add(k);
+      return make(k || wn, k ? pp[k] : null, wp[wn]);
+    });
+    Object.keys(pp).forEach(k=>{ if(!used.has(k)) pages.push(make(k, pp[k], null)); });
+    if(!pages.length) return;
+    const seen = pages.filter(pg=>pg.seen);
+    const have = seen.reduce((x,pg)=>x+pg.have, 0), total = pages.reduce((x,pg)=>x+pg.total, 0);
+    const done = seen.filter(pg=>pg.total && pg.have>=pg.total).length;
+    d.tabs.push({name:t, pages, have, total, done, seen:seen.length});
+    d.pages.push(...pages);
+    d.have += have; d.total += total; d.done += done; d.seen += seen.length;
+  });
+  return d;
+}
+function clogIcon(it){
+  if(it.id) return `https://static.runelite.net/cache/item/icon/${it.id}.png`;
+  if(it.pic) return WIKI + encodeURI(it.pic.replace(/ /g,"_") + ".png");
+  return dropIconUrl(it.name);
+}
 function renderClog(){
-  const el = $("#clogView");
-  const c = state.clog;
-  if(!c){ el.innerHTML = `<div class="empty">No collection log imported.</div>`; return; }
-  const bars = c.total ? `<div class="stat" style="margin-top:12px">
-      <div class="k">Unique items</div>
-      <div class="v">${fmt(c.obtained)} / ${fmt(c.total)}</div>
-      <div class="bar full" style="margin-top:8px"><i style="width:${(c.obtained/c.total*100)}%"></i></div>
-    </div>` : "";
-  const cats = (c.categories||[]).sort((a,b)=> (b.obtained/b.total)-(a.obtained/a.total));
-  el.innerHTML = `<div class="row" style="margin-top:12px">${bars}</div>`
-    + `<div class="section-title"><h3>By category</h3><span class="small muted">${cats.length} tracked</span></div>`
-    + (cats.length? cats.map(cat=>{
-        const pct = cat.total? (cat.obtained/cat.total*100):0;
-        const full = cat.obtained>=cat.total && cat.total>0;
-        return `<div class="catrow">
-          <span class="grow">${escapeHtml(cat.name)} ${full?"✅":""}</span>
-          <span class="small muted">${cat.obtained}/${cat.total}</span>
-          <div class="bar ${full?"full":""}" style="width:140px"><i style="width:${pct}%"></i></div>
+  const el = $("#clogView"); if(!el) return;
+  if(!clogDB()) clogDbEnsure();
+  const d = clogData();
+  const eb = $("#clogEyebrow"), blurb = $("#clogBlurb");
+  const hasPlugin = !!(state.charExport && state.charExport.clog && Object.keys(state.charExport.clog).length);
+  if(!d || !d.pages.length){
+    if(eb) eb.textContent = "Collection log";
+    if(blurb) blurb.textContent = "Every log, page by page, and how close you are to completing each one.";
+    el.innerHTML = `<div class="panel cl-empty">
+        <h3>${clogDbBusy ? "Loading the collection log" : "Nothing here yet"}</h3>
+        <p class="muted">${clogDbBusy ? "Reading the full list of pages and items from the wiki." : "The hiscores can't see your collection log, but RuneLite's <b>Character Export</b> plugin can. Connect it, and every page you open in game shows your progress here."}</p>
+        <div class="row" style="justify-content:center; gap:8px; margin-top:14px">
+          <button class="primary" id="clogConnect">${ceDesktop() ? "Connect RuneLite" : "Import from RuneLite"}</button>
+          <button class="ghost small" id="clogPickFile">Or load collection_log.json</button>
+        </div>
+      </div>`;
+    $("#clogConnect").onclick = ()=>openRuneLite();
+    $("#clogPickFile").onclick = ()=>$("#clogFile").click();
+    return;
+  }
+  const v = clogView;
+  if(eb) eb.textContent = (state.charExport && state.charExport.account) || "Collection log";
+  if(blurb) blurb.textContent = hasPlugin
+    ? `${d.done} of ${d.pages.length} logs complete, ${fmt(d.have)} items collected so far.`
+    : `All ${d.pages.length} logs. Connect RuneLite to see your progress on each one.`;
+  if(!v.tab || !d.tabs.find(t=>t.name===v.tab)) v.tab = d.tabs[0].name;
+  const tab = d.tabs.find(t=>t.name===v.tab);
+  const q = v.q.trim().toLowerCase();
+  const left = pg => pg.total - pg.have;
+  const pct = (x,y) => y ? Math.round(x/y*100) : 0;
+  // pages you haven't opened in game always sort after the ones you have
+  const unseen = (x,y) => (!x.seen) - (!y.seen);
+  const sorters = {
+    close: (x,y)=> unseen(x,y) || ((x.have>=x.total) - (y.have>=y.total)) || ((y.have>0) - (x.have>0)) || (left(x)-left(y)) || x.name.localeCompare(y.name),
+    most:  (x,y)=> unseen(x,y) || (y.have/(y.total||1) - x.have/(x.total||1)) || (y.have-x.have) || x.name.localeCompare(y.name),
+    az:    (x,y)=> x.name.localeCompare(y.name),
+  };
+  const pages = (q ? d.pages.filter(pg=>pg.name.toLowerCase().includes(q) || pg.items.some(i=>i.name.toLowerCase().includes(q)))
+                   : tab.pages.slice()).sort(sorters[v.sort] || sorters.close);
+  if(!v.page || !pages.find(pg=>pg.name===v.page)) v.page = pages[0] ? pages[0].name : null;
+  const page = pages.find(pg=>pg.name===v.page);
+  const closest = d.pages.filter(pg=>pg.seen && pg.have>0 && pg.have<pg.total).sort((x,y)=>left(x)-left(y)).slice(0,5);
+
+  const banner = hasPlugin ? "" : `<div class="cl-banner">
+      <p><b>Your progress isn't loaded.</b> Connect RuneLite's Character Export plugin and each page you open in game fills in here.</p>
+      <button class="primary" id="clogConnect">${ceDesktop() ? "Connect RuneLite" : "Import from RuneLite"}</button>
+    </div>`;
+  const stats = `<div class="cl-stats">
+      <div class="cl-stat"><div class="k">Logs complete</div><div class="v">${d.done}<span> / ${d.pages.length}</span></div>
+        <div class="bar full"><i style="width:${pct(d.done,d.pages.length)}%"></i></div></div>
+      <div class="cl-stat"><div class="k">Items collected</div><div class="v">${fmt(d.have)}<span> / ${fmt(d.total)}</span></div>
+        <div class="bar"><i style="width:${pct(d.have,d.total)}%"></i></div></div>
+      <div class="cl-stat"><div class="k">Pages loaded</div><div class="v">${d.seen}<span> / ${d.pages.length}</span></div>
+        <div class="cl-sub">${d.seen < d.pages.length ? "Open the rest in game to load them" : "Every page is loaded"}</div></div>
+    </div>`;
+  const almost = closest.length ? `<div class="cl-close"><span class="cl-lbl">Almost there</span>${closest.map(pg=>
+      `<button class="cl-chip" data-clgo="${escapeHtml(pg.tab)}|${escapeHtml(pg.name)}">${escapeHtml(pg.name)}<b>${left(pg)} to go</b></button>`).join("")}</div>` : "";
+  const tabs = `<div class="cl-tabs">${d.tabs.map(t=>
+      `<button class="cl-tab ${!q && t.name===v.tab ? "on" : ""}" data-cltab="${escapeHtml(t.name)}">
+        <span>${escapeHtml(t.name)}</span>
+        <b>${t.done} of ${t.pages.length} logs complete</b>
+        <em>${fmt(t.have)} of ${fmt(t.total)} items</em>
+      </button>`).join("")}</div>`;
+  const list = pages.length ? pages.map(pg=>{
+      const full = pg.seen && pg.total && pg.have>=pg.total;
+      return `<button class="cl-page ${pg.name===v.page?"on":""} ${full?"full":""} ${pg.seen?"":"unseen"}" data-clpage="${escapeHtml(pg.name)}"
+          title="${pg.seen ? "" : "Not opened in game yet"}">
+        <span class="cl-pn">${escapeHtml(pg.name)}${q ? `<i>${escapeHtml(pg.tab)}</i>` : ""}</span>
+        <span class="cl-pc">${pg.seen ? `${pg.have}/${pg.total}` : `${pg.total} items`}</span>
+        <span class="cl-pb"><i style="width:${pct(pg.have,pg.total)}%"></i></span>
+      </button>`;
+    }).join("") : `<div class="empty">No page or item matches that.</div>`;
+  const detail = !page ? `<div class="empty">Pick a page.</div>` : `
+      <div class="cl-dh">
+        <div><h3>${escapeHtml(page.name)}${page.seen ? "" : `<span class="cl-tagline">Not opened in game</span>`}</h3>
+          <div class="small muted">${escapeHtml(page.tab)}${typeof page.seen==="string" ? ` · opened in game ${fmtDay(isoDate(new Date(page.seen)))}` : ""}</div></div>
+        <div class="cl-dc">${page.seen ? `<b>${page.have}</b> / ${page.total}` : `<b>${page.total}</b> items`}</div>
+      </div>
+      <div class="bar ${page.seen && page.total && page.have>=page.total ? "full" : ""}"><i style="width:${pct(page.have,page.total)}%"></i></div>
+      ${page.seen ? "" : `<p class="small muted" style="margin:10px 0 0">Open this page in your in-game collection log with the Character Export plugin running, and your progress on it shows up here.</p>`}
+      <div class="cl-grid ${page.seen?"":"unseen"}">${page.items.map(it=>{
+        const hit = q && it.name.toLowerCase().includes(q);
+        const tip = it.name + (!page.seen ? "" : it.got ? "" : it.hand ? " (ticked by hand, not in your in-game log yet)" : " (not collected yet)");
+        return `<div class="cl-item ${it.got?"got":""} ${it.hand?"hand":""} ${hit?"hit":""}" title="${escapeHtml(tip)}">
+          <span class="cl-ic"><img src="${clogIcon(it)}" alt="" loading="lazy" data-alt="${escapeHtml(dropIconUrl(it.name))}"
+            onerror="if(this.dataset.alt && this.src!==this.dataset.alt){ this.src=this.dataset.alt; } else { this.style.visibility='hidden'; }"></span>
+          <span class="cl-in">${escapeHtml(it.name)}</span>
         </div>`;
-      }).join("") : `<div class="empty">Couldn't read categories from this file — the summary above still applies.</div>`);
+      }).join("")}</div>
+      ${page.seen && page.items.length < page.total ? `<p class="small muted" style="margin:6px 0 0">${page.total-page.items.length} more item${page.total-page.items.length===1?" wasn't":"s weren't"} captured. Open this page in game again to refresh it.</p>` : ""}`;
+
+  el.innerHTML = `${banner}${stats}${almost}${tabs}
+    <div class="cl-body">
+      <div class="panel cl-side">
+        <input type="text" id="clogQ" placeholder="Search pages or items" value="${escapeHtml(v.q)}" autocomplete="off" spellcheck="false">
+        <div class="seg cl-sort">${CLOG_SORTS.map(([id,l])=>`<button class="${v.sort===id?"on":""}" data-clsort="${id}">${l}</button>`).join("")}</div>
+        <div class="cl-list">${list}</div>
+      </div>
+      <div class="panel cl-detail">${detail}</div>
+    </div>
+    <p class="cl-foot small muted">${d.source==="wiki" ? "Pages and items come from the OSRS Wiki. Your progress" : "Only pages you've opened in game appear here. Progress"} comes from the Character Export plugin, one page at a time as you open them in game.
+      <a href="#" id="clogPickFile2">Load collection_log.json</a></p>`;
+
+  const cc = $("#clogConnect"); if(cc) cc.onclick = ()=>openRuneLite();
+  $$("#clogView [data-cltab]").forEach(btn=>btn.onclick=()=>{ v.tab = btn.dataset.cltab; v.page = null; v.q = ""; renderClog(); });
+  $$("#clogView [data-clpage]").forEach(btn=>btn.onclick=()=>{ v.page = btn.dataset.clpage; renderClog(); });
+  $$("#clogView [data-clsort]").forEach(btn=>btn.onclick=()=>{ v.sort = btn.dataset.clsort; renderClog(); });
+  $$("#clogView [data-clgo]").forEach(btn=>btn.onclick=()=>{
+    const parts = btn.dataset.clgo.split("|");
+    v.tab = parts[0]; v.page = parts.slice(1).join("|"); v.q = ""; renderClog();
+  });
+  const qi = $("#clogQ");
+  qi.oninput = ()=>{
+    v.q = qi.value; v.page = null;
+    const pos = qi.selectionStart;
+    renderClog();
+    const again = $("#clogQ"); again.focus(); again.setSelectionRange(pos, pos);
+  };
+  $("#clogPickFile2").onclick = e=>{ e.preventDefault(); $("#clogFile").click(); };
 }
 
 function parseClog(json){
@@ -4829,16 +5099,27 @@ $("#clogFile").onchange = e=>{
   r.onload = ()=>{
     try{
       const json = JSON.parse(r.result);
-      state.clog = parseClog(json);
-      const ticked = tickDropsFromClog(json);
-      save(); renderClog(); renderSkills();
-      toast(ticked ? `Collection log imported ✓ — ticked ${ticked} boss drop${ticked>1?"s":""}`
-                   : "Collection log imported ✓");
-    }catch(err){ toast("Couldn't parse that JSON file", true); }
+      const isExport = json && json.tabs && typeof json.tabs==="object" &&
+        Object.values(json.tabs).some(t=>t && typeof t==="object" && Object.values(t).some(pg=>pg && Array.isArray(pg.items)));
+      if(isExport){
+        // Character Export's collection_log.json: show every page, and tick boss drops it proves (adds only)
+        const drops = ceClogNewDrops(json);
+        const got = dropsGot(); drops.forEach(n=>{ got[n] = true; });
+        state.charExport = Object.assign({}, state.charExport || {}, {clog: ceMergeClog((state.charExport || {}).clog, json.tabs), importedAt: new Date().toISOString()});
+        save(); renderClog(); renderSkills();
+        toast("Collection log loaded" + (drops.length ? `, ${drops.length} boss drop${drops.length===1?"":"s"} ticked` : ""));
+      } else {
+        // the older Collection Log plugin's export: totals only
+        state.clog = parseClog(json);
+        const ticked = tickDropsFromClog(json);
+        save(); renderClog(); renderSkills();
+        toast(ticked ? `Collection log imported, ${ticked} boss drop${ticked>1?"s":""} ticked` : "Collection log imported");
+      }
+    }catch(err){ toast("Couldn't read that file", true); }
+    e.target.value = "";
   };
   r.readAsText(f);
 };
-$("#clearClog").onclick = ()=>{ delete state.clog; save(); renderClog(); };
 
 $("#autoRefresh").onchange = e=>{
   state.autoRefresh = e.target.checked; save(); setupRefresh();
@@ -4913,77 +5194,31 @@ function applyTheme(){
 // requirements against live stats. No AI, no network — answers are computed, not guessed.
 // PROTOTYPE knowledge base: ~35 high-traffic entities. Skill reqs are encoded only where
 // certain; anything murkier lives in the note + wiki link. Full ~160-quest DB is a later pass.
-// ---- RuneLite local sync (WikiSync plugin's LOCAL WebSocket, ports 37767-37776) ----
-// This talks to the player's own RuneLite on their own machine — the wiki's servers are
-// never involved. The plugin only accepts connections from pages served on localhost,
-// so this works in the browser/dev setup but NOT from the installed exe or file:// yet.
-// Payload is DPS-shaped: name, worn equipment (item ids), combat skills, a few buffs.
+// ---- Worn gear, from the Character Export plugin's equipment.json ----
+// The import and the desktop sync tick Roadmap gear you're wearing (see ceApply). This used to
+// go through WikiSync's local connection, which only worked in the browser version.
 const RL_GEAR_IDS = { // equipped item id -> Roadmap gear-track item id
-  4151:"whip", 12954:"ddef", 9185:"rcb", 12924:"bp", 11905:"trident", 11907:"trident", 6570:"firecape", 4587:null /*d scim — not a roadmap item*/ };
+  4151:"whip", 12954:"ddef", 9185:"rcb", 12924:"bp", 11905:"trident", 11907:"trident", 6570:"firecape" };
 const RL_GRACEFUL_IDS = new Set([11850,11852,11854,11856,11858,11860]); // standard recolour only
-function rlOpen(port, timeoutMs){
-  return new Promise((res,rej)=>{
-    let ws; try{ ws = new WebSocket("ws://localhost:"+port); }catch(e){ rej(e); return; }
-    const t = setTimeout(()=>{ try{ws.close();}catch(e){} rej(new Error("timeout")); }, timeoutMs);
-    ws.onopen = ()=>{ clearTimeout(t); res(ws); };
-    ws.onerror = ()=>{ clearTimeout(t); rej(new Error("refused")); };
-  });
-}
-async function rlSync(){
-  if(location.protocol==="file:") return {err:"origin"};
-  let ws = null;
-  for(let p=37767; p<=37776 && !ws; p++){ try{ ws = await rlOpen(p, 1200); }catch(e){} }
-  if(!ws) return {err:"no-client"};
-  return new Promise(resolve=>{
-    let username = null, done = false;
-    const finish = r => { if(done) return; done = true; try{ws.close();}catch(e){} resolve(r); };
-    const timer = setTimeout(()=>finish({err:"timeout"}), 5000);
-    const request = ()=>{ try{ ws.send(JSON.stringify({_wsType:"GetPlayer", sequenceId:1})); }catch(e){} };
-    ws.onmessage = ev=>{
-      try{
-        const m = JSON.parse(ev.data);
-        if(m._wsType==="UsernameChanged"){ username = m.username || username; request(); }
-        else if(m._wsType==="GetPlayer"){ clearTimeout(timer); finish({payload:m.payload, username}); }
-      }catch(e){}
-    };
-    ws.onclose = ()=>finish({err:"closed"});
-    setTimeout(request, 500); // in case no UsernameChanged greets us
-  });
-}
-// Digest a sync result: remember it, auto-tick worn Roadmap gear, report what happened.
-function rlApply(r){
-  if(r.err) return r;
-  const loadout = (r.payload && (r.payload.loadouts && r.payload.loadouts[0] || r.payload)) || {};
-  const name = loadout.name || r.username || null;
-  const eq = loadout.equipment || {};
-  const ids = Object.values(eq).map(x=>x && (x.id!=null ? x.id : x)).filter(x=>typeof x==="number");
-  const ticked = [];
-  ids.forEach(id=>{
-    const road = RL_GEAR_IDS[id];
-    if(road && !state.roadmapDone[road]){
-      state.roadmapDone[road] = true;
-      const it = TRACKS.flatMap(t=>t.items).find(x=>x.id===road);
-      ticked.push(it ? it.text : road);
-    }
-  });
-  const gracefulOn = ids.filter(id=>RL_GRACEFUL_IDS.has(id)).length;
-  state.rl = { name, at: Date.now(), equippedIds: ids, buffs: loadout.buffs || {} };
-  if(ticked.length){ save(); renderStart(); } else save();
-  return { name, ticked, gracefulOn, count: ids.length };
-}
-const RL_FAIL_MSG = {
-  origin: `This copy of the app is running from a plain file, and RuneLite's plugin only talks to pages served from <b>localhost</b> — open the app via the local server and try again. (Teaching the installed app this trick is on the roadmap.)`,
-  "no-client": `I couldn't find RuneLite. Make sure it's running with the <b>WikiSync</b> plugin enabled (it's the one that opens the local connection), then say <i>sync</i> again.`,
-  timeout: `RuneLite answered the door but never brought the goods — try again, or log fully into the game first.`,
-  closed: `RuneLite hung up on me mid-conversation. Try again in a moment.`,
-};
+// "sync" in Ask Bud: pull the latest Character Export data, then say what you're wearing.
 async function budSync(){
-  const r = rlApply(await rlSync());
-  if(r.err) return RL_FAIL_MSG[r.err] || RL_FAIL_MSG["closed"];
-  let out = `Synced with RuneLite${r.name?` — hello, <b>${escapeHtml(r.name)}</b>`:""}. I can see ${r.count} equipped item${r.count===1?"":"s"}.`;
-  if(r.ticked.length) out += `<ul>${r.ticked.map(t=>`<li class="req-ok">✓ ${t} — you're wearing it, so it's now ticked on your Roadmap</li>`).join("")}</ul>`;
-  if(r.gracefulOn>=6) out += `<div style="margin-top:4px">Full Graceful, I see. If that was a recent grind, it deserves a 🏆 milestone on your Scroll.</div>`;
-  if(!r.ticked.length && r.gracefulOn<6) out += ` Nothing new to tick from what you're wearing — swap on anything you want me to record.`;
+  if(ceDesktop() && state.ceSync && state.ceSync.path){
+    if(state.ceSync.off) return `RuneLite syncing is paused. Turn it back on in Settings, under RuneLite data.`;
+    const r = await ceSyncNow({force:true});
+    if(r && r.err) return `I couldn't read your RuneLite folder: ${escapeHtml(r.err)}`;
+    if(r && r.waiting) return `Quest data is still loading. Say <i>sync</i> again in a moment.`;
+  }
+  const ex = state.charExport;
+  if(!ex) return ceDesktop()
+    ? `RuneLite isn't connected yet. Open Settings and choose <b>Connect RuneLite</b>.`
+    : `Import your RuneLite data first. Open Settings and choose <b>Import from RuneLite</b>.`;
+  const ids = (ex.equipment || []).map(i=>i && i.id).filter(x=>typeof x==="number");
+  const worn = TRACKS.flatMap(t=>t.items).filter(it=>ids.some(id=>RL_GEAR_IDS[id]===it.id));
+  const graceful = ids.filter(id=>RL_GRACEFUL_IDS.has(id)).length;
+  let out = `Synced with RuneLite${ex.account ? ` for <b>${escapeHtml(ex.account)}</b>` : ""}. `
+    + (ex.equipment ? `I can see ${ids.length} equipped item${ids.length===1?"":"s"}.` : `Your worn gear isn't in the export yet. Equip or remove something in game, then say <i>sync</i> again.`);
+  if(worn.length) out += `<ul>${worn.map(it=>`<li class="req-ok">✓ ${escapeHtml(it.text)}: you're wearing it, so it's ticked on your Roadmap</li>`).join("")}</ul>`;
+  if(graceful >= 6) out += `<div style="margin-top:4px">You're wearing full Graceful. If that was a recent grind, mark it as a milestone on your Scroll.</div>`;
   return out;
 }
 
@@ -8452,7 +8687,7 @@ function qpPlanHtml(target, db){
       <div class="qp-gap" data-qpgap="${s}" title="Click to see which quests reward ${nice(s)} XP">
         <span class="g-lvl">${g.need} ${nice(s)}</span>
         ${verdict}
-        ${g.boostable?`<span class="qp-tag boost">boostable</span>`:""}
+        ${g.boostable?`<span class="qp-tag boost" data-boost="${s}" data-need="${g.need}" ${live?`data-have="${g.have}"`:""}>boostable</span>`:""}
         ${(live&&covered)?`<span class="qp-tag free">covered by rewards</span>`:""}
         <span class="g-caret">▾</span>
       </div>
@@ -8468,7 +8703,7 @@ function qpPlanHtml(target, db){
     const reqs = Object.entries(q.reqs||{}).filter(([s])=>SKILL_ORDER.includes(s)).sort((a,b)=>b[1]-a[1]);
     const chips = reqs.map(([s,l])=>{
       const ok = lvlOf(s)>=l, boost = q.boostable && q.boostable[s];
-      return `<span class="qreq ${ok?"ok":"no"}" title="${nice(s)} ${l} — you're ${lvlOf(s)}${(!ok&&boost)?" (boostable)":""}"><img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">${l}${(!ok&&boost)?`<i class="bst">+</i>`:""}</span>`;
+      return `<span class="qreq ${ok?"ok":"no"}" ${(!ok&&boost)?`data-boost="${s}" data-need="${l}" data-have="${lvlOf(s)}"`:`title="${nice(s)} ${l} — you're ${lvlOf(s)}"`}><img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">${l}${(!ok&&boost)?`<i class="bst">+</i>`:""}</span>`;
     }).join("");
     const lockedQ = (q.prereqs||[]).filter(p=>!questDone(p));
     return `<div class="qp-step ${st}">
@@ -8609,7 +8844,7 @@ function qpReqRow(n, db, st){
   const chips = reqs.slice(0,5).map(([s,l])=>{
     const have = lvlOf(s), ok = have>=l;
     const boost = q.boostable && q.boostable[s];
-    return `<span class="qreq ${ok?"ok":"no"}" title="${nice(s)} ${l}${ok?` — you have ${have}`:` — you're ${have}${boost?", boostable":""}`}">`
+    return `<span class="qreq ${ok?"ok":"no"}" ${(!ok&&boost)?`data-boost="${s}" data-need="${l}" data-have="${have}"`:`title="${nice(s)} ${l}${ok?` — you have ${have}`:` — you're ${have}`}"`}>`
       + `<img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">${l}${(!ok&&boost)?`<i class="bst">+</i>`:""}</span>`;
   }).join("");
   const more = reqs.length>5 ? `<span class="qreq more">+${reqs.length-5}</span>` : "";
@@ -8697,7 +8932,7 @@ function qpDetailHtml(n, db){
     return `<div class="qpd-row ${have==null?"":ok?"ok":"no"}">
       <img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">
       <span class="want">${l}</span> <span>${nice(s)}</span>
-      ${(have!=null&&!ok&&boost)?`<span class="qp-tag" title="A boost can cover this">boostable</span>`:""}
+      ${(have!=null&&!ok&&boost)?`<span class="qp-tag boost" data-boost="${s}" data-need="${l}" data-have="${have}">boostable</span>`:""}
       <span class="have">${have==null?"stats not loaded":"you: "+have}</span></div>`;
   }).join("");
   const myQp = qpMyQp(db), qpOk = myQp >= (q.qp||0);
@@ -9377,7 +9612,7 @@ function renderStorage(){
     + (r.pct>70?`<br><span style="color:var(--gold)">Songs for the rhythm game are stored separately and don't count toward this.</span>`:"");
 }
 function openSettings(){
-  renderFontSeg(); renderNumSeg(); renderUpdSetting(); renderBackups(); renderStorage();
+  renderFontSeg(); renderNumSeg(); renderUpdSetting(); renderBackups(); renderStorage(); renderCeSetting();
   renderDevSection(); devWireSettings();
   const bb = $("#bugBtn");
   if(bb){
@@ -9570,10 +9805,6 @@ $("#updCheckBtn").onclick = async ()=>{
   renderUpdateBanner(); renderUpdSetting();
 };
 $("#settingsBtn").onclick = openSettings;
-$("#rlSyncBtn").onclick = async ()=>{
-  $("#rlSyncMsg").innerHTML = "Connecting to RuneLite…";
-  $("#rlSyncMsg").innerHTML = await budSync();
-};
 $("#openPatch").onclick = ()=>{ closeSettings(); switchView("patch"); };
 $("#settingsX").onclick = closeSettings;
 $("#settingsBack").onclick = closeSettings;
@@ -10493,8 +10724,19 @@ function renderPrestige(){
 }
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.6";
+const APP_VERSION = "1.7";
 const PATCH_NOTES = [
+  {v:"1.7", date:"September 13, 2026", title:"RuneLite data, kept in sync", notes:[
+    "The desktop app keeps your RuneLite data in sync on its own. Point it at the Character Export folder once in Setup, and while the app is open it picks up newly finished quests, boss drops and diaries within a few seconds of the plugin saving them.",
+    "Setup finds the plugin's folder by itself when it's in the usual place. If it isn't, paste the path.",
+    "Settings has a new RuneLite data section. It says plainly when you're connected, which folder and account it syncs from and when it last updated, with Sync now, Pause and Change folder. Changing the folder opens its own RuneLite window instead of walking through Setup again.",
+    "Automatic syncing only ever adds ticks. If the game disagrees with a quest you ticked yourself, it leaves that quest alone and shows it in Settings so you can review it in Setup.",
+    "The Collection log page is rebuilt around completing logs. It lists every page in the game, read from the OSRS Wiki, and shows how many logs you've completed, how many items you've collected, and the pages you're closest to finishing.",
+    "Each tab shows logs completed and items collected. Pages you haven't opened in game yet are marked as not opened rather than counted as empty, and open them in game with the Character Export plugin running to load your progress.",
+    "Pick a page to see every item on it with its in-game icon, lit up once you have it. Sort pages by closest to done, most collected or A to Z, and search across pages and item names.",
+    "In the quest planner, hover over a boostable requirement to see what can boost that skill and by how much, from the OSRS Wiki. Boosts big enough to cover what you're short are highlighted.",
+    "Removed the old Sync from RuneLite button in Settings. It needed the WikiSync plugin and only worked in the browser version. Worn gear on the Roadmap now ticks from the Character Export plugin instead, and saying sync to Ask Bud pulls your latest RuneLite data.",
+  ]},
   {v:"1.6", date:"September 13, 2026", title:"Setup and RuneLite import", notes:[
     "Added Setup, a short walkthrough on first launch: your character, your RuneLite data, your priorities, and how the app looks. Every step is optional.",
     "Run it again any time from Settings. It starts from your current data and only saves what you change. If a step would remove anything, it asks you to back up first and to confirm twice.",
@@ -11005,27 +11247,34 @@ const SU_STEPS = [
 ];
 let su = null;
 function suDid(k, t){ if(su) su.did[k] = t; }
-function openSetup(){
-  su = {step:0, shown:-1, rerun:!!state.setupDone, groups:null, account:null, preview:null, choices:{}, applied:false, did:{}, nameDraft:null};
+function openSetup(startStep, opts){
+  su = {step:(typeof startStep==="number" ? startStep : 0), single:!!(opts && opts.single), fromSettings:!!(opts && opts.fromSettings), shown:-1, rerun:!!state.setupDone, groups:null, account:null, preview:null, choices:{}, applied:false, did:{}, nameDraft:null};
   closeSettings();
   $("#suBack").classList.remove("hidden");
   renderSetup();
 }
+// Settings and the Collection log open just the RuneLite step, in the same window, instead
+// of walking through all of Setup again.
+function openRuneLite(fromSettings){
+  openSetup(SU_STEPS.findIndex(x=>x.id==="rl"), {single:true, fromSettings:!!fromSettings});
+}
 function closeSetup(){
   if(!su) return;
-  if(!state.setupDone){ state.setupDone = true; save(); }
+  const back = su.single && su.fromSettings;
+  if(!state.setupDone && !su.single){ state.setupDone = true; save(); }
   $("#suBack").classList.add("hidden");
   $("#suGuard").classList.add("hidden");
   su = null;
+  if(back) openSettings();
 }
 function renderSetup(){
   if(!su) return;
   const st = SU_STEPS[su.step];
-  $("#suDots").innerHTML = SU_STEPS.map((x,i)=>
+  $("#suDots").innerHTML = su.single ? `<div class="su-single-h">RuneLite data</div>` : SU_STEPS.map((x,i)=>
     `<button class="su-dot ${i===su.step?"on":""} ${i<su.step?"past":""}" data-sustep="${i}" title="${x.label}"><span>${x.label}</span></button>`).join("");
   $("#suBody").innerHTML = SU_VIEW[st.id]();
-  $("#suPrev").classList.toggle("hidden", su.step===0);
-  $("#suNext").textContent = su.step===SU_STEPS.length-1 ? "Finish" : su.step===0 ? "Get started" : "Next";
+  $("#suPrev").classList.toggle("hidden", su.step===0 || su.single);
+  $("#suNext").textContent = su.single ? "Done" : su.step===SU_STEPS.length-1 ? "Finish" : su.step===0 ? "Get started" : "Next";
   $$("#suDots [data-sustep]").forEach(b=>b.onclick=()=>{ su.step = +b.dataset.sustep; renderSetup(); });
   if(SU_WIRE[st.id]) SU_WIRE[st.id]();
   if(su.shown !== su.step){ $("#suBody").scrollTop = 0; su.shown = su.step; }
@@ -11092,12 +11341,17 @@ async function suReadFiles(list){
     const to = nm && !groups[nm] ? nm : "Selected files";
     groups[to] = groups._; delete groups._;
   }
+  suUseGroups(groups);
+}
+// Shared by the browser's folder picker and the desktop app's folder reader.
+function suUseGroups(groups){
   const names = Object.keys(groups).filter(k=>groups[k].quests || groups[k].collection_log || groups[k].diaries || groups[k].character);
-  if(!names.length){ toast("No Character Export files in that selection", true); return; }
+  if(!names.length){ toast("No Character Export files in that folder", true); return false; }
   su.groups = {}; names.forEach(n=>su.groups[n] = groups[n]);
   const want = profKey(profName() || state.username);
   su.account = names.find(n=>profKey(n)===want) || names.slice().sort((a,b)=>su.groups[b]._ts - su.groups[a]._ts)[0];
   suSelectAccount(su.account);
+  return true;
 }
 function suSelectAccount(name){
   su.account = name; su.choices = {}; su.applied = false;
@@ -11108,7 +11362,10 @@ function suSelectAccount(name){
 }
 // Works out what an import WOULD do, without touching anything.
 function suBuildPreview(){
-  const acc = su.groups && su.groups[su.account]; if(!acc) return null;
+  return ceBuildPreview(su.groups && su.groups[su.account]);
+}
+function ceBuildPreview(acc){
+  if(!acc) return null;
   const db = questDB(), pv = {};
   if(acc.quests && Array.isArray(acc.quests.quests)){
     if(!db) pv.quests = {waiting:true};
@@ -11167,7 +11424,8 @@ function suPreviewHtml(){
   if(!sec.length) return `<div class="su-note warn">None of the files in that folder could be read.</div>`;
   const busy = pv.quests && pv.quests.waiting;
   return `<div class="su-preview">${sec.join("")}</div>
-    <div class="su-note">${su.applied ? "Imported. Choose the folder again whenever you want to pull in newer data." : "Nothing has changed yet. Importing only adds ticks, apart from any conflicts you choose to untick."}</div>
+    <div class="su-note">${su.applied ? (ceDesktop() && state.ceSync && !state.ceSync.off ? "Imported. The app keeps this in sync while it's open, so there's nothing else to do." : "Imported. Choose the folder again whenever you want to pull in newer data.") : "Nothing has changed yet. Importing only adds ticks, apart from any conflicts you choose to untick."}</div>
+    ${ceDesktop() && !su.applied ? `<label class="chk small su-chk" style="justify-content:center"><input type="checkbox" id="suKeep" ${su.keepSync!==false?"checked":""}> Keep it in sync automatically while the app is open</label>` : ""}
     <div class="su-row center"><button class="primary" id="suApply" ${su.applied||busy?"disabled":""}>${su.applied?"Imported ✓":"Import"}</button></div>`;
 }
 async function suApplyImport(){
@@ -11180,30 +11438,15 @@ async function suApplyImport(){
     if(!await suGuard(`This unticks ${unticks.length} quest${unticks.length===1?"":"s"} you had marked as done: ${names}.`)) return;
   }
   try{ await snapshotNow("before RuneLite import"); }catch(e){}
-  const out = [];
-  if(q){
-    state.questsDone = state.questsDone || {};
-    q.add.forEach(n=>{ state.questsDone[n] = true; });
-    unticks.forEach(n=>{ delete state.questsDone[n]; });
-    state.questsInProgress = q.prog;
-    out.push(`${q.add.length} quest${q.add.length===1?"":"s"} ticked` + (unticks.length ? `, ${unticks.length} unticked` : ""));
+  const out = ceApply(pv, acc, su.account, unticks).out;
+  if(ceDesktop() && su.desktopPath){
+    if(su.keepSync !== false){
+      let stamp = 0; try{ stamp = await ceInvoke("ce_stamp", {path:su.desktopPath}); }catch(e){}
+      state.ceSync = {path:su.desktopPath, account:su.account, stamp, lastSync:Date.now(), off:false, err:null,
+        conflicts: q ? q.conflicts.filter(c=>su.choices[c.n]!=="untick").map(c=>c.n) : []};
+      ceStartWatch();
+    } else if(state.ceSync) state.ceSync.off = true;
   }
-  if(pv.clog && pv.clog.newDrops.length){
-    const got = dropsGot();
-    pv.clog.newDrops.forEach(n=>{ got[n] = true; });
-    out.push(`${pv.clog.newDrops.length} boss drop${pv.clog.newDrops.length===1?"":"s"} ticked`);
-  }
-  if(pv.diaries && pv.diaries.ticks.length){
-    pv.diaries.ticks.forEach(t=>{
-      if(t.store==="roadmap") state.roadmapDone[t.id] = true;
-      else { state.prestige = state.prestige || {}; state.prestige[t.id] = true; }
-    });
-    out.push(`${pv.diaries.ticks.length} diary tick${pv.diaries.ticks.length===1?"":"s"}`);
-  }
-  state.charExport = {account: su.account, importedAt: new Date().toISOString(),
-    diaries: acc.diaries ? acc.diaries.diaries : undefined,
-    clog: acc.collection_log ? acc.collection_log.tabs : undefined,
-    ca: acc.combat_achievements ? acc.combat_achievements.summary : undefined};
   save();
   su.applied = true;
   const msg = out.length ? out.join(", ") : "nothing new to tick";
@@ -11244,6 +11487,162 @@ function suGuard(text){
   });
 }
 
+// ---- RuneLite folder sync (desktop app only) ----
+// The page can't read files by path, but the desktop app around it can. It exposes three
+// commands (see app/src-tauri/src/lib.rs) that only read the Character Export plugin's own
+// files. Once a folder is set, the app checks it every 15 seconds and imports what changed.
+// Automatic syncing only ever ADDS: it never unticks. Conflicts wait in Settings for a person.
+function ceDesktop(){ return !!(window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke); }
+function ceInvoke(cmd, args){ return window.__TAURI__.core.invoke(cmd, args || {}); }
+function ceGroup(files){
+  const groups = {};
+  (files||[]).forEach(f=>{
+    let json; try{ json = JSON.parse(f.text); }catch(e){ return; }
+    const g = groups[f.account] || (groups[f.account] = {_ts:0});
+    g[f.name] = json;
+    g._ts = Math.max(g._ts, f.modified||0);
+  });
+  return groups;
+}
+// Writes an import. Only adds, apart from `unticks`, which the caller has already confirmed
+// through suGuard. Returns what changed.
+function ceApply(pv, acc, account, unticks){
+  unticks = unticks || [];
+  const out = [];
+  const q = pv.quests && !pv.quests.waiting ? pv.quests : null;
+  if(q){
+    state.questsDone = state.questsDone || {};
+    q.add.forEach(n=>{ state.questsDone[n] = true; });
+    unticks.forEach(n=>{ delete state.questsDone[n]; });
+    const before = JSON.stringify(state.questsInProgress || {});
+    state.questsInProgress = q.prog;
+    if(q.add.length || unticks.length) out.push(`${q.add.length} quest${q.add.length===1?"":"s"} ticked` + (unticks.length ? `, ${unticks.length} unticked` : ""));
+    else if(before !== JSON.stringify(q.prog)) out.push("quests in progress updated");
+  }
+  if(pv.clog && pv.clog.newDrops.length){
+    const got = dropsGot();
+    pv.clog.newDrops.forEach(n=>{ got[n] = true; });
+    out.push(`${pv.clog.newDrops.length} boss drop${pv.clog.newDrops.length===1?"":"s"} ticked`);
+  }
+  if(pv.diaries && pv.diaries.ticks.length){
+    pv.diaries.ticks.forEach(t=>{
+      if(t.store==="roadmap") state.roadmapDone[t.id] = true;
+      else { state.prestige = state.prestige || {}; state.prestige[t.id] = true; }
+    });
+    out.push(`${pv.diaries.ticks.length} diary tick${pv.diaries.ticks.length===1?"":"s"}`);
+  }
+  if(acc.equipment && Array.isArray(acc.equipment.items)){
+    const ticked = acc.equipment.items.map(i=>i && RL_GEAR_IDS[i.id]).filter((road,k,arr)=>road && !state.roadmapDone[road] && arr.indexOf(road)===k);
+    ticked.forEach(road=>{ state.roadmapDone[road] = true; });
+    if(ticked.length) out.push(`${ticked.length} Roadmap gear item${ticked.length===1?"":"s"} ticked`);
+  }
+  // Keep what's already saved for this account when a file is missing, and merge the collection
+  // log page by page (see ceMergeClog) rather than replacing it.
+  const prev = state.charExport || {};
+  const same = !prev.account || prev.account === account;
+  state.charExport = {account, importedAt: new Date().toISOString(),
+    diaries: acc.diaries ? acc.diaries.diaries : (same ? prev.diaries : undefined),
+    clog: acc.collection_log ? ceMergeClog(same ? prev.clog : null, acc.collection_log.tabs) : (same ? prev.clog : undefined),
+    ca: acc.combat_achievements ? acc.combat_achievements.summary : (same ? prev.ca : undefined),
+    equipment: acc.equipment && Array.isArray(acc.equipment.items) ? acc.equipment.items : (same ? prev.equipment : undefined)};
+  return {out, changed: out.length > 0};
+}
+// The plugin starts a fresh collection_log.json each session holding only the pages opened in
+// that session. Replacing the saved log with it would throw away every older page, so merge:
+// a page in the new file replaces the saved copy unless the saved one was captured more
+// recently, and pages the new file doesn't mention are kept.
+function ceMergeClog(oldTabs, newTabs){
+  const out = {};
+  Object.entries(oldTabs || {}).forEach(([t, pages])=>{ out[t] = Object.assign({}, pages || {}); });
+  Object.entries(newTabs || {}).forEach(([t, pages])=>{
+    const tab = out[t] || (out[t] = {});
+    Object.entries(pages || {}).forEach(([name, pg])=>{
+      const had = tab[name];
+      const then = had ? (Date.parse(had.last_scraped) || 0) : -1, now = Date.parse(pg && pg.last_scraped) || 0;
+      if(!had || now >= then) tab[name] = pg;
+    });
+  });
+  return out;
+}
+let ceTimer = null, ceBusy = false;
+async function ceSyncNow(opts){
+  opts = opts || {};
+  const cfg = state.ceSync;
+  if(!ceDesktop() || !cfg || !cfg.path || cfg.off || su || ceBusy) return null;
+  ceBusy = true;
+  try{
+    const stamp = await ceInvoke("ce_stamp", {path:cfg.path});
+    if(!opts.force && stamp && stamp === cfg.stamp) return {changed:false};
+    const groups = ceGroup(await ceInvoke("ce_read", {path:cfg.path}));
+    const names = Object.keys(groups);
+    const acc = groups[cfg.account] || (names.length===1 ? groups[names[0]] : null);
+    if(!acc){ cfg.err = `No files for ${cfg.account} in that folder.`; save(); return {changed:false}; }
+    const pv = ceBuildPreview(acc);
+    if(pv.quests && pv.quests.waiting) return {changed:false, waiting:true};   // quest data still loading; next check retries
+    const res = ceApply(pv, acc, cfg.account, []);
+    cfg.stamp = stamp; cfg.err = null;
+    cfg.conflicts = pv.quests ? pv.quests.conflicts.map(c=>c.n) : [];
+    if(res.changed) cfg.lastSync = Date.now();
+    save();
+    if(res.changed){
+      renderAll(); renderQuestPlanner();
+      toast("RuneLite sync: " + res.out.join(", "));
+    }
+    return res;
+  }catch(e){
+    cfg.err = String((e && e.message) || e); save();
+    return {changed:false, err:cfg.err};
+  }finally{ ceBusy = false; }
+}
+function ceStartWatch(){
+  if(!ceDesktop() || ceTimer) return;
+  ceTimer = setInterval(()=>{ ceSyncNow(); }, 15000);
+}
+// One line that says plainly whether RuneLite is hooked up: connected and syncing in the desktop
+// app, or when the data was last imported in the browser version.
+function ceStatusHtml(){
+  const c = state.ceSync, ex = state.charExport;
+  const when = ts => { const d = new Date(ts); return `${fmtDay(isoDate(d))} at ${d.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}`; };
+  if(ceDesktop() && c && c.path){
+    return `<div class="ce-ok ${c.off ? "paused" : ""}"><span class="ce-badge">${c.off ? "Paused" : "✓ Connected"}</span>
+      ${c.off ? "Not syncing" : "Syncing"} <b>${escapeHtml(c.account || "")}</b> from <span class="muted">${escapeHtml(c.path)}</span>.
+      ${c.lastSync ? `Last update ${when(c.lastSync)}.` : ""}${c.err ? `<br><span style="color:var(--red)">${escapeHtml(c.err)}</span>` : ""}</div>`;
+  }
+  if(ex && ex.importedAt){
+    return `<div class="ce-ok"><span class="ce-badge">✓ Imported</span> ${ex.account ? `<b>${escapeHtml(ex.account)}</b>` : "Your data"} on ${when(Date.parse(ex.importedAt))}.
+      ${ceDesktop() ? "" : `<br><span class="muted">This browser version can't watch the folder, so import again for newer data. The desktop app keeps it in sync on its own.</span>`}</div>`;
+  }
+  return "";
+}
+function renderCeSetting(){
+  const el = $("#ceSetting"); if(!el) return;
+  const c = state.ceSync, connected = !!(ceDesktop() && c && c.path);
+  const n = connected ? (c.conflicts || []).length : 0;
+  const label = connected ? (n ? "Review conflicts" : "Change folder")
+    : ceDesktop() ? "Connect RuneLite" : state.charExport ? "Import again" : "Import from RuneLite";
+  el.innerHTML = `${ceStatusHtml()}
+    ${n ? `<div class="small" style="color:var(--gold); margin:0 0 8px">${n} quest${n===1?" is":"s are"} ticked here but not finished in game.</div>` : ""}
+    <div class="row" style="gap:6px; flex-wrap:wrap">
+      ${connected ? `<button class="ghost small" id="ceNow">Sync now</button><button class="ghost small" id="cePause">${c.off ? "Resume" : "Pause"}</button>` : ""}
+      <button class="ghost small" id="ceOpen">${label}</button>
+    </div>
+    ${!connected && !state.charExport ? `<p class="small muted" style="margin:6px 0 0">${ceDesktop()
+      ? "Point the app at the Character Export plugin's folder and it keeps your quests, collection log and diaries up to date while you play."
+      : "Reads the Character Export plugin's files: quests, collection log and diaries. In the desktop app it stays in sync on its own."}</p>` : ""}`;
+  const o = $("#ceOpen"); if(o) o.onclick = ()=>openRuneLite(true);
+  const now = $("#ceNow");
+  if(now) now.onclick = async ()=>{
+    now.disabled = true; now.textContent = "Syncing…";
+    const r = await ceSyncNow({force:true});
+    if(r && r.waiting) toast("Quest data is still loading. Try again in a moment.");
+    else if(r && r.err) toast(r.err, true);
+    else if(!r || !r.changed) toast("Already up to date");
+    renderCeSetting();
+  };
+  const pz = $("#cePause");
+  if(pz) pz.onclick = ()=>{ c.off = !c.off; save(); if(!c.off){ ceStartWatch(); ceSyncNow({force:true}); } renderCeSetting(); };
+}
+
 const SU_PRIO_IDEAS = [["Quest cape",""], ["Train Slayer","slayer"], ["Base 70s",""], ["Fire cape",""], ["Barrows gloves",""], ["Train Farming","farming"]];
 const SU_VIEW = {
   welcome: ()=>`
@@ -11272,12 +11671,17 @@ const SU_VIEW = {
       body = `<ol class="su-steps">
           <li>In RuneLite, open the Plugin Hub, search for <b>Character Export</b> and install it.</li>
           <li>Log in to the game. The plugin saves your quests, collection log, diaries and more as files, and keeps them up to date while you play. Open your collection log pages in game to include them.</li>
-          <li>Choose its folder below. It's usually <code>C:\\Users\\<i>you</i>\\.runelite\\character-exporter</code>, and you can paste that path into the folder window.</li>
+          ${ceDesktop()
+            ? `<li>Point the app at its folder. It's usually <code>C:\\Users\\<i>you</i>\\.runelite\\character-exporter</code>. The app keeps reading it while it's open, so your data stays up to date as you play.</li>`
+            : `<li>Choose its folder below. It's usually <code>C:\\Users\\<i>you</i>\\.runelite\\character-exporter</code>, and you can paste that path into the folder window.</li>`}
         </ol>
-        <div class="su-row center">
+        ${ceDesktop()
+          ? `<div class="su-row"><input type="text" id="suPath" value="${escapeHtml(su.desktopPath || (state.ceSync && state.ceSync.path) || "")}" placeholder="C:\\Users\\you\\.runelite\\character-exporter" spellcheck="false" autocomplete="off"><button class="primary" id="suUsePath">Use this folder</button></div>
+             <div class="su-note" id="suPathNote"></div>`
+          : `<div class="su-row center">
           <button class="primary" id="suPickDir">Choose folder</button>
           <button class="ghost small" id="suPickFiles">Or pick the files</button>
-        </div>`;
+        </div>`}`;
     } else {
       const names = Object.keys(g), acc = g[su.account] || {};
       const file = (k,label)=>`<span class="su-file ${acc[k]?"ok":""}">${acc[k]?"✓":"–"} ${label}</span>`;
@@ -11289,6 +11693,7 @@ const SU_VIEW = {
     }
     return `<h3 class="su-h">Connect RuneLite <span class="su-rec">Optional, highly recommended</span></h3>
       <p class="su-p">The hiscores can't see your quests, collection log or diaries. The Character Export plugin can, so importing its files fills all of that in for you.</p>
+      ${su.groups ? "" : ceStatusHtml()}
       ${body}
       <input type="file" id="suDir" class="hidden" webkitdirectory multiple>
       <input type="file" id="suFiles" class="hidden" accept=".json,application/json" multiple>`;
@@ -11359,7 +11764,10 @@ const SU_WIRE = {
   },
   rl: ()=>{
     const pd = $("#suPickDir"), pf = $("#suPickFiles");
-    if(pd) pd.onclick = ()=>$("#suDir").click();
+    if(pd) pd.onclick = ()=>{
+      if(ceDesktop() && su.groups){ su.groups = null; su.preview = null; su.applied = false; renderSetup(); }
+      else $("#suDir").click();
+    };
     if(pf) pf.onclick = ()=>$("#suFiles").click();
     const take = e=>{ const fl = [...e.target.files]; e.target.value = ""; suReadFiles(fl); };
     $("#suDir").onchange = take;
@@ -11371,6 +11779,31 @@ const SU_WIRE = {
       ((su.preview.quests||{}).conflicts||[]).forEach(c=>{ su.choices[c.n] = b.dataset.suall; });
       renderSetup();
     });
+    const up = $("#suUsePath");
+    if(up){
+      const inp = $("#suPath"), note = $("#suPathNote");
+      const use = async ()=>{
+        const path = inp.value.trim().replace(/^"(.*)"$/, "$1");
+        if(!path){ note.textContent = "Paste the folder path first."; return; }
+        note.textContent = "Reading…";
+        try{
+          const files = await ceInvoke("ce_read", {path});
+          su.desktopPath = path;
+          if(!suUseGroups(ceGroup(files))) note.textContent = "No Character Export files in that folder.";
+        }catch(e){ note.textContent = String((e && e.message) || e); }
+      };
+      up.onclick = use;
+      inp.onkeydown = e=>{ if(e.key==="Enter") use(); };
+      if(!inp.value){
+        ceInvoke("ce_default_dir").then(dir=>{
+          const box = $("#suPath"), nt = $("#suPathNote");
+          if(!su || !box) return;
+          if(dir){ box.value = dir; nt.textContent = "Found it in the usual place."; }
+          else nt.textContent = "It isn't in the usual place. Paste the folder path, or install the plugin and log in first.";
+        }).catch(()=>{});
+      }
+    }
+    const ks = $("#suKeep"); if(ks) ks.onchange = e=>{ su.keepSync = e.target.checked; };
     const rc = $("#suRecheck"); if(rc) rc.onclick = ()=>{ su.preview = suBuildPreview(); renderSetup(); };
     const ap = $("#suApply"); if(ap) ap.onclick = suApplyImport;
   },
@@ -11425,12 +11858,111 @@ $("#suX").onclick = closeSetup;
 $("#suPrev").onclick = ()=>{ if(su && su.step>0){ su.step--; renderSetup(); } };
 $("#suNext").onclick = ()=>{
   if(!su) return;
+  if(su.single){ closeSetup(); return; }
   if(su.step >= SU_STEPS.length-1){ const first = !su.rerun; closeSetup(); if(first) switchView("home"); return; }
   su.step++; renderSetup();
 };
 addEventListener("keydown", e=>{
   if(su && e.key==="Escape" && $("#suGuard").classList.contains("hidden")){ e.preventDefault(); e.stopImmediatePropagation(); closeSetup(); }
 }, true);
+
+// ---- Boost tooltip (quest planner) ----
+// Hover any "boostable" marker to see what can boost that skill. The list comes from the wiki's
+// "Temporary skill boost/<Skill>" pages, fetched in one request and cached two weeks.
+const BOOSTDB_VERSION = 1;
+let boostDbBusy = false;
+function boostDB(){ const d = state.boostDB; return (d && d.v===BOOSTDB_VERSION && d.skills) ? d : null; }
+function boostWikiText(x){
+  return String(x||"")
+    .replace(/\{\{plinkt?\|([^|}]+)[^}]*\}\}/g, "$1")
+    .replace(/\[\[File:[^\]]*\]\]/g, "")
+    .replace(/\[\[(?:[^|\]]*\|)?([^\]]+)\]\]/g, "$1")
+    .replace(/\{\{[^}]*\}\}/g, "")
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/'{2,3}/g, "")
+    .replace(/\s+/g, " ").trim();
+}
+function boostParse(wt, skillName){
+  const a = wt.indexOf("{|"), b = wt.lastIndexOf("|}");
+  if(a < 0 || b < 0) return [];
+  const out = [];
+  wt.slice(a, b).split(/\n\|-[^\n]*\n/).slice(1).forEach(row=>{
+    const cells = row.split(/\n\|/).map(c=>c.replace(/^\|/, "").trim());
+    if(cells.length < 3) return;
+    const pic = /^\[\[File:/.test(cells[0]);
+    const name = boostWikiText(pic ? cells[1] : cells[0]);
+    const lvl = pic ? cells[2] : cells[1], vis = pic ? cells[3] : cells[2];
+    const nums = (String(lvl).match(/\d+/g) || []).map(Number);
+    if(!name || !nums.length) return;
+    if(name.toLowerCase() === (skillName + " cape").toLowerCase()) return;   // needs a 99 already
+    const txt = boostWikiText(lvl);
+    out.push({name, lvl: /^\d/.test(txt) ? "+" + txt : txt, max: Math.max(...nums), hidden: /invisible/i.test(vis || "")});
+  });
+  // Fixed, visible boosts first (strongest first), then random ones like spicy stew, then
+  // invisible boosts, which don't raise the level a quest checks.
+  const rank = x => x.hidden ? 2 : /±/.test(x.lvl) ? 1 : 0;
+  return out.sort((x,y)=> rank(x) - rank(y) || y.max - x.max || x.name.localeCompare(y.name));
+}
+async function boostDbEnsure(){
+  const d = boostDB();
+  if(boostDbBusy || (d && Date.now()-d.ts < 14*86400e3)) return;
+  boostDbBusy = true;
+  try{
+    const wikiName = k => k==="runecrafting" ? "Runecraft" : nice(k);
+    const titles = SKILL_ORDER.map(k=>"Temporary skill boost/" + wikiName(k));
+    const r = await fetch(WIKI_API + "?origin=*&format=json&formatversion=2&action=query&prop=revisions&rvprop=content&rvslots=main&titles=" + encodeURIComponent(titles.join("|")));
+    const pages = ((await r.json()).query || {}).pages || [];
+    const skills = {};
+    pages.forEach(pg=>{
+      if(!pg.revisions) return;
+      const skillName = pg.title.split("/").pop();
+      const key = SKILL_ORDER.find(k=>wikiName(k)===skillName);
+      if(key) skills[key] = boostParse(pg.revisions[0].slots.main.content, skillName);
+    });
+    if(Object.keys(skills).length > 10){ state.boostDB = {v:BOOSTDB_VERSION, ts:Date.now(), skills}; save(); }
+  }catch(e){ /* offline: the tooltip says it couldn't load */ }
+  boostDbBusy = false;
+}
+function boostTipHtml(skill, need, have){
+  // Ordered here as well as when parsed, so a list cached before a change still reads right:
+  // fixed visible boosts strongest first, then random ones, then invisible ones.
+  const rank = x => x.hidden ? 2 : /±/.test(x.lvl) ? 1 : 0;
+  const raw = boostDB() && boostDB().skills[skill];
+  const list = raw && raw.slice().sort((x,y)=> rank(x) - rank(y) || y.max - x.max || x.name.localeCompare(y.name));
+  const gap = (need && have!=null && have!=="") ? Number(need) - Number(have) : null;
+  const head = `<div class="bt-h">Boosting ${escapeHtml(nice(skill))}</div>`
+    + (gap > 0 ? `<div class="bt-need">You need +${gap}. It asks for ${escapeHtml(need)} and you're ${escapeHtml(have)}.</div>` : "");
+  if(!list) return head + `<div class="bt-more">${boostDbBusy ? "Loading boosts from the wiki…" : "Couldn't load boosts from the wiki."}</div>`;
+  if(!list.length) return head + `<div class="bt-more">The wiki lists no boosts for this skill.</div>`;
+  return head + list.slice(0,8).map(x=>
+      `<div class="bt-row ${gap>0 && !x.hidden && !/±/.test(x.lvl) && x.max>=gap ? "ok" : ""}"><span>${escapeHtml(x.name)}${x.hidden ? "<i>invisible</i>" : ""}</span><b>${escapeHtml(x.lvl)}</b></div>`).join("")
+    + (list.length > 8 ? `<div class="bt-more">and ${list.length-8} more on the wiki</div>` : "");
+}
+(function wireBoostTip(){
+  const tip = document.createElement("div");
+  tip.className = "bst-tip hidden"; tip.id = "bstTip"; tip.setAttribute("role", "tooltip");
+  document.body.appendChild(tip);
+  let cur = null;
+  const place = el=>{
+    const r = el.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+    const x = Math.min(window.innerWidth - tw - 8, Math.max(8, r.left + r.width/2 - tw/2));
+    let y = r.top - th - 8;
+    if(y < 8) y = r.bottom + 8;
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+  };
+  const fill = el=>{ tip.innerHTML = boostTipHtml(el.dataset.boost, el.dataset.need, el.dataset.have); place(el); };
+  const hide = ()=>{ cur = null; tip.classList.add("hidden"); };
+  document.addEventListener("mouseover", e=>{
+    const el = e.target.closest && e.target.closest("[data-boost]");
+    if(!el){ if(cur) hide(); return; }
+    if(el === cur) return;
+    cur = el;
+    tip.classList.remove("hidden");
+    fill(el);
+    if(!boostDB()) boostDbEnsure().then(()=>{ if(cur === el) fill(el); });
+  });
+  document.addEventListener("scroll", ()=>{ if(cur) hide(); }, true);
+})();
 
 // ============ INIT ============
 state.scroll = state.scroll || {}; state.scroll.range = "all"; state.scroll.homeRange = "all";
@@ -11459,11 +11991,15 @@ setTimeout(async ()=>{
   }catch(e){}
 }, 1500);
 setTimeout(qdbEnsure, 800);  // quest data self-loads; slight delay so character stats go first
+setTimeout(clogDbEnsure, 1600);  // the full collection log list, same idea
+setTimeout(boostDbEnsure, 2400); // what can boost each skill, for the quest planner's tooltip
 // Setup opens by itself only on a genuinely fresh install: no character, no other profiles,
 // nothing logged. Anyone with data reaches it from Settings instead.
 if(!state.setupDone && !state.username && !Object.keys(profStore().stash||{}).length && !(state.scroll.log||[]).length){
   setTimeout(openSetup, 400);
 }
+// Desktop app: pick up anything the plugin saved since last time, then keep watching.
+if(ceDesktop()) setTimeout(()=>{ ceSyncNow(); ceStartWatch(); }, 3000);
 </script>
 </body>
 </html>
