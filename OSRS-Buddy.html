@@ -172,6 +172,89 @@
   .qlm-foot{display:flex; justify-content:flex-end; gap:8px; margin-top:18px}
   @keyframes qlmFade{from{opacity:0} to{opacity:1}}
   @keyframes qlmIn{from{opacity:0; transform:translateY(10px) scale(.98)} to{opacity:1; transform:none}}
+  /* ---- Setup: first-run walkthrough, theme tokens only ---- */
+  .su-back{position:fixed; inset:0; z-index:90; display:flex; align-items:center; justify-content:center; padding:20px;
+    background:rgba(0,0,0,.55); backdrop-filter:blur(4px); animation:qlmFade .15s ease both}
+  .su-back.hidden{display:none}
+  .su{position:relative; width:min(760px,100%); height:min(720px, calc(100vh - 40px)); display:flex; flex-direction:column;
+    background:var(--panel); border:1px solid var(--gold-dim); border-radius:18px; box-shadow:0 24px 70px rgba(0,0,0,.6);
+    animation:qlmIn .22s cubic-bezier(.2,.8,.3,1) both; overflow:hidden}
+  .su-top{display:flex; align-items:center; gap:12px; padding:16px 14px 12px 22px; border-bottom:1px solid var(--border)}
+  .su-dots{display:flex; flex:1; gap:6px; min-width:0}
+  .su-dot{flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:6px; background:none; border:0;
+    box-shadow:none; padding:0; cursor:pointer; color:var(--muted)}
+  .su-dot::before{content:""; display:block; width:100%; height:3px; border-radius:3px; background:var(--border); transition:background .2s}
+  .su-dot.past::before{background:var(--gold-dim)}
+  .su-dot.on::before{background:var(--gold)}
+  .su-dot span{font-size:10.5px; letter-spacing:.07em; text-transform:uppercase; white-space:nowrap; overflow:hidden;
+    text-overflow:ellipsis; max-width:100%}
+  .su-dot.on span{color:var(--gold)}
+  .su-dot:hover span{color:var(--text)}
+  .su-body{flex:1; overflow:auto; padding:24px 30px 12px}
+  .su-foot{display:flex; justify-content:space-between; align-items:center; gap:8px; padding:12px 20px; border-top:1px solid var(--border)}
+  .su-foot #suNext{margin-left:auto; min-width:128px}
+  .su-hero{text-align:center; padding:30px 10px 6px}
+  .su-eyebrow{font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold-dim)}
+  .su-title{font-family:var(--font-display); font-size:32px; color:var(--gold); margin:8px 0 12px; font-weight:700}
+  .su-lead{color:var(--muted); font-size:14.5px; line-height:1.65; max-width:520px; margin:0 auto}
+  .su-safe{margin:24px auto 6px; max-width:560px; padding:13px 16px; border-radius:12px; background:var(--inset);
+    border:1px solid var(--border); font-size:13px; line-height:1.6; color:var(--muted)}
+  .su-safe b{color:var(--text)}
+  .su-h{font-family:var(--font-display); font-size:22px; color:var(--gold); margin:0 0 6px; display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .su-p{color:var(--muted); font-size:13.5px; line-height:1.6; margin:0 0 14px}
+  .su-rec, .su-opt{font-family:var(--font-body, inherit); font-size:10px; letter-spacing:.1em; text-transform:uppercase; padding:3px 9px;
+    border-radius:999px; border:1px solid var(--border); color:var(--muted); font-weight:600}
+  .su-rec{border-color:var(--gold-dim); color:var(--gold)}
+  .su-row{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:10px 0}
+  .su-row.center{justify-content:center}
+  .su-row input[type=text]{flex:1 1 220px; min-width:0}
+  .su-note{font-size:12.5px; color:var(--muted); margin:8px 0; line-height:1.55}
+  .su-note b{color:var(--text)}
+  .su-note.warn{color:var(--text); padding:10px 13px; border-radius:10px; background:var(--inset); border:1px solid var(--gold-dim)}
+  .su-steps{margin:0 0 14px; padding-left:20px; color:var(--text); font-size:13.5px; line-height:1.65}
+  .su-steps li{margin-bottom:7px}
+  .su-steps code{font-size:12px; background:var(--inset); border:1px solid var(--border); border-radius:6px; padding:1px 6px; word-break:break-all}
+  .su-files{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 12px}
+  .su-file{font-size:12px; padding:4px 11px; border-radius:999px; border:1px solid var(--border); color:var(--muted)}
+  .su-file.ok{color:var(--text); border-color:var(--gold-dim)}
+  .su-preview{display:grid; gap:10px; margin-top:6px}
+  .su-card{padding:12px 15px; border-radius:12px; background:var(--inset); border:1px solid var(--border)}
+  .su-card-h{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-dim); margin-bottom:7px}
+  .su-stats{display:flex; flex-wrap:wrap; gap:6px 18px; font-size:13px; color:var(--muted)}
+  .su-stats b{color:var(--text); font-size:15px}
+  .su-conf{margin-top:12px; padding-top:10px; border-top:1px solid var(--border)}
+  .su-conf-h{font-size:13px; color:var(--text); margin-bottom:8px; line-height:1.5}
+  .su-conf-all{display:flex; gap:6px; margin-bottom:6px; flex-wrap:wrap}
+  .su-conf-row{display:flex; align-items:center; gap:10px; padding:7px 0; border-top:1px dashed var(--border); font-size:13px}
+  .su-mini{margin:0; flex-wrap:nowrap}
+  .su-mini button{padding:3px 10px; font-size:11.5px}
+  .su-lbl{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:12px 0 6px; display:flex; align-items:center}
+  .su-chips{display:flex; flex-wrap:wrap; gap:6px}
+  .su-chip{font-size:12.5px; padding:4px 11px; border-radius:999px; background:var(--inset); border:1px solid var(--border); color:var(--text)}
+  .su-chip.btn{cursor:pointer; color:var(--muted); box-shadow:none}
+  .su-chip.btn:hover{color:var(--text); border-color:var(--gold-dim)}
+  .su-themes{display:grid; grid-template-columns:repeat(auto-fill, minmax(118px,1fr)); gap:8px}
+  .su-theme{display:flex; flex-direction:column; align-items:center; gap:7px; padding:13px 8px; border-radius:12px; background:var(--inset);
+    border:1px solid var(--border); color:var(--muted); cursor:pointer; box-shadow:none; transition:border-color .14s, color .14s}
+  .su-theme img{width:28px; height:28px; object-fit:contain}
+  .su-theme:hover{color:var(--text); border-color:var(--gold-dim)}
+  .su-theme.on{color:var(--gold); border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset}
+  .su-seg{justify-content:flex-start; margin:0 0 6px}
+  .su-chk{display:flex; align-items:center; gap:8px; margin-top:14px}
+  .su-did{margin:18px auto 0; max-width:520px; padding:0; list-style:none; display:grid; gap:6px}
+  .su-did li{padding:10px 14px; border-radius:10px; background:var(--inset); border:1px solid var(--border); font-size:13px}
+  .su-guard{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:20px;
+    background:rgba(0,0,0,.5); backdrop-filter:blur(2px); z-index:2}
+  .su-guard.hidden{display:none}
+  .su-g{width:min(470px,100%); padding:20px 22px; border-radius:14px; background:var(--panel); border:1px solid var(--red);
+    box-shadow:0 18px 50px rgba(0,0,0,.6); animation:qlmIn .18s cubic-bezier(.2,.8,.3,1) both}
+  .su-g-h{font-family:var(--font-display); font-size:21px; color:var(--gold); margin-bottom:8px}
+  .su-g p{font-size:13.5px; line-height:1.55; color:var(--muted); margin:0 0 10px}
+  .su-g-foot{display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; margin-top:14px}
+  button.su-danger{background:var(--red); color:#fff; border-color:var(--red)}
+  @media (max-width:560px){ .su-body{padding:18px 16px 8px} .su-dot span{display:none} .su-title{font-size:25px} }
+  .qp-tag.prog{color:var(--gold); border-color:var(--gold-dim)}
+  .qb-pill.prog{color:var(--gold)}
   /* recap panel under the heatmap: centred, the whole thing is the button, theme tokens only */
   .recap-cta{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
     gap:10px; cursor:pointer; padding:18px 20px; transition:border-color .15s, transform .15s, background .15s}
@@ -1377,7 +1460,7 @@
 
   .toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
     background:var(--btnlo); border:1px solid var(--gold-dim); color:var(--text);
-    padding:10px 18px; border-radius:8px; box-shadow:var(--shadow); z-index:50; max-width:90%}
+    padding:10px 18px; border-radius:8px; box-shadow:var(--shadow); z-index:120; max-width:90%}
   .toast.err{border-color:var(--red)}
   .empty{color:var(--muted); font-style:italic; padding:14px 4px}
   code{background:var(--inset); padding:1px 5px; border-radius:4px; font-size:13px; color:var(--code)}
@@ -1463,6 +1546,21 @@
       </div>
     </div>
   </div>
+  <!-- Setup: first-run walkthrough, also reachable from Settings -->
+  <div class="su-back hidden" id="suBack">
+    <div class="su" role="dialog" aria-modal="true" aria-label="Setup">
+      <div class="su-top">
+        <div class="su-dots" id="suDots"></div>
+        <button class="qlm-x" id="suX" type="button" aria-label="Close setup" title="Close setup">✕</button>
+      </div>
+      <div class="su-body" id="suBody"></div>
+      <div class="su-foot">
+        <button class="ghost" id="suPrev" type="button">Back</button>
+        <button class="primary" id="suNext" type="button">Next</button>
+      </div>
+      <div class="su-guard hidden" id="suGuard"></div>
+    </div>
+  </div>
   <div id="skillWrap" class="hidden">
     <div id="skillBack"></div>
     <div id="skillModal"></div>
@@ -1471,6 +1569,11 @@
     <div id="settingsBack"></div>
     <div id="settingsModal">
       <div class="dp-head"><span>⚙️ Settings</span><button class="dp-x" id="settingsX" aria-label="Close">✕</button></div>
+      <div class="set-sec">
+        <div class="set-h">Setup</div>
+        <button class="ghost small" id="setupAgainBtn">Run setup again</button>
+        <p class="small muted" style="margin:6px 0 0">Walks through setup with your current info filled in. Nothing is erased: only what you change is saved, and anything that would remove data asks you to back up and confirm twice first.</p>
+      </div>
       <div class="set-sec">
         <div class="set-h">Font</div>
         <div class="seg" id="fontSeg"></div>
@@ -2409,7 +2512,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView"];
+const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -7714,6 +7817,8 @@ function matchQuestName(text){
   return best;
 }
 function questDone(name){ return !!(state.questsDone && state.questsDone[name]); }
+// Started in game but not finished, as reported by the Character Export import.
+function questInProgress(name){ return !questDone(name) && !!(state.questsInProgress && state.questsInProgress[name]); }
 // Ticking a quest also ticks everything it requires, since you can't have done Jungle
 // Potion without Druidic Ritual. Returns the prerequisites that were newly ticked.
 // Unticking does not cascade: saying you haven't done a quest says nothing about
@@ -8170,7 +8275,7 @@ function qpBoardCard(n, db){
   if(!db.quests[n]) return {n, name:qpCrumbName(n), missing:"not in the quest data", status:"blocked", all:0, done:0};
   const plan = questPlan(n, db);
   const st = questStatus(n, db);
-  return {n, name:qpLabel(n), all:plan.all.length, done:plan.done.length, status:st,
+  return {n, name:qpLabel(n), all:plan.all.length, done:plan.done.length, status:st, prog:questInProgress(n),
           missing: st==="done" ? "" : questMissingText(n, db)};
 }
 // Your pinned quests as a row of tabs above the chart, so swapping between them
@@ -8207,7 +8312,7 @@ function qpBoardHtml(db, target){
   }
   const body = cards.map(c=>{
     const pct = c.all ? Math.round(c.done/c.all*100) : 0;
-    const pill = c.status==="done" ? `<span class="qb-pill done">✓ Done</span>`
+    const pill = (c.prog && c.status!=="done") ? `<span class="qb-pill prog">In progress</span>` : c.status==="done" ? `<span class="qb-pill done">✓ Done</span>`
                : c.status==="ready" ? `<span class="qb-pill ready">Ready now</span>`
                : `<span class="qb-pill blocked">Blocked</span>`;
     return `<div class="qb ${c.status} ${c.n===target?"on":""}" data-qbcard="${escapeHtml(c.n)}" draggable="true">
@@ -8303,7 +8408,7 @@ function qpSearchHtml(hits, db){
     return `<div class="qp-hit-row">
       <button class="qp-hit grow" data-qptarget="${escapeHtml(n)}" title="Chart the route to this quest">
         ${escapeHtml(qpLabel(n))}
-        <span class="muted">· ${st==="done"?"done":st==="ready"?"ready now":"blocked"}</span>
+        <span class="muted">· ${questInProgress(n)?"in progress":st==="done"?"done":st==="ready"?"ready now":"blocked"}</span>
       </button>
       <button class="qp-pin ${on?"on":""}" data-qbadd="${escapeHtml(n)}"
         title="${on?"Already on the board":"Pin to the board"}">${on?"📌":"+"}</button>
@@ -8369,7 +8474,7 @@ function qpPlanHtml(target, db){
     return `<div class="qp-step ${st}">
       <span class="n">${i+1}</span>
       <label class="chk"><input type="checkbox" data-qpdone="${escapeHtml(n)}"></label>
-      <span class="nm">${escapeHtml(qpLabel(n))}</span>
+      <span class="nm">${escapeHtml(qpLabel(n))}${questInProgress(n)?` <span class="qp-tag prog">in progress</span>`:""}</span>
       <span class="qreqs grow">${chips}${q.qp?`<span class="qreq qp">${q.qp}<i>QP</i></span>`:""}${lockedQ.length?`<span class="qreq no" title="${escapeHtml(lockedQ.join(", "))}">📜${lockedQ.length}</span>`:""}</span>
       ${(live&&st==="ready")?`<span class="qp-tag free">do now</span>`:`<span class="small muted">${q.difficulty||""}</span>`}
     </div>`;
@@ -8613,6 +8718,7 @@ function qpDetailHtml(n, db){
   return `<div class="qpd-head">
       <h4>${escapeHtml(qpLabel(n))}</h4>
       <span class="qp-tag ${(live&&st==="ready")?"free":""}">${st==="done"?"complete":!live?"stats not loaded":st==="ready"?"ready to start":"blocked"}</span>
+      ${questInProgress(n)?`<span class="qp-tag prog">in progress</span>`:""}
       ${parent?`<button class="qpd-q" style="width:auto" data-qpgo="${escapeHtml(parent)}">part of ${escapeHtml(parent)}</button>`:""}
       ${q.difficulty?`<span class="small muted">${escapeHtml(q.difficulty)}</span>`:""}
       ${q.length?`<span class="small muted">· ${escapeHtml(q.length)}</span>`:""}
@@ -10387,8 +10493,15 @@ function renderPrestige(){
 }
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.5";
+const APP_VERSION = "1.6";
 const PATCH_NOTES = [
+  {v:"1.6", date:"September 13, 2026", title:"Setup and RuneLite import", notes:[
+    "Added Setup, a short walkthrough on first launch: your character, your RuneLite data, your priorities, and how the app looks. Every step is optional.",
+    "Run it again any time from Settings. It starts from your current data and only saves what you change. If a step would remove anything, it asks you to back up first and to confirm twice.",
+    "Import from the Character Export plugin for RuneLite. Choose its folder and the app shows a preview, then ticks your finished quests, collected boss drops, and completed achievement diaries.",
+    "If the import disagrees with a quest you marked as done yourself, it lists the conflict and lets you choose, quest by quest. Nothing is unticked unless you pick it.",
+    "Quests you've started in game show as In progress in the quest planner: in search, on the board, in quest details and on the route.",
+  ]},
   {v:"1.5", date:"September 13, 2026", title:"The Scroll, upgraded", notes:[
     "The Scroll opens with Highlights, cards drawn from your own history. Streaks and personal records, this week against last, which skill is eating your month, one that's gone quiet, and how close you are to the next level worth having. Suggestions come with a button that turns them into a tracked goal.",
     "Added the Trophy cabinet: milestones that matter, sorted by how close you are. Barrows gloves, the quest cape, fire and infernal capes, base 60s through 90s, the raids, Piety and Rigour, and more, each with real item art, what it needs, and what you're still short on. Things the hiscores can't see, like graceful and diaries, you tick yourself.",
@@ -10876,6 +10989,449 @@ $("#loadBtnHome").onclick = ()=>loadCharacter({live:true});
 $("#loadBtnHomeGo").onclick = ()=>loadCharacter({live:true, name:$("#usernameHome").value});
 $("#usernameHome").addEventListener("keydown", e=>{ if(e.key==="Enter") loadCharacter({live:true, name:$("#usernameHome").value}); });
 
+// ============ SETUP ============
+// A guided first run: character, RuneLite files, priorities, looks. Every step is optional.
+// Running it again is safe by construction: each step starts from the current data and only
+// writes what the user actually changes. The import only ever ADDS ticks; anything that would
+// remove data (unticking a conflicting quest) goes through suGuard first: a backup offer and
+// two separate confirmations, with an automatic restore point on top.
+const SU_STEPS = [
+  {id:"welcome", label:"Welcome"},
+  {id:"char",    label:"Character"},
+  {id:"rl",      label:"RuneLite"},
+  {id:"prio",    label:"Priorities"},
+  {id:"look",    label:"Look"},
+  {id:"done",    label:"Done"},
+];
+let su = null;
+function suDid(k, t){ if(su) su.did[k] = t; }
+function openSetup(){
+  su = {step:0, shown:-1, rerun:!!state.setupDone, groups:null, account:null, preview:null, choices:{}, applied:false, did:{}, nameDraft:null};
+  closeSettings();
+  $("#suBack").classList.remove("hidden");
+  renderSetup();
+}
+function closeSetup(){
+  if(!su) return;
+  if(!state.setupDone){ state.setupDone = true; save(); }
+  $("#suBack").classList.add("hidden");
+  $("#suGuard").classList.add("hidden");
+  su = null;
+}
+function renderSetup(){
+  if(!su) return;
+  const st = SU_STEPS[su.step];
+  $("#suDots").innerHTML = SU_STEPS.map((x,i)=>
+    `<button class="su-dot ${i===su.step?"on":""} ${i<su.step?"past":""}" data-sustep="${i}" title="${x.label}"><span>${x.label}</span></button>`).join("");
+  $("#suBody").innerHTML = SU_VIEW[st.id]();
+  $("#suPrev").classList.toggle("hidden", su.step===0);
+  $("#suNext").textContent = su.step===SU_STEPS.length-1 ? "Finish" : su.step===0 ? "Get started" : "Next";
+  $$("#suDots [data-sustep]").forEach(b=>b.onclick=()=>{ su.step = +b.dataset.sustep; renderSetup(); });
+  if(SU_WIRE[st.id]) SU_WIRE[st.id]();
+  if(su.shown !== su.step){ $("#suBody").scrollTop = 0; su.shown = su.step; }
+}
+
+// ---- Character Export files ----
+const CE_FILES = ["quests","collection_log","diaries","combat_achievements","character","equipment"];
+// The plugin names Recipe for Disaster's parts differently from the wiki.
+const CE_RFD = {"Another Cook's Quest":"Another Cook's Quest", "Mountain Dwarf":"Freeing the Mountain Dwarf",
+  "Wartface & Bentnoze":"Freeing the Goblin generals", "Pirate Pete":"Freeing Pirate Pete",
+  "Lumbridge Guide":"Freeing the Lumbridge Guide", "Evil Dave":"Freeing Evil Dave",
+  "Skrach Uglogwee":"Freeing Skrach Uglogwee", "Sir Amik Varze":"Freeing Sir Amik Varze",
+  "King Awowogei":"Freeing King Awowogei", "Culinaromancer":"Defeating the Culinaromancer"};
+function ceQuestName(name, db){
+  if(db.quests[name]) return name;
+  const m = /^Recipe for Disaster - (.+)$/.exec(name);
+  if(m){ const sub = "Recipe for Disaster/" + (CE_RFD[m[1]] || m[1]); if(db.quests[sub]) return sub; }
+  const norm = x => String(x).toLowerCase().replace(/[^a-z0-9]/g, "");
+  const k = norm(name);
+  return db.order.find(n=>norm(n)===k) || null;
+}
+function ceClogNewDrops(clog){
+  const wanted = new Map();
+  Object.values(BOSS_DROPS).flat().forEach(n=>wanted.set(String(n).toLowerCase(), n));
+  const got = state.drops || {}, out = new Set();
+  Object.values(clog.tabs||{}).forEach(tab=>Object.values(tab||{}).forEach(pg=>(pg.items||[]).forEach(it=>{
+    if(!it || !it.obtained || typeof it.name!=="string") return;
+    const hit = wanted.get(it.name.toLowerCase());
+    if(hit && !got[hit]) out.add(hit);
+  })));
+  return [...out];
+}
+const CE_DIARY_IDS = {"Ardougne":"d_ardougne", "Desert":"d_desert", "Falador":"d_falador", "Fremennik":"d_fremennik",
+  "Kandarin":"d_kandarin", "Karamja":"d_karamja", "Kourend & Kebos":"d_kourend", "Lumbridge & Draynor":"d_lumbridge",
+  "Morytania":"d_morytania", "Varrock":"d_varrock", "Western Provinces":"d_western", "Wilderness":"d_wildy"};
+function ceDiaryTicks(d){
+  const out = [], regions = Object.entries(d||{});
+  const tier = (v,t) => !!(v && v[t] && v[t].complete);
+  const rd = state.roadmapDone || {}, pz = state.prestige || {};
+  regions.forEach(([r,v])=>{
+    const id = CE_DIARY_IDS[r];
+    if(id && ["easy","medium","hard","elite"].every(t=>tier(v,t)) && !rd[id]) out.push({store:"roadmap", id, label:r+" diary"});
+  });
+  if(regions.length && regions.every(([,v])=>tier(v,"elite")) && !rd.e_diarycape) out.push({store:"roadmap", id:"e_diarycape", label:"Achievement diary cape"});
+  if(regions.length && regions.every(([,v])=>tier(v,"easy")) && !pz["diary-easy"]) out.push({store:"prestige", id:"diary-easy", label:"All easy diaries"});
+  if(regions.some(([,v])=>tier(v,"elite")) && !pz["diary-elite"]) out.push({store:"prestige", id:"diary-elite", label:"An elite diary"});
+  return out;
+}
+async function suReadFiles(list){
+  const files = [...(list||[])].filter(f=>/\.json$/i.test(f.name) && CE_FILES.includes(f.name.replace(/\.json$/i,"")));
+  if(!files.length){ toast("No Character Export files in that selection", true); return; }
+  const groups = {};
+  for(const f of files){
+    let json; try{ json = JSON.parse(await f.text()); }catch(e){ continue; }
+    const parts = (f.webkitRelativePath||"").split("/");
+    const acct = parts.length >= 2 ? parts[parts.length-2] : "_";
+    const g = groups[acct] || (groups[acct] = {_ts:0});
+    g[f.name.replace(/\.json$/i,"")] = json;
+    g._ts = Math.max(g._ts, f.lastModified||0);
+  }
+  // files picked one by one have no folder, so name them from character.json
+  if(groups._){
+    const nm = groups._.character && groups._.character.account_name;
+    const to = nm && !groups[nm] ? nm : "Selected files";
+    groups[to] = groups._; delete groups._;
+  }
+  const names = Object.keys(groups).filter(k=>groups[k].quests || groups[k].collection_log || groups[k].diaries || groups[k].character);
+  if(!names.length){ toast("No Character Export files in that selection", true); return; }
+  su.groups = {}; names.forEach(n=>su.groups[n] = groups[n]);
+  const want = profKey(profName() || state.username);
+  su.account = names.find(n=>profKey(n)===want) || names.slice().sort((a,b)=>su.groups[b]._ts - su.groups[a]._ts)[0];
+  suSelectAccount(su.account);
+}
+function suSelectAccount(name){
+  su.account = name; su.choices = {}; su.applied = false;
+  const acc = su.groups[name];
+  if(acc && acc.character && acc.character.account_name && !state.username) su.exportName = acc.character.account_name;
+  su.preview = suBuildPreview();
+  renderSetup();
+}
+// Works out what an import WOULD do, without touching anything.
+function suBuildPreview(){
+  const acc = su.groups && su.groups[su.account]; if(!acc) return null;
+  const db = questDB(), pv = {};
+  if(acc.quests && Array.isArray(acc.quests.quests)){
+    if(!db) pv.quests = {waiting:true};
+    else {
+      const add=[], same=[], prog={}, conflicts=[], untracked=[];
+      acc.quests.quests.forEach(q=>{
+        const n = ceQuestName(q.name, db);
+        if(!n){ untracked.push(q.name); return; }
+        const done = questDone(n);
+        if(q.state==="FINISHED"){ (done ? same : add).push(n); return; }
+        if(q.state==="IN_PROGRESS") prog[n] = true;
+        if(done) conflicts.push({n, game:q.state});
+      });
+      pv.quests = {add, same, prog, conflicts, untracked};
+    }
+  }
+  if(acc.collection_log && acc.collection_log.tabs){
+    let pages = 0, got = 0;
+    Object.values(acc.collection_log.tabs).forEach(tab=>Object.values(tab||{}).forEach(pg=>{
+      pages++; got += (pg.items||[]).filter(i=>i && i.obtained).length;
+    }));
+    pv.clog = {pages, got, newDrops: ceClogNewDrops(acc.collection_log)};
+  }
+  if(acc.diaries && acc.diaries.diaries){
+    const tiers = [];
+    Object.entries(acc.diaries.diaries).forEach(([r,v])=>Object.entries(v||{}).forEach(([t,x])=>{ if(x && x.complete) tiers.push(r+" "+t); }));
+    pv.diaries = {tiers, ticks: ceDiaryTicks(acc.diaries.diaries)};
+  }
+  return pv;
+}
+function suPreviewHtml(){
+  const pv = su.preview; if(!pv) return "";
+  const sec = [];
+  if(pv.quests && pv.quests.waiting){
+    sec.push(`<div class="su-card"><div class="su-card-h">Quests</div>
+      <div class="su-note" style="margin:0">Quest data is still loading from the wiki. <button class="ghost small" id="suRecheck">Check again</button></div></div>`);
+  } else if(pv.quests){
+    const q = pv.quests, progN = Object.keys(q.prog).length;
+    const conf = !q.conflicts.length ? "" : `<div class="su-conf">
+      <div class="su-conf-h">${q.conflicts.length} conflict${q.conflicts.length===1?"":"s"}: marked as done here, but the game says ${q.conflicts.length===1?"it isn't":"they aren't"} finished. Choose what to keep.</div>
+      <div class="su-conf-all"><button class="ghost small" data-suall="keep">Keep all as done</button><button class="ghost small" data-suall="untick">Untick all</button></div>
+      ${q.conflicts.map(c=>{
+        const ch = su.choices[c.n] || "keep";
+        return `<div class="su-conf-row">
+          <span class="grow">${escapeHtml(qpLabel(c.n))} <span class="muted small">· game says ${c.game==="IN_PROGRESS"?"in progress":"not started"}</span></span>
+          <span class="seg su-mini"><button class="${ch==="keep"?"on":""}" data-sukeep="${escapeHtml(c.n)}">Keep done</button><button class="${ch==="untick"?"on":""}" data-suuntick="${escapeHtml(c.n)}">Untick</button></span>
+        </div>`;
+      }).join("")}</div>`;
+    sec.push(`<div class="su-card"><div class="su-card-h">Quests</div>
+      <div class="su-stats"><span><b>${q.add.length}</b> to tick</span><span><b>${q.same.length}</b> already ticked</span><span><b>${progN}</b> in progress</span>${q.untracked.length?`<span title="${escapeHtml(q.untracked.join(", "))}"><b>${q.untracked.length}</b> the app doesn't track</span>`:""}</div>${conf}</div>`);
+  }
+  if(pv.clog) sec.push(`<div class="su-card"><div class="su-card-h">Collection log</div>
+    <div class="su-stats"><span><b>${pv.clog.pages}</b> pages captured</span><span><b>${pv.clog.got}</b> items obtained</span><span><b>${pv.clog.newDrops.length}</b> boss drops to tick</span></div></div>`);
+  if(pv.diaries) sec.push(`<div class="su-card"><div class="su-card-h">Achievement diaries</div>
+    <div class="su-stats"><span><b>${pv.diaries.tiers.length}</b> tiers complete</span><span><b>${pv.diaries.ticks.length}</b> Roadmap or Trophy ticks</span></div></div>`);
+  if(!sec.length) return `<div class="su-note warn">None of the files in that folder could be read.</div>`;
+  const busy = pv.quests && pv.quests.waiting;
+  return `<div class="su-preview">${sec.join("")}</div>
+    <div class="su-note">${su.applied ? "Imported. Choose the folder again whenever you want to pull in newer data." : "Nothing has changed yet. Importing only adds ticks, apart from any conflicts you choose to untick."}</div>
+    <div class="su-row center"><button class="primary" id="suApply" ${su.applied||busy?"disabled":""}>${su.applied?"Imported ✓":"Import"}</button></div>`;
+}
+async function suApplyImport(){
+  const pv = su && su.preview, acc = su && su.groups && su.groups[su.account];
+  if(!pv || !acc || su.applied) return;
+  const q = pv.quests && !pv.quests.waiting ? pv.quests : null;
+  const unticks = q ? q.conflicts.filter(c=>su.choices[c.n]==="untick").map(c=>c.n) : [];
+  if(unticks.length){
+    const names = unticks.slice(0,4).map(qpLabel).join(", ") + (unticks.length>4 ? ` and ${unticks.length-4} more` : "");
+    if(!await suGuard(`This unticks ${unticks.length} quest${unticks.length===1?"":"s"} you had marked as done: ${names}.`)) return;
+  }
+  try{ await snapshotNow("before RuneLite import"); }catch(e){}
+  const out = [];
+  if(q){
+    state.questsDone = state.questsDone || {};
+    q.add.forEach(n=>{ state.questsDone[n] = true; });
+    unticks.forEach(n=>{ delete state.questsDone[n]; });
+    state.questsInProgress = q.prog;
+    out.push(`${q.add.length} quest${q.add.length===1?"":"s"} ticked` + (unticks.length ? `, ${unticks.length} unticked` : ""));
+  }
+  if(pv.clog && pv.clog.newDrops.length){
+    const got = dropsGot();
+    pv.clog.newDrops.forEach(n=>{ got[n] = true; });
+    out.push(`${pv.clog.newDrops.length} boss drop${pv.clog.newDrops.length===1?"":"s"} ticked`);
+  }
+  if(pv.diaries && pv.diaries.ticks.length){
+    pv.diaries.ticks.forEach(t=>{
+      if(t.store==="roadmap") state.roadmapDone[t.id] = true;
+      else { state.prestige = state.prestige || {}; state.prestige[t.id] = true; }
+    });
+    out.push(`${pv.diaries.ticks.length} diary tick${pv.diaries.ticks.length===1?"":"s"}`);
+  }
+  state.charExport = {account: su.account, importedAt: new Date().toISOString(),
+    diaries: acc.diaries ? acc.diaries.diaries : undefined,
+    clog: acc.collection_log ? acc.collection_log.tabs : undefined,
+    ca: acc.combat_achievements ? acc.combat_achievements.summary : undefined};
+  save();
+  su.applied = true;
+  const msg = out.length ? out.join(", ") : "nothing new to tick";
+  suDid("rl", `Imported from RuneLite (${su.account}): ${msg}`);
+  renderAll(); renderQuestPlanner();
+  toast("Imported: " + msg);
+  renderSetup();
+}
+// Anything that removes data comes through here: back up, then two separate confirmations.
+function suGuard(text){
+  return new Promise(resolve=>{
+    const box = $("#suGuard");
+    let stage = 0;
+    const finish = v=>{ box.classList.add("hidden"); box.innerHTML = ""; resolve(v); };
+    const views = [
+      `<div class="su-g-h">Back up first</div><p>${escapeHtml(text)}</p>
+       <p>Removing data can't be undone from here. Download a backup before you continue so you can restore it later if you need to.</p>
+       <div class="su-g-foot"><button class="ghost" data-g="cancel">Cancel</button><button class="ghost" data-g="backup">Download backup</button><button class="primary" data-g="next">Continue</button></div>`,
+      `<div class="su-g-h">Are you sure?</div><p>${escapeHtml(text)}</p>
+       <div class="su-g-foot"><button class="ghost" data-g="cancel">Cancel</button><button class="primary" data-g="next">Yes, continue</button></div>`,
+      `<div class="su-g-h">Are you really sure?</div>
+       <p>This is the last check. The app also saves a restore point first, which you can find in Settings under Restore.</p>
+       <div class="su-g-foot"><button class="ghost" data-g="cancel">Cancel</button><button class="su-danger" data-g="next">Yes, remove it</button></div>`,
+    ];
+    const draw = ()=>{
+      box.innerHTML = `<div class="su-g" role="alertdialog">${views[stage]}</div>`;
+      box.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{
+        const a = b.dataset.g;
+        if(a==="cancel") return finish(false);
+        if(a==="backup"){ $("#exportBtn").click(); b.textContent = "Backup downloaded ✓"; return; }
+        stage++;
+        if(stage >= views.length) return finish(true);
+        draw();
+      });
+    };
+    box.classList.remove("hidden");
+    draw();
+  });
+}
+
+const SU_PRIO_IDEAS = [["Quest cape",""], ["Train Slayer","slayer"], ["Base 70s",""], ["Fire cape",""], ["Barrows gloves",""], ["Train Farming","farming"]];
+const SU_VIEW = {
+  welcome: ()=>`
+    <div class="su-hero">
+      <div class="su-eyebrow">${su.rerun ? "Setup, again" : "Setup"}</div>
+      <h2 class="su-title">${su.rerun ? "Let's go through it again" : "Welcome to OSRS Buddy"}</h2>
+      <p class="su-lead">A few quick steps: your character, your RuneLite data, what you're working toward, and how the app looks. Every step is optional, and you can run this again any time from Settings.</p>
+    </div>
+    <div class="su-safe"><b>Your data is safe.</b> ${su.rerun ? "Running setup again doesn't erase anything." : "Setup doesn't erase anything."} Every step starts from what you already have, and only what you change is saved. If a step would remove something, you'll be asked to back up first and to confirm twice.</div>`,
+  char: ()=>{
+    const draft = su.nameDraft!=null ? su.nameDraft : (state.username || su.exportName || "");
+    const c = live ? combatLevel() : null;
+    return `<h3 class="su-h">Your character</h3>
+      <p class="su-p">Your RuneScape name. The app reads your levels and XP from the hiscores through WiseOldMan and uses them everywhere.</p>
+      <div class="su-row">
+        <input type="text" id="suName" value="${escapeHtml(draft)}" placeholder="RuneScape name" autocomplete="off">
+        <button class="primary" id="suLoad">Load</button>
+      </div>
+      <div class="su-note">${live && profName() ? `Loaded: <b>${escapeHtml(profName())}</b>${c?` · combat ${c.level}`:""}${totalLvl()?` · total ${fmt(totalLvl())}`:""}` : "Not loaded yet."}</div>
+      <div class="su-note warn hidden" id="suNameSwitch"></div>`;
+  },
+  rl: ()=>{
+    const g = su.groups;
+    let body;
+    if(!g){
+      body = `<ol class="su-steps">
+          <li>In RuneLite, open the Plugin Hub, search for <b>Character Export</b> and install it.</li>
+          <li>Log in to the game. The plugin saves your quests, collection log, diaries and more as files, and keeps them up to date while you play. Open your collection log pages in game to include them.</li>
+          <li>Choose its folder below. It's usually <code>C:\\Users\\<i>you</i>\\.runelite\\character-exporter</code>, and you can paste that path into the folder window.</li>
+        </ol>
+        <div class="su-row center">
+          <button class="primary" id="suPickDir">Choose folder</button>
+          <button class="ghost small" id="suPickFiles">Or pick the files</button>
+        </div>`;
+    } else {
+      const names = Object.keys(g), acc = g[su.account] || {};
+      const file = (k,label)=>`<span class="su-file ${acc[k]?"ok":""}">${acc[k]?"✓":"–"} ${label}</span>`;
+      body = `<div class="su-note">${names.length>1 ? `Found ${names.length} accounts. Pick yours:` : `Found <b>${escapeHtml(su.account)}</b>.`}</div>
+        ${names.length>1 ? `<div class="seg su-seg">${names.map(n=>`<button class="${n===su.account?"on":""}" data-suacc="${escapeHtml(n)}">${escapeHtml(n)}</button>`).join("")}</div>` : ""}
+        <div class="su-files">${file("quests","Quests")}${file("collection_log","Collection log")}${file("diaries","Diaries")}${file("combat_achievements","Combat achievements")}${file("character","Character")}</div>
+        ${suPreviewHtml()}
+        <div class="su-row center"><button class="ghost small" id="suPickDir">Choose a different folder</button></div>`;
+    }
+    return `<h3 class="su-h">Connect RuneLite <span class="su-rec">Optional, highly recommended</span></h3>
+      <p class="su-p">The hiscores can't see your quests, collection log or diaries. The Character Export plugin can, so importing its files fills all of that in for you.</p>
+      ${body}
+      <input type="file" id="suDir" class="hidden" webkitdirectory multiple>
+      <input type="file" id="suFiles" class="hidden" accept=".json,application/json" multiple>`;
+  },
+  prio: ()=>{
+    const ps = state.priorities || [];
+    return `<h3 class="su-h">What matters to you <span class="su-opt">Optional</span></h3>
+      <p class="su-p">Priorities are the long-term things you want to keep working on. The app keeps track of when you last touched each one and reminds you when it's been a while.</p>
+      ${ps.length ? `<div class="su-lbl">You already have</div><div class="su-chips">${ps.map(p=>`<span class="su-chip">★ ${escapeHtml(p.label)}</span>`).join("")}</div>` : ""}
+      <div class="su-lbl">Add one</div>
+      <div class="su-chips">${SU_PRIO_IDEAS.map(i=>`<button class="su-chip btn" data-suidea="${escapeHtml(i[0])}" data-suskill="${i[1]}">${escapeHtml(i[0])}</button>`).join("")}</div>
+      <div class="su-row">
+        <input type="text" id="suPLabel" placeholder="e.g. Train Slayer">
+        <select id="suPSkill"><option value="">Track by hand</option>${SKILL_ORDER.map(k=>`<option value="${k}">Track ${nice(k)} XP</option>`).join("")}</select>
+      </div>
+      <div class="su-row">
+        <label class="su-lbl" style="margin:0; gap:10px">Rank <input type="range" id="suPRank" min="1" max="10" value="5"> <b id="suPRankV" style="color:var(--gold)">5</b></label>
+        <button class="primary" id="suPAdd" style="margin-left:auto">Add priority</button>
+      </div>
+      <p class="su-note">You can change these any time on the Scroll, under Priorities.</p>`;
+  },
+  look: ()=>{
+    const cur = state.theme || DEFAULT_THEME, f = state.font || "garamond", num = state.exactNums ? "exact" : "short";
+    return `<h3 class="su-h">Look and feel <span class="su-opt">Optional</span></h3>
+      <p class="su-p">Pick a theme. It changes as you click, so you can see it straight away.</p>
+      <div class="su-themes">${THEMES.map(([id,label,ic])=>`<button class="su-theme ${id===cur?"on":""}" data-sutheme="${id}"><img src="${WIKI+ic}" alt=""><span>${label}</span></button>`).join("")}</div>
+      <div class="su-lbl">Font</div>
+      <div class="seg su-seg">${FONT_CHOICES.map(([id,label])=>`<button class="${id===f?"on":""}" data-sufont="${id}">${label}</button>`).join("")}</div>
+      <div class="su-lbl">Numbers</div>
+      <div class="seg su-seg">${NUM_CHOICES.map(([id,label])=>`<button class="${id===num?"on":""}" data-sunum="${id}">${label}</button>`).join("")}</div>
+      <label class="chk small su-chk"><input type="checkbox" id="suAuto" ${state.autoRefresh?"checked":""}> Refresh stats from the hiscores every 5 minutes</label>`;
+  },
+  done: ()=>{
+    const did = Object.values(su.did);
+    return `<div class="su-hero">
+        <div class="su-eyebrow">All set</div>
+        <h2 class="su-title">You're ready</h2>
+        <p class="su-lead">${did.length ? "Here's what changed:" : "Nothing changed, so your data is exactly as it was."}</p>
+      </div>
+      ${did.length ? `<ul class="su-did">${did.map(t=>`<li>${escapeHtml(t)}</li>`).join("")}</ul>` : ""}
+      ${!state.charExport ? `<div class="su-safe" style="text-align:center">You haven't imported from RuneLite yet. Run setup again from Settings whenever you want to.</div>` : ""}`;
+  },
+};
+const SU_WIRE = {
+  char: ()=>{
+    const inp = $("#suName"), sw = $("#suNameSwitch");
+    const check = ()=>{
+      su.nameDraft = inp.value;
+      const cur = profKey(profName()), nk = profKey(inp.value);
+      const differs = !!(cur && nk && nk!==cur);
+      sw.classList.toggle("hidden", !differs);
+      if(differs) sw.innerHTML = `This is a different name from <b>${escapeHtml(profName())}</b>. Loading it opens a separate profile, and ${escapeHtml(profName())}'s data stays saved under its own name. You can switch back from the character menu any time.`;
+    };
+    inp.oninput = check; check();
+    const go = async ()=>{
+      const n = inp.value.trim();
+      if(!n){ toast("Enter your RuneScape name first", true); return; }
+      $("#username").value = n;
+      await loadCharacter({name:n, live:true});
+      if(su && SU_STEPS[su.step].id==="char"){
+        if(live) suDid("char", "Loaded " + profName());
+        su.nameDraft = null;
+        renderSetup();
+      }
+    };
+    $("#suLoad").onclick = go;
+    inp.onkeydown = e=>{ if(e.key==="Enter") go(); };
+  },
+  rl: ()=>{
+    const pd = $("#suPickDir"), pf = $("#suPickFiles");
+    if(pd) pd.onclick = ()=>$("#suDir").click();
+    if(pf) pf.onclick = ()=>$("#suFiles").click();
+    const take = e=>{ const fl = [...e.target.files]; e.target.value = ""; suReadFiles(fl); };
+    $("#suDir").onchange = take;
+    $("#suFiles").onchange = take;
+    $$("#suBody [data-suacc]").forEach(b=>b.onclick=()=>suSelectAccount(b.dataset.suacc));
+    $$("#suBody [data-sukeep]").forEach(b=>b.onclick=()=>{ su.choices[b.dataset.sukeep] = "keep"; renderSetup(); });
+    $$("#suBody [data-suuntick]").forEach(b=>b.onclick=()=>{ su.choices[b.dataset.suuntick] = "untick"; renderSetup(); });
+    $$("#suBody [data-suall]").forEach(b=>b.onclick=()=>{
+      ((su.preview.quests||{}).conflicts||[]).forEach(c=>{ su.choices[c.n] = b.dataset.suall; });
+      renderSetup();
+    });
+    const rc = $("#suRecheck"); if(rc) rc.onclick = ()=>{ su.preview = suBuildPreview(); renderSetup(); };
+    const ap = $("#suApply"); if(ap) ap.onclick = suApplyImport;
+  },
+  prio: ()=>{
+    $$("#suBody [data-suidea]").forEach(b=>b.onclick=()=>{
+      $("#suPLabel").value = b.dataset.suidea; $("#suPSkill").value = b.dataset.suskill || ""; $("#suPLabel").focus();
+    });
+    $("#suPRank").oninput = e=>{ $("#suPRankV").textContent = e.target.value; };
+    const add = ()=>{
+      const label = $("#suPLabel").value.trim();
+      if(!label){ toast("Name the priority first", true); return; }
+      if((state.priorities||[]).some(p=>p.label.toLowerCase()===label.toLowerCase())){ toast(label+" is already a priority", true); return; }
+      const metric = $("#suPSkill").value || null;
+      const p = {id:"p"+Date.now()+Math.random().toString(36).slice(2,5), label, kind: metric?"skill":"none", metric,
+        weight:Number($("#suPRank").value)||5, createdAt:todayISO(), lastTouched:null, lastValue:null, snoozeUntil:null};
+      if(metric && live){ const e = metricEntry("skill", metric); if(e) p.lastValue = e.experience; }
+      state.priorities.push(p);
+      save(); renderPriorities(); renderGlance(); renderPrioPicker();
+      su.added = (su.added||0) + 1;
+      suDid("prio", `Added ${su.added} priorit${su.added===1?"y":"ies"}`);
+      toast("Priority added: " + label);
+      renderSetup();
+    };
+    $("#suPAdd").onclick = add;
+    $("#suPLabel").onkeydown = e=>{ if(e.key==="Enter") add(); };
+  },
+  look: ()=>{
+    $$("#suBody [data-sutheme]").forEach(b=>b.onclick=()=>{
+      if(state.theme !== b.dataset.sutheme){
+        state.theme = b.dataset.sutheme; save(); applyTheme();
+        suDid("look", "Theme set to " + ((THEMES.find(t=>t[0]===state.theme)||[])[1] || state.theme));
+      }
+      renderSetup();
+    });
+    $$("#suBody [data-sufont]").forEach(b=>b.onclick=()=>{
+      if((state.font||"garamond") !== b.dataset.sufont){ state.font = b.dataset.sufont; save(); applyFont(); }
+      renderSetup();
+    });
+    $$("#suBody [data-sunum]").forEach(b=>b.onclick=()=>{
+      const ex = b.dataset.sunum==="exact";
+      if(!!state.exactNums !== ex){ state.exactNums = ex; save(); renderSkills(); }
+      renderSetup();
+    });
+    $("#suAuto").onchange = e=>{
+      state.autoRefresh = e.target.checked; save(); setupRefresh();
+      const ar = $("#autoRefresh"); if(ar) ar.checked = state.autoRefresh;
+    };
+  },
+};
+$("#setupAgainBtn").onclick = openSetup;
+$("#suX").onclick = closeSetup;
+$("#suPrev").onclick = ()=>{ if(su && su.step>0){ su.step--; renderSetup(); } };
+$("#suNext").onclick = ()=>{
+  if(!su) return;
+  if(su.step >= SU_STEPS.length-1){ const first = !su.rerun; closeSetup(); if(first) switchView("home"); return; }
+  su.step++; renderSetup();
+};
+addEventListener("keydown", e=>{
+  if(su && e.key==="Escape" && $("#suGuard").classList.contains("hidden")){ e.preventDefault(); e.stopImmediatePropagation(); closeSetup(); }
+}, true);
+
 // ============ INIT ============
 state.scroll = state.scroll || {}; state.scroll.range = "all"; state.scroll.homeRange = "all";
 applyTheme(); applyFont(); startUpdateCheck(); renderHomeHeatControls(); renderFunFact(); renderQuestPlanner(); renderMeta(); renderTodo(); renderClog(); renderQuickAdd(); populateMetricDropdown(); renderStart(); renderScroll(); renderPatchNotes(); renderNotes();
@@ -10903,6 +11459,11 @@ setTimeout(async ()=>{
   }catch(e){}
 }, 1500);
 setTimeout(qdbEnsure, 800);  // quest data self-loads; slight delay so character stats go first
+// Setup opens by itself only on a genuinely fresh install: no character, no other profiles,
+// nothing logged. Anyone with data reaches it from Settings instead.
+if(!state.setupDone && !state.username && !Object.keys(profStore().stash||{}).length && !(state.scroll.log||[]).length){
+  setTimeout(openSetup, 400);
+}
 </script>
 </body>
 </html>
