@@ -587,6 +587,11 @@
   button.ach-chk:hover{border-color:var(--gold)}
   .ach-task.edited .ach-chk{box-shadow:0 0 0 2px color-mix(in oklab, var(--gold) 45%, transparent)}
   .ach-you{color:var(--gold)}
+  /* badges at the top of a heatmap day's popup */
+  .dp-badges{display:flex; flex-wrap:wrap; gap:6px; margin:2px 0 10px}
+  .dp-badge{display:inline-flex; align-items:center; gap:6px; padding:3px 10px 3px 5px; border-radius:999px; font-size:12px; font-weight:600;
+    color:var(--text); background:color-mix(in oklab, var(--gold) 12%, var(--inset)); border:1px solid color-mix(in oklab, var(--gold) 40%, var(--border))}
+  .dp-badge img{width:18px; height:18px; object-fit:contain}
   .dy-note{margin:8px 0 0}
   .ach-link{background:none; border:0; padding:0; box-shadow:none; color:var(--gold); cursor:pointer; font:inherit; text-decoration:underline}
   .cl-item{position:relative; cursor:pointer}
@@ -3377,31 +3382,35 @@ const SKILL_COLOR = {
   "High Alch":  "oklch(0.94 0.19 70)",
 };
 const SKILL_MUTED = "#7b7264"; // manual-only days (no game data to colour by)
-// ---- tag effects ----
-// Combat (boss kills), Questing, Clues and High Alch aren't skills, so on the heatmap they're
-// drawn as marks on top of the day's skill colours instead of taking a colour of their own.
-// High Alch is Magic XP, so its day paints as Magic with a coin on top. Everything for this
-// lives in this block plus the few call sites that use swatchBg/tagColourIds; to undo it,
-// revert those and the palette above.
-const TAG_EFFECTS = {Combat:"slash", Questing:"fold", Clues:"dots", "High Alch":"coin"};
-const TAG_EFFECT_CSS = {
-  slash: "repeating-linear-gradient(135deg, rgba(0,0,0,.55) 0 1.3px, transparent 1.3px 3.8px)",
-  fold:  "linear-gradient(225deg, rgba(255,255,255,.95) 0 48%, rgba(0,0,0,.45) 48% 60%, transparent 60%) right top / 7px 7px no-repeat",
-  dots:  "radial-gradient(circle, rgba(255,255,255,.9) 0 .9px, transparent 1.3px) 0 0 / 4px 4px",
-  coin:  "radial-gradient(circle, #fff4b8 0 18%, #f2c14e 20% 52%, rgba(120,80,10,.6) 54% 62%, transparent 64%) center / 8px 8px no-repeat",
-};
+// ---- tag badges ----
+// Combat (boss kills), Questing, Clues and High Alch aren't skills, so they don't colour the
+// heatmap at all. The day's cells and bars show skill colours only (High Alch counts as the
+// Magic it is), and these show up as badges with their in-game icons when you click a day.
+// An earlier try drew them as marks on the cells; that looked bad and was dropped.
+const TAG_EFFECTS = {Combat:"Combat_icon.png", Questing:"Quest_point_icon.png", Clues:"Clue_scroll.png", "High Alch":"High_Level_Alchemy.png"};
 // the skills that give a day its colour, with High Alch counted as the Magic it is
 function tagColourIds(ids){
   return [...new Set((ids || []).map(id=> id==="High Alch" ? "Magic" : id).filter(id=>!(id in TAG_EFFECTS)))];
 }
-function tagEffectLayers(ids){
-  return ["High Alch","Clues","Questing","Combat"].filter(t=>(ids || []).includes(t)).map(t=>TAG_EFFECT_CSS[TAG_EFFECTS[t]]);
-}
-// a small swatch for legends, chips and log tags: a skill's colour, or a tag's mark
+// a small swatch for chips and log tags: a skill's colour, or a tag's icon
 function swatchBg(k){
   if(!(k in TAG_EFFECTS)) return SKILL_COLOR[k] || SKILL_MUTED;
-  const base = k==="High Alch" ? SKILL_COLOR.Magic : "color-mix(in oklab, var(--text) 38%, var(--inset))";
-  return `${tagEffectLayers([k]).join(", ")}, ${base}`;
+  return `url("${WIKI}${TAG_EFFECTS[k]}") center / contain no-repeat`;
+}
+// the badges at the top of a day's popup
+function dayBadgesHtml(iso){
+  const a = (state.scroll.autoOn!==false && state.scroll.auto) ? state.scroll.auto[iso] : null;
+  const logged = new Set((state.scroll.log || []).filter(e=>e.date===iso).flatMap(e=>entryTagList(e)));
+  const out = [];
+  let kc = 0; if(a) for(const bn in (a.bosses || {})) kc += Math.max(0, a.bosses[bn]);
+  if(kc || logged.has("Combat")) out.push(["Combat", kc ? `${fmt(kc)} boss kill${kc===1?"":"s"}` : "Combat"]);
+  if(logged.has("Questing")) out.push(["Questing", "Questing"]);
+  const cl = a ? (a.clues || 0) : 0;
+  if(cl || logged.has("Clues")) out.push(["Clues", cl ? `${fmt(cl)} clue${cl===1?"":"s"}` : "Clues"]);
+  let alch = 0; if(a) for(const k in (a.skills || {})) if(reclassOf(iso, k)==="High Alch") alch += a.skills[k];
+  if(alch || logged.has("High Alch")) out.push(["High Alch", alch ? `${xpText(alch)} xp alched` : "High Alch"]);
+  if(!out.length) return "";
+  return `<div class="dp-badges">${out.map(([k,label])=>`<span class="dp-badge"><img src="${WIKI}${TAG_EFFECTS[k]}" alt="">${escapeHtml(label)}</span>`).join("")}</div>`;
 }
 // WiseOldMan reports XP, not what earned it — Magic from alching looks identical to
 // Magic from combat. These let you say which it was, per day; the choice is stored
@@ -3915,7 +3924,7 @@ function renderActLegend(){
     // dynamic legend: only the skills actually present, busiest first
     const counts={};
     const sbd=skillsByDate();
-    for(const iso in sbd) sbd[iso].forEach(k=>counts[k]=(counts[k]||0)+1);
+    for(const iso in sbd) tagColourIds(sbd[iso]).forEach(k=>counts[k]=(counts[k]||0)+1);
     const keys=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
     $("#actLegend").innerHTML = keys.length
       ? keys.map(k=>`<span class="lg"><span class="dot" style="background:${swatchBg(k)}"></span>${heatLabel(k)}</span>`).join("")
@@ -3999,9 +4008,7 @@ function cellBg(typeIds, angle, maxBands){
   if(!typeIds || !typeIds.length) return "";
   const skillMode = heatPalMode()==="skill";
   const ids = skillMode ? tagColourIds(typeIds) : typeIds;
-  const fx = skillMode ? tagEffectLayers(typeIds) : [];
   const c = (ids.length ? ids : ["Logged"]).slice(0, maxBands || HEAT_MAX_BANDS).map(id=>heatCol(id));
-  if(fx.length) return `${fx.join(", ")}, ${cellBgBands(c, angle)}`;
   return cellBgBands(c, angle);
 }
 function cellBgBands(c, angle){
@@ -4443,7 +4450,7 @@ function openDayPopover(iso, anchor){
   const msHtml = msKeys.length ? `<div class="dp-auto"><div class="dp-auto-h">${
       msTierOfDay(iso)==="nn"?"🎆":msTierOfDay(iso)==="diamond"?"💎":"🥇"} Milestone${msKeys.length>1?"s":""}</div>${
       msKeys.map(k=>{ const i=milestoneInfo(k); return `<div>${i.tier==="nn"?"🎆":i.icon} ${escapeHtml(i.title)}</div>`; }).join("")}</div>` : "";
-  pop.innerHTML = `<div class="dp-head"><span>${isMile?"🏆 ":""}${fmtDay(iso)}</span><button class="dp-x" id="dpX" aria-label="Close">✕</button></div>${inner}${msHtml}`;
+  pop.innerHTML = `<div class="dp-head"><span>${isMile?"🏆 ":""}${fmtDay(iso)}</span><button class="dp-x" id="dpX" aria-label="Close">✕</button></div>${dayBadgesHtml(iso)}${inner}${msHtml}`;
   pop.classList.remove("hidden");
   const r=anchor.getBoundingClientRect();
   const pw=Math.min(266, window.innerWidth-20);
@@ -10851,7 +10858,7 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
-    "Boss kills, questing, clues and High Alch are no longer colours on the heatmap. They show as marks on top of the day's skill colours: slash marks for boss kills, a folded corner for questing, dots for clues and a gold coin for High Alch. The Recap folds High Alch into the Magic bar as a gold stripe, and the skill colours are spread further apart so no two look alike.",
+    "Boss kills, questing, clues and High Alch no longer take a colour on the heatmap, which now shows skill colours only. Click a day to see them as badges with their in-game icons, like 3 boss kills or 2 clues. The Recap folds High Alch into the Magic bar as a gold stripe, and the skill colours are spread further apart so no two look alike.",
     "Combat XP is split by skill. Attack, Strength, Defence, Ranged, Magic and Hitpoints each have their own colour on the heatmap, in the Recap and in Wrapped, instead of sharing one Combat bar, so you can see where the XP actually went. Boss kills and entries you log as Combat still show as Combat.",
     "Tick or untick anything in Achievements by hand: diary tasks, combat achievements and collection log items. Your changes are marked as set by you and stay put through RuneLite syncs. Set something back to match RuneLite and it follows RuneLite again.",
     "In the quest planner, hover over a boostable requirement to see what can boost that skill and by how much, from the OSRS Wiki. Boosts big enough to cover what you're short are highlighted.",
