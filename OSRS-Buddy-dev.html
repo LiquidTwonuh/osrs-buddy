@@ -587,6 +587,17 @@
   button.ach-chk:hover{border-color:var(--gold)}
   .ach-task.edited .ach-chk{box-shadow:0 0 0 2px color-mix(in oklab, var(--gold) 45%, transparent)}
   .ach-you{color:var(--gold)}
+  /* Recap heatmap: pick a day, a span or a week */
+  .rc-heat{margin:10px 0 4px}
+  .rc-heat [data-iso]{cursor:pointer}
+  .rc-heat.has-sel [data-iso]:not(.rc-sel){opacity:.35}
+  .rc-heat .heat-cell.rc-sel{box-shadow:0 0 0 2px var(--text)}
+  .rc-heat .rib-day.rc-sel .rib-bar{box-shadow:0 0 0 2px var(--text)}
+  .rc-selbar{display:flex; justify-content:center; align-items:center; gap:8px; flex-wrap:wrap; margin:6px 0 14px; font-size:12.5px; text-align:center}
+  .rc-selchip{padding:4px 12px; border-radius:999px; background:var(--inset); border:1px solid var(--gold-dim); color:var(--text); font-weight:600}
+  .rc-journal{display:grid; gap:6px; max-width:720px; margin:0 auto}
+  .rc-jrow{display:flex; gap:10px; padding:8px 12px; border-radius:10px; background:var(--inset); border:1px solid var(--border); font-size:13px}
+  .rc-jdate{color:var(--gold); white-space:nowrap; font-size:12px; min-width:84px}
   /* badges at the top of a heatmap day's popup */
   .dp-badges{display:flex; flex-wrap:wrap; gap:6px; margin:2px 0 10px}
   .dp-badge{display:inline-flex; align-items:center; gap:6px; padding:3px 10px 3px 5px; border-radius:999px; font-size:12px; font-weight:600;
@@ -2024,6 +2035,9 @@
           <div class="section-title" style="margin-top:0"><h3>📊 Recap</h3><span class="small muted" id="recapSub"></span>
             <button class="ghost small right" id="recapBack">← Back</button></div>
           <div class="seg" id="recapSeg" style="justify-content:center"></div>
+          <div class="seg seg-sub" id="recapStyle"></div>
+          <div class="heatwrap big rc-heat"><div id="recapHeat" class="heatgrid"></div></div>
+          <div class="rc-selbar" id="recapSelBar"></div>
           <div id="recapBody"></div>
         </div>
     </div>
@@ -4412,7 +4426,7 @@ function drawRibbon(id, range, tbd, logBy){
   el.innerHTML = `<div class="ribbon" style="gap:${gap}px; --ribcol:${barW}px">${bars.map(x=>{
     const h = x.w ? Math.round(base + (top-base)*(x.w/maxW)) : 4;
     const bg = x.paint.filled ? x.paint.bg : "var(--border)";
-    return `<div class="rib-day ${x.today?"today":""} ${x.w?"has":""} ${x.prio?"prio":""} ${x.mt?`ms ms-${x.mt}`:""} ${x.mile?"mile":""}" data-iso="${x.iso}" title="${escapeHtml(x.title||"")}"><div class="rib-bar" style="height:${h}px;background:${bg};${x.paint.prim?`color:${x.paint.prim}`:""}"></div></div>`;
+    return `<div class="rib-day ${x.today?"today":""} ${x.w?"has":""} ${x.prio?"prio":""} ${x.mt?`ms ms-${x.mt}`:""} ${x.mile?"mile":""}" data-iso="${x.iso}"${x.b.length>1 ? ` data-span="${x.b[0]}|${x.b[x.b.length-1]}"` : ""} title="${escapeHtml(x.title||"")}"><div class="rib-bar" style="height:${h}px;background:${bg};${x.paint.prim?`color:${x.paint.prim}`:""}"></div></div>`;
   }).join("")}</div>${weekly?`<div class="rib-cap">Each bar is one week</div>`:""}`;
 }
 
@@ -7867,7 +7881,7 @@ async function renderArcade(){
 // ============ RECAP ============
 // Everything here comes from data the Scroll already collects — per-day XP from your
 // game stats, manual log entries, and the milestone record. Nothing new is fetched.
-const RECAP_RANGES = [["week","7 days"],["month","30 days"],["3mo","3 months"],["6mo","6 months"],["all","All time"]];
+const RECAP_RANGES = [["week","7 days"],["month","30 days"],["3mo","3 months"],["6mo","6 months"],["1y","1 year"],["all","All time"]];
 function recapWindow(range){
   const days = rangeDays(range, mergedTypesByDate());
   return {days, from:days[0], to:days[days.length-1]};
@@ -8017,6 +8031,101 @@ function recapCluesHtml(d){
       </div>`).join("")}</div>`
       : `<div class="small muted" style="text-align:center">No tier breakdown saved for these days.</div>`}`;
 }
+// ---- Recap heatmap ----
+// The same drawers as the Scroll's heatmap, drawn into the Recap and used to choose what the
+// Recap covers: click a day for just that day, shift-click another for a span, or click a
+// week's bar for that week. The selection isn't saved; changing the range clears it.
+let recapSel = null;   // {from, to}, or null for the whole range
+function recapDaysBetween(a, b){
+  const out = [], d = new Date(a+"T12:00:00"), end = new Date(b+"T12:00:00");
+  while(d <= end){ out.push(isoDate(d)); d.setDate(d.getDate()+1); }
+  return out;
+}
+function drawRecapHeat(range){
+  const el = $("#recapHeat"); if(!el) return;
+  const wrap = el.closest(".heatwrap");
+  const tbd = heatPalMode()==="skill" ? skillsByDate() : mergedTypesByDate();
+  const logBy = logByDate();
+  heatPrioDays = priorityDoneDays();
+  heatMileDays = milestoneDays();
+  heatMsDays = {}; Object.keys(msDayMap()).forEach(iso=>{ heatMsDays[iso] = msTierOfDay(iso); });
+  const savedFocus = heatFocus; heatFocus = null;   // the Scroll's skill focus doesn't apply here
+  const mode = state.recapMode || "calendar";
+  try{
+    if(mode==="bars"){
+      drawRibbon("recapHeat", range, tbd, logBy);
+      el.className = "";
+      if(wrap) wrap.className = "heatwrap big rc-heat mode-bars";
+    } else if(range==="week"){
+      if(wrap){ const w = wrap.clientWidth || 820; wrap.style.setProperty("--cell", Math.max(18, Math.min(42, Math.floor(w/7) - 10))+"px"); }
+      drawWeekStrip("recapHeat", tbd);
+      el.className = "";
+      if(wrap) wrap.className = "heatwrap big rc-heat mode-calendar";
+    } else {
+      let weeks = heatWeeksFor(range, tbd);
+      if(wrap){
+        const width = wrap.clientWidth || 820;
+        const gap = parseFloat(getComputedStyle(wrap).getPropertyValue("--hgap")) || 5;
+        const cell = Math.max(5, Math.min(34, Math.floor((width - 28) / weeks) - gap));
+        wrap.style.setProperty("--cell", cell+"px");
+        weeks = Math.max(4, Math.min(weeks, Math.floor((width - 28) / (cell + gap))));
+      }
+      drawHeatmap("recapHeat", weeks, tbd);
+      el.className = "heatgrid";
+      if(wrap) wrap.className = "heatwrap big rc-heat mode-calendar";
+    }
+  } finally { heatFocus = savedFocus; }
+  if(wrap) wrap.classList.toggle("has-sel", !!recapSel);
+  $$("#recapHeat [data-iso]").forEach(n=>{
+    let on = false;
+    if(recapSel){
+      const sp = n.dataset.span;
+      if(sp){ const [x, y] = sp.split("|"); on = !(y < recapSel.from || x > recapSel.to); }
+      else on = n.dataset.iso >= recapSel.from && n.dataset.iso <= recapSel.to;
+    }
+    n.classList.toggle("rc-sel", on);
+  });
+  el.onclick = e=>{
+    const day = e.target.closest("[data-iso]"); if(!day) return;
+    e.stopPropagation();
+    if(day.dataset.span){ const [x, y] = day.dataset.span.split("|"); recapSel = {from:x, to:y}; }
+    else {
+      const iso = day.dataset.iso;
+      if(e.shiftKey && recapSel) recapSel = {from: recapSel.from < iso ? recapSel.from : iso, to: recapSel.to > iso ? recapSel.to : iso};
+      else if(recapSel && recapSel.from===iso && recapSel.to===iso) recapSel = null;   // click the same day again to clear
+      else recapSel = {from:iso, to:iso};
+    }
+    renderRecap();
+  };
+}
+function renderRecapSelBar(){
+  const el = $("#recapSelBar"); if(!el) return;
+  if(!recapSel){
+    el.innerHTML = `<span class="muted">Click a day to see just that day, shift-click another day for a span, or click a week's bar.</span>`;
+    return;
+  }
+  const one = recapSel.from===recapSel.to;
+  el.innerHTML = `<span class="rc-selchip">Showing ${one ? fmtDay(recapSel.from) : `${fmtDay(recapSel.from)} to ${fmtDay(recapSel.to)}`}</span>
+    <button class="ghost small" id="recapSelWeek">Whole week</button>
+    <button class="ghost small" id="recapSelClear">Back to the full range</button>`;
+  el.querySelector("#recapSelWeek").textContent = one ? "Whole week" : "Whole weeks";
+  $("#recapSelWeek").onclick = ()=>{
+    // every week the selection touches, Sunday to Saturday like the calendar's columns
+    const s0 = new Date(recapSel.from+"T12:00:00"); s0.setDate(s0.getDate() - s0.getDay());
+    const e0 = new Date(recapSel.to+"T12:00:00");   e0.setDate(e0.getDate() + (6 - e0.getDay()));
+    let y = isoDate(e0); if(y > todayISO()) y = todayISO();
+    recapSel = {from:isoDate(s0), to:y}; renderRecap();
+  };
+  $("#recapSelClear").onclick = ()=>{ recapSel = null; renderRecap(); };
+}
+function recapJournalHtml(dayList){
+  const set = new Set(dayList);
+  const es = (state.scroll.log || []).filter(e=>set.has(e.date)).sort((x,y)=> x.date < y.date ? -1 : x.date > y.date ? 1 : 0);
+  if(!es.length) return "";
+  return `<div class="section-title center" style="margin-top:18px"><h3>Journal</h3><span class="small muted">${es.length} entr${es.length===1?"y":"ies"}</span></div>
+    <div class="rc-journal">${es.slice(0,30).map(e=>`<div class="rc-jrow"><span class="rc-jdate">${fmtDay(e.date)}</span>
+      <span class="grow">${e.text ? escapeHtml(e.text) : '<span class="muted">(no note)</span>'}${entryTagList(e).length ? `<span class="small muted"> · ${entryTagList(e).map(entryTagLabel).join(", ")}</span>` : ""}</span></div>`).join("")}</div>`;
+}
 function renderRecap(){
   const el = $("#recapBody"); if(!el) return;
   const range = state.recapRange || "month";
@@ -8024,16 +8133,26 @@ function renderRecap(){
   if(seg) seg.innerHTML = RECAP_RANGES.map(([k,label])=>
     `<button class="${k===range?"on":""}" data-recaprange="${k}">${label}</button>`).join("");
   $$("#recapSeg [data-recaprange]").forEach(b=>b.onclick=()=>{
-    state.recapRange = b.dataset.recaprange; save(); renderRecap();
+    state.recapRange = b.dataset.recaprange; recapSel = null; save(); renderRecap();
   });
+  const st = $("#recapStyle");
+  if(st){
+    const cur = state.recapMode || "calendar";
+    st.innerHTML = HEAT_MODES.map(([id,label])=>`<button class="${id===cur?"on":""}" data-rcmode="${id}">${label}</button>`).join("");
+    $$("#recapStyle [data-rcmode]").forEach(b=>b.onclick=()=>{ state.recapMode = b.dataset.rcmode; save(); renderRecap(); });
+  }
+  drawRecapHeat(range);
+  renderRecapSelBar();
 
-  const {days, from, to} = recapWindow(range);
+  const days = recapSel ? recapDaysBetween(recapSel.from, recapSel.to) : recapWindow(range).days;
+  const from = days[0], to = days[days.length-1];
   const d = recapCollect(days);
-  const prev = range==="all" ? null : recapPrev(days);
-  $("#recapSub").textContent = `${fmtDay(from)} – ${fmtDay(to)}`;
+  const prev = (range==="all" && !recapSel) ? null : recapPrev(days);
+  $("#recapSub").textContent = from===to ? fmtDay(from) : `${fmtDay(from)} to ${fmtDay(to)}`;
 
   if(!d.totalXp && !d.entries){
-    el.innerHTML = `<div class="empty">Nothing recorded in this window yet. Play a bit and check back.</div>`;
+    el.innerHTML = `<div class="empty">${recapSel ? (from===to ? "Nothing recorded on this day." : "Nothing recorded on these days.") : "Nothing recorded in this window yet. Play a bit and check back."}</div>`
+      + (recapSel && from===to ? `<div style="display:flex; justify-content:center">${dayBadgesHtml(from)}</div>` : "");
     return;
   }
   // High Alch is Magic XP: fold it into the Magic bar and show that share as a gold stripe
@@ -8052,11 +8171,12 @@ function renderRecap(){
       <div class="rc-cap">experience gained</div>
       <div class="rc-delta">${recapDelta(d, prev, "totalXp")}</div>
     </div>
+    ${recapSel && from===to ? `<div style="display:flex; justify-content:center">${dayBadgesHtml(from)}</div>` : ""}
 
     <div class="rc-cards">
       <div class="rc-card"><div class="k">Days played</div><div class="v">${d.activeDays}<span class="of">/${d.days}</span></div></div>
-      <div class="rc-card"><div class="k">Longest streak</div><div class="v">${d.streak}<span class="of"> days</span></div></div>
-      ${d.bestDay?`<div class="rc-card"><div class="k">Biggest day</div><div class="v">${xpText(d.bestDay.xp)}</div><div class="sub">${fmtDay(d.bestDay.iso)}</div></div>`:""}
+      ${d.days>1 ? `<div class="rc-card"><div class="k">Longest streak</div><div class="v">${d.streak}<span class="of"> days</span></div></div>` : ""}
+      ${d.bestDay && d.days>1?`<div class="rc-card"><div class="k">Biggest day</div><div class="v">${xpText(d.bestDay.xp)}</div><div class="sub">${fmtDay(d.bestDay.iso)}</div></div>`:""}
       ${(d.days>14 && Math.max(...d.dow)>0)?`<div class="rc-card"><div class="k">Best day of week</div><div class="v" style="font-size:20px">${DOW[bestDow]}</div></div>`:""}
       ${d.bosses?`<div class="rc-card"><div class="k">Boss kills</div><div class="v">${fmt(d.bosses)}</div></div>`:""}
       ${d.clues?`<div class="rc-card"><div class="k">Clues done</div><div class="v">${fmt(d.clues)}</div></div>`:""}
@@ -8078,6 +8198,7 @@ function renderRecap(){
         </div>`).join("")}
     </div>`:""}
 
+    ${recapSel ? recapJournalHtml(days) : ""}
     ${recapKcHtml(d)}
     ${recapCluesHtml(d)}
 
@@ -10858,6 +10979,7 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
+    "The Recap has its own heatmap at the top, with a time range and a calendar or bars view. Click a day to see the Recap for just that day, shift-click a second day for a span, or click a week's bar for that week. A single day also shows its badges, and any selection lists the journal entries written in it.",
     "Boss kills, questing, clues and High Alch no longer take a colour on the heatmap, which now shows skill colours only. Click a day to see them as badges with their in-game icons, like 3 boss kills or 2 clues. The Recap folds High Alch into the Magic bar as a gold stripe, and the skill colours are spread further apart so no two look alike.",
     "Combat XP is split by skill. Attack, Strength, Defence, Ranged, Magic and Hitpoints each have their own colour on the heatmap, in the Recap and in Wrapped, instead of sharing one Combat bar, so you can see where the XP actually went. Boss kills and entries you log as Combat still show as Combat.",
     "Tick or untick anything in Achievements by hand: diary tasks, combat achievements and collection log items. Your changes are marked as set by you and stay put through RuneLite syncs. Set something back to match RuneLite and it follows RuneLite again.",
