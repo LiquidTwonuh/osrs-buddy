@@ -4109,7 +4109,7 @@ function drawWeekStrip(id, tbd){
 function renderHomeHeatControls(){
   const r = $("#homeHeatRange"), m = $("#homeHeatStyle");
   if(r){
-    const cur = state.scroll.homeRange || "all";
+    const cur = state.scroll.homeRange || "month";
     r.innerHTML = HEAT_RANGES.map(([id,label])=>
       `<button class="${id===cur?"on":""}" data-hrange="${id}">${label}</button>`).join("");
     $$("#homeHeatRange [data-hrange]").forEach(b=>b.onclick=()=>{
@@ -4118,7 +4118,7 @@ function renderHomeHeatControls(){
     });
   }
   if(m){
-    const cur = state.scroll.homeMode || "calendar";
+    const cur = state.scroll.homeMode || "bars";
     m.innerHTML = HEAT_MODES.map(([id,label])=>
       `<button class="${id===cur?"on":""}" data-hmode2="${id}">${label}</button>`).join("");
     $$("#homeHeatStyle [data-hmode2]").forEach(b=>b.onclick=()=>{
@@ -4129,7 +4129,7 @@ function renderHomeHeatControls(){
 }
 function renderHeatRange(){
   const el = $("#heatRange"); if(!el) return;
-  const cur = state.scroll.range || "all";
+  const cur = state.scroll.range || "month";
   el.innerHTML = HEAT_RANGES.map(([id,label])=>`<button class="${id===cur?"on":""}" data-range="${id}">${label}</button>`).join("");
   $$("#heatRange [data-range]").forEach(b=>b.onclick=()=>{
     state.scroll.range = b.dataset.range; save();
@@ -4137,11 +4137,11 @@ function renderHeatRange(){
   });
 }
 
-const HEAT_MODES = [["calendar","📅 Calendar"],["bars","📊 Bars"]];
+const HEAT_MODES = [["bars","📊 Bars"],["calendar","📅 Calendar"]];
 // migrate the old multi-style value → two modes
 function heatMode(){
   if(state.scroll.heatMode) return state.scroll.heatMode;
-  return state.scroll.heatStyle==="ribbon" ? "bars" : "calendar";
+  return "bars";
 }
 function renderHeatStyle(){
   const el = $("#heatStyle"); if(!el) return;
@@ -4522,7 +4522,7 @@ function renderHeatmap(){
   heatMileDays = milestoneDays();     // rainbow-ring days (milestone beats gold)
   heatMsDays = {};                    // auto-detected milestones, by tier
   Object.keys(msDayMap()).forEach(iso=>{ heatMsDays[iso] = msTierOfDay(iso); });
-  const range = state.scroll.range || "all";
+  const range = state.scroll.range || "month";
   const mode = heatMode();
   // null unless one skill is focused; tally scoped to the days this range shows
   heatFocus = buildHeatFocus(heatFocusKey(), visibleIsos(mode, range, tbd));
@@ -4560,8 +4560,8 @@ function renderHeatmap(){
   // Home widget: its own range and display mode. It's a different shape of space to the
   // Scroll's, so it keeps its own two settings rather than inheriting them. Palette and
   // skill focus stay shared, because those are about how you read colour.
-  const hRange = state.scroll.homeRange || "all";
-  const hMode  = state.scroll.homeMode  || "calendar";
+  const hRange = state.scroll.homeRange || "month";
+  const hMode  = state.scroll.homeMode  || "bars";
   const hw = $("#heatmapHome") && $("#heatmapHome").closest(".heatwrap");
   const hEl = $("#heatmapHome");
   if(hEl){
@@ -8050,7 +8050,7 @@ function drawRecapHeat(range){
   heatMileDays = milestoneDays();
   heatMsDays = {}; Object.keys(msDayMap()).forEach(iso=>{ heatMsDays[iso] = msTierOfDay(iso); });
   const savedFocus = heatFocus; heatFocus = null;   // the Scroll's skill focus doesn't apply here
-  const mode = state.recapMode || "calendar";
+  const mode = state.recapMode || "bars";
   try{
     if(mode==="bars"){
       drawRibbon("recapHeat", range, tbd, logBy);
@@ -8137,7 +8137,7 @@ function renderRecap(){
   });
   const st = $("#recapStyle");
   if(st){
-    const cur = state.recapMode || "calendar";
+    const cur = state.recapMode || "bars";
     st.innerHTML = HEAT_MODES.map(([id,label])=>`<button class="${id===cur?"on":""}" data-rcmode="${id}">${label}</button>`).join("");
     $$("#recapStyle [data-rcmode]").forEach(b=>b.onclick=()=>{ state.recapMode = b.dataset.rcmode; save(); renderRecap(); });
   }
@@ -10979,6 +10979,7 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
+    "Heatmaps open as bars over the last 30 days, on the Scroll, on Home and in the Recap. The Bars button comes first, and calendar and every other range are one click away.",
     "The Recap has its own heatmap at the top, with a time range and a calendar or bars view. Click a day to see the Recap for just that day, shift-click a second day for a span, or click a week's bar for that week. A single day also shows its badges, and any selection lists the journal entries written in it.",
     "Boss kills, questing, clues and High Alch no longer take a colour on the heatmap, which now shows skill colours only. Click a day to see them as badges with their in-game icons, like 3 boss kills or 2 clues. The Recap folds High Alch into the Magic bar as a gold stripe, and the skill colours are spread further apart so no two look alike.",
     "Combat XP is split by skill. Attack, Strength, Defence, Ranged, Magic and Hitpoints each have their own colour on the heatmap, in the Recap and in Wrapped, instead of sharing one Combat bar, so you can see where the XP actually went. Boss kills and entries you log as Combat still show as Combat.",
@@ -11354,7 +11355,7 @@ function wireQuickLog(){
 }
 function renderHeatStats(){
   const el = $("#heatStats"); if(!el) return;
-  const range = state.scroll.range || "all";
+  const range = state.scroll.range || "month";
   const days = rangeDays(range, mergedTypesByDate());
   const d = recapCollect(days);
   const pct = days.length ? Math.round(d.activeDays/days.length*100) : 0;
@@ -11377,10 +11378,10 @@ function switchView(name){
   document.body.toggleAttribute("data-wide", name==="quests");
   closeSidebar(); window.scrollTo(0,0);
   // heatmaps size themselves to their container — refit when their view becomes visible
-  // Both heatmaps open on All time each time you come to them. Pick another range and it
+  // Both heatmaps open on 30 days each time you come to them. Pick another range and it
   // holds while you're on the page, but a saved choice from last time no longer wins.
-  if(name==="scroll"){ state.scroll.range = "all"; renderHeatRange(); }
-  if(name==="home") state.scroll.homeRange = "all";
+  if(name==="scroll"){ state.scroll.range = "month"; renderHeatRange(); }
+  if(name==="home") state.scroll.homeRange = "month";
   if(name==="home" || name==="scroll") renderHeatmap();
   if(name==="home"){ renderHomeHeatControls(); renderFunFact(true); }
   // the board shows live status against your stats and quest progress, so it has to be
@@ -12602,7 +12603,13 @@ function renderCombatAch(){
 }
 
 // ============ INIT ============
-state.scroll = state.scroll || {}; state.scroll.range = "all"; state.scroll.homeRange = "all";
+state.scroll = state.scroll || {}; state.scroll.range = "month"; state.scroll.homeRange = "month";
+// Bars became the default on 2026-09-15. Switch any saved calendar choice over once; after that
+// whatever you pick sticks.
+if(!state.scroll.barsDefaultSet){
+  state.scroll.heatMode = "bars"; state.scroll.homeMode = "bars"; state.recapMode = "bars";
+  state.scroll.barsDefaultSet = true; save();
+}
 applyTheme(); applyFont(); startUpdateCheck(); renderHomeHeatControls(); renderFunFact(); renderQuestPlanner(); renderMeta(); renderTodo(); renderClog(); renderQuickAdd(); populateMetricDropdown(); renderStart(); renderScroll(); renderPatchNotes(); renderNotes();
 switchView("home"); // always land on Home
 if(state.username){
