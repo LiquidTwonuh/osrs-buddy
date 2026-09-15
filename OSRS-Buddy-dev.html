@@ -3325,11 +3325,27 @@ migrateActivities();  // must run here, not in ensure() — ACTIVITIES is a cons
 // ---- SKILL-SPECIFIC SCROLL (trial) ----
 // The WOM auto-fill already records per-skill XP per day; skill mode colours the
 // heatmap by the actual skills trained instead of the 7 broad categories.
-// Combat lump: these six all render as SKILL_COLOR.Combat.
-const COMBAT_LUMP_KEYS = new Set(["attack","strength","defence","ranged","magic","hitpoints"]);
+// The six combat skills each get their own colour. They used to share one "Combat" colour,
+// which hid where the XP actually went (a week of Defence read as plain Combat). "Combat"
+// itself stays for boss kills and for journal entries tagged Combat, and a Combat priority
+// still counts XP in any of the six.
+const COMBAT_SKILL_NAMES = new Set(["Attack","Strength","Defence","Ranged","Magic","Hitpoints"]);
+// the chips offered when logging by hand: one Combat chip rather than six
+function logSkillKeys(){ return Object.keys(SKILL_COLOR).filter(k=>!COMBAT_SKILL_NAMES.has(k)); }
+// does a day's skill list count for this tag?
+function tagHit(list, tag){ return list.includes(tag) || (tag==="Combat" && list.some(k=>COMBAT_SKILL_NAMES.has(k))); }
 // oklch(L C H) so theme hue-rotation can operate on H like the category colors do now
 const SKILL_COLOR = {
-  Combat:       "oklch(0.62 0.19 25)",   // #E24B4A red
+  Combat:       "oklch(0.62 0.19 25)",   // #E24B4A red: boss kills and entries logged as Combat
+  // The six combat skills. Picked by searching OKLCH, inside the palette's own lightness and
+  // chroma range, for the colours furthest from everything else, with hues that follow the
+  // in-game icons. Nearest neighbour for any of them is 12.6; the palette's tightest pair is 4.6.
+  Attack:       "oklch(0.50 0.18 36)",   // rust red sword
+  Strength:     "oklch(0.42 0.18 108)",  // dark olive fist
+  Defence:      "oklch(0.80 0.18 230)",  // sky blue shield
+  Ranged:       "oklch(0.56 0.18 100)",  // khaki bow
+  Magic:        "oklch(0.80 0.18 302)",  // lavender hat
+  Hitpoints:    "oklch(0.80 0.18 4)",    // heart pink
   Slayer:       "oklch(0.38 0.14 25)",   // #7A1F1F blood red
   Prayer:       "oklch(0.93 0.03 90)",   // #F2E8C9 holy off-white
   Firemaking:   "oklch(0.72 0.17 55)",   // #F2872E flame
@@ -3373,7 +3389,6 @@ function setReclass(iso, womKey, label){
   save();
 }
 function skillColorKey(womKey){
-  if(COMBAT_LUMP_KEYS.has(womKey)) return "Combat";
   if(womKey==="runecrafting") return "Runecraft";
   return womKey.charAt(0).toUpperCase()+womKey.slice(1);
 }
@@ -3552,7 +3567,7 @@ function latestTagDate(tag){
   // skill tags: manual skill-tagged entries AND auto-detected per-skill XP days both count
   if(SKILL_COLOR[tag]){
     const s=skillsByDate();
-    for(const iso in s){ if(iso<=today && s[iso].includes(tag) && (!best || iso>best)) best=iso; }
+    for(const iso in s){ if(iso<=today && tagHit(s[iso], tag) && (!best || iso>best)) best=iso; }
   }
   return best;
 }
@@ -3882,7 +3897,7 @@ function renderActLegend(){
 }
 function renderActPicker(){
   // Skill chips (the categories retired 2026-07-31 — legacy entries keep their types)
-  $("#actPicker").innerHTML = Object.keys(SKILL_COLOR).map(k=>{
+  $("#actPicker").innerHTML = logSkillKeys().map(k=>{
     const on = logSelTypes.has(k);
     return `<span class="act-chip ${on?"on":""}" data-act="${k}" style="--c:${SKILL_COLOR[k]}"><span class="dot" style="background:${SKILL_COLOR[k]}"></span>${k}</span>`;
   }).join("");
@@ -4241,7 +4256,7 @@ function priorityDoneDays(){
     const s = skillsByDate();
     tagged.forEach(p=>{
       for(const iso in m){ if(m[iso].includes(p.metric)) set.add(iso); }
-      if(SKILL_COLOR[p.metric]) for(const iso in s){ if(s[iso].includes(p.metric)) set.add(iso); }
+      if(SKILL_COLOR[p.metric]) for(const iso in s){ if(tagHit(s[iso], p.metric)) set.add(iso); }
     });
   }
   if(state.scroll.autoOn!==false && state.scroll.auto){
@@ -10791,6 +10806,7 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
+    "Combat XP is split by skill. Attack, Strength, Defence, Ranged, Magic and Hitpoints each have their own colour on the heatmap, in the Recap and in Wrapped, instead of sharing one Combat bar, so you can see where the XP actually went. Boss kills and entries you log as Combat still show as Combat.",
     "Tick or untick anything in Achievements by hand: diary tasks, combat achievements and collection log items. Your changes are marked as set by you and stay put through RuneLite syncs. Set something back to match RuneLite and it follows RuneLite again.",
     "In the quest planner, hover over a boostable requirement to see what can boost that skill and by how much, from the OSRS Wiki. Boosts big enough to cover what you're short are highlighted.",
     "Removed the old Sync from RuneLite button in Settings. It needed the WikiSync plugin and only worked in the browser version. Worn gear on the Roadmap now ticks from the Character Export plugin instead, and saying sync to Ask Bud pulls your latest RuneLite data.",
@@ -11099,7 +11115,7 @@ function renderQuickLogChips(){
   if(!qlm) return;
   const auto = qlDetect($("#qlmText").value);
   $("#qlmAuto").textContent = auto.length ? `picked up: ${auto.join(", ")}` : "";
-  $("#qlmSkills").innerHTML = Object.keys(SKILL_COLOR).map(k=>
+  $("#qlmSkills").innerHTML = logSkillKeys().map(k=>
     `<span class="act-chip ${qlm.skills.has(k)?"on":""}" data-qlsk="${escapeHtml(k)}" style="--c:${SKILL_COLOR[k]}"><span class="dot" style="background:${SKILL_COLOR[k]}"></span>${escapeHtml(k)}</span>`).join("");
   $$("#qlmSkills [data-qlsk]").forEach(c=>c.onclick=()=>{
     const k = c.dataset.qlsk;
