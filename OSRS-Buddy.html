@@ -3351,7 +3351,7 @@ const SKILL_COLOR = {
   Firemaking:   "oklch(0.72 0.17 55)",   // #F2872E flame
   Runecraft:    "oklch(0.85 0.14 95)",   // #E8D44D rune yellow
   Crafting:     "oklch(0.72 0.09 75)",   // #C9A15E leather amber
-  Hunter:       "oklch(0.64 0.08 70)",   // #B08A5A tan
+  Hunter:       "oklch(0.42 0.18 198)",  // deep teal. Was tan, which sat 8.1 from Crafting; this is 16.6 from its nearest (Agility)
   Construction: "oklch(0.47 0.07 65)",   // #7D5A38 plank brown
   Woodcutting:  "oklch(0.51 0.11 145)",  // #3F7D3A forest
   Farming:      "oklch(0.73 0.13 125)",  // #8FBF4D leaf
@@ -9726,7 +9726,7 @@ function skillFacts(key, xp){
     fx.push(`<div class="fx"><span class="fi">📅</span>Trained on <b>${days}</b> of the last 30 days</div>`);
     if(streak>1) fx.push(`<div class="fx"><span class="fi">🔥</span>Hot streak — <b>${streak} days</b> running</div>`);
     if(best.iso) fx.push(`<div class="fx"><span class="fi">⚡</span>Best day: <b>+${fmt(best.xp)} xp</b> on ${fmtDay(best.iso)}</div>`);
-    if(lvlsGained>0) fx.push(`<div class="fx"><span class="fi">📈</span><b>${lvlsGained} level${lvlsGained>1?"s":""}</b> gained this month</div>`);
+    if(lvlsGained>0) fx.push(`<div class="fx"><span class="fi">📈</span><b>${lvlsGained} level${lvlsGained>1?"s":""}</b> gained in the last 30 days</div>`);
   } else {
     fx.push(`<div class="fx"><span class="fi">💤</span>No training seen in the last 30 days</div>`);
   }
@@ -9965,9 +9965,11 @@ const INSIGHT_GENS = [
     const b = c.all.bestDay;
     if(!b || !b.xp) return null;
     const recent = dayDiff(b.iso, todayISO()) <= 30;
+    // "this month" only for the calendar month we're in; 25 Aug isn't this month on 15 Sep
+    const sameMonth = b.iso.slice(0,7) === todayISO().slice(0,7);
     return {id:"best-day", kind:"record", icon:"🏅",
       title:`Best day: ${fmt(b.xp)} xp`,
-      body:`${fmtDay(b.iso)}${recent ? ", and that was this month." : "."}`,
+      body:`${fmtDay(b.iso)}${sameMonth ? ", and that was this month." : recent ? ", in the last 30 days." : "."}`,
       weight: recent ? 74 : 46};
   },
 
@@ -10063,7 +10065,7 @@ const INSIGHT_GENS = [
     const n = Object.keys(c.month.skills).length;
     if(!n) return null;
     return {id:"spread", kind:"fact", icon:"🎨",
-      title: n === 1 ? "One skill, all month" : `${n} skills this month`,
+      title: n === 1 ? "One skill for 30 days" : `${n} skills in the last 30 days`,
       body: n === 1 ? "Focused. Possibly to a fault."
           : n >= 8  ? "You're spreading it around nicely."
           : "A steady handful.",
@@ -10075,7 +10077,7 @@ const INSIGHT_GENS = [
     if(!e || !c.month.totalXp) return null;
     const share = Math.round(e[1]/c.month.totalXp*100);
     return {id:"top-skill", kind:"fact", icon:"⭐",
-      title:`${e[0]} is eating your month`,
+      title:`${e[0]} leads your last 30 days`,
       body:`${share}% of your XP, or ${fmt(e[1])}.`,
       weight: 55};
   },
@@ -10088,36 +10090,36 @@ const INSIGHT_GENS = [
     return {id:"neglected", kind:"nudge", icon:"🕸️",
       title:`${gone[0]} has gone quiet`,
       body: gone.length > 1
-        ? `Nothing this month, and the same for ${gone.length-1} other skill${gone.length>2?"s":""} you were on.`
-        : "You were on it last month and haven't touched it since.",
+        ? `Nothing in the last 30 days, and the same for ${gone.length-1} other skill${gone.length>2?"s":""} you were on.`
+        : "You trained it in the 30 days before that and haven't touched it since.",
       weight: 58};
   },
 
   function bossing(c){
     if(!c.month.bosses) return null;
     return {id:"bossing", kind:"fact", icon:"💀",
-      title:`${fmt(c.month.bosses)} boss kills this month`,
+      title:`${fmt(c.month.bosses)} boss kills in the last 30 days`,
       body: c.prevMonth && c.prevMonth.bosses
-        ? `Last month: ${fmt(c.prevMonth.bosses)}.` : "Keep the drops coming.",
+        ? `The 30 days before: ${fmt(c.prevMonth.bosses)}.` : "Keep the drops coming.",
       weight: 48};
   },
 
   function clues(c){
     if(!c.month.clues) return null;
     return {id:"clues", kind:"fact", icon:"📜",
-      title:`${c.month.clues} clue${c.month.clues===1?"":"s"} this month`,
+      title:`${c.month.clues} clue${c.month.clues===1?"":"s"} in the last 30 days`,
       body:"Treasure trails are the cheapest gamble in the game.", weight: 38};
   },
 
   function journalHabit(c){
     const e = c.month.entries;
     if(!e) return {id:"journal", kind:"nudge", icon:"✍️",
-      title:"Nothing written down this month",
+      title:"Nothing written down in the last 30 days",
       body:"The heatmap fills itself, but the notes are what you'll actually reread.",
       weight: 30};
     if(e < 4) return null;
     return {id:"journal", kind:"fact", icon:"✍️",
-      title:`${e} journal entries this month`,
+      title:`${e} journal entries in the last 30 days`,
       body:"Future you will appreciate it.", weight: 32};
   },
 ];
@@ -10568,7 +10570,7 @@ const WRAP_STATS = [
             sub:`${fmt(now)} xp this week, ${fmt(prev)} last week.`};
   },
   c => Object.keys(c.month.skills).length >= 2 && {icon:"🎨", big:fmt(Object.keys(c.month.skills).length),
-       head:"skills trained this month", sub:""},
+       head:"skills trained in the last 30 days", sub:""},
   c => c.all.bosses >= 1 && {icon:"💀", big:fmt(c.all.bosses), head:"boss kills logged", sub:""},
   c => {
     if(!live || !live.bosses) return null;
