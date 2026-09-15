@@ -3335,35 +3335,39 @@ function logSkillKeys(){ return Object.keys(SKILL_COLOR).filter(k=>!COMBAT_SKILL
 // does a day's skill list count for this tag?
 function tagHit(list, tag){ return list.includes(tag) || (tag==="Combat" && list.some(k=>COMBAT_SKILL_NAMES.has(k))); }
 // oklch(L C H) so theme hue-rotation can operate on H like the category colors do now
+// Skill colours were re-spread on 2026-09-15 once Combat, Questing, Clues and High Alch
+// became marks instead of colours (see TAG_EFFECTS). Each skill stayed within 20 degrees of
+// its old hue; the closest pair went from 4.6 (Sailing/Fishing) to 15.8. To go back, restore
+// the previous commit's values.
 const SKILL_COLOR = {
   Combat:       "oklch(0.62 0.19 25)",   // #E24B4A red: boss kills and entries logged as Combat
   // The six combat skills. Picked by searching OKLCH, inside the palette's own lightness and
   // chroma range, for the colours furthest from everything else, with hues that follow the
   // in-game icons. Nearest neighbour for any of them is 12.6; the palette's tightest pair is 4.6.
-  Attack:       "oklch(0.50 0.18 36)",   // rust red sword
-  Strength:     "oklch(0.42 0.18 108)",  // dark olive fist
-  Defence:      "oklch(0.80 0.18 230)",  // sky blue shield
-  Ranged:       "oklch(0.56 0.18 100)",  // khaki bow
+  Attack:       "oklch(0.57 0.19 31)",   // rust red sword
+  Strength:     "oklch(0.37 0.18 108)",  // dark olive fist
+  Defence:      "oklch(0.77 0.19 236)",  // sky blue shield
+  Ranged:       "oklch(0.60 0.19 101)",  // khaki bow
   Magic:        "oklch(0.80 0.18 302)",  // lavender hat
-  Hitpoints:    "oklch(0.80 0.18 4)",    // heart pink
-  Slayer:       "oklch(0.38 0.14 25)",   // #7A1F1F blood red
-  Prayer:       "oklch(0.93 0.03 90)",   // #F2E8C9 holy off-white
-  Firemaking:   "oklch(0.72 0.17 55)",   // #F2872E flame
-  Runecraft:    "oklch(0.85 0.14 95)",   // #E8D44D rune yellow
-  Crafting:     "oklch(0.72 0.09 75)",   // #C9A15E leather amber
-  Hunter:       "oklch(0.42 0.18 198)",  // deep teal. Was tan, which sat 8.1 from Crafting; this is 16.6 from its nearest (Agility)
-  Construction: "oklch(0.47 0.07 65)",   // #7D5A38 plank brown
-  Woodcutting:  "oklch(0.51 0.11 145)",  // #3F7D3A forest
-  Farming:      "oklch(0.73 0.13 125)",  // #8FBF4D leaf
-  Herblore:     "oklch(0.70 0.12 155)",  // #4DBF7A mint
-  Fletching:    "oklch(0.72 0.09 175)",  // #62BFA8 teal
-  Sailing:      "oklch(0.58 0.09 210)",  // #2E8FA8 sea
-  Fishing:      "oklch(0.58 0.07 240)",  // #5A87B0 slate water
-  Agility:      "oklch(0.46 0.11 260)",  // #3E5FA8 navy
-  Mining:       "oklch(0.74 0.02 240)",  // #A8B4C0 pale steel
-  Smithing:     "oklch(0.50 0.03 240)",  // #66727F anvil grey
+  Hitpoints:    "oklch(0.78 0.18 355)",    // heart pink
+  Slayer:       "oklch(0.36 0.16 30)",   // #7A1F1F blood red
+  Prayer:       "oklch(0.93 0.03 95)",   // #F2E8C9 holy off-white
+  Firemaking:   "oklch(0.82 0.16 52)",   // #F2872E flame
+  Runecraft:    "oklch(0.93 0.19 91)",   // #E8D44D rune yellow
+  Crafting:     "oklch(0.65 0.06 60)",   // #C9A15E leather amber
+  Hunter:       "oklch(0.36 0.18 184)",  // deep teal. Was tan, which sat 8.1 from Crafting; this is 16.6 from its nearest (Agility)
+  Construction: "oklch(0.48 0.10 73)",   // #7D5A38 plank brown
+  Woodcutting:  "oklch(0.50 0.19 142)",  // #3F7D3A forest
+  Farming:      "oklch(0.80 0.17 121)",  // #8FBF4D leaf
+  Herblore:     "oklch(0.65 0.16 159)",  // #4DBF7A mint
+  Fletching:    "oklch(0.80 0.18 179)",  // #62BFA8 teal
+  Sailing:      "oklch(0.52 0.17 197)",  // #2E8FA8 sea
+  Fishing:      "oklch(0.62 0.12 251)",  // #5A87B0 slate water
+  Agility:      "oklch(0.47 0.17 257)",  // #3E5FA8 navy
+  Mining:       "oklch(0.78 0.03 240)",  // #A8B4C0 pale steel
+  Smithing:     "oklch(0.38 0.03 241)",  // #66727F anvil grey
   Cooking:      "oklch(0.55 0.13 320)",  // #9C5FA8 plum
-  Thieving:     "oklch(0.45 0.10 295)",  // #6B5494 shadow purple
+  Thieving:     "oklch(0.37 0.17 304)",  // #6B5494 shadow purple
   // non-skill chips — days that aren't about XP but still deserve a colour
   Questing:     "oklch(0.65 0.16 255)",  // vivid quest blue
   Clues:        "oklch(0.64 0.16 350)",  // clue pink (also auto-detected from WOM)
@@ -3373,6 +3377,32 @@ const SKILL_COLOR = {
   "High Alch":  "oklch(0.94 0.19 70)",
 };
 const SKILL_MUTED = "#7b7264"; // manual-only days (no game data to colour by)
+// ---- tag effects ----
+// Combat (boss kills), Questing, Clues and High Alch aren't skills, so on the heatmap they're
+// drawn as marks on top of the day's skill colours instead of taking a colour of their own.
+// High Alch is Magic XP, so its day paints as Magic with a coin on top. Everything for this
+// lives in this block plus the few call sites that use swatchBg/tagColourIds; to undo it,
+// revert those and the palette above.
+const TAG_EFFECTS = {Combat:"slash", Questing:"fold", Clues:"dots", "High Alch":"coin"};
+const TAG_EFFECT_CSS = {
+  slash: "repeating-linear-gradient(135deg, rgba(0,0,0,.55) 0 1.3px, transparent 1.3px 3.8px)",
+  fold:  "linear-gradient(225deg, rgba(255,255,255,.95) 0 48%, rgba(0,0,0,.45) 48% 60%, transparent 60%) right top / 7px 7px no-repeat",
+  dots:  "radial-gradient(circle, rgba(255,255,255,.9) 0 .9px, transparent 1.3px) 0 0 / 4px 4px",
+  coin:  "radial-gradient(circle, #fff4b8 0 18%, #f2c14e 20% 52%, rgba(120,80,10,.6) 54% 62%, transparent 64%) center / 8px 8px no-repeat",
+};
+// the skills that give a day its colour, with High Alch counted as the Magic it is
+function tagColourIds(ids){
+  return [...new Set((ids || []).map(id=> id==="High Alch" ? "Magic" : id).filter(id=>!(id in TAG_EFFECTS)))];
+}
+function tagEffectLayers(ids){
+  return ["High Alch","Clues","Questing","Combat"].filter(t=>(ids || []).includes(t)).map(t=>TAG_EFFECT_CSS[TAG_EFFECTS[t]]);
+}
+// a small swatch for legends, chips and log tags: a skill's colour, or a tag's mark
+function swatchBg(k){
+  if(!(k in TAG_EFFECTS)) return SKILL_COLOR[k] || SKILL_MUTED;
+  const base = k==="High Alch" ? SKILL_COLOR.Magic : "color-mix(in oklab, var(--text) 38%, var(--inset))";
+  return `${tagEffectLayers([k]).join(", ")}, ${base}`;
+}
 // WiseOldMan reports XP, not what earned it — Magic from alching looks identical to
 // Magic from combat. These let you say which it was, per day; the choice is stored
 // against the date and survives refreshes (the auto cache gets rebuilt, this doesn't).
@@ -3534,12 +3564,12 @@ function cellPaint(iso, types, angle, maxBands){
             title:`${fmtDay(iso)} — ${heatFocus.key}: ${focusDetail(iso, heatFocus.key)}`};
   }
   if(!types || !types.length) return {bg:"", prim:null, filled:false, title:`${fmtDay(iso)} — nothing logged`};
-  return {bg:cellBg(types, angle, maxBands), prim:heatCol(types[0]), filled:true,
+  return {bg:cellBg(types, angle, maxBands), prim:heatCol((heatPalMode()==="skill" ? tagColourIds(types)[0] : null) || types[0]), filled:true,
           title:`${fmtDay(iso)} — ${types.map(t=>heatLabel(t)).join(", ")}`};
 }
 // Log entries: new ones carry skills[], legacy ones carry types[] — render whichever exists
 function entryTagList(e){ return (e.skills && e.skills.length) ? e.skills : (e.types||[]); }
-function entryTagColor(t){ return SKILL_COLOR[t] || (ACT[t] ? ACT[t].color : '#555'); }
+function entryTagColor(t){ return SKILL_COLOR[t] ? swatchBg(t) : (ACT[t] ? ACT[t].color : '#555'); }
 function entryTagLabel(t){ return SKILL_COLOR[t] ? t : (ACT[t] ? ACT[t].label : t); }
 
 // date helpers — local time, YYYY-MM-DD
@@ -3888,7 +3918,7 @@ function renderActLegend(){
     for(const iso in sbd) sbd[iso].forEach(k=>counts[k]=(counts[k]||0)+1);
     const keys=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
     $("#actLegend").innerHTML = keys.length
-      ? keys.map(k=>`<span class="lg"><span class="dot" style="background:${heatCol(k)}"></span>${heatLabel(k)}</span>`).join("")
+      ? keys.map(k=>`<span class="lg"><span class="dot" style="background:${swatchBg(k)}"></span>${heatLabel(k)}</span>`).join("")
       : `<span class="lg muted">skill colours appear as your game data fills in</span>`;
     return;
   }
@@ -3899,7 +3929,7 @@ function renderActPicker(){
   // Skill chips (the categories retired 2026-07-31 — legacy entries keep their types)
   $("#actPicker").innerHTML = logSkillKeys().map(k=>{
     const on = logSelTypes.has(k);
-    return `<span class="act-chip ${on?"on":""}" data-act="${k}" style="--c:${SKILL_COLOR[k]}"><span class="dot" style="background:${SKILL_COLOR[k]}"></span>${k}</span>`;
+    return `<span class="act-chip ${on?"on":""}" data-act="${k}" style="--c:${SKILL_COLOR[k]}"><span class="dot" style="background:${swatchBg(k)}"></span>${k}</span>`;
   }).join("");
   $$("#actPicker [data-act]").forEach(c=>c.onclick=()=>{
     const id=c.dataset.act;
@@ -3967,7 +3997,14 @@ function typesByDate(){
 const HEAT_MAX_BANDS = 6;
 function cellBg(typeIds, angle, maxBands){
   if(!typeIds || !typeIds.length) return "";
-  const c = typeIds.slice(0, maxBands || HEAT_MAX_BANDS).map(id=>heatCol(id));
+  const skillMode = heatPalMode()==="skill";
+  const ids = skillMode ? tagColourIds(typeIds) : typeIds;
+  const fx = skillMode ? tagEffectLayers(typeIds) : [];
+  const c = (ids.length ? ids : ["Logged"]).slice(0, maxBands || HEAT_MAX_BANDS).map(id=>heatCol(id));
+  if(fx.length) return `${fx.join(", ")}, ${cellBgBands(c, angle)}`;
+  return cellBgBands(c, angle);
+}
+function cellBgBands(c, angle){
   if(c.length===1) return c[0];
   const seam="rgba(0,0,0,.55)", w=".8px"; // crisp dark divider so colours don't bleed
   const step = 100/c.length, parts=[];
@@ -4291,7 +4328,7 @@ function autoGainsHtml(iso){
       : "";
     // keep the original skill visible — it's still Magic XP, just earned by alching
     const label = re ? `${nice(k)} XP - ${escapeHtml(re)}` : nice(k);
-    rows.push(`<span class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:baseline;background:${SKILL_COLOR[key]||SKILL_MUTED}"></span>${label} <b>+${fmt(xp)}</b> xp${btn}`);
+    rows.push(`<span class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:baseline;background:${SKILL_COLOR[key] ? swatchBg(key) : SKILL_MUTED}"></span>${label} <b>+${fmt(xp)}</b> xp${btn}`);
   });
   Object.entries(a.bosses||{}).sort((x,y)=>y[1]-x[1]).forEach(([k,kc])=> rows.push(`${nice(k)} <b>+${fmt(kc)}</b> KC`));
   if(a.clues>0) rows.push(`<b>+${a.clues}</b> clue${a.clues>1?"s":""}`);
@@ -7992,7 +8029,11 @@ function renderRecap(){
     el.innerHTML = `<div class="empty">Nothing recorded in this window yet. Play a bit and check back.</div>`;
     return;
   }
-  const ranked = Object.entries(d.skills).sort((a,b)=>b[1]-a[1]);
+  // High Alch is Magic XP: fold it into the Magic bar and show that share as a gold stripe
+  const alch = d.skills["High Alch"] || 0;
+  const skillsR = Object.assign({}, d.skills);
+  if(alch){ delete skillsR["High Alch"]; skillsR.Magic = (skillsR.Magic || 0) + alch; }
+  const ranked = Object.entries(skillsR).sort((a,b)=>b[1]-a[1]);
   const top = ranked[0];
   const maxXp = top ? top[1] : 1;
   const DOW = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -8017,12 +8058,14 @@ function renderRecap(){
 
     ${ranked.length?`
     <div class="section-title center" style="margin-top:18px"><h3>Where the time went</h3></div>
-    <p class="muted small" style="text-align:center;margin:0 0 10px">${escapeHtml(recapShape(d.skills, d.totalXp))}</p>
+    <p class="muted small" style="text-align:center;margin:0 0 10px">${escapeHtml(recapShape(skillsR, d.totalXp))}</p>
     <div class="rc-bars">
       ${ranked.map(([k,v])=>`
         <div class="rc-bar">
-          <span class="rc-name">${escapeHtml(k)}</span>
-          <span class="rc-track"><i style="width:${Math.max(2,(v/maxXp)*100)}%; background:${SKILL_COLOR[k]||SKILL_MUTED}"></i></span>
+          <span class="rc-name">${escapeHtml(k)}${k==="Magic" && alch ? ` <span class="muted small">(${xpText(alch)} High Alch)</span>` : ""}</span>
+          <span class="rc-track"><i style="width:${Math.max(2,(v/maxXp)*100)}%; background:${k==="Magic" && alch
+            ? `linear-gradient(90deg, ${SKILL_COLOR.Magic} 0 ${Math.round((v-alch)/v*100)}%, transparent ${Math.round((v-alch)/v*100)}%), repeating-linear-gradient(135deg, #f2c14e 0 3px, #b8862f 3px 6px)`
+            : (SKILL_COLOR[k]||SKILL_MUTED)}"></i></span>
           <span class="rc-val">${xpText(v)}</span>
           <span class="rc-pct">${Math.round(v/d.totalXp*100)}%</span>
         </div>`).join("")}
@@ -10808,6 +10851,7 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
+    "Boss kills, questing, clues and High Alch are no longer colours on the heatmap. They show as marks on top of the day's skill colours: slash marks for boss kills, a folded corner for questing, dots for clues and a gold coin for High Alch. The Recap folds High Alch into the Magic bar as a gold stripe, and the skill colours are spread further apart so no two look alike.",
     "Combat XP is split by skill. Attack, Strength, Defence, Ranged, Magic and Hitpoints each have their own colour on the heatmap, in the Recap and in Wrapped, instead of sharing one Combat bar, so you can see where the XP actually went. Boss kills and entries you log as Combat still show as Combat.",
     "Tick or untick anything in Achievements by hand: diary tasks, combat achievements and collection log items. Your changes are marked as set by you and stay put through RuneLite syncs. Set something back to match RuneLite and it follows RuneLite again.",
     "In the quest planner, hover over a boostable requirement to see what can boost that skill and by how much, from the OSRS Wiki. Boosts big enough to cover what you're short are highlighted.",
@@ -11118,7 +11162,7 @@ function renderQuickLogChips(){
   const auto = qlDetect($("#qlmText").value);
   $("#qlmAuto").textContent = auto.length ? `picked up: ${auto.join(", ")}` : "";
   $("#qlmSkills").innerHTML = logSkillKeys().map(k=>
-    `<span class="act-chip ${qlm.skills.has(k)?"on":""}" data-qlsk="${escapeHtml(k)}" style="--c:${SKILL_COLOR[k]}"><span class="dot" style="background:${SKILL_COLOR[k]}"></span>${escapeHtml(k)}</span>`).join("");
+    `<span class="act-chip ${qlm.skills.has(k)?"on":""}" data-qlsk="${escapeHtml(k)}" style="--c:${SKILL_COLOR[k]}"><span class="dot" style="background:${swatchBg(k)}"></span>${escapeHtml(k)}</span>`).join("");
   $$("#qlmSkills [data-qlsk]").forEach(c=>c.onclick=()=>{
     const k = c.dataset.qlsk;
     if(qlm.skills.has(k)){ qlm.skills.delete(k); qlm.off.add(k); } else { qlm.skills.add(k); qlm.off.delete(k); }
