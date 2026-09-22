@@ -1730,7 +1730,7 @@
       </div>
       <div class="set-sec">
         <div class="set-h">Stats</div>
-        <label class="chk small"><input type="checkbox" id="autoRefresh"> Auto-refresh from the hiscores every 5 minutes</label>
+        <label class="chk small"><input type="checkbox" id="autoRefresh"> Auto-refresh from the hiscores every 15 minutes</label>
       </div>
       <div class="set-sec">
         <div class="set-h">RuneLite data</div>
@@ -2775,6 +2775,7 @@ function currentValue(goal){
 async function fetchPlayer(name, {live=true}={}){
   const url = WOM + encodeURIComponent(name.trim());
   if(live){
+    womPingAt = Date.now();
     const res = await fetch(url, {method:"POST"});
     if(res.ok) return {player: await res.json(), throttled:false};
     if(res.status === 429){
@@ -4218,25 +4219,41 @@ async function fetchSnapshots(name, deep){
   }catch(e){ if(!all.length) return null; }
   return all.length ? all.sort((a,b)=> new Date(a.createdAt)-new Date(b.createdAt)) : null;
 }
-// Each consecutive snapshot pair's gains are attributed to the LATER snapshot's date.
+// Each consecutive pair's gains are attributed to the LATER point's date. The points are WOM
+// snapshots plus, in the desktop app, readings from RuneLite (see autoPoints). The two can
+// disagree for a while: the hiscores only update when you log out, so a WOM snapshot taken while
+// you're still playing is behind what RuneLite already saw. Measuring every gain against the
+// highest value seen so far means a stale snapshot adds nothing and nothing is counted twice.
+// A value of 0 or less means unknown (unranked, or a RuneLite reading, which has no boss kills),
+// and the first known value only sets the starting point.
 function deriveAutoDays(snaps){
   const out={};
   if(!snaps || snaps.length<2) return {};
-  const val=(o,k,f)=> (o && o[k] && o[k][f]>0) ? o[k][f] : 0;
+  const F = {skills:"experience", bosses:"kills", activities:"score"};
+  const top = {skills:{}, bosses:{}, activities:{}};
+  const gain = (data, g, k)=>{
+    const e = data[g] && data[g][k], v = e ? e[F[g]] : 0;
+    if(!(v > 0)) return 0;
+    const was = top[g][k];
+    if(was === undefined || v > was) top[g][k] = v;
+    return was === undefined ? 0 : Math.max(0, v - was);
+  };
+  const first = snaps[0].data || {};
+  for(const g in F) for(const k in (first[g] || {})) gain(first, g, k);
   for(let i=1;i<snaps.length;i++){
-    const A=snaps[i-1].data||{}, B=snaps[i].data||{};
+    const B=snaps[i].data||{};
     const iso=isoDate(new Date(snaps[i].createdAt));
     const fromIso=isoDate(new Date(snaps[i-1].createdAt));
     const d=out[iso]||(out[iso]={types:new Set(), skills:{}, bosses:{}, clues:0, clueTiers:{}, minis:0, spanFrom:fromIso});
     if(fromIso<d.spanFrom) d.spanFrom=fromIso;
     for(const k in (B.skills||{})){ if(k==="overall") continue;
-      const g=val(B.skills,k,"experience")-val(A.skills,k,"experience");
+      const g=gain(B,"skills",k);
       if(g>0){ d.skills[k]=(d.skills[k]||0)+g; d.types.add(COMBAT_SKILLS.has(k)?"combat":"skilling"); } }
     for(const k in (B.bosses||{})){
-      const g=val(B.bosses,k,"kills")-val(A.bosses,k,"kills");
+      const g=gain(B,"bosses",k);
       if(g>0){ d.bosses[k]=(d.bosses[k]||0)+g; d.types.add("combat"); } }
     for(const k in (B.activities||{})){
-      const g=val(B.activities,k,"score")-val(A.activities,k,"score");
+      const g=gain(B,"activities",k);
       if(g<=0) continue;
       if(k.startsWith("clue")){
         // The hiscores list every clue twice: under its tier and again in the all-clues
@@ -4258,6 +4275,78 @@ function deriveAutoDays(snaps){
   }
   return res;
 }
+// Two copies of the same day's WOM history can differ: a short refresh only reaches back a few
+// hours, so the oldest day in it is missing its morning. Keep whichever copy holds more. A day's
+// totals only grow as more of it is seen, so the fuller one is the right one; on a tie the
+// newer copy wins, which lets a re-derivation (like the clue fix) replace the old numbers.
+function autoDayWeight(d){
+  if(!d) return [-1, -1];
+  let xp = 0, n = 0;
+  for(const k in (d.skills || {})) xp += d.skills[k] || 0;
+  for(const k in (d.bosses || {})) n += d.bosses[k] || 0;
+  return [xp, n + (d.clues || 0) + (d.minis || 0)];
+}
+// `after`: the day the fetched history starts on. Every day after it was seen in full, so the new
+// copy replaces the old outright, and a day it has no gains for is dropped. That matters when
+// RuneLite moves XP from one day to the day before: the later day gets smaller, and "keep the
+// fuller copy" would count that XP on both.
+function autoMerge(older, newer, after){
+  const out = Object.assign({}, older || {});
+  if(after) for(const iso in out) if(iso > after && !(newer && newer[iso])) delete out[iso];
+  for(const iso in (newer || {})){
+    if(after && iso > after){ out[iso] = newer[iso]; continue; }
+    const [ax, an] = autoDayWeight(out[iso]), [bx, bn] = autoDayWeight(newer[iso]);
+    if(bx > ax || (bx === ax && bn >= an)) out[iso] = newer[iso];
+  }
+  return out;
+}
+// ---- XP from RuneLite (desktop app) ----
+// Character Export rewrites character.json on every XP drop, stamped with the exact time. The
+// hiscores only move when you log out, so on their own a late session that runs past midnight
+// lands on the next day. The desktop app reads the file as it changes and keeps each day's first
+// and last reading. Those readings sit alongside the WOM snapshots, so XP is counted on the day
+// you earned it: a reading just before midnight and one just after split the session cleanly.
+// WOM still covers everything RuneLite can't see, like mobile, boss kills and clues.
+const RL_SKILL_KEY = n=> { const k = String(n).toLowerCase(); return k==="runecraft" ? "runecrafting" : k; };
+function ceTime(s){ return Date.parse(String(s || "").replace(/(\.\d{3})\d+/, "$1")) || 0; }
+function xpLocalRecord(ch){
+  if(!ch || !ch.stats || !state.username) return false;
+  if(profKey(ch.account_name) !== profKey(state.username)) return false;
+  const t = ceTime(ch.exported_at);
+  if(!t || t > Date.now() + 3600e3) return false;
+  const xp = {};
+  for(const n in ch.stats){ const e = ch.stats[n] && ch.stats[n].experience; if(e > 0) xp[RL_SKILL_KEY(n)] = e; }
+  if(!Object.keys(xp).length) return false;
+  const L = state.xpLocal || (state.xpLocal = {days:{}});
+  L.game = ch.game_state || null;
+  const iso = isoDate(new Date(t)), d = L.days[iso] || (L.days[iso] = {});
+  if(d.last && d.last.t >= t) return false;
+  if(!d.first) d.first = {t, xp};
+  d.last = {t, xp};
+  L.lastT = Math.max(L.lastT || 0, t);
+  const cut = isoDate(new Date(Date.now() - 400*86400e3));
+  for(const k in L.days) if(k < cut) delete L.days[k];
+  return true;
+}
+// WOM snapshots plus RuneLite's readings from the same stretch of time, oldest first
+function autoPoints(snaps){
+  const L = state.xpLocal, from = new Date(snaps[0].createdAt).getTime(), pts = snaps.slice();
+  if(L && L.days) for(const iso in L.days) ["first","last"].forEach(w=>{
+    const r = L.days[iso][w];
+    if(r && r.t >= from) pts.push({createdAt: new Date(r.t).toISOString(), data:{skills: Object.fromEntries(Object.entries(r.xp).map(([k,v])=>[k,{experience:v}]))}});
+  });
+  return pts.sort((a,b)=> new Date(a.createdAt) - new Date(b.createdAt));
+}
+// the last WOM history fetched, so a new RuneLite reading can be folded in without asking WOM again
+let autoSnapCache = null;
+function autoRederive(){
+  const c = autoSnapCache;
+  if(!c || c.user !== profKey(state.username) || !c.snaps.length) return;
+  const pts = autoPoints(c.snaps);
+  state.scroll.auto = autoMerge(state.scroll.auto, deriveAutoDays(pts), isoDate(new Date(pts[0].createdAt)));
+  save();
+  renderScroll();
+}
 async function refreshAutoActivity(){
   if(!state.username) return;
   // One page (200 snapshots ≈ several hours) covers a routine refresh. The full
@@ -4270,9 +4359,11 @@ async function refreshAutoActivity(){
   const snaps=await fetchSnapshots(state.username, deep);
   if(snaps && deep){ s.autoDeepTs = Date.now(); }
   if(!snaps) return;
+  autoSnapCache = {user: profKey(state.username), snaps};
   // MERGE, never replace: a short fetch (rate limit, or WOM ageing out old snapshots)
   // must not erase days we already derived. Newer derivation wins per day.
-  const fresh = deriveAutoDays(snaps);
+  const pts = autoPoints(snaps);
+  const fresh = deriveAutoDays(pts);
   const prior = state.scroll.auto||{};
   if(deep && (s.autoV||0) < AUTO_V){
     // Days WOM has already aged out can't be re-derived. They were counted as tier plus
@@ -4282,7 +4373,7 @@ async function refreshAutoActivity(){
     }
     s.autoV = AUTO_V;
   }
-  state.scroll.auto = Object.assign({}, prior, fresh);
+  state.scroll.auto = autoMerge(prior, fresh, isoDate(new Date(pts[0].createdAt)));
   save();
   renderScroll();
 }
@@ -5251,10 +5342,23 @@ $("#clogFile").onchange = e=>{
 $("#autoRefresh").onchange = e=>{
   state.autoRefresh = e.target.checked; save(); setupRefresh();
 };
+// Every WOM update saves a new snapshot, changed or not, and the hiscores only move when you log
+// out. Asking every 5 minutes filled WOM with hundreds of identical snapshots a day. Now it asks
+// every 15 minutes, which still catches mobile play. While RuneLite shows you playing on this PC
+// it doesn't ask at all, since RuneLite already has the XP, and asks once shortly after you stop
+// so boss kills and clues come in.
+let womPingAt = Date.now();
+function womPingDue(){
+  const L = state.xpLocal, now = Date.now();
+  const rl = ceDesktop() && state.ceSync && !state.ceSync.off && L && L.lastT;
+  if(rl && L.game === "LOGGED_IN" && now - L.lastT < 10*60e3) return false;
+  if(rl && L.lastT > womPingAt && now - L.lastT > 3*60e3) return true;
+  return now - womPingAt >= 15*60e3;
+}
 function setupRefresh(){
   clearInterval(refreshTimer);
   if(state.autoRefresh && state.username){
-    refreshTimer = setInterval(()=>loadCharacter({live:true, silent:true}), 5*60*1000);
+    refreshTimer = setInterval(()=>{ if(womPingDue()) loadCharacter({live:true, silent:true}); }, 60*1000);
   }
 }
 
@@ -10979,6 +11083,10 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
+    "XP lands on the day you earned it. The hiscores only update when you log out, so a session running past midnight, or a day you never logged out, used to count on the next day. With RuneLite connected in the desktop app, OSRS Buddy now reads your XP as it changes and splits it at midnight. WiseOldMan still covers mobile, boss kills and clues.",
+    "Auto-refresh asks WiseOldMan every 15 minutes instead of every 5, and not at all while RuneLite shows you playing on this PC. Each ask saves a snapshot on WiseOldMan, so the old pace filled your history with hundreds of identical ones a day.",
+    "Importing a backup now brings everything across: your WiseOldMan day history, achievement edits, RuneLite data, quest board and settings. Before, it only carried goals, the journal and quest ticks, so a backup opened on a new computer lost most of its history.",
+    "A quick refresh could replace a full day of XP with just its last few hours. Each day now keeps its fuller record.",
     "Heatmaps open as bars over the last 30 days, on the Scroll, on Home and in the Recap. The Bars button comes first, and calendar and every other range are one click away.",
     "The Recap has its own heatmap at the top, with a time range and a calendar or bars view. Click a day to see the Recap for just that day, shift-click a second day for a span, or click a week's bar for that week. A single day also shows its badges, and any selection lists the journal entries written in it.",
     "Boss kills, questing, clues and High Alch no longer take a colour on the heatmap, which now shows skill colours only. Click a day to see them as badges with their in-game icons, like 3 boss kills or 2 clues. The Recap folds High Alch into the Magic bar as a gold stripe, and the skill colours are spread further apart so no two look alike.",
@@ -11424,6 +11532,19 @@ function mergeImportedState(inc){
     profSaveStore(p);
     delete inc.__profiles;
   }
+  // A copy with nothing in it yet (a new install, a new computer) takes the backup as it is,
+  // settings and all. Only the downloaded wiki data stays, since it re-downloads anyway.
+  const scr = state.scroll || {};
+  const blank = !state.username && !(scr.log || []).length && !Object.keys(scr.auto || {}).length
+             && !(state.goals || []).length && !Object.keys(state.questsDone || {}).length;
+  if(blank){
+    const keep = {};
+    BACKUP_SKIP.forEach(k=>{ if(state[k]!==undefined) keep[k] = state[k]; });
+    state = Object.assign({}, inc, keep);
+    live = null;
+    ensure(); save();
+    return;
+  }
   const byId=(a,b)=>{ const m=new Map(); [...(a||[]),...(b||[])].forEach(x=>{ if(x&&x.id) m.set(x.id,x); }); return [...m.values()]; };
   state.goals = byId(inc.goals, state.goals);
   state.manual = byId(inc.manual, state.manual);
@@ -11433,6 +11554,20 @@ function mergeImportedState(inc){
   ["roadmapDone","questsDone","gearDone"].forEach(k=>{ state[k] = Object.assign({}, inc[k]||{}, state[k]||{}); });
   if(!state.username && inc.username) state.username = inc.username;
   if(inc.clog && !state.clog) state.clog = inc.clog;
+  // the WOM day history: WOM only keeps so much, so the backup may hold days it no longer has
+  state.scroll.auto = autoMerge(inc.scroll && inc.scroll.auto, state.scroll.auto);
+  // Everything else (achievement edits, RuneLite data, quest board, settings...): anything this
+  // copy doesn't have comes from the backup, and where both have something, this copy's wins.
+  const plain = v=> v && typeof v === "object" && !Array.isArray(v);
+  const fill = (dst, src)=>{
+    for(const k in src){
+      if(dst[k] === undefined) dst[k] = src[k];
+      else if(plain(dst[k]) && plain(src[k])) fill(dst[k], src[k]);
+    }
+  };
+  const rest = {};
+  for(const k in inc) if(!BACKUP_SKIP.includes(k)) rest[k] = inc[k];
+  fill(state, rest);
   ensure(); save();
 }
 $("#exportBtn").onclick = ()=>{
@@ -11830,6 +11965,7 @@ async function ceSyncNow(opts){
     const names = Object.keys(groups);
     const acc = groups[cfg.account] || (names.length===1 ? groups[names[0]] : null);
     if(!acc){ cfg.err = `No files for ${cfg.account} in that folder.`; save(); return {changed:false}; }
+    if(xpLocalRecord(acc.character)) autoRederive();
     const pv = ceBuildPreview(acc);
     if(pv.quests && pv.quests.waiting) return {changed:false, waiting:true};   // quest data still loading; next check retries
     const res = ceApply(pv, acc, cfg.account, []);
@@ -11977,7 +12113,7 @@ const SU_VIEW = {
       <div class="seg su-seg">${FONT_CHOICES.map(([id,label])=>`<button class="${id===f?"on":""}" data-sufont="${id}">${label}</button>`).join("")}</div>
       <div class="su-lbl">Numbers</div>
       <div class="seg su-seg">${NUM_CHOICES.map(([id,label])=>`<button class="${id===num?"on":""}" data-sunum="${id}">${label}</button>`).join("")}</div>
-      <label class="chk small su-chk"><input type="checkbox" id="suAuto" ${state.autoRefresh?"checked":""}> Refresh stats from the hiscores every 5 minutes</label>`;
+      <label class="chk small su-chk"><input type="checkbox" id="suAuto" ${state.autoRefresh?"checked":""}> Refresh stats from the hiscores every 15 minutes</label>`;
   },
   done: ()=>{
     const did = Object.values(su.did);
