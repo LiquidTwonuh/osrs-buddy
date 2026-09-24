@@ -587,6 +587,24 @@
   button.ach-chk:hover{border-color:var(--gold)}
   .ach-task.edited .ach-chk{box-shadow:0 0 0 2px color-mix(in oklab, var(--gold) 45%, transparent)}
   .ach-you{color:var(--gold)}
+  /* the folder picker that drops out of a board card */
+  .qb-folds{display:flex; flex-wrap:wrap; gap:6px; padding:8px 10px; grid-column:1/-1}
+  /* the optimal guide */
+  .gd-prog{margin:10px 0 4px} .gd-prog .qb-bar{margin-bottom:6px}
+  .gd-next{margin-top:8px; padding:10px 12px; border-radius:12px; background:var(--inset); border:1px solid var(--border)}
+  .gd-nh{font-size:15px; margin:2px 0}
+  .gd-list{display:flex; flex-direction:column; gap:6px; max-height:70vh; overflow:auto}
+  .gd{display:flex; gap:10px; align-items:flex-start; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:var(--inset)}
+  .gd.quest{cursor:pointer} .gd.quest:hover{border-color:color-mix(in oklab, var(--gold) 45%, var(--border))}
+  .gd.done{opacity:.55}
+  .gd-tick{width:22px; height:22px; flex:0 0 auto; margin-top:2px; border-radius:6px; border:1px solid var(--border);
+    background:var(--panel); color:var(--gold); font-size:13px; cursor:pointer}
+  .gd.done .gd-tick{background:color-mix(in oklab, var(--gold) 20%, var(--panel))}
+  .gd-b{flex:1 1 auto; min-width:0}
+  .gd-h{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+  .gd-qp{font-size:11px; font-weight:700; color:var(--gold)}
+  .gd-sub{font-size:12px; color:var(--muted); margin-top:2px}
+  .gd-acts{display:flex; gap:4px; flex:0 0 auto}
   /* Recap heatmap: pick a day, a span or a week */
   .rc-heat{margin:10px 0 4px}
   .rc-heat [data-iso]{cursor:pointer}
@@ -1625,7 +1643,8 @@
       <div class="nav-sec">Planning</div>
       <button class="navitem" data-view="goals"><span class="ni-ic">✅</span>Goals</button>
       <button class="navitem" data-view="start"><span class="ni-ic">🗺️</span>Roadmap</button>
-      <button class="navitem" data-view="quests"><span class="ni-ic">🧭</span>Quest planner</button>
+      <button class="navitem" data-view="quests"><span class="ni-ic">🧭</span>The Map</button>
+      <div class="nav-sub hidden" id="navSubMap"></div>
       <button class="navitem" data-view="notes"><span class="ni-ic">📝</span>Notes</button>
       <div class="nav-sec">Tools</div>
       <button class="navitem" data-view="ask"><span class="ni-ic">💬</span>Ask Bud</button>
@@ -2083,21 +2102,27 @@
   <div class="view hidden" id="view-quests">
     <div class="panel">
       <div class="goals-head">
-        <h2>🧭 Quest planner</h2>
-        <p class="goals-blurb">Pick what you're working toward and see the whole dependency chain: what's done, what's next,
-        and what you still need. Requirements come straight from the wiki.</p>
+        <div class="sh-eyebrow" id="mapEyebrow">Planner</div>
+        <h2>🧭 The Map</h2>
+        <p class="goals-blurb" id="mapBlurb"></p>
         <span class="small muted" id="qpSub"></span>
       </div>
-      <div id="qpSetup"></div>
-      <div class="row" style="justify-content:center; margin-top:8px; gap:6px; flex-wrap:wrap">
-        <input type="text" id="qpSearch" placeholder="Search any quest…" style="min-width:230px" autocomplete="off">
-        <button class="ghost small" id="qpRefresh" title="Re-read the wiki">⟲ Refresh data</button>
+      <div class="map-sec" data-msec="planner">
+        <div id="qpSetup"></div>
+        <div class="row" style="justify-content:center; margin-top:8px; gap:6px; flex-wrap:wrap">
+          <input type="text" id="qpSearch" placeholder="Search any quest…" style="min-width:230px" autocomplete="off">
+          <button class="ghost small" id="qpRefresh" title="Re-read the wiki">⟲ Refresh data</button>
+        </div>
+        <div id="qpSuggest"></div>
       </div>
-      <div id="qpSuggest"></div>
     </div>
 
-    <div id="qpBoardWrap"></div>
-    <div id="qpResult"></div>
+    <div class="map-sec" data-msec="planner">
+      <div id="qpBoardWrap"></div>
+      <div id="qpResult"></div>
+    </div>
+    <div class="map-sec hidden" data-msec="folders"><div id="qpFoldersView"></div></div>
+    <div class="map-sec hidden" data-msec="guide"><div id="qpGuideView"></div></div>
   </div>
 
   <!-- VIEW: GOALS (to-do list + tracked-goal builder) -->
@@ -2572,7 +2597,7 @@ function storageReport(){
 // are ~96% of the bytes and re-download themselves, so they're excluded.
 const BACKUP_KEY = "osrs_todo_backups_v1";   // legacy home; migrated out on first run
 const BACKUP_KEEP = 8;
-const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB"];
+const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB"];
 // Snapshots live in IndexedDB, not localStorage. Keeping eight copies of your data in
 // a 5MB bucket meant the backup system was the thing that would eventually fill it —
 // journal history alone costs ~86KB/year, so the data is fine for decades; nine copies
@@ -2663,7 +2688,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB"];
+const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -8809,6 +8834,327 @@ function qpRouteHtml(scope, db){
 // out of the old pinned-plan chips rather than sitting beside them, so there's still
 // only one list of "quests I care about"; a card just says a lot more than a chip did.
 const QP_BOARD_MAX = 30;
+// ============ THE MAP ============
+// The quest planner grew into its own place: the Planner you chart quests in, and Folders, which
+// are the quieter lists. The board stays the shortlist you're actually working on; a folder is
+// where the "some day" quests wait without crowding it.
+const MAP_SECTIONS = [
+  {id:"planner", label:"Planner", icon:"🧭"},
+  {id:"folders", label:"Folders", icon:"📁"},
+  {id:"guide",   label:"Optimal guide", icon:"🧾"},
+];
+const MAP_BLURB = {
+  planner: "Pick what you're working toward and see the whole dependency chain: what's done, what's next, and what you still need. Requirements come straight from the wiki.",
+  folders: "Lists for everything that isn't next. Group quests however you like, and move one to the board when it's time.",
+  guide: "The wiki's optimal quest order, step by step, ticked off against your own quests, levels and diaries.",
+};
+function mapSec(){ const x = state.mapSec; return MAP_SECTIONS.some(m=>m.id===x) ? x : "planner"; }
+function setMapSec(id){ state.mapSec = id; save(); applyMapSec(); renderNavSubMap(); window.scrollTo(0,0); }
+function applyMapSec(){
+  const cur = mapSec();
+  $$("#view-quests .map-sec").forEach(el=>el.classList.toggle("hidden", el.dataset.msec !== cur));
+  const eb = $("#mapEyebrow"); if(eb) eb.textContent = (MAP_SECTIONS.find(m=>m.id===cur)||{}).label || "";
+  const bl = $("#mapBlurb"); if(bl) bl.textContent = MAP_BLURB[cur];
+  const sub = $("#qpSub"); if(sub && cur!=="planner") sub.textContent = "";
+  if(cur==="folders") renderFolders();
+  else if(cur==="guide"){ renderGuide(); guideDbEnsure(); }
+  else { renderQuestPlanner(); qpFitTree(); }
+}
+function renderNavSubMap(){
+  const el = $("#navSubMap"); if(!el) return;
+  const on = state.lastView === "quests";
+  el.classList.toggle("hidden", !on);
+  if(!on){ el.innerHTML = ""; return; }
+  const cur = mapSec();
+  el.innerHTML = MAP_SECTIONS.map(m=>`<button class="navsub${m.id===cur?" active":""}" data-msec-nav="${m.id}">${m.icon} ${m.label}</button>`).join("");
+  $$("#navSubMap [data-msec-nav]").forEach(b=>b.onclick=()=>{ setMapSec(b.dataset.msecNav); closeSidebar(); });
+}
+
+// ---- folders ----
+// {id, name, quests:[quest name]}. A quest can sit in more than one folder; the board is separate.
+function qpFolders(){
+  if(!Array.isArray(state.qpFolders)) state.qpFolders = [];
+  return state.qpFolders;
+}
+function qpFolder(id){ return qpFolders().find(f=>f.id===id) || null; }
+function qpFolderName(name){
+  const n = String(name||"").trim().slice(0, 40);
+  return n || null;
+}
+function qpFolderCreate(name){
+  const n = qpFolderName(name);
+  if(!n) return null;
+  const f = {id:"f"+Date.now().toString(36)+Math.random().toString(36).slice(2,6), name:n, quests:[]};
+  qpFolders().push(f); save();
+  return f;
+}
+function qpFolderPut(id, quest){
+  const f = qpFolder(id);
+  if(!f || !quest || f.quests.indexOf(quest) !== -1) return false;
+  f.quests.push(quest); save();
+  return true;
+}
+function qpFolderTake(id, quest){
+  const f = qpFolder(id); if(!f) return;
+  f.quests = f.quests.filter(q=>q!==quest); save();
+}
+function renderFolders(){
+  const el = $("#qpFoldersView"); if(!el) return;
+  const db = questDB();
+  if(!db){ el.innerHTML = `<div class="panel"><div class="empty">Quest data is still loading.</div></div>`; return; }
+  const folders = qpFolders();
+  const names = db.order.filter(n=>!questDone(n));
+  const head = `<div class="panel">
+    <div class="row" style="gap:6px; flex-wrap:wrap; align-items:center">
+      <input type="text" id="qpFolderNew" placeholder="New folder name…" maxlength="40" style="min-width:200px" autocomplete="off">
+      <button class="ghost small" id="qpFolderAdd">＋ Folder</button>
+      <span class="small muted grow">${folders.length ? `${folders.length} folder${folders.length===1?"":"s"}` : "Name it after what it's for: Barrows gloves, Slayer unlocks, anything."}</span>
+    </div></div>`;
+  const body = folders.map(f=>{
+    const rows = f.quests.map(n=>{
+      const c = qpBoardCard(n, db);
+      const pill = c.status==="done" ? `<span class="qb-pill done">✓ Done</span>`
+                 : c.prog ? `<span class="qb-pill prog">In progress</span>`
+                 : c.status==="ready" ? `<span class="qb-pill ready">Ready now</span>`
+                 : `<span class="qb-pill blocked">Blocked</span>`;
+      return `<div class="qb ${c.status}" data-fq="${escapeHtml(n)}" data-fid="${f.id}">
+        <div class="qb-b">
+          <div class="qb-h"><b>${escapeHtml(c.name)}</b>${pill}</div>
+          <div class="qb-sub">${c.status==="done" ? "Complete" : c.missing ? `Needs ${escapeHtml(c.missing)}` : "No requirements left. Go and do it."}</div>
+        </div>
+        <div class="qb-acts">
+          <button class="qb-x" data-fpin="${escapeHtml(n)}" data-fid="${f.id}" title="Move to the board">📌</button>
+          <button class="qb-x" data-fdel="${escapeHtml(n)}" data-fid="${f.id}" title="Take out of this folder">✕</button>
+        </div>
+      </div>`;
+    }).join("");
+    return `<div class="panel">
+      <div class="section-title" style="margin-top:0">
+        <h3>📁 ${escapeHtml(f.name)}</h3>
+        <span class="small muted">${f.quests.length ? `${f.quests.length} quest${f.quests.length===1?"":"s"}` : "empty"}</span>
+        <button class="ghost small right" data-frename="${f.id}">✎ Rename</button>
+        <button class="ghost small" data-fdrop="${f.id}">🗑 Delete</button>
+      </div>
+      ${rows ? `<div class="qb-grid">${rows}</div>` : `<div class="empty">Nothing in here yet.</div>`}
+      <div class="row" style="gap:6px; margin-top:8px">
+        <input type="text" class="qp-fadd" data-fadd="${f.id}" list="qpQuestNames" placeholder="Add a quest…" autocomplete="off" style="min-width:200px">
+        <button class="ghost small" data-faddgo="${f.id}">Add</button>
+      </div>
+    </div>`;
+  }).join("");
+  el.innerHTML = head + (folders.length ? body : `<div class="panel"><div class="empty">No folders yet. Make one above for the quests you'll get to later.</div></div>`)
+    + `<datalist id="qpQuestNames">${names.map(n=>`<option value="${escapeHtml(n)}"></option>`).join("")}</datalist>`;
+
+  const create = ()=>{
+    const inp = $("#qpFolderNew");
+    if(!inp || !qpFolderName(inp.value)){ toast("Give the folder a name first", true); return; }
+    qpFolderCreate(inp.value); inp.value = ""; renderFolders();
+  };
+  $("#qpFolderAdd").onclick = create;
+  $("#qpFolderNew").addEventListener("keydown", e=>{ if(e.key==="Enter") create(); });
+  $$("#qpFoldersView [data-faddgo]").forEach(b=>b.onclick=()=>{
+    const inp = $(`#qpFoldersView [data-fadd="${b.dataset.faddgo}"]`);
+    const n = inp && db.quests[inp.value.trim()] ? inp.value.trim() : null;
+    if(!n){ toast("Pick a quest from the list", true); return; }
+    qpFolderPut(b.dataset.faddgo, n); renderFolders();
+  });
+  $$("#qpFoldersView .qp-fadd").forEach(i=>i.addEventListener("keydown", e=>{
+    if(e.key==="Enter") $(`#qpFoldersView [data-faddgo="${i.dataset.fadd}"]`).click();
+  }));
+  $$("#qpFoldersView [data-fpin]").forEach(b=>b.onclick=()=>{
+    qpBoardAdd(b.dataset.fpin); qpFolderTake(b.dataset.fid, b.dataset.fpin);
+    toast("📌 "+b.dataset.fpin+" moved to the board"); renderFolders();
+  });
+  $$("#qpFoldersView [data-fdel]").forEach(b=>b.onclick=()=>{ qpFolderTake(b.dataset.fid, b.dataset.fdel); renderFolders(); });
+  $$("#qpFoldersView [data-frename]").forEach(b=>b.onclick=()=>{
+    const f = qpFolder(b.dataset.frename); if(!f) return;
+    const n = qpFolderName(prompt("Rename this folder", f.name));
+    if(n){ f.name = n; save(); renderFolders(); }
+  });
+  $$("#qpFoldersView [data-fdrop]").forEach(b=>b.onclick=()=>{
+    const f = qpFolder(b.dataset.fdrop); if(!f) return;
+    // deleting a folder only drops the list, never a quest's own progress
+    if(f.quests.length && !confirm(`Delete "${f.name}"? The ${f.quests.length} quest${f.quests.length===1?"":"s"} in it stay in the planner, they just lose this list.`)) return;
+    state.qpFolders = qpFolders().filter(x=>x.id!==f.id); save(); renderFolders();
+  });
+  // clicking a row charts that quest in the Planner
+  $$("#qpFoldersView [data-fq]").forEach(c=>c.onclick=e=>{
+    if(e.target.closest("button")) return;
+    state.qpTarget = c.dataset.fq; state.qpHist = []; save(); setMapSec("planner");
+  });
+}
+// ---- the wiki's optimal quest guide ----
+// One long table on the wiki: quests, but also "Train Fletching from level 1 to level 10", easy
+// diaries, miniquests and unlocks like the Stronghold of Security. Quests, training steps and
+// diaries tick themselves off your own data; the rest you tick by hand. The ironman page is the
+// same shape with its own order, so it's the same code with a different page name.
+const GUIDE_VERSION = 1;
+const GUIDE_PAGES = {main:["Optimal quest guide","Main"], iron:["Optimal quest guide/Ironman","Ironman"]};
+const GUIDE_FILTERS = [["all","Everything"],["quests","Quests only"],["todo","Still to do"]];
+let guideBusy = "";
+function guideMode(){ return state.guideMode === "iron" ? "iron" : "main"; }
+function guideDB(mode){
+  const d = (state.guideDB || {})[mode || guideMode()];
+  return (d && d.v === GUIDE_VERSION && d.steps && d.steps.length) ? d : null;
+}
+// one row of the table -> a step we can check off
+function guideParseRow(cells, i){
+  const cellText = c => (c ? c.innerText : "").replace(/\s+/g, " ").trim();
+  const name = cellText(cells[0]);
+  if(!name) return null;
+  const st = {i, name, qp: parseInt(cellText(cells[3]), 10) || 0, total: parseInt(cellText(cells[4]), 10) || 0,
+              levels: cellText(cells[2]), info: cellText(cells[5]), loc: cellText(cells[6]), kind:"step"};
+  let m;
+  if((m = /^Train\s+(.+?)\s+from level\s+\d+\s+to level\s+(\d+)/i.exec(name))){
+    const k = m[1].trim().toLowerCase();
+    const skill = k === "runecraft" ? "runecrafting" : k;
+    if(SKILL_ORDER.includes(skill)){ st.kind = "train"; st.skill = skill; st.lvl = +m[2]; return st; }
+  }
+  if((m = /^(Easy|Medium|Hard|Elite)\s+(.+?)\s+Diary$/i.exec(name))){
+    const region = DIARY_REGIONS.find(r=>achNorm(r) === achNorm(m[2]));
+    if(region){ st.kind = "diary"; st.region = region; st.tier = m[1].toLowerCase(); return st; }
+  }
+  if(/\(miniquest\)/i.test(name)){ st.kind = "mini"; return st; }
+  if(/^Unlock:/i.test(name)){ st.kind = "unlock"; return st; }
+  // a quest: the wiki links it, so take the page name off the link and check it against our own list
+  const a = cells[0] && cells[0].querySelector("a[href^='/w/']");
+  const href = a ? decodeURIComponent(a.getAttribute("href").slice(3)).replace(/_/g, " ") : "";
+  const db = questDB();
+  const hit = db && (db.quests[href] ? href : (db.quests[name] ? name : null));
+  if(hit){ st.kind = "quest"; st.quest = hit; }
+  return st;
+}
+async function guideDbEnsure(force){
+  const mode = guideMode(), have = guideDB(mode);
+  if(guideBusy === mode || (!force && have && Date.now() - have.ts < 14*86400e3)) return;
+  guideBusy = mode;
+  renderGuide();
+  try{
+    const r = await fetch(WIKI_API + "?origin=*&format=json&action=parse&prop=text&page=" + encodeURIComponent(GUIDE_PAGES[mode][0]));
+    const html = (await r.json()).parse.text["*"];
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    // the guide is the biggest table on the page; the ironman page opens with a small one
+    const table = [...doc.querySelectorAll("table")].sort((a,b)=>b.rows.length - a.rows.length)[0];
+    const steps = [];
+    if(table) [...table.rows].slice(1).forEach(tr=>{
+      const st = guideParseRow([...tr.cells], steps.length);
+      if(st) steps.push(st);
+    });
+    if(steps.length > 50){
+      state.guideDB = Object.assign({}, state.guideDB, {[mode]: {v:GUIDE_VERSION, ts:Date.now(), steps}});
+      save();
+    }
+  }catch(e){ /* offline, or the wiki changed shape: the tab says so and offers a retry */ }
+  guideBusy = "";
+  renderGuide();
+}
+// Quests, levels and diaries answer for themselves. Miniquests and unlocks aren't in anyone's
+// data, so those you tick, and a tick by hand wins over everything.
+function guideKey(st){ return st.kind + "|" + st.name; }
+function guideDone(st){
+  if((state.guideDone || {})[guideKey(st)]) return true;
+  if(st.kind === "quest") return questDone(st.quest);
+  if(st.kind === "train") return lvlOf(st.skill) >= st.lvl;
+  if(st.kind === "diary"){
+    const dd = diaryData(); if(!dd) return false;
+    const reg = dd.regions.find(r=>r.name === st.region);
+    const t = reg && reg.tiers.find(x=>x.tier === st.tier);
+    return !!(t && t.complete);
+  }
+  return false;
+}
+function guideTick(st){
+  state.guideDone = state.guideDone || {};
+  const k = guideKey(st);
+  if(state.guideDone[k]) delete state.guideDone[k];
+  else state.guideDone[k] = true;
+  save(); renderGuide();
+}
+function guideBlocking(st){
+  if(st.kind === "train") return `You're ${lvlOf(st.skill)}, needs ${st.lvl} ${nice(st.skill)}`;
+  if(st.kind === "quest"){
+    const c = qpBoardCard(st.quest, questDB());
+    return c.status === "ready" ? "Nothing in the way" : c.missing ? "Needs " + c.missing : "";
+  }
+  return "";
+}
+function renderGuide(){
+  const el = $("#qpGuideView"); if(!el) return;
+  const mode = guideMode(), db = guideDB(mode);
+  const modeBar = `<div class="seg seg-sub">${Object.entries(GUIDE_PAGES).map(([k,v])=>
+      `<button class="${k===mode?"on":""}" data-gmode="${k}">${v[1]}</button>`).join("")}</div>`;
+  if(!db){
+    el.innerHTML = `<div class="panel">${modeBar}<div class="empty">${guideBusy
+      ? "Reading the guide off the wiki…"
+      : `Couldn't read the guide. <div style="margin-top:9px"><button class="primary" id="gdRetry">📥 Try again</button></div>`}</div></div>`;
+    $$("#qpGuideView [data-gmode]").forEach(b=>b.onclick=()=>{ state.guideMode = b.dataset.gmode; save(); renderGuide(); guideDbEnsure(); });
+    const rt = $("#gdRetry"); if(rt) rt.onclick = ()=>guideDbEnsure(true);
+    return;
+  }
+  const steps = db.steps.map(st=>Object.assign({}, st, {done: guideDone(st)}));
+  const doneN = steps.filter(x=>x.done).length;
+  const next = steps.find(x=>!x.done);
+  const filter = GUIDE_FILTERS.some(f=>f[0]===state.guideFilter) ? state.guideFilter : "all";
+  const shown = steps.filter(x=> filter==="quests" ? x.kind==="quest" : filter==="todo" ? !x.done : true);
+  const icon = {quest:"📜", train:"📈", diary:"🗺️", mini:"🧩", unlock:"🔓", step:"•"};
+  const row = st=>`<div class="gd ${st.done?"done":""} ${st.kind}" data-gstep="${st.i}">
+      <button class="gd-tick" data-gtick="${st.i}" title="${st.done?"Tick off":"Mark as done"}">${st.done?"✓":""}</button>
+      <div class="gd-b">
+        <div class="gd-h">${icon[st.kind]||"•"} <b>${escapeHtml(st.kind==="quest" ? qpLabel(st.quest) : st.name)}</b>
+          ${st.qp ? `<span class="gd-qp">+${st.qp} QP</span>` : ""}
+          ${st.levels && st.kind==="quest" ? `<span class="small muted">${escapeHtml(st.levels)}</span>` : ""}</div>
+        ${st.info ? `<div class="gd-sub">${escapeHtml(st.info)}</div>` : ""}
+      </div>
+      ${st.kind==="quest" ? `<div class="gd-acts">
+        <button class="qb-x" data-gpin="${escapeHtml(st.quest)}" title="Pin to the board">📌</button>
+        ${qpFolders().length ? `<button class="qb-x" data-gfold="${escapeHtml(st.quest)}" title="Put in a folder">📁</button>` : ""}
+      </div>` : ""}
+    </div>`;
+  el.innerHTML = `<div class="panel">
+      <div class="row" style="gap:8px; flex-wrap:wrap; align-items:center">
+        ${modeBar}
+        <div class="seg seg-sub">${GUIDE_FILTERS.map(([k,label])=>`<button class="${k===filter?"on":""}" data-gfilter="${k}">${label}</button>`).join("")}</div>
+        <span class="grow"></span>
+        <button class="ghost small" id="gdRefresh" title="Re-read the wiki">⟲ Refresh</button>
+      </div>
+      <div class="gd-prog"><div class="qb-bar"><i style="width:${steps.length?Math.round(doneN/steps.length*100):0}%"></i></div>
+        <span class="small muted">${fmt(doneN)} of ${fmt(steps.length)} steps done · ${GUIDE_PAGES[mode][1]} order · read ${fmtDay(isoDate(new Date(db.ts)))}</span></div>
+      ${next ? `<div class="gd-next"><div class="small muted">Next up</div>
+        <div class="gd-nh">${icon[next.kind]||"•"} <b>${escapeHtml(next.kind==="quest" ? qpLabel(next.quest) : next.name)}</b></div>
+        ${guideBlocking(next) ? `<div class="small muted">${escapeHtml(guideBlocking(next))}</div>` : ""}
+        ${next.info ? `<div class="gd-sub">${escapeHtml(next.info)}</div>` : ""}</div>` : `<div class="gd-next"><b>Every step done. That's the whole guide.</b></div>`}
+    </div>
+    <div class="panel"><div class="gd-list">${shown.map(row).join("") || `<div class="empty">Nothing to show with this filter.</div>`}</div></div>`;
+
+  $$("#qpGuideView [data-gmode]").forEach(b=>b.onclick=()=>{ state.guideMode = b.dataset.gmode; save(); renderGuide(); guideDbEnsure(); });
+  $$("#qpGuideView [data-gfilter]").forEach(b=>b.onclick=()=>{ state.guideFilter = b.dataset.gfilter; save(); renderGuide(); });
+  $("#gdRefresh").onclick = ()=>guideDbEnsure(true);
+  $$("#qpGuideView [data-gtick]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); guideTick(db.steps[+b.dataset.gtick]); });
+  $$("#qpGuideView [data-gpin]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    if(qpBoardAdd(b.dataset.gpin)) toast("📌 " + qpLabel(b.dataset.gpin) + " pinned to the board");
+  });
+  $$("#qpGuideView [data-gfold]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    const n = b.dataset.gfold, f = qpFolders();
+    const pick = f.map(x=>`${x.name}`).join(", ");
+    const which = f.length === 1 ? f[0] : f.find(x=>achNorm(x.name) === achNorm(prompt("Which folder? (" + pick + ")", f[0].name) || ""));
+    if(which && qpFolderPut(which.id, n)) toast("📁 " + qpLabel(n) + " added to " + which.name);
+  });
+  // open on where you are, not on Tutorial Island
+  const list = $("#qpGuideView .gd-list");
+  if(list && next){
+    const here = list.querySelector(`[data-gstep="${next.i}"]`);
+    if(here) list.scrollTop = Math.max(0, here.offsetTop - list.offsetTop - 8);
+  }
+  // clicking a quest row charts it in the Planner
+  $$("#qpGuideView [data-gstep]").forEach(c=>c.onclick=e=>{
+    if(e.target.closest("button")) return;
+    const st = db.steps[+c.dataset.gstep];
+    if(st.kind !== "quest") return;
+    state.qpTarget = st.quest; state.qpHist = []; save(); setMapSec("planner");
+  });
+}
 function qpBoard(){
   if(!Array.isArray(state.qpBoard)){
     // the chips became the board, so bring them across
@@ -8907,6 +9253,7 @@ function qpBoardHtml(db, target){
         }</div>
       </div>
       <div class="qb-acts">
+        ${c.n!=="__ALL__" && qpFolders().length ? `<button class="qb-x" data-qbfold="${escapeHtml(c.n)}" title="Move to a folder">📁</button>` : ""}
         <button class="qb-x" data-qbup="${escapeHtml(c.n)}" title="Move up">▲</button>
         <button class="qb-x" data-qbdown="${escapeHtml(c.n)}" title="Move down">▼</button>
         <button class="qb-x" data-qbdel="${escapeHtml(c.n)}" title="Take off the board">✕</button>
@@ -8940,6 +9287,22 @@ function qpWireBoard(db){
   $$("#qpBoardWrap [data-qbcard]").forEach(c=>c.onclick=e=>{
     if(e.target.closest("button")) return;
     state.qpTarget = c.dataset.qbcard; state.qpHist = []; save(); renderQuestPlanner();
+  });
+  // 📁 on a card: pick a folder, and the quest moves off the board into it
+  $$("#qpBoardWrap [data-qbfold]").forEach(x=>x.onclick=e=>{
+    e.stopPropagation();
+    const n = x.dataset.qbfold, card = x.closest(".qb"), acts = x.parentElement;
+    if(card.querySelector(".qb-folds")) return;
+    const pick = document.createElement("div");
+    pick.className = "qb-folds";
+    pick.innerHTML = qpFolders().map(f=>`<button class="ghost small" data-fput="${f.id}">📁 ${escapeHtml(f.name)}</button>`).join("")
+      + `<button class="ghost small" data-fput="">Cancel</button>`;
+    acts.after(pick);
+    [...card.querySelectorAll(".qb-folds [data-fput]")].forEach(b=>b.onclick=ev=>{
+      ev.stopPropagation();
+      if(b.dataset.fput){ qpFolderPut(b.dataset.fput, n); qpBoardRemove(n); toast("📁 "+qpCrumbName(n)+" moved to "+qpFolder(b.dataset.fput).name); }
+      renderQuestPlanner();
+    });
   });
   const sortBtn = $("#qpBoardSort");
   if(sortBtn) sortBtn.onclick = ()=>{ state.qpBoardSort = !state.qpBoardSort; save(); renderQuestPlanner(); };
@@ -9754,7 +10117,7 @@ async function budTrainAnswer(sk){
   if(db){
     const rows = Object.keys(db.quests).map(n=>({n, xp:(db.quests[n].rewards||{})[sk]||0}))
       .filter(r=>r.xp>0 && !questDone(r.n)).sort((a,b)=>b.xp-a.xp).slice(0,3);
-    if(rows.length) qline = ` Quests still holding ${nice(sk)} XP for you: ${rows.map(r=>`<b>${qpLabel(r.n)}</b> (+${fmt(r.xp)})`).join(" · ")} — the Quest planner charts the route.`;
+    if(rows.length) qline = ` Quests still holding ${nice(sk)} XP for you: ${rows.map(r=>`<b>${qpLabel(r.n)}</b> (+${fmt(r.xp)})`).join(" · ")} — the Map charts the route.`;
   }
   let path = "", link = "";
   const lad = await budTrainLadder(sk);
@@ -11083,6 +11446,7 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
+    "The quest planner is now The Map, with its own tabs. The Planner works exactly as it did, Folders holds named lists for the quests you'll get to later, and the Optimal guide follows the wiki's quest order, ticking off quests, levels and diaries from your own data. There's an ironman order too.",
     "XP lands on the day you earned it. The hiscores only update when you log out, so a session running past midnight, or a day you never logged out, used to count on the next day. With RuneLite connected in the desktop app, OSRS Buddy now reads your XP as it changes and splits it at midnight. WiseOldMan still covers mobile, boss kills and clues.",
     "Auto-refresh asks WiseOldMan every 15 minutes instead of every 5, and not at all while RuneLite shows you playing on this PC. Each ask saves a snapshot on WiseOldMan, so the old pace filled your history with hundreds of identical ones a day.",
     "Importing a backup now brings everything across: your WiseOldMan day history, achievement edits, RuneLite data, quest board and settings. Before, it only carried goals, the journal and quest ticks, so a backup opened on a new computer lost most of its history.",
@@ -11288,7 +11652,7 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"Quest planner", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"The Map", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
 // ---- Scroll sections ----
 // The page got big enough that one long scroll stopped working. Same data, five
 // sections, heatmap first because that's what people open the page for.
@@ -11494,13 +11858,13 @@ function switchView(name){
   if(name==="home"){ renderHomeHeatControls(); renderFunFact(true); }
   // the board shows live status against your stats and quest progress, so it has to be
   // rebuilt on entry rather than left as whatever it was at launch
-  if(name==="quests"){ renderQuestPlanner(); qpFitTree(); }
+  if(name==="quests") applyMapSec();
   if(name==="arcade") renderArcade();
   // the recap is something you open and close, not a place, so coming back to the Scroll
   // always lands on the Overview
   if(name==="scroll"){ if(state.scrollSec==="recap") state.scrollSec = "heat"; applyScrollMode(); }
   if(name==="clog") applyAchSec();
-  renderNavSub(); renderNavSubAch();
+  renderNavSub(); renderNavSubAch(); renderNavSubMap();
   // Recap and Patch notes lost their nav entries; keep old saved views working
   if(name==="recap"){ switchView("scroll"); return; }
   if(name==="rhythm"){
