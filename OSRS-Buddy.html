@@ -589,12 +589,21 @@
   .ach-you{color:var(--gold)}
   /* the folder picker that drops out of a board card */
   .qb-folds{display:flex; flex-wrap:wrap; gap:6px; padding:8px 10px; grid-column:1/-1}
+  /* the board and folders on one surface: drag a quest between them */
+  .qp-listpanel.over{border-color:color-mix(in oklab, var(--gold) 55%, var(--border))}
+  .qp-listpanel.drag{opacity:.6}
+  .qp-fgrip{color:var(--muted); cursor:grab; font-size:12px}
+  .qp-list{min-height:46px; border-radius:12px}
+  .qp-list.dropping{outline:1px dashed color-mix(in oklab, var(--gold) 55%, var(--border)); outline-offset:3px}
+  .qp-list .qb.over{border-color:var(--gold)}
+  .qp-list .qb.drag{opacity:.45}
+  .qp-drop{grid-column:1/-1; margin:0}
   /* the optimal guide */
   .gd-prog{margin:10px 0 4px} .gd-prog .qb-bar{margin-bottom:6px}
   .gd-next{margin-top:8px; padding:10px 12px; border-radius:12px; background:var(--inset); border:1px solid var(--border)}
   .gd-nh{font-size:15px; margin:2px 0}
   .gd-list{display:flex; flex-direction:column; gap:6px; max-height:70vh; overflow:auto}
-  .gd{display:flex; gap:10px; align-items:flex-start; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:var(--inset)}
+  .gd{display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:var(--inset)}
   .gd.quest{cursor:pointer} .gd.quest:hover{border-color:color-mix(in oklab, var(--gold) 45%, var(--border))}
   .gd.done{opacity:.55}
   .gd-tick{width:22px; height:22px; flex:0 0 auto; margin-top:2px; border-radius:6px; border:1px solid var(--border);
@@ -8840,12 +8849,12 @@ const QP_BOARD_MAX = 30;
 // where the "some day" quests wait without crowding it.
 const MAP_SECTIONS = [
   {id:"planner", label:"Planner", icon:"🧭"},
-  {id:"folders", label:"Folders", icon:"📁"},
+  {id:"folders", label:"Board & folders", icon:"📁"},
   {id:"guide",   label:"Optimal guide", icon:"🧾"},
 ];
 const MAP_BLURB = {
   planner: "Pick what you're working toward and see the whole dependency chain: what's done, what's next, and what you still need. Requirements come straight from the wiki.",
-  folders: "Lists for everything that isn't next. Group quests however you like, and move one to the board when it's time.",
+  folders: "Your board and your own lists side by side. Drag a quest between them, or drop it on a row to put it in that spot.",
   guide: "The wiki's optimal quest order, step by step, ticked off against your own quests, levels and diaries.",
 };
 function mapSec(){ const x = state.mapSec; return MAP_SECTIONS.some(m=>m.id===x) ? x : "planner"; }
@@ -8898,51 +8907,81 @@ function qpFolderTake(id, quest){
   const f = qpFolder(id); if(!f) return;
   f.quests = f.quests.filter(q=>q!==quest); save();
 }
+// The board and the folders are one surface here, so moving a quest is a drag, not a menu:
+// drag it into another list, drop it on a row to put it in that spot, or drag a folder's header
+// to reorder the folders themselves.
+function qpLists(){
+  return [{id:"board", name:"Board", icon:"📌", board:true, quests:qpBoard().filter(n=>n!=="__ALL__")}]
+    .concat(qpFolders().map(f=>({id:f.id, name:f.name, icon:"📁", quests:f.quests.slice()})));
+}
+function qpListArr(id){ return id==="board" ? qpBoard() : ((qpFolder(id)||{}).quests || null); }
+function qpListInsert(id, quest, at){
+  const arr = qpListArr(id); if(!arr) return;
+  const cur = arr.indexOf(quest);
+  if(cur !== -1) arr.splice(cur, 1);
+  arr.splice(at==null || at<0 ? arr.length : Math.min(at, arr.length), 0, quest);
+  if(id==="board") state.qpSaved = qpBoard().slice();
+  save();
+}
+function qpListRemove(id, quest){
+  if(id==="board") qpBoardRemove(quest);
+  else qpFolderTake(id, quest);
+}
+function qpListMove(fromId, quest, toId, at){
+  if(fromId !== toId){
+    if(qpListArr(toId) && qpListArr(toId).indexOf(quest) !== -1) return;   // already in there
+    qpListRemove(fromId, quest);
+  }
+  qpListInsert(toId, quest, at);
+}
+let mapDrag = null;
 function renderFolders(){
   const el = $("#qpFoldersView"); if(!el) return;
   const db = questDB();
   if(!db){ el.innerHTML = `<div class="panel"><div class="empty">Quest data is still loading.</div></div>`; return; }
-  const folders = qpFolders();
+  const lists = qpLists();
   const names = db.order.filter(n=>!questDone(n));
-  const head = `<div class="panel">
-    <div class="row" style="gap:6px; flex-wrap:wrap; align-items:center">
-      <input type="text" id="qpFolderNew" placeholder="New folder name…" maxlength="40" style="min-width:200px" autocomplete="off">
-      <button class="ghost small" id="qpFolderAdd">＋ Folder</button>
-      <span class="small muted grow">${folders.length ? `${folders.length} folder${folders.length===1?"":"s"}` : "Name it after what it's for: Barrows gloves, Slayer unlocks, anything."}</span>
-    </div></div>`;
-  const body = folders.map(f=>{
-    const rows = f.quests.map(n=>{
-      const c = qpBoardCard(n, db);
-      const pill = c.status==="done" ? `<span class="qb-pill done">✓ Done</span>`
-                 : c.prog ? `<span class="qb-pill prog">In progress</span>`
-                 : c.status==="ready" ? `<span class="qb-pill ready">Ready now</span>`
-                 : `<span class="qb-pill blocked">Blocked</span>`;
-      return `<div class="qb ${c.status}" data-fq="${escapeHtml(n)}" data-fid="${f.id}">
-        <div class="qb-b">
-          <div class="qb-h"><b>${escapeHtml(c.name)}</b>${pill}</div>
-          <div class="qb-sub">${c.status==="done" ? "Complete" : c.missing ? `Needs ${escapeHtml(c.missing)}` : "No requirements left. Go and do it."}</div>
-        </div>
-        <div class="qb-acts">
-          <button class="qb-x" data-fpin="${escapeHtml(n)}" data-fid="${f.id}" title="Move to the board">📌</button>
-          <button class="qb-x" data-fdel="${escapeHtml(n)}" data-fid="${f.id}" title="Take out of this folder">✕</button>
-        </div>
-      </div>`;
-    }).join("");
-    return `<div class="panel">
-      <div class="section-title" style="margin-top:0">
-        <h3>📁 ${escapeHtml(f.name)}</h3>
-        <span class="small muted">${f.quests.length ? `${f.quests.length} quest${f.quests.length===1?"":"s"}` : "empty"}</span>
-        <button class="ghost small right" data-frename="${f.id}">✎ Rename</button>
-        <button class="ghost small" data-fdrop="${f.id}">🗑 Delete</button>
+  const row = (n, list)=>{
+    const c = qpBoardCard(n, db);
+    const pill = c.status==="done" ? `<span class="qb-pill done">✓ Done</span>`
+               : c.prog ? `<span class="qb-pill prog">In progress</span>`
+               : c.status==="ready" ? `<span class="qb-pill ready">Ready now</span>`
+               : `<span class="qb-pill blocked">Blocked</span>`;
+    return `<div class="qb ${c.status}" draggable="true" data-q="${escapeHtml(n)}" data-in="${list.id}">
+      <div class="qb-grip" title="Drag to move">⋮⋮</div>
+      <div class="qb-b">
+        <div class="qb-h"><b>${escapeHtml(qpLabel(n))}</b>${pill}</div>
+        <div class="qb-sub">${c.status==="done" ? "Complete" : c.missing ? `Needs ${escapeHtml(c.missing)}` : "No requirements left. Go and do it."}</div>
       </div>
-      ${rows ? `<div class="qb-grid">${rows}</div>` : `<div class="empty">Nothing in here yet.</div>`}
-      <div class="row" style="gap:6px; margin-top:8px">
-        <input type="text" class="qp-fadd" data-fadd="${f.id}" list="qpQuestNames" placeholder="Add a quest…" autocomplete="off" style="min-width:200px">
-        <button class="ghost small" data-faddgo="${f.id}">Add</button>
+      <div class="qb-acts">
+        ${list.board ? "" : `<button class="qb-x" data-tolist="board" data-q="${escapeHtml(n)}" data-from="${list.id}" title="Send to the board">📌</button>`}
+        <button class="qb-x" data-qdrop="${escapeHtml(n)}" data-from="${list.id}" title="${list.board?"Take off the board":"Take out of this folder"}">✕</button>
       </div>
     </div>`;
-  }).join("");
-  el.innerHTML = head + (folders.length ? body : `<div class="panel"><div class="empty">No folders yet. Make one above for the quests you'll get to later.</div></div>`)
+  };
+  const panel = list=>`<div class="panel qp-listpanel" data-panel="${list.id}">
+      <div class="section-title" style="margin-top:0" ${list.board?"":`draggable="true" data-fdrag="${list.id}"`}>
+        <h3>${list.board?"":`<span class="qp-fgrip" title="Drag to reorder folders">⋮⋮</span> `}${list.icon} ${escapeHtml(list.name)}</h3>
+        <span class="small muted">${list.quests.length ? `${list.quests.length} quest${list.quests.length===1?"":"s"}` : "empty"}</span>
+        ${list.board ? `<span class="small muted right">Your shortlist. Drag a quest out to park it.</span>` : `
+          <button class="ghost small right" data-frename="${list.id}">✎ Rename</button>
+          <button class="ghost small" data-fdrop="${list.id}">🗑 Delete</button>`}
+      </div>
+      <div class="qb-grid qp-list" data-list="${list.id}">${list.quests.map(n=>row(n, list)).join("")
+        || `<div class="empty qp-drop">${list.board ? "Nothing pinned. Drag a quest here." : "Empty. Drag a quest in, or add one below."}</div>`}</div>
+      <div class="row" style="gap:6px; margin-top:8px">
+        <input type="text" class="qp-fadd" data-fadd="${list.id}" list="qpQuestNames" placeholder="Add a quest…" autocomplete="off" style="min-width:200px">
+        <button class="ghost small" data-faddgo="${list.id}">Add</button>
+      </div>
+    </div>`;
+
+  el.innerHTML = `<div class="panel">
+      <div class="row" style="gap:6px; flex-wrap:wrap; align-items:center">
+        <input type="text" id="qpFolderNew" placeholder="New folder name…" maxlength="40" style="min-width:200px" autocomplete="off">
+        <button class="ghost small" id="qpFolderAdd">＋ Folder</button>
+        <span class="small muted grow">Drag quests between the board and your folders. Name a folder after what it's for: Barrows gloves, Slayer unlocks, anything.</span>
+      </div></div>`
+    + lists.map(panel).join("")
     + `<datalist id="qpQuestNames">${names.map(n=>`<option value="${escapeHtml(n)}"></option>`).join("")}</datalist>`;
 
   const create = ()=>{
@@ -8956,16 +8995,19 @@ function renderFolders(){
     const inp = $(`#qpFoldersView [data-fadd="${b.dataset.faddgo}"]`);
     const n = inp && db.quests[inp.value.trim()] ? inp.value.trim() : null;
     if(!n){ toast("Pick a quest from the list", true); return; }
-    qpFolderPut(b.dataset.faddgo, n); renderFolders();
+    qpListInsert(b.dataset.faddgo, n); renderFolders();
   });
   $$("#qpFoldersView .qp-fadd").forEach(i=>i.addEventListener("keydown", e=>{
     if(e.key==="Enter") $(`#qpFoldersView [data-faddgo="${i.dataset.fadd}"]`).click();
   }));
-  $$("#qpFoldersView [data-fpin]").forEach(b=>b.onclick=()=>{
-    qpBoardAdd(b.dataset.fpin); qpFolderTake(b.dataset.fid, b.dataset.fpin);
-    toast("📌 "+b.dataset.fpin+" moved to the board"); renderFolders();
+  $$("#qpFoldersView [data-tolist]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    qpListMove(b.dataset.from, b.dataset.q, b.dataset.tolist, null);
+    toast("📌 " + qpLabel(b.dataset.q) + " moved to the board"); renderFolders();
   });
-  $$("#qpFoldersView [data-fdel]").forEach(b=>b.onclick=()=>{ qpFolderTake(b.dataset.fid, b.dataset.fdel); renderFolders(); });
+  $$("#qpFoldersView [data-qdrop]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation(); qpListRemove(b.dataset.from, b.dataset.qdrop); renderFolders();
+  });
   $$("#qpFoldersView [data-frename]").forEach(b=>b.onclick=()=>{
     const f = qpFolder(b.dataset.frename); if(!f) return;
     const n = qpFolderName(prompt("Rename this folder", f.name));
@@ -8978,11 +9020,70 @@ function renderFolders(){
     state.qpFolders = qpFolders().filter(x=>x.id!==f.id); save(); renderFolders();
   });
   // clicking a row charts that quest in the Planner
-  $$("#qpFoldersView [data-fq]").forEach(c=>c.onclick=e=>{
+  $$("#qpFoldersView .qb[data-q]").forEach(c=>c.onclick=e=>{
     if(e.target.closest("button")) return;
-    state.qpTarget = c.dataset.fq; state.qpHist = []; save(); setMapSec("planner");
+    state.qpTarget = c.dataset.q; state.qpHist = []; save(); setMapSec("planner");
+  });
+
+  // ---- dragging ----
+  const clearMarks = ()=> $$("#qpFoldersView .over, #qpFoldersView .dropping, #qpFoldersView .drag").forEach(x=>x.classList.remove("over","dropping","drag"));
+  $$("#qpFoldersView .qb[data-q]").forEach(card=>{
+    card.ondragstart = e=>{
+      mapDrag = {kind:"quest", quest:card.dataset.q, from:card.dataset.in};
+      card.classList.add("drag");
+      try{ e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", card.dataset.q); }catch(err){}
+      e.stopPropagation();
+    };
+    card.ondragend = ()=>{ clearMarks(); mapDrag = null; };
+    card.ondragover = e=>{
+      if(!mapDrag || mapDrag.kind!=="quest") return;
+      e.preventDefault(); e.stopPropagation();
+      if(card.dataset.q !== mapDrag.quest) card.classList.add("over");
+    };
+    card.ondragleave = ()=> card.classList.remove("over");
+    card.ondrop = e=>{
+      if(!mapDrag || mapDrag.kind!=="quest") return;
+      e.preventDefault(); e.stopPropagation();
+      const to = card.dataset.in, at = qpListArr(to).indexOf(card.dataset.q);
+      qpListMove(mapDrag.from, mapDrag.quest, to, at);
+      mapDrag = null; renderFolders();
+    };
+  });
+  // dropping on a list's empty space puts the quest at the end
+  $$("#qpFoldersView .qp-list").forEach(list=>{
+    list.ondragover = e=>{ if(!mapDrag || mapDrag.kind!=="quest") return; e.preventDefault(); list.classList.add("dropping"); };
+    list.ondragleave = ()=> list.classList.remove("dropping");
+    list.ondrop = e=>{
+      if(!mapDrag || mapDrag.kind!=="quest") return;
+      e.preventDefault();
+      qpListMove(mapDrag.from, mapDrag.quest, list.dataset.list, null);
+      mapDrag = null; renderFolders();
+    };
+  });
+  // folders reorder by dragging their panel
+  $$("#qpFoldersView [data-fdrag]").forEach(head=>{
+    const pan = head.closest(".qp-listpanel");
+    head.ondragstart = e=>{
+      mapDrag = {kind:"folder", id:head.dataset.fdrag};
+      pan.classList.add("drag");
+      try{ e.dataTransfer.effectAllowed = "move"; }catch(err){}
+    };
+    head.ondragend = ()=>{ clearMarks(); mapDrag = null; };
+    head.ondragover = e=>{
+      if(!mapDrag || mapDrag.kind!=="folder" || mapDrag.id===head.dataset.fdrag) return;
+      e.preventDefault(); pan.classList.add("over");
+    };
+    head.ondragleave = ()=> pan.classList.remove("over");
+    head.ondrop = e=>{
+      if(!mapDrag || mapDrag.kind!=="folder") return;
+      e.preventDefault();
+      const fs = qpFolders(), from = fs.findIndex(f=>f.id===mapDrag.id), to = fs.findIndex(f=>f.id===head.dataset.fdrag);
+      if(from !== -1 && to !== -1){ fs.splice(to, 0, fs.splice(from, 1)[0]); save(); }
+      mapDrag = null; renderFolders();
+    };
   });
 }
+
 // ---- the wiki's optimal quest guide ----
 // One long table on the wiki: quests, but also "Train Fletching from level 1 to level 10", easy
 // diaries, miniquests and unlocks like the Stronghold of Security. Quests, training steps and
@@ -9136,10 +9237,19 @@ function renderGuide(){
   });
   $$("#qpGuideView [data-gfold]").forEach(b=>b.onclick=e=>{
     e.stopPropagation();
-    const n = b.dataset.gfold, f = qpFolders();
-    const pick = f.map(x=>`${x.name}`).join(", ");
-    const which = f.length === 1 ? f[0] : f.find(x=>achNorm(x.name) === achNorm(prompt("Which folder? (" + pick + ")", f[0].name) || ""));
-    if(which && qpFolderPut(which.id, n)) toast("📁 " + qpLabel(n) + " added to " + which.name);
+    const n = b.dataset.gfold, row = b.closest(".gd");
+    if(row.querySelector(".qb-folds")) return;
+    const pick = document.createElement("div");
+    pick.className = "qb-folds";
+    pick.innerHTML = qpFolders().map(f=>`<button class="ghost small" data-fput="${f.id}">📁 ${escapeHtml(f.name)}</button>`).join("")
+      + `<button class="ghost small" data-fput="">Cancel</button>`;
+    row.appendChild(pick);
+    [...pick.querySelectorAll("[data-fput]")].forEach(x=>x.onclick=ev=>{
+      ev.stopPropagation();
+      const f = x.dataset.fput && qpFolder(x.dataset.fput);
+      if(f && qpFolderPut(f.id, n)) toast("📁 " + qpLabel(n) + " added to " + f.name);
+      pick.remove();
+    });
   });
   // open on where you are, not on Tutorial Island
   const list = $("#qpGuideView .gd-list");
@@ -11446,7 +11556,7 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
-    "The quest planner is now The Map, with its own tabs. The Planner works exactly as it did, Folders holds named lists for the quests you'll get to later, and the Optimal guide follows the wiki's quest order, ticking off quests, levels and diaries from your own data. There's an ironman order too.",
+    "The quest planner is now The Map, with its own tabs. The Planner works exactly as it did, Folders shows your board and your own named lists together, with quests dragged between them, and the Optimal guide follows the wiki's quest order, ticking off quests, levels and diaries from your own data. There's an ironman order too.",
     "XP lands on the day you earned it. The hiscores only update when you log out, so a session running past midnight, or a day you never logged out, used to count on the next day. With RuneLite connected in the desktop app, OSRS Buddy now reads your XP as it changes and splits it at midnight. WiseOldMan still covers mobile, boss kills and clues.",
     "Auto-refresh asks WiseOldMan every 15 minutes instead of every 5, and not at all while RuneLite shows you playing on this PC. Each ask saves a snapshot on WiseOldMan, so the old pace filled your history with hundreds of identical ones a day.",
     "Importing a backup now brings everything across: your WiseOldMan day history, achievement edits, RuneLite data, quest board and settings. Before, it only carried goals, the journal and quest ticks, so a backup opened on a new computer lost most of its history.",
