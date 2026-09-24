@@ -9791,7 +9791,7 @@ function qpDetailHtml(n, db){
         <button class="ghost small" data-qpdone2="${escapeHtml(n)}">${st==="done"?"✅ Done":"⬜ Mark done"}</button>
         ${n!==state.qpTarget?`<button class="ghost small" data-qpfocus="${escapeHtml(n)}" title="Chart the route to this quest">🧭 Plan this</button>`:""}
         ${qpBoardHas(n)?"":`<button class="ghost small" data-qbadd="${escapeHtml(n)}" title="Pin to the board">📌 Pin</button>`}
-        <button class="ghost small" data-qfold="${escapeHtml(n)}" title="Put in a folder">📁 Folder</button>
+        <button class="ghost small" data-qfold="${escapeHtml(n)}" title="Put in a folder">📁 Folders</button>
         <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a>
       </div>
     </div>
@@ -11560,7 +11560,7 @@ function renderPrestige(){
 // ============ PATCH NOTES ============
 const APP_VERSION = "1.7";
 const PATCH_NOTES = [
-  {v:"1.7", date:"September 13, 2026", title:"RuneLite data, kept in sync", notes:[
+  {v:"1.7", date:"September 24, 2026", title:"RuneLite data, The Map, and XP on the right day", notes:[
     "The desktop app keeps your RuneLite data in sync on its own. Point it at the Character Export folder once in Setup, and while the app is open it picks up newly finished quests, boss drops and diaries within a few seconds of the plugin saving them.",
     "Setup finds the plugin's folder by itself when it's in the usual place. If it isn't, paste the path.",
     "Settings has a new RuneLite data section. It says plainly when you're connected, which folder and account it syncs from and when it last updated, with Sync now, Pause and Change folder. Changing the folder opens its own RuneLite window instead of walking through Setup again.",

@@ -9,6 +9,7 @@ a copy of your data — for that, use ⇓ Backup in Settings.
 
 | File | Released |
 |---|---|
+| `OSRS-Buddy-v1.7.html` | 24 Sep 2026 — RuneLite auto-sync, Achievements, The Map, XP counted on the right day |
 | `OSRS-Buddy-v1.6.html` | 13 Sep 2026 — Setup walkthrough, RuneLite Character Export import |
 | `OSRS-Buddy-v1.5.html` | 13 Sep 2026 — the Scroll upgraded, Trophy cabinet, quest board and route |
 | `OSRS-Buddy-v1.4.html` | 9 Sep 2026 — Gielinor Survivors, boss drop checklists, heatmap skill focus |
