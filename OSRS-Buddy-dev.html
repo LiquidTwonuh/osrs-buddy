@@ -589,6 +589,12 @@
   .ach-you{color:var(--gold)}
   /* the folder picker that drops out of a board card */
   .qb-folds{display:flex; flex-wrap:wrap; gap:6px; padding:8px 10px; grid-column:1/-1}
+  /* the folder menu that drops out of any 📁 button */
+  .qp-foldmenu{position:absolute; z-index:40; right:0; top:calc(100% + 4px); flex-direction:column; align-items:stretch;
+    min-width:190px; max-height:280px; overflow:auto; padding:6px; grid-column:auto;
+    background:var(--panel); border:1px solid var(--border); border-radius:10px; box-shadow:0 12px 26px rgba(0,0,0,.4)}
+  .qp-foldmenu button{text-align:left}
+  .qp-hit-row, .qpd-acts, .qb-acts{position:relative}
   /* the board and folders on one surface: drag a quest between them */
   .qp-listpanel.over{border-color:color-mix(in oklab, var(--gold) 55%, var(--border))}
   .qp-listpanel.drag{opacity:.6}
@@ -8849,7 +8855,7 @@ const QP_BOARD_MAX = 30;
 // where the "some day" quests wait without crowding it.
 const MAP_SECTIONS = [
   {id:"planner", label:"Planner", icon:"🧭"},
-  {id:"folders", label:"Board & folders", icon:"📁"},
+  {id:"folders", label:"Folders", icon:"📁"},
   {id:"guide",   label:"Optimal guide", icon:"🧾"},
 ];
 const MAP_BLURB = {
@@ -9208,7 +9214,7 @@ function renderGuide(){
       </div>
       ${st.kind==="quest" ? `<div class="gd-acts">
         <button class="qb-x" data-gpin="${escapeHtml(st.quest)}" title="Pin to the board">📌</button>
-        ${qpFolders().length ? `<button class="qb-x" data-gfold="${escapeHtml(st.quest)}" title="Put in a folder">📁</button>` : ""}
+        <button class="qb-x" data-qfold="${escapeHtml(st.quest)}" title="Put in a folder">📁</button>
       </div>` : ""}
     </div>`;
   el.innerHTML = `<div class="panel">
@@ -9235,28 +9241,7 @@ function renderGuide(){
     e.stopPropagation();
     if(qpBoardAdd(b.dataset.gpin)) toast("📌 " + qpLabel(b.dataset.gpin) + " pinned to the board");
   });
-  $$("#qpGuideView [data-gfold]").forEach(b=>b.onclick=e=>{
-    e.stopPropagation();
-    const n = b.dataset.gfold, row = b.closest(".gd");
-    if(row.querySelector(".qb-folds")) return;
-    const pick = document.createElement("div");
-    pick.className = "qb-folds";
-    pick.innerHTML = qpFolders().map(f=>`<button class="ghost small" data-fput="${f.id}">📁 ${escapeHtml(f.name)}</button>`).join("")
-      + `<button class="ghost small" data-fput="">Cancel</button>`;
-    row.appendChild(pick);
-    [...pick.querySelectorAll("[data-fput]")].forEach(x=>x.onclick=ev=>{
-      ev.stopPropagation();
-      const f = x.dataset.fput && qpFolder(x.dataset.fput);
-      if(f && qpFolderPut(f.id, n)) toast("📁 " + qpLabel(n) + " added to " + f.name);
-      pick.remove();
-    });
-  });
-  // open on where you are, not on Tutorial Island
-  const list = $("#qpGuideView .gd-list");
-  if(list && next){
-    const here = list.querySelector(`[data-gstep="${next.i}"]`);
-    if(here) list.scrollTop = Math.max(0, here.offsetTop - list.offsetTop - 8);
-  }
+  qpWireFolderButtons();
   // clicking a quest row charts it in the Planner
   $$("#qpGuideView [data-gstep]").forEach(c=>c.onclick=e=>{
     if(e.target.closest("button")) return;
@@ -9363,7 +9348,7 @@ function qpBoardHtml(db, target){
         }</div>
       </div>
       <div class="qb-acts">
-        ${c.n!=="__ALL__" && qpFolders().length ? `<button class="qb-x" data-qbfold="${escapeHtml(c.n)}" title="Move to a folder">📁</button>` : ""}
+        ${c.n!=="__ALL__" ? `<button class="qb-x" data-qfold="${escapeHtml(c.n)}" data-qmove="board" title="Move to a folder">📁</button>` : ""}
         <button class="qb-x" data-qbup="${escapeHtml(c.n)}" title="Move up">▲</button>
         <button class="qb-x" data-qbdown="${escapeHtml(c.n)}" title="Move down">▼</button>
         <button class="qb-x" data-qbdel="${escapeHtml(c.n)}" title="Take off the board">✕</button>
@@ -9371,6 +9356,48 @@ function qpBoardHtml(db, target){
     </div>`;
   }).join("");
   return `<div class="panel">${head}<div class="qb-grid" id="qbGrid">${body}</div></div>`;
+}
+// 📁 sits next to every + in the planner: the same menu of your folders wherever a quest turns
+// up, with "New folder" in it so the first one takes one click too. On a board card it moves the
+// quest off the board; everywhere else it just files a copy.
+function qpFolderBtn(n, cls){
+  return `<button class="${cls || "qp-pin"}" data-qfold="${escapeHtml(n)}" title="Put in a folder">📁</button>`;
+}
+function qpFolderMenu(btn, quest, moveOffBoard){
+  const host = btn.parentElement;
+  const open = host.querySelector(".qp-foldmenu");
+  $$(".qp-foldmenu").forEach(m=>m.remove());
+  if(open) return;                                   // clicking the button again closes it
+  const menu = document.createElement("div");
+  menu.className = "qb-folds qp-foldmenu";
+  menu.innerHTML = qpFolders().map(f=>
+      `<button class="ghost small" data-fput="${f.id}">📁 ${escapeHtml(f.name)} <span class="muted">${f.quests.length}</span></button>`).join("")
+    + `<button class="ghost small" data-fnew="1">＋ New folder</button>`;
+  host.style.position = host.style.position || "relative";
+  host.appendChild(menu);
+  const file = f=>{
+    if(!f) return;
+    qpFolderPut(f.id, quest);
+    if(moveOffBoard) qpBoardRemove(quest);
+    toast("📁 " + qpCrumbName(quest) + " filed under " + f.name);
+    menu.remove();
+    if(state.lastView === "quests" && mapSec() === "planner") renderQuestPlanner();
+  };
+  [...menu.querySelectorAll("[data-fput]")].forEach(b=>b.onclick=e=>{ e.stopPropagation(); file(qpFolder(b.dataset.fput)); });
+  menu.querySelector("[data-fnew]").onclick = e=>{
+    e.stopPropagation();
+    file(qpFolderCreate(prompt("Name the folder", "Later")));
+  };
+  setTimeout(()=>{
+    const away = ev=>{ if(!menu.contains(ev.target)){ menu.remove(); document.removeEventListener("click", away); } };
+    document.addEventListener("click", away);
+  }, 0);
+}
+function qpWireFolderButtons(){
+  $$("[data-qfold]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    qpFolderMenu(b, b.dataset.qfold, b.dataset.qmove === "board");
+  });
 }
 // The + button shows up in search results and next to the quest-cape shortcut.
 function qpWirePinButtons(){
@@ -9381,6 +9408,7 @@ function qpWirePinButtons(){
       renderQuestPlanner();
     }
   });
+  qpWireFolderButtons();
 }
 function qpWireBoard(db){
   const grid = $("#qbGrid");
@@ -9397,22 +9425,6 @@ function qpWireBoard(db){
   $$("#qpBoardWrap [data-qbcard]").forEach(c=>c.onclick=e=>{
     if(e.target.closest("button")) return;
     state.qpTarget = c.dataset.qbcard; state.qpHist = []; save(); renderQuestPlanner();
-  });
-  // 📁 on a card: pick a folder, and the quest moves off the board into it
-  $$("#qpBoardWrap [data-qbfold]").forEach(x=>x.onclick=e=>{
-    e.stopPropagation();
-    const n = x.dataset.qbfold, card = x.closest(".qb"), acts = x.parentElement;
-    if(card.querySelector(".qb-folds")) return;
-    const pick = document.createElement("div");
-    pick.className = "qb-folds";
-    pick.innerHTML = qpFolders().map(f=>`<button class="ghost small" data-fput="${f.id}">📁 ${escapeHtml(f.name)}</button>`).join("")
-      + `<button class="ghost small" data-fput="">Cancel</button>`;
-    acts.after(pick);
-    [...card.querySelectorAll(".qb-folds [data-fput]")].forEach(b=>b.onclick=ev=>{
-      ev.stopPropagation();
-      if(b.dataset.fput){ qpFolderPut(b.dataset.fput, n); qpBoardRemove(n); toast("📁 "+qpCrumbName(n)+" moved to "+qpFolder(b.dataset.fput).name); }
-      renderQuestPlanner();
-    });
   });
   const sortBtn = $("#qpBoardSort");
   if(sortBtn) sortBtn.onclick = ()=>{ state.qpBoardSort = !state.qpBoardSort; save(); renderQuestPlanner(); };
@@ -9464,6 +9476,7 @@ function qpSearchHtml(hits, db){
       </button>
       <button class="qp-pin ${on?"on":""}" data-qbadd="${escapeHtml(n)}"
         title="${on?"Already on the board":"Pin to the board"}">${on?"📌":"+"}</button>
+      ${qpFolderBtn(n)}
     </div>`;
   }).join("")}</div>`;
 }
@@ -9778,6 +9791,7 @@ function qpDetailHtml(n, db){
         <button class="ghost small" data-qpdone2="${escapeHtml(n)}">${st==="done"?"✅ Done":"⬜ Mark done"}</button>
         ${n!==state.qpTarget?`<button class="ghost small" data-qpfocus="${escapeHtml(n)}" title="Chart the route to this quest">🧭 Plan this</button>`:""}
         ${qpBoardHas(n)?"":`<button class="ghost small" data-qbadd="${escapeHtml(n)}" title="Pin to the board">📌 Pin</button>`}
+        <button class="ghost small" data-qfold="${escapeHtml(n)}" title="Put in a folder">📁 Folder</button>
         <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a>
       </div>
     </div>
@@ -10603,6 +10617,7 @@ $("#qpSearch").addEventListener("input", ()=>{
   $$("#qpSuggest [data-qptarget]").forEach(b=>b.onclick=()=>{
     state.qpTarget=b.dataset.qptarget; save(); $("#qpSearch").value=""; renderQuestPlanner();
   });
+  qpWireFolderButtons();
   // pinning keeps the search open so you can add several in one go
   $$("#qpSuggest [data-qbadd]").forEach(b=>b.onclick=e=>{
     e.stopPropagation();
@@ -11556,7 +11571,7 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
-    "The quest planner is now The Map, with its own tabs. The Planner works exactly as it did, Folders shows your board and your own named lists together, with quests dragged between them, and the Optimal guide follows the wiki's quest order, ticking off quests, levels and diaries from your own data. There's an ironman order too.",
+    "The quest planner is now The Map, with its own tabs. The Planner works exactly as it did, Folders shows your board and your own named lists together, with quests dragged between them, and a 📁 button on every quest in the planner files one straight into a folder, and the Optimal guide follows the wiki's quest order, ticking off quests, levels and diaries from your own data. There's an ironman order too.",
     "XP lands on the day you earned it. The hiscores only update when you log out, so a session running past midnight, or a day you never logged out, used to count on the next day. With RuneLite connected in the desktop app, OSRS Buddy now reads your XP as it changes and splits it at midnight. WiseOldMan still covers mobile, boss kills and clues.",
     "Auto-refresh asks WiseOldMan every 15 minutes instead of every 5, and not at all while RuneLite shows you playing on this PC. Each ask saves a snapshot on WiseOldMan, so the old pace filled your history with hundreds of identical ones a day.",
     "Importing a backup now brings everything across: your WiseOldMan day history, achievement edits, RuneLite data, quest board and settings. Before, it only carried goals, the journal and quest ticks, so a backup opened on a new computer lost most of its history.",
