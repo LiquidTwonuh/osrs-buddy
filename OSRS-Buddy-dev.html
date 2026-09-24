@@ -604,6 +604,26 @@
   .qp-list .qb.over{border-color:var(--gold)}
   .qp-list .qb.drag{opacity:.45}
   .qp-drop{grid-column:1/-1; margin:0}
+  /* the Coffer */
+  .cf-quiz{text-align:center; padding:26px 18px}
+  .cf-opts{display:flex; flex-wrap:wrap; gap:8px; justify-content:center}
+  .cf-opts button{padding:10px 16px; font-size:14px}
+  .cf-opts button.on{border-color:var(--gold); color:var(--gold)}
+  .cf-chips{display:flex; flex-wrap:wrap; gap:8px}
+  .cf-chip{display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:999px; background:var(--inset); border:1px solid var(--border); font-size:12px}
+  .cf-chip b{color:var(--muted); font-weight:600; margin-right:2px}
+  .cf-chip button{border:0; background:none; color:var(--text); font:inherit; padding:2px 7px; border-radius:999px; cursor:pointer; opacity:.6}
+  .cf-chip button.on{background:color-mix(in oklab, var(--gold) 22%, var(--panel)); color:var(--gold); opacity:1}
+  .cf-list{display:flex; flex-direction:column; gap:6px; max-height:70vh; overflow:auto}
+  .cf-row{display:flex; gap:12px; align-items:center; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:var(--inset)}
+  .cf-row.short{opacity:.72}
+  .cf-gp{flex:0 0 116px; text-align:right; font-weight:700; color:var(--gold); font-size:15px}
+  .cf-gp .muted{font-size:11px; font-weight:500}
+  .cf-b{flex:1 1 auto; min-width:0}
+  .cf-h{display:flex; gap:6px; align-items:center; flex-wrap:wrap}
+  .cf-sub{font-size:12px; color:var(--muted); margin-top:2px}
+  .cf-tag{font-size:10px; padding:1px 7px; border-radius:999px; background:var(--panel); border:1px solid var(--border); color:var(--muted)}
+  .cf-tag.wild{color:var(--red); border-color:color-mix(in oklab, var(--red) 40%, var(--border))}
   /* the optimal guide */
   .gd-prog{margin:10px 0 4px} .gd-prog .qb-bar{margin-bottom:6px}
   .gd-next{margin-top:8px; padding:10px 12px; border-radius:12px; background:var(--inset); border:1px solid var(--border)}
@@ -1660,6 +1680,7 @@
       <button class="navitem" data-view="start"><span class="ni-ic">🗺️</span>Roadmap</button>
       <button class="navitem" data-view="quests"><span class="ni-ic">🧭</span>The Map</button>
       <div class="nav-sub hidden" id="navSubMap"></div>
+      <button class="navitem" data-view="coffer"><span class="ni-ic">🪙</span>The Coffer</button>
       <button class="navitem" data-view="notes"><span class="ni-ic">📝</span>Notes</button>
       <div class="nav-sec">Tools</div>
       <button class="navitem" data-view="ask"><span class="ni-ic">💬</span>Ask Bud</button>
@@ -2140,6 +2161,19 @@
     <div class="map-sec hidden" data-msec="guide"><div id="qpGuideView"></div></div>
   </div>
 
+  <!-- VIEW: THE COFFER (making GP) -->
+  <div class="view hidden" id="view-coffer">
+    <div class="panel">
+      <div class="goals-head">
+        <div class="sh-eyebrow">Earn</div>
+        <h2>🪙 The Coffer</h2>
+        <p class="goals-blurb">Every money maker the wiki lists, measured against your own levels. Answer a few questions
+        and it shows the ones worth your time.</p>
+      </div>
+    </div>
+    <div id="cofferView"></div>
+  </div>
+
   <!-- VIEW: GOALS (to-do list + tracked-goal builder) -->
   <div class="view hidden" id="view-goals">
     <div class="panel">
@@ -2612,7 +2646,7 @@ function storageReport(){
 // are ~96% of the bytes and re-download themselves, so they're excluded.
 const BACKUP_KEY = "osrs_todo_backups_v1";   // legacy home; migrated out on first run
 const BACKUP_KEEP = 8;
-const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB"];
+const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB"];
 // Snapshots live in IndexedDB, not localStorage. Keeping eight copies of your data in
 // a 5MB bucket meant the backup system was the thing that would eventually fill it —
 // journal history alone costs ~86KB/year, so the data is fine for decades; nine copies
@@ -2703,7 +2737,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB"];
+const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -8849,6 +8883,251 @@ function qpRouteHtml(scope, db){
 // out of the old pinned-plan chips rather than sitting beside them, so there's still
 // only one list of "quests I care about"; a card just says a lot more than a chip did.
 const QP_BOARD_MAX = 30;
+// ============ THE COFFER ============
+// The wiki's money making guide is one table of ~490 methods, each with an hourly profit, the
+// skills it wants, a category and how busy it keeps you. We read it, check every skill against
+// your own levels, and let the quiz do the filtering for you. The quiz is only a friendly way to
+// set the filters: they stay on screen afterwards and you can change any of them.
+const MMG_VERSION = 1;
+const MMG_PAGE = "Money making guide";
+let mmgBusy = false;
+function mmgDB(){ const d = state.mmgDB; return (d && d.v===MMG_VERSION && d.methods && d.methods.length) ? d : null; }
+function mmgSkillKey(n){ const k = String(n||"").toLowerCase(); return k==="runecraft" ? "runecrafting" : k; }
+async function mmgDbEnsure(force){
+  const have = mmgDB();
+  if(mmgBusy || (!force && have && Date.now()-have.ts < 7*86400e3)) return;
+  mmgBusy = true; renderCoffer();
+  const methods = [];
+  await mmgReadTable(MMG_PAGE, methods, false);
+  // The recurring ones (bird houses, brewing, tree runs) live on their own page, because they pay
+  // per run rather than per hour. Same table, two extra columns.
+  await mmgReadTable(MMG_PAGE + "/Recurring", methods, true);
+  if(methods.length > 50){
+    // The summary tables leave out where a method happens and which quests it needs. Both matter:
+    // one says whether you can be killed doing it, the other the app can check for you. Every
+    // method has its own page and the wiki hands back 50 pages a request, so it's ten calls.
+    await mmgDetails(methods);
+    await mmgTags(methods);
+    state.mmgDB = {v:MMG_VERSION, ts:Date.now(), methods};
+    save();
+  }
+  mmgBusy = false; renderCoffer();
+}
+// One money making table: the name, what it pays, the skills it wants, its category, and how
+// busy it keeps you. The recurring table also says what a single run pays, how long a run takes
+// and how often you can do it again.
+async function mmgReadTable(page, methods, recurring){
+  try{
+    const r = await fetch(WIKI_API + "?origin=*&format=json&action=parse&prop=text&page=" + encodeURIComponent(page));
+    const doc = new DOMParser().parseFromString((await r.json()).parse.text["*"], "text/html");
+    const table = [...doc.querySelectorAll("table")].sort((a,b)=>b.rows.length-a.rows.length)[0];
+    if(!table) return;
+    const num = x => parseInt(String(x||"").replace(/[^\d-]/g, ""), 10) || 0;
+    const col = recurring ? {profit:3, skills:5, cat:6, pace:-1, mem:7} : {profit:1, skills:2, cat:3, pace:4, mem:5};
+    [...table.rows].slice(1).forEach(tr=>{
+      const c = [...tr.cells];
+      const link = c[0] && c[0].querySelector("a[href^='/w/']");
+      const name = (c[0] ? c[0].innerText : "").replace(/\s+/g," ").trim();
+      if(!name) return;
+      // each skill is its own little span, with the level and the skill's name on it
+      const skills = [...(c[col.skills] ? c[col.skills].querySelectorAll("span.scp[data-skill]") : [])].map(sp=>{
+        const li = sp.closest("li");
+        return {skill: mmgSkillKey(sp.dataset.skill), lvl: parseInt(sp.dataset.level, 10) || 0,
+                soft: /recommend/i.test((li ? li.innerText : "") || "")};
+      }).filter(x=>SKILL_ORDER.includes(x.skill) && x.lvl > 0);
+      const cat = (c[col.cat] ? c[col.cat].innerText : "").trim();
+      methods.push({name, page: link ? link.getAttribute("href").slice(3) : "",
+        profit: num(c[col.profit] ? c[col.profit].innerText : 0),
+        skills, cat, group: cat.split(/[\/(]/)[0].trim() || "Other",
+        pace: col.pace < 0 ? "" : (c[col.pace] ? c[col.pace].innerText : "").trim(),
+        f2p: /free/i.test((c[col.mem] ? c[col.mem].innerText : "") || ""),
+        recur: !!recurring,
+        perRun: recurring ? num(c[1] ? c[1].innerText : 0) : 0,
+        every: recurring ? (c[4] ? c[4].innerText.trim() : "") : ""});
+    });
+  }catch(e){ /* a table that won't parse leaves the other one working */ }
+}
+// Fill in Location, Quest and members from each method's own page. Anything that fails just
+// leaves those fields empty, and the method still lists with what the table gave us.
+async function mmgDetails(methods){
+  const plain = x => String(x||"")
+    .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, "$2").replace(/\[\[([^\]]+)\]\]/g, "$1")
+    .replace(/\{\{[^}]*\}\}/g, "").replace(/'{2,3}/g, "").replace(/<[^>]+>/g, "")
+    .replace(/\s+/g, " ").trim();
+  const db = questDB();
+  const byTitle = {};
+  methods.forEach(m=>{ byTitle[decodeURIComponent(m.page || "").replace(/_/g, " ")] = m; });
+  const titles = Object.keys(byTitle).filter(Boolean);
+  for(let i=0;i<titles.length;i+=50){
+    if(i) await new Promise(r=>setTimeout(r, 250));                       // be gentle with the wiki
+    const batch = titles.slice(i, i+50);
+    try{
+      const r = await fetch(WIKI_API + "?origin=*&format=json&formatversion=2&action=query&prop=revisions&rvprop=content&rvslots=main&titles=" + encodeURIComponent(batch.join("|")));
+      ((await r.json()).query || {}).pages.forEach(pg=>{
+        const m = byTitle[pg.title];
+        if(!m || !pg.revisions) return;
+        const wt = pg.revisions[0].slots.main.content;
+        const field = k => (new RegExp("\\|\\s*" + k + "\\s*=([\\s\\S]*?)\\n\\|", "i").exec(wt) || [])[1] || "";
+        m.loc = plain(field("Location")).slice(0, 120);
+        m.wildy = /wilderness/i.test(field("Location"));
+        const mem = plain(field("Members"));
+        if(/^(yes|no)$/i.test(mem)) m.f2p = /^no$/i.test(mem);
+        // quests the method needs, kept only when we know the quest ourselves
+        const qs = [...field("Quest").matchAll(/\[\[([^\]|]+)/g)].map(x=>x[1].trim());
+        m.quests = db ? [...new Set(qs.filter(q=>db.quests[q]))] : [];
+      });
+    }catch(e){ /* one bad batch shouldn't cost the whole list */ }
+  }
+}
+// The wiki keeps its own lists: which methods can get you killed, which ones you can only do
+// once a day or week, and which are meant for ironmen. One call each, and far better than
+// guessing from the words on the page.
+const MMG_TAGS = [["MMG/Risky","risky"], ["MMG/Ironman","iron"]];
+async function mmgTags(methods){
+  const byName = {};
+  methods.forEach(m=>{ byName[achNorm(m.name)] = m; });
+  for(const [cat, flag] of MMG_TAGS){
+    try{
+      const r = await fetch(WIKI_API + "?origin=*&format=json&formatversion=2&action=query&list=categorymembers&cmlimit=max&cmtitle=" + encodeURIComponent("Category:" + cat));
+      (((await r.json()).query || {}).categorymembers || []).forEach(x=>{
+        const m = byName[achNorm(String(x.title).replace(/^Money making guide\//, ""))];
+        if(m) m[flag] = true;
+      });
+      await new Promise(r=>setTimeout(r, 200));
+    }catch(e){ /* a missing tag list just means that filter finds nothing */ }
+  }
+  // a method in the Wilderness is risky whether or not the wiki says so
+  methods.forEach(m=>{ if(m.wildy) m.risky = true; });
+}
+// what you'd still need for a method: hard requirements first, then the recommended ones
+function mmgGaps(m){
+  const hard = [], soft = [];
+  (m.skills || []).forEach(rq=>{
+    const have = lvlOf(rq.skill);
+    if(have >= rq.lvl) return;
+    (rq.soft ? soft : hard).push({skill:rq.skill, lvl:rq.lvl, have, short:rq.lvl-have});
+  });
+  const quests = (m.quests || []).filter(q=>!questDone(q));
+  return {hard, soft, quests, ok: !hard.length && !quests.length, short: hard.reduce((a,x)=>a+x.short, 0) + quests.length*10};
+}
+// ---- the quiz: six questions that set the filters ----
+const COFFER_QUIZ = [
+  {id:"members", q:"Are you a member?", opts:[["yes","Yes, members"],["no","Free-to-play"]]},
+  {id:"style",   q:"What do you actually enjoy?", opts:[["any","A bit of everything"],["combat","Combat and bossing"],["skilling","Skilling"],["gather","Gathering and processing"]]},
+  {id:"pace",    q:"How busy do you want to be?", opts:[["any","Don't mind"],["Low","AFK, barely touching it"],["Moderate","Somewhere in between"],["High","Hands on the whole time"]]},
+  {id:"wildy",   q:"Risky methods, where you can be attacked or lose your stuff?", opts:[["ok","I'll risk it"],["no","No thanks"]]},
+  {id:"reach",   q:"Methods you don't have the levels for?", opts:[["hide","Hide them"],["show","Show them, I want the goals"]]},
+  {id:"floor",   q:"Worth your time from…", opts:[["0","Anything"],["100000","100k an hour"],["500000","500k an hour"],["1000000","1m an hour"]]},
+];
+const COFFER_DEFAULTS = {members:"yes", style:"any", pace:"any", wildy:"ok", reach:"hide", floor:"0"};
+function cofferPrefs(){
+  state.coffer = state.coffer || {};
+  state.coffer.prefs = Object.assign({}, COFFER_DEFAULTS, state.coffer.prefs || {});
+  return state.coffer.prefs;
+}
+function cofferSet(k, v){ cofferPrefs()[k] = v; save(); renderCoffer(); }
+function cofferMatches(m, pf){
+  if(pf.members === "no" && !m.f2p) return false;
+  if(pf.wildy === "no" && m.risky) return false;
+  if(pf.pace !== "any" && m.pace !== pf.pace) return false;
+  if(pf.floor !== "0" && m.profit < +pf.floor) return false;
+  if(pf.style === "combat" && m.group !== "Combat") return false;
+  if(pf.style === "skilling" && m.group !== "Skilling") return false;
+  if(pf.style === "gather" && !["Collecting","Processing"].includes(m.group)) return false;
+  return true;
+}
+// "48:00:00" is the wiki's way of saying every two days
+function mmgEvery(t){
+  const h = parseInt(String(t).split(":")[0], 10) || 0;
+  if(h >= 48 && h % 24 === 0) return (h/24) + " days";
+  if(h === 24) return "day";
+  return h ? h + "h" : String(t);
+}
+function renderCoffer(){
+  const el = $("#cofferView"); if(!el) return;
+  const db = mmgDB();
+  if(!db){
+    el.innerHTML = `<div class="panel"><div class="empty">${mmgBusy ? "Reading the money making guide off the wiki…"
+      : `Couldn't read the guide. <div style="margin-top:9px"><button class="primary" id="cfRetry">📥 Try again</button></div>`}</div></div>`;
+    const b = $("#cfRetry"); if(b) b.onclick = ()=>mmgDbEnsure(true);
+    return;
+  }
+  // the quiz, first time through or when you ask for it again
+  if(!state.coffer || !state.coffer.done || state.coffer.quizOpen){
+    const step = Math.min(state.coffer && state.coffer.step || 0, COFFER_QUIZ.length-1);
+    const qq = COFFER_QUIZ[step], pf = cofferPrefs();
+    el.innerHTML = `<div class="panel cf-quiz">
+      <div class="small muted">Question ${step+1} of ${COFFER_QUIZ.length}</div>
+      <h3 style="margin:6px 0 12px">${qq.q}</h3>
+      <div class="cf-opts">${qq.opts.map(([v,label])=>
+        `<button class="ghost ${pf[qq.id]===v?"on":""}" data-cfans="${v}">${label}</button>`).join("")}</div>
+      <div class="row" style="gap:8px; margin-top:14px">
+        ${step ? `<button class="ghost small" id="cfBack">← Back</button>` : ""}
+        <span class="grow"></span>
+        <button class="ghost small" id="cfSkip">Skip the questions</button>
+      </div></div>`;
+    $$("#cofferView [data-cfans]").forEach(b=>b.onclick=()=>{
+      cofferPrefs()[qq.id] = b.dataset.cfans;
+      state.coffer.step = step + 1;
+      if(state.coffer.step >= COFFER_QUIZ.length){ state.coffer.done = true; state.coffer.quizOpen = false; state.coffer.step = 0; }
+      save(); renderCoffer();
+    });
+    if($("#cfBack")) $("#cfBack").onclick = ()=>{ state.coffer.step = step-1; save(); renderCoffer(); };
+    $("#cfSkip").onclick = ()=>{ state.coffer.done = true; state.coffer.quizOpen = false; state.coffer.step = 0; save(); renderCoffer(); };
+    return;
+  }
+  const pf = cofferPrefs();
+  const all = db.methods.map(m=>Object.assign({}, m, {gap: mmgGaps(m)}));
+  const picked = all.filter(m=>cofferMatches(m, pf)).sort((a,b)=>b.profit-a.profit);
+  const ready = picked.filter(m=>m.gap.ok && !m.recur);
+  const dailies = picked.filter(m=>m.gap.ok && m.recur);
+  const soon = picked.filter(m=>!m.gap.ok && !m.recur).sort((a,b)=> a.gap.short-b.gap.short || b.profit-a.profit);
+  const chip = (id, label)=>{
+    const q = COFFER_QUIZ.find(x=>x.id===id);
+    return `<span class="cf-chip"><b>${label}</b>${q.opts.map(([v,t])=>
+      `<button class="${pf[id]===v?"on":""}" data-cfset="${id}" data-cfval="${v}">${t}</button>`).join("")}</span>`;
+  };
+  const rowHtml = m=>{
+    const need = m.gap.hard.map(g=>`${g.lvl} ${nice(g.skill)} <span class="muted">(you're ${g.have})</span>`)
+      .concat(m.gap.quests.map(q=>escapeHtml(qpLabel(q)))).join(", ");
+    const rec = m.gap.soft.map(g=>`${g.lvl} ${nice(g.skill)}`).join(", ");
+    return `<div class="cf-row ${m.gap.ok?"":"short"}">
+      <div class="cf-gp">${m.recur ? `${fmt(m.perRun)}<span class="muted">/run</span>` : `${fmt(m.profit)}<span class="muted">/hr</span>`}</div>
+      <div class="cf-b">
+        <div class="cf-h"><b>${escapeHtml(m.name)}</b>
+          ${m.risky?`<span class="cf-tag wild">${m.wildy?"Wilderness":"Risky"}</span>`:""}
+          ${m.recur && m.every?`<span class="cf-tag">every ${escapeHtml(mmgEvery(m.every))}</span>`:""}
+          ${m.f2p?`<span class="cf-tag">F2P</span>`:""}
+          <span class="cf-tag">${escapeHtml(m.cat)}</span>
+          <span class="cf-tag">${escapeHtml(m.pace)}</span></div>
+        <div class="cf-sub">${need ? `Needs ${need}` : rec ? `Wiki recommends ${rec}` : "You've got the levels for this"}${
+          m.loc ? `<span class="muted"> · ${escapeHtml(m.loc)}</span>` : ""}</div>
+      </div>
+      <a class="ghost small" href="https://oldschool.runescape.wiki/w/${encodeURIComponent(m.page || (MMG_PAGE+"/"+m.name))}" target="_blank" rel="noopener">Guide ↗</a>
+    </div>`;
+  };
+  el.innerHTML = `<div class="panel">
+      <div class="cf-chips">${chip("members","Account")}${chip("style","Enjoy")}${chip("pace","Pace")}${chip("wildy","Risk")}${chip("reach","Out of reach")}${chip("floor","At least")}</div>
+      <div class="row" style="gap:8px; margin-top:10px; align-items:center">
+        <span class="small muted grow">${fmt(ready.length + dailies.length)} you can do now, out of ${fmt(db.methods.length)} the wiki lists${live?"":" · load your stats to check them against your levels"}</span>
+        <button class="ghost small" id="cfQuiz">↻ Retake the quiz</button>
+        <button class="ghost small" id="cfRefresh" title="Re-read the wiki">⟲ Refresh</button>
+      </div></div>
+    <div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>Ready now</h3><span class="small muted">${fmt(ready.length)} method${ready.length===1?"":"s"}</span></div>
+      <div class="cf-list">${ready.slice(0,60).map(rowHtml).join("") || `<div class="empty">Nothing matches those answers. Loosen a filter above.</div>`}</div>
+    </div>
+    ${dailies.length ? `<div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>Every day or two</h3><span class="small muted">start it, walk away, come back</span></div>
+      <div class="cf-list">${dailies.slice(0,30).map(rowHtml).join("")}</div></div>` : ""}
+    ${pf.reach==="show" && soon.length ? `<div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>Not yet</h3><span class="small muted">closest first</span></div>
+      <div class="cf-list">${soon.slice(0,40).map(rowHtml).join("")}</div></div>` : ""}`;
+  $$("#cofferView [data-cfset]").forEach(b=>b.onclick=()=>cofferSet(b.dataset.cfset, b.dataset.cfval));
+  $("#cfQuiz").onclick = ()=>{ state.coffer.quizOpen = true; state.coffer.step = 0; save(); renderCoffer(); };
+  $("#cfRefresh").onclick = ()=>mmgDbEnsure(true);
+}
+
 // ============ THE MAP ============
 // The quest planner grew into its own place: the Planner you chart quests in, and Folders, which
 // are the quieter lists. The board stays the shortlist you're actually working on; a folder is
@@ -11558,8 +11837,13 @@ function renderPrestige(){
 }
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.7";
+const APP_VERSION = "1.8";
 const PATCH_NOTES = [
+  {v:"1.8", date:"in progress", title:"The Coffer", notes:[
+    "New section: the Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
+    "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
+    "Each method shows what it pays an hour, where it happens, what you're still short on, and whether the wiki marks it risky. Recurring ones show what a single run pays and how often you can do it again.",
+  ]},
   {v:"1.7", date:"September 24, 2026", title:"RuneLite data, The Map, and XP on the right day", notes:[
     "The desktop app keeps your RuneLite data in sync on its own. Point it at the Character Export folder once in Setup, and while the app is open it picks up newly finished quests, boss drops and diaries within a few seconds of the plugin saving them.",
     "Setup finds the plugin's folder by itself when it's in the usual place. If it isn't, paste the path.",
@@ -11777,7 +12061,7 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"The Map", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"The Map", coffer:"The Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
 // ---- Scroll sections ----
 // The page got big enough that one long scroll stopped working. Same data, five
 // sections, heatmap first because that's what people open the page for.
@@ -11984,6 +12268,7 @@ function switchView(name){
   // the board shows live status against your stats and quest progress, so it has to be
   // rebuilt on entry rather than left as whatever it was at launch
   if(name==="quests") applyMapSec();
+  if(name==="coffer"){ renderCoffer(); mmgDbEnsure(); }
   if(name==="arcade") renderArcade();
   // the recap is something you open and close, not a place, so coming back to the Scroll
   // always lands on the Overview
