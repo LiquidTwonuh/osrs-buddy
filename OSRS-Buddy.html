@@ -627,6 +627,7 @@
   .cf-h{display:flex; gap:6px; align-items:center; flex-wrap:wrap}
   .cf-sub{font-size:12px; color:var(--muted); margin-top:2px}
   .cf-tag{font-size:10px; padding:1px 7px; border-radius:999px; background:var(--panel); border:1px solid var(--border); color:var(--muted)}
+  .cf-eff{color:var(--gold); opacity:.85}
   .cf-tag.wild{color:var(--red); border-color:color-mix(in oklab, var(--red) 40%, var(--border))}
   /* the optimal guide */
   .gd-prog{margin:10px 0 4px} .gd-prog .qb-bar{margin-bottom:6px}
@@ -8887,6 +8888,72 @@ function qpRouteHtml(scope, db){
 // out of the old pinned-plan chips rather than sitting beside them, so there's still
 // only one list of "quests I care about"; a card just says a lot more than a chip did.
 const QP_BOARD_MAX = 30;
+// ============ REACH ============
+// "Can I do this yet, and if not, how far off is it?" asked once, in one place, so every part of
+// the app answers it the same way. Hand it requirements, get back what's missing, how much work
+// that is, and which of three bands it lands in.
+//
+//   reachOf({skills:[{skill:"slayer", lvl:75}], quests:["Monkey Madness I"], qp:32})
+//     -> {band:"close", skills:[...], quests:[...], xp:2100000, effort:2500000, text:"..."}
+//
+// Work is measured in experience, because that's the only honest common unit: five levels at 40
+// is an evening, five levels at 90 is a month. Quests count as a chunk of work each, more when
+// they're locked behind other quests.
+const REACH_BANDS = [
+  {id:"ready", label:"Ready now",   icon:"✅"},
+  {id:"close", label:"Within reach", icon:"🎯"},
+  {id:"far",   label:"Further off",  icon:"🧗"},
+];
+const REACH_CLOSE = 2000000;      // work you could get through in a session or two
+const REACH_QUEST = 400000;       // a quest you could start today
+const REACH_LOCKED = 1200000;     // one that's behind other quests
+function reachBand(id){ return REACH_BANDS.find(b=>b.id===id) || REACH_BANDS[2]; }
+// quest points you hold right now, counted off the quests you've ticked
+function reachQP(){
+  const db = questDB();
+  return db ? db.order.filter(questDone).reduce((a,n)=>a + (db.quests[n].qpGain || 0), 0) : 0;
+}
+function reachOf(req){
+  req = req || {};
+  const skills = [], quests = [], other = (req.other || []).slice();
+  let xp = 0;
+  (req.skills || []).forEach(r=>{
+    if(r.soft) return;                                  // "recommended" isn't a requirement
+    const have = lvlOf(r.skill);
+    if(have >= r.lvl) return;
+    const gap = Math.max(0, xpForLevel(r.lvl) - liveSkillXp(r.skill));
+    xp += gap;
+    skills.push({skill:r.skill, lvl:r.lvl, have, xp:gap});
+  });
+  let questWork = 0;
+  const db = questDB();
+  (req.quests || []).forEach(q=>{
+    if(questDone(q)) return;
+    const ready = db && db.quests[q] ? questStatus(q, db) === "ready" : false;
+    questWork += ready ? REACH_QUEST : REACH_LOCKED;
+    quests.push({name:q, ready});
+  });
+  if(req.qp){
+    const have = reachQP();
+    if(have < req.qp){ other.push(`${req.qp} quest points (you have ${have})`); questWork += (req.qp-have) * 40000; }
+  }
+  const effort = xp + questWork;
+  const band = (!skills.length && !quests.length && !other.length) ? "ready"
+             : effort <= REACH_CLOSE ? "close" : "far";
+  const v = {band, ok: band === "ready", skills, quests, other, xp, effort};
+  v.text = reachText(v);
+  return v;
+}
+// one line saying what's in the way, shortest first
+function reachText(v){
+  if(v.ok) return "";
+  const bits = v.skills.slice().sort((a,b)=>a.xp-b.xp)
+    .map(g=>`${g.lvl} ${nice(g.skill)} <span class="muted">(you're ${g.have}${g.xp ? ", " + xpText(g.xp) + " xp" : ""})</span>`);
+  v.quests.forEach(q=>bits.push(escapeHtml(qpLabel(q.name)) + (q.ready ? "" : ` <span class="muted">(and what it needs)</span>`)));
+  v.other.forEach(o=>bits.push(escapeHtml(o)));
+  return bits.join(", ");
+}
+
 // ============ THE COFFER ============
 // The wiki's money making guide is one table of ~490 methods, each with an hourly profit, the
 // skills it wants, a category and how busy it keeps you. We read it, check every skill against
@@ -9003,16 +9070,11 @@ async function mmgTags(methods){
   // a method in the Wilderness is risky whether or not the wiki says so
   methods.forEach(m=>{ if(m.wildy) m.risky = true; });
 }
-// what you'd still need for a method: hard requirements first, then the recommended ones
+// what a method still wants from you, plus the levels the wiki only recommends
 function mmgGaps(m){
-  const hard = [], soft = [];
-  (m.skills || []).forEach(rq=>{
-    const have = lvlOf(rq.skill);
-    if(have >= rq.lvl) return;
-    (rq.soft ? soft : hard).push({skill:rq.skill, lvl:rq.lvl, have, short:rq.lvl-have});
-  });
-  const quests = (m.quests || []).filter(q=>!questDone(q));
-  return {hard, soft, quests, ok: !hard.length && !quests.length, short: hard.reduce((a,x)=>a+x.short, 0) + quests.length*10};
+  const v = reachOf({skills:m.skills, quests:m.quests});
+  v.soft = (m.skills || []).filter(r=>r.soft && lvlOf(r.skill) < r.lvl);
+  return v;
 }
 // ---- the quiz: six questions that set the filters ----
 const COFFER_QUIZ = [
@@ -9020,10 +9082,10 @@ const COFFER_QUIZ = [
   {id:"style",   q:"What do you actually enjoy?", opts:[["any","A bit of everything"],["combat","Combat and bossing"],["skilling","Skilling"],["gather","Gathering and processing"]]},
   {id:"pace",    q:"How busy do you want to be?", opts:[["any","Don't mind"],["Low","AFK, barely touching it"],["Moderate","Somewhere in between"],["High","Hands on the whole time"]]},
   {id:"wildy",   q:"Risky methods, where you can be attacked or lose your stuff?", opts:[["ok","I'll risk it"],["no","No thanks"]]},
-  {id:"reach",   q:"Methods you don't have the levels for?", opts:[["hide","Hide them"],["show","Show them, I want the goals"]]},
+  {id:"reach",   q:"Methods you can't do yet?", opts:[["ready","Hide them"],["close","Show the near ones"],["all","Show everything"]]},
   {id:"floor",   q:"What's worth your time?", slider:true},
 ];
-const COFFER_DEFAULTS = {members:"yes", style:"any", pace:"any", wildy:"ok", reach:"hide", floor:"0"};
+const COFFER_DEFAULTS = {members:"yes", style:"any", pace:"any", wildy:"ok", reach:"close", floor:"0"};
 // The slider's steps: fine at the bottom where most methods sit, coarser at the top where the
 // difference between 6m and 8m an hour hardly matters.
 const CF_FLOOR = [0,25000,50000,75000,100000,150000,200000,250000,300000,400000,500000,600000,
@@ -9044,7 +9106,11 @@ function cfFloorIdx(v){
 function cofferPrefs(){
   state.coffer = state.coffer || {};
   state.coffer.prefs = Object.assign({}, COFFER_DEFAULTS, state.coffer.prefs || {});
-  return state.coffer.prefs;
+  // the old two-way answer became three bands
+  const pf = state.coffer.prefs;
+  if(pf.reach === "hide") pf.reach = "ready";
+  if(pf.reach === "show") pf.reach = "all";
+  return pf;
 }
 function cofferSet(k, v){ cofferPrefs()[k] = v; save(); renderCoffer(); }
 function cofferMatches(m, pf){
@@ -9119,7 +9185,9 @@ function renderCoffer(){
   const picked = all.filter(m=>cofferMatches(m, pf)).sort((a,b)=>b.profit-a.profit);
   const ready = picked.filter(m=>m.gap.ok && !m.recur);
   const dailies = picked.filter(m=>m.gap.ok && m.recur);
-  const soon = picked.filter(m=>!m.gap.ok && !m.recur).sort((a,b)=> a.gap.short-b.gap.short || b.profit-a.profit);
+  const byBand = id => picked.filter(m=>m.gap.band===id && !m.recur).sort((a,b)=> a.gap.effort-b.gap.effort || b.profit-a.profit);
+  const close = byBand("close"), far = byBand("far");
+
   const chip = (id, label)=>{
     const q = COFFER_QUIZ.find(x=>x.id===id);
     if(q.slider) return `<span class="cf-chip"><b>${label}</b>
@@ -9129,8 +9197,7 @@ function renderCoffer(){
       `<button class="${pf[id]===v?"on":""}" data-cfset="${id}" data-cfval="${v}">${t}</button>`).join("")}</span>`;
   };
   const rowHtml = m=>{
-    const need = m.gap.hard.map(g=>`${g.lvl} ${nice(g.skill)} <span class="muted">(you're ${g.have})</span>`)
-      .concat(m.gap.quests.map(q=>escapeHtml(qpLabel(q)))).join(", ");
+    const need = m.gap.text;
     const rec = m.gap.soft.map(g=>`${g.lvl} ${nice(g.skill)}`).join(", ");
     return `<div class="cf-row ${m.gap.ok?"":"short"}">
       <div class="cf-gp">${m.recur ? `${fmt(m.perRun)}<span class="muted">/run</span>` : `${fmt(m.profit)}<span class="muted">/hr</span>`}</div>
@@ -9142,6 +9209,7 @@ function renderCoffer(){
           <span class="cf-tag">${escapeHtml(m.cat)}</span>
           <span class="cf-tag">${escapeHtml(m.pace)}</span></div>
         <div class="cf-sub">${need ? `Needs ${need}` : rec ? `Wiki recommends ${rec}` : "You've got the levels for this"}${
+          m.gap.ok ? "" : ` <span class="cf-eff">${xpText(m.gap.effort)} of work away</span>`}${
           m.loc ? `<span class="muted"> · ${escapeHtml(m.loc)}</span>` : ""}</div>
       </div>
       <a class="ghost small" href="https://oldschool.runescape.wiki/w/${encodeURIComponent(m.page || (MMG_PAGE+"/"+m.name))}" target="_blank" rel="noopener">Guide ↗</a>
@@ -9155,15 +9223,18 @@ function renderCoffer(){
         <button class="ghost small" id="cfRefresh" title="Re-read the wiki">⟲ Refresh</button>
       </div></div>
     <div class="panel">
-      <div class="section-title" style="margin-top:0"><h3>Ready now</h3><span class="small muted">${fmt(ready.length)} method${ready.length===1?"":"s"}</span></div>
+      <div class="section-title" style="margin-top:0"><h3>✅ Ready now</h3><span class="small muted">${fmt(ready.length)} method${ready.length===1?"":"s"}</span></div>
       <div class="cf-list">${ready.slice(0,60).map(rowHtml).join("") || `<div class="empty">Nothing matches those answers. Loosen a filter above.</div>`}</div>
     </div>
     ${dailies.length ? `<div class="panel">
       <div class="section-title" style="margin-top:0"><h3>Every day or two</h3><span class="small muted">start it, walk away, come back</span></div>
       <div class="cf-list">${dailies.slice(0,30).map(rowHtml).join("")}</div></div>` : ""}
-    ${pf.reach==="show" && soon.length ? `<div class="panel">
-      <div class="section-title" style="margin-top:0"><h3>Not yet</h3><span class="small muted">closest first</span></div>
-      <div class="cf-list">${soon.slice(0,40).map(rowHtml).join("")}</div></div>` : ""}`;
+    ${pf.reach!=="ready" && close.length ? `<div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>🎯 Within reach</h3><span class="small muted">a session or two of work</span></div>
+      <div class="cf-list">${close.slice(0,40).map(rowHtml).join("")}</div></div>` : ""}
+    ${pf.reach==="all" && far.length ? `<div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>🧗 Further off</h3><span class="small muted">closest first</span></div>
+      <div class="cf-list">${far.slice(0,40).map(rowHtml).join("")}</div></div>` : ""}`;
   $$("#cofferView [data-cfset]").forEach(b=>b.onclick=()=>cofferSet(b.dataset.cfset, b.dataset.cfval));
   const fc = $("#cfFloorChip");
   if(fc){
@@ -11889,6 +11960,7 @@ const PATCH_NOTES = [
   {v:"1.8", date:"in progress", title:"The Coffer", notes:[
     "New section: the Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
     "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
+    "Methods are grouped by how far away they are: ready now, within reach (a session or two of work), and further off. Distance is measured in experience, since five levels at 40 is an evening and five at 90 is a month, and quests you still need count too. The same measure is built to be reused elsewhere in the app.",
     "Each method shows what it pays an hour, where it happens, what you're still short on, and whether the wiki marks it risky. Recurring ones show what a single run pays and how often you can do it again.",
   ]},
   {v:"1.7", date:"September 24, 2026", title:"RuneLite data, The Map, and XP on the right day", notes:[
