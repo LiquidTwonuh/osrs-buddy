@@ -12778,7 +12778,8 @@ function suGuard(text){
 // commands (see app/src-tauri/src/lib.rs) that only read the Character Export plugin's own
 // files. Once a folder is set, the app checks it every 15 seconds and imports what changed.
 // Automatic syncing only ever ADDS: it never unticks. Conflicts wait in Settings for a person.
-function ceDesktop(){ return !!(window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke); }
+const IS_ANDROID = /Android/i.test(navigator.userAgent || "");
+function ceDesktop(){ return !IS_ANDROID && !!(window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke); }
 function ceInvoke(cmd, args){ return window.__TAURI__.core.invoke(cmd, args || {}); }
 function ceGroup(files){
   const groups = {};
