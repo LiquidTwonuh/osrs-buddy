@@ -4625,9 +4625,13 @@ function openDayPopover(iso, anchor){
       <button class="dp-x dp-edit" data-dpedit="${e.id}" title="Edit this entry">✎</button></div>`;
   }).join("") : "";
   const auto = autoGainsHtml(iso);
-  const inner = (body || auto) ? body+auto
-    : `<div class="muted small" style="padding:4px 0">Nothing logged this day.</div>
-       <button class="ghost small" data-dplog="${iso}" style="margin-top:2px">✎ Log what you did</button>`;
+  // Writing something about a day shouldn't depend on the day being empty: XP from the game says
+  // what you trained, not what you were doing.
+  const logBtn = `<button class="ghost small" data-dplog="${iso}" style="margin-top:6px">✎ ${
+    entries.length ? "Add a note" : "Log what you did"}</button>`;
+  const inner = (body || auto)
+    ? body + auto + logBtn
+    : `<div class="muted small" style="padding:4px 0">Nothing logged this day.</div>` + logBtn;
   const isMile = entries.some(e=>e.milestone);
   // why this day has a ring
   const msKeys = msDayMap()[iso] || [];
@@ -4671,6 +4675,7 @@ function openDayPopover(iso, anchor){
     const iso = b.dataset.dplog;
     closeDayPopover();
     switchView("scroll");
+    setScrollSec("journal");          // the composer lives there; without this the click did nothing
     const d=$("#logDate"); if(d) d.value=iso;
     const t=$("#logText"); if(t) t.focus();
     const comp = document.querySelector(".composer");
@@ -11960,6 +11965,7 @@ const PATCH_NOTES = [
   {v:"1.8", date:"in progress", title:"The Coffer", notes:[
     "New section: the Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
     "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
+    "The day popup's Log button works again, and it's on every day now, not only empty ones. It opens the Journal with that date filled in. Before, it was missing whenever the day had XP from the game, and on empty days it quietly did nothing, because the composer sits in a section the click never opened.",
     "Methods are grouped by how far away they are: ready now, within reach (a session or two of work), and further off. Distance is measured in experience, since five levels at 40 is an evening and five at 90 is a month, and quests you still need count too. The same measure is built to be reused elsewhere in the app.",
     "Each method shows what it pays an hour, where it happens, what you're still short on, and whether the wiki marks it risky. Recurring ones show what a single run pays and how often you can do it again.",
   ]},
