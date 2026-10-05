@@ -44,6 +44,7 @@ pub struct Pair {
 struct Shared {
   code: String,
   snapshot: String,
+  page: String,
   pairs: Vec<Pair>,
   inbox: Vec<String>,
   new_pairs: Vec<Pair>,
@@ -243,6 +244,30 @@ fn handle(mut stream: TcpStream, shared: Arc<Mutex<Shared>>) {
     return;
   }
 
+  // The phone's copy of the app is baked into its APK, so a change means reinstalling, which
+  // Android deliberately makes tedious. Instead the PC hands over the page it's running and the
+  // phone keeps that, so updating is a button rather than a download and an "install anyway".
+  if path.starts_with("/app") {
+    if s.page.is_empty() {
+      send(&mut stream, "404 Not Found", "{\"error\":\"no page yet\"}");
+    } else {
+      let page = s.page.clone();
+      let res = format!(
+        "HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Length: {}
+Access-Control-Allow-Origin: *
+Connection: close
+
+{page}",
+        page.len()
+      );
+      let _ = stream.write_all(res.as_bytes());
+      let _ = stream.flush();
+    }
+    return;
+  }
+
   if path.starts_with("/pull") {
     let snap = if s.snapshot.is_empty() { "{}".to_string() } else { s.snapshot.clone() };
     send(&mut stream, "200 OK", &snap);
@@ -337,6 +362,14 @@ pub fn sync_status(state: tauri::State<'_, SyncState>) -> Result<SyncInfo, Strin
     inbox,
     last_seen: s.last_seen,
   })
+}
+
+// The desktop app hands over its own HTML, so a paired phone can take the newer copy.
+#[tauri::command]
+pub fn sync_page(state: tauri::State<'_, SyncState>, text: String) -> Result<(), String> {
+  let mut sh = state.shared.lock().map_err(|_| "sync state is stuck")?;
+  sh.page = text;
+  Ok(())
 }
 
 // The page hands over what a phone should receive. Kept as text: the server never looks inside.

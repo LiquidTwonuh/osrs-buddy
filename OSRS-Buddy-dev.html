@@ -2,9 +2,51 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>OSRS Buddy — character companion</title>
 <meta http-equiv="Cache-Control" content="no-store">
+<script>
+// ---- the copy from your PC ----
+// The phone's app is whatever page was inside the APK the day it was built. Reinstalling to see a
+// change is painful on Android, so the phone can take the PC's page over Wi-Fi and keep it here.
+// This runs before anything else and swaps the document for the stored copy when there is a newer
+// one. If a stored page ever fails to finish loading, the flag below is still set next launch and
+// the copy is thrown away, so a bad page can't lock you out: the built-in one always comes back.
+window.__pageRunningFrom = "built-in";
+(function(){
+  if(window.__fromCache) return;                      // this IS the stored copy, carry on
+  var TRY = "osrs_page_try";
+  try{
+    var failed = localStorage.getItem(TRY);
+    if(failed){
+      localStorage.removeItem(TRY);
+      indexedDB.deleteDatabase("osrsbuddy-page");      // it didn't boot last time: back to built-in
+      window.__pageFailed = failed;
+      return;
+    }
+  }catch(e){ return; }
+  var rq;
+  try{ rq = indexedDB.open("osrsbuddy-page", 1); }catch(e){ return; }
+  rq.onupgradeneeded = function(){ try{ rq.result.createObjectStore("page"); }catch(e){} };
+  rq.onsuccess = function(){
+    var db = rq.result, get;
+    try{ get = db.transaction("page", "readonly").objectStore("page").get("current"); }
+    catch(e){ return; }
+    get.onsuccess = function(){
+      var rec = get.result;
+      if(!rec || !rec.html || rec.html.length < 50000) return;
+      var mine = (/const APP_VERSION = "([^"]+)"/.exec(document.documentElement.outerHTML) || [])[1] || "";
+      if(rec.version && mine && rec.version === mine) return;   // same build, nothing to do
+      try{ localStorage.setItem(TRY, rec.version || "?"); }catch(e){}
+      // the built-in app has had a moment to start: stop its timers before the document goes
+      for(var i = 1; i < 5000; i++){ clearTimeout(i); clearInterval(i); }
+      window.__fromCache = true;
+      window.__pageRunningFrom = "pc";
+      document.open(); document.write(rec.html); document.close();
+    };
+  };
+})();
+</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
 <style>
   /* Embedded display fonts (OFL-licensed, latin subsets) — keeps the app a single offline file */
@@ -1301,6 +1343,9 @@
     .sb-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:39}
   }
 
+
+  }
+
   .panel{background:var(--panel); border:1px solid var(--border); border-radius:10px;
     box-shadow:var(--shadow); padding:18px; margin-top:18px}
   .row{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
@@ -1379,7 +1424,7 @@
        container has to carry the gap from the panel above, or they sit flush against it */
     .home-row2 > .panel{margin-top:0}
   }
-  @media(max-width:460px){ .skills-grid{grid-template-columns:repeat(2,1fr)} }
+
   .skill{display:flex; align-items:center; gap:9px; background:var(--panel2);
     border:1px solid var(--border); border-radius:7px; padding:7px 10px}
   .skill.maxed{border-color:var(--gold-dim); box-shadow:0 0 0 1px rgba(230,195,92,.15) inset}
@@ -1670,6 +1715,50 @@
   details summary{cursor:pointer; color:var(--gold-dim); font-weight:bold; padding:4px 0}
   .catrow{display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px solid var(--catbd)}
   .catrow .grow{min-width:0}
+  /* ---- phones ----
+     Tested on a folding phone, folded and open. Three things were wrong: the menu button sat
+     under the camera cutout, everything was sized for a mouse and a wide window, and the skills
+     took three screens to read. So: keep clear of the cutout, tighten the spacing, and let the
+     skill tiles shrink enough that all 24 are one glance. */
+  @media(max-width:820px){
+    .topbar{padding-top:calc(12px + env(safe-area-inset-top, 0px))}
+    .hamb{padding:9px 14px; font-size:19px; min-width:46px; min-height:42px}
+    .tb-title{font-size:17px}
+    .panel{padding:13px; margin-top:12px; border-radius:9px}
+    .goals-head h2, .char-head h2{font-size:21px}
+    .goals-blurb, .sh-blurb{font-size:12px; line-height:1.45}
+    .ff-line{font-size:12px; margin:4px 0}
+    .section-title h3{font-size:16px}
+    /* the three big stat cards were a third of the first screen on their own */
+    .summary{gap:7px}
+    .stat{padding:7px 9px; min-width:0; flex:1 1 30%}
+    .stat .k{font-size:9.5px; letter-spacing:.3px}
+    .stat .v{font-size:19px}
+    /* all 24 skills, three columns, no scrolling to take them in */
+    .skills-grid{grid-template-columns:repeat(3,1fr); gap:5px}
+    .skill{padding:5px 7px; gap:6px; border-radius:6px}
+    .skill .semoji{width:19px; height:19px}
+    .skill .sname{font-size:10.5px; line-height:1.1}
+    .skill .slvl{font-size:17px; line-height:1.15}
+    .skill .sxp{font-size:9.5px}
+    .cf-row{gap:8px; padding:7px 8px}
+    .cf-gp{flex-basis:84px; font-size:13px}
+    .cf-opts button{padding:12px 15px}
+    .cf-next{width:100%; margin-top:14px; padding:12px}
+    .gd-list, .cf-list{max-height:none}
+  }
+  /* Folded, the screen is narrow but still fits three columns, which is what keeps all 24 skills
+     on one screen. Two columns would push the last eight below the fold. */
+  @media(max-width:400px){
+    .skill{padding:4px 6px; gap:5px}
+    .skill .sname{font-size:9.5px}
+    .skill .slvl{font-size:15px}
+    .skill .sxp{font-size:9px}
+    .skill .semoji{width:16px; height:16px}
+    .cf-opts{flex-direction:column}
+    .cf-opts button{width:100%}
+    .stat{flex:1 1 45%}
+  @media(max-width:330px){ .skills-grid{grid-template-columns:repeat(2,1fr)} }
 </style>
 </head>
 <body>
@@ -9067,6 +9156,7 @@ async function syncHostStart(){
     const info = await ceInvoke("sync_start", {pairs: c.pairs});
     c.on = true; c.info = info; save();
     await ceInvoke("sync_snapshot", {text: syncSnapshotText()});
+    syncOfferPage();
     if(syncTimer) clearInterval(syncTimer);
     syncTimer = setInterval(syncHostTick, SYNC_TICK);
     renderSyncSetting();
@@ -9111,6 +9201,18 @@ async function syncHostTick(){
     renderSyncSetting();
   }catch(e){ /* the listener died or the app is closing; the next tick tries again */ }
   syncBusy = false;
+}
+// Hand the server a copy of the page we're running, so a paired phone can take it instead of
+// installing a new APK. Fetching our own address gives the build as shipped, not the DOM as the
+// app has since changed it.
+async function syncOfferPage(){
+  try{
+    const r = await fetch(location.href.split("#")[0], {cache: "no-store"});
+    const html = await r.text();
+    if(html && html.length > 50000 && html.indexOf("OSRS Buddy") !== -1){
+      await ceInvoke("sync_page", {text: html});
+    }
+  }catch(e){ /* without this the phone simply has no update to take */ }
 }
 // ---- the phone's half ----
 // Ask the Rust side for this device's address, then knock on every house in the same street.
@@ -9193,8 +9295,51 @@ async function syncTry(peer){
     return await r.json();
   }catch(e){ return null; }
 }
+// ---- the phone's copy of the app ----
+// The page the APK ships with is whatever was built that day. Rather than reinstall to see a
+// change, the phone can take the PC's copy and keep it. It's stored in IndexedDB (too big for
+// localStorage), and booted at the very top of the next launch, before anything else runs.
+const PAGE_DB = "osrsbuddy-page", PAGE_STORE = "page";
+function pageIdb(){
+  return new Promise((res, rej)=>{
+    const rq = indexedDB.open(PAGE_DB, 1);
+    rq.onupgradeneeded = ()=>{ rq.result.createObjectStore(PAGE_STORE); };
+    rq.onsuccess = ()=>res(rq.result);
+    rq.onerror = ()=>rej(rq.error);
+  });
+}
+function pagePut(rec){
+  return pageIdb().then(db=>new Promise((res, rej)=>{
+    const tx = db.transaction(PAGE_STORE, "readwrite");
+    tx.objectStore(PAGE_STORE).put(rec, "current");
+    tx.oncomplete = res; tx.onerror = ()=>rej(tx.error);
+  }));
+}
+function pageGet(){
+  return pageIdb().then(db=>new Promise((res, rej)=>{
+    const tx = db.transaction(PAGE_STORE, "readonly");
+    const rq = tx.objectStore(PAGE_STORE).get("current");
+    rq.onsuccess = ()=>res(rq.result || null);
+    rq.onerror = ()=>rej(rq.error);
+  })).catch(()=>null);
+}
+// Take the PC's page. Checked, stored, and only used from the next launch, so a bad one can't
+// take the app down mid-session.
+async function pageUpdateFromPC(){
+  const c = syncCfg(), peer = c.peer;
+  if(!peer || !peer.token) throw new Error("Pair with your PC first");
+  const r = await fetch(`http://${peer.ip}:${peer.port}/app`, {headers: {"Authorization": "Bearer " + peer.token}});
+  if(!r.ok) throw new Error(r.status === 404 ? "Your PC hasn't offered a copy yet. Turn sharing off and on." : "Couldn't fetch it (" + r.status + ")");
+  const html = await r.text();
+  const ver = (/const APP_VERSION = "([^"]+)"/.exec(html) || [])[1];
+  if(!html || html.length < 50000 || !ver) throw new Error("That didn't look like OSRS Buddy");
+  await pagePut({html, version: ver, at: Date.now()});
+  return ver;
+}
+async function pageForget(){ try{ await pagePut(null); }catch(e){} }
 // ---- settings ----
 let syncFinding = false, syncFound = [], syncPick = null;
+const pageRunningFrom = window.__pageRunningFrom || "built-in";
 async function renderVaultSetting(){
   const el = $("#vaultSetting"); if(!el) return;
   if(!vaultOn()){
@@ -9259,8 +9404,9 @@ function renderSyncSetting(){
     ? `<div class="ce-ok"><span class="ce-badge">✓ Paired</span> with <b>${escapeHtml(peer.host || "your PC")}</b>
          <span class="muted">${escapeHtml(peer.ip)}</span>.${c.lastSync ? ` Last sync ${fmtDay(isoDate(new Date(c.lastSync)))}.` : ""}</div>
        <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="syncGo">Sync now</button>
+         <button class="ghost small" id="syncApp">Update app from PC</button>
          <button class="ghost small" id="syncUnpair">Unpair</button></div>
-       <div class="small muted" id="syncMsg" style="margin-top:6px"></div>`
+       <div class="small muted" id="syncMsg" style="margin-top:6px">${pageRunningFrom === "pc" ? "Running the copy from your PC." : ""}</div>`
     : `<p class="small muted" style="margin:0 0 8px">Turn on sharing in the desktop app, then find it here. Both devices need to be on the same Wi-Fi.</p>
        ${syncFound.length ? `<div class="row" style="gap:6px; flex-wrap:wrap; margin-bottom:8px">${syncFound.map((f,i)=>
            `<button class="ghost small ${syncPick===i?"on":""}" data-syncpick="${i}">🖥 ${escapeHtml(f.host)} <span class="muted">${escapeHtml(f.ip)}</span></button>`).join("")}</div>
@@ -9292,6 +9438,15 @@ function renderSyncSetting(){
     const m = $("#syncMsg"); if(m) m.textContent = "Syncing…";
     try{ await syncNow(); if(m) m.textContent = "Up to date."; toast("✓ Synced with your PC"); renderSyncSetting(); }
     catch(e){ if(m) m.textContent = String(e.message || e); }
+  };
+  const ap = $("#syncApp");
+  if(ap) ap.onclick = async ()=>{
+    const m = $("#syncMsg"); if(m) m.textContent = "Fetching the app from your PC…";
+    try{
+      const ver = await pageUpdateFromPC();
+      if(m) m.textContent = `Version ${ver} is ready. Restarting…`;
+      setTimeout(()=>location.reload(), 900);
+    }catch(e){ if(m) m.textContent = String(e.message || e); }
   };
   const up = $("#syncUnpair");
   if(up) up.onclick = ()=>{ delete c.peer; save(); renderSyncSetting(); };
@@ -9502,7 +9657,7 @@ const CF_FLOOR = [0,25000,50000,75000,100000,150000,200000,250000,300000,400000,
 function cfGp(n){
   n = +n || 0;
   if(!n) return "Anything";
-  if(n >= 1000000) return (n/1000000).toFixed(n % 1000000 ? 2 : 0).replace(/\.?0+$/, "") + "m";
+  if(n >= 1000000) return (n/1000000).toFixed(n % 1000000 ? 2 : 0).replace(/\.0+$/, "") + "m";
   return Math.round(n/1000) + "k";
 }
 function cfFloorIdx(v){
@@ -9562,18 +9717,25 @@ function renderCoffer(){
           <button class="primary" id="cfFloorGo" style="margin-top:12px">Show me the list</button>
         </div>`
         : `<div class="cf-opts">${qq.opts.map(([v,label])=>
-        `<button class="ghost ${pf[qq.id]===v?"on":""}" data-cfans="${v}">${label}</button>`).join("")}</div>`}
+        `<button class="ghost ${pf[qq.id]===v?"on":""}" data-cfans="${v}">${label}</button>`).join("")}</div>
+        <button class="primary cf-next" id="cfNext">${step === COFFER_QUIZ.length-1 ? "Show me the list" : "Next →"}</button>`}
       <div class="row" style="gap:8px; margin-top:14px">
         ${step ? `<button class="ghost small" id="cfBack">← Back</button>` : ""}
         <span class="grow"></span>
         <button class="ghost small" id="cfSkip">Skip the questions</button>
       </div></div>`;
+    // Tapping picks, Next moves on. Advancing on a tap made it too easy to shoot past a
+    // question, especially on a phone.
     $$("#cofferView [data-cfans]").forEach(b=>b.onclick=()=>{
       cofferPrefs()[qq.id] = b.dataset.cfans;
+      $$("#cofferView [data-cfans]").forEach(x=>x.classList.toggle("on", x === b));
+    });
+    const next = $("#cfNext");
+    if(next) next.onclick = ()=>{
       state.coffer.step = step + 1;
       if(state.coffer.step >= COFFER_QUIZ.length){ state.coffer.done = true; state.coffer.quizOpen = false; state.coffer.step = 0; }
       save(); renderCoffer();
-    });
+    };
     const sl = $("#cfFloor");
     if(sl){
       const show = ()=>{ const v = CF_FLOOR[+sl.value];
@@ -12369,6 +12531,9 @@ const PATCH_NOTES = [
   {v:"1.8", date:"in progress", title:"The Coffer", notes:[
     "New section: the Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
     "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
+    "The phone can take the app itself from your PC. Pair them, tap Update app from PC, and it keeps that copy and runs it from then on, so a change doesn't mean installing an APK again. If a copy ever fails to load, the built-in one comes back by itself.",
+    "The phone layout is tighter: the menu button clears the camera cutout, panels and headings take less room, and all 24 skills fit on one screen instead of three.",
+    "The Coffer's quiz has a Next button instead of jumping forward the moment you tap an answer, and the top of the profit slider now reads 10m an hour, which is what it always was.",
     "Your PC can hand its data to your phone over your own Wi-Fi. Turn on sharing in the desktop app, type the six-character code on the phone once, and from then on the phone finds your PC itself and syncs both ways. Nothing is stored anywhere but your own devices, and the phone keeps working on WiseOldMan when the PC is off.",
     "The day popup's Log button works again, and it's on every day now, not only empty ones. It opens the Journal with that date filled in. Before, it was missing whenever the day had XP from the game, and on empty days it quietly did nothing, because the composer sits in a section the click never opened.",
     "Methods are grouped by how far away they are: ready now, within reach (a session or two of work), and further off. Distance is measured in experience, since five levels at 40 is an evening and five at 90 is a month, and quests you still need count too. The same measure is built to be reused elsewhere in the app.",
@@ -14083,6 +14248,9 @@ setTimeout(diaryDbEnsure, 3200);  // every diary task, for Achievements
 setTimeout(caDbEnsure, 4000);     // every combat achievement, for Achievements
 // If the saved state didn't load, decide what to do about it before anything is written, and
 // start the hourly backup files either way.
+// we're up: whichever copy this is, it loaded, so clear the "didn't boot" flag
+try{ localStorage.removeItem("osrs_page_try"); }catch(e){}
+if(window.__pageFailed) setTimeout(()=>toast("The copy from your PC wouldn't load, so the built-in app is back.", true), 1200);
 vaultBoot();
 // Setup opens by itself only on a genuinely fresh install: no character, no other profiles,
 // nothing logged. Anyone with data reaches it from Settings instead. A state that failed to load

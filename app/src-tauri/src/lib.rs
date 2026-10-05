@@ -135,6 +135,7 @@ pub fn run() {
       sync::sync_stop,
       sync::sync_status,
       sync::sync_snapshot,
+      sync::sync_page,
       vault::vault_dir,
       vault::vault_write,
       vault::vault_list,
