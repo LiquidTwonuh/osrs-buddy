@@ -628,6 +628,8 @@
   .cf-sub{font-size:12px; color:var(--muted); margin-top:2px}
   .cf-tag{font-size:10px; padding:1px 7px; border-radius:999px; background:var(--panel); border:1px solid var(--border); color:var(--muted)}
   .cf-eff{color:var(--gold); opacity:.85}
+  .sync-code{margin-top:8px; font-size:13px}
+  .sync-code b{font-size:20px; letter-spacing:3px; color:var(--gold); font-family:ui-monospace, monospace}
   .cf-tag.wild{color:var(--red); border-color:color-mix(in oklab, var(--red) 40%, var(--border))}
   /* the optimal guide */
   .gd-prog{margin:10px 0 4px} .gd-prog .qb-bar{margin-bottom:6px}
@@ -1797,6 +1799,14 @@
         <div id="ceSetting"></div>
       </div>
       <div class="set-sec">
+        <div class="set-h">Backup files</div>
+        <div id="vaultSetting"></div>
+      </div>
+      <div class="set-sec">
+        <div class="set-h">Your other devices</div>
+        <div id="syncSetting"></div>
+      </div>
+      <div class="set-sec">
         <div class="set-h">Version</div>
         <div class="row" style="gap:6px; flex-wrap:nowrap; align-items:center">
           <span class="grow small" id="updStatus">OSRS Buddy v<span id="updCur"></span></span>
@@ -2578,21 +2588,80 @@ function metricIconHtml(kind, key, cls){
     + `<span class="ficon">${metricEmoji(kind,key)}</span></span>`;
 }
 
+const LS_MIRROR = LS_KEY + "_mirror";
+let loadTrouble = null;      // "missing" | "unreadable" | null
+let loadedFrom = "storage";  // where the state in memory came from
+let saveLock = false;        // true while we don't trust what's in memory
 // --- state ---
 let state = load();
 let live = null;          // latest snapshot data {skills,bosses,activities,computed}
 let refreshTimer = null;
 
+// Everything you've ever logged lives under one key. On 5 October 2026 that key came back
+// unreadable after the app was killed mid-write, the page shrugged and started fresh, and the
+// first save wrote that blank state over the top. Three things stop that happening again:
+//
+//   1. a mirror of the irreplaceable parts under a second key, written as you go
+//   2. plain JSON files in Documents (desktop only, see vault.rs), which outlive this storage
+//   3. and the important one: if the state doesn't load, NOTHING is saved until you've been
+//      asked. An empty app is recoverable; an empty app that saved itself is not.
 function load(){
-  try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }catch(e){ return {}; }
+  let raw = null;
+  try{ raw = localStorage.getItem(LS_KEY); }catch(e){}
+  if(raw){
+    try{
+      const j = JSON.parse(raw);
+      if(j && typeof j === "object") return j;
+      loadTrouble = "unreadable";
+    }catch(e){ loadTrouble = "unreadable"; }
+  }
+  // the mirror: same data minus the wiki downloads, which rebuild themselves
+  try{
+    const m = localStorage.getItem(LS_MIRROR);
+    if(m){
+      const j = JSON.parse(m);
+      if(j && typeof j === "object" && Object.keys(j).length){
+        loadTrouble = loadTrouble || (raw ? "unreadable" : "missing");
+        loadedFrom = "mirror";
+        return j;
+      }
+    }
+  }catch(e){}
+  if(!raw) loadTrouble = loadTrouble || "missing";
+  // nothing readable: hold every save until the user has decided (see vaultRescue)
+  if(loadTrouble) saveLock = true;
+  return {};
+}
+// what's worth keeping: everything except the wiki data, which any device re-downloads
+function stateSlim(){
+  const out = {};
+  Object.keys(state).forEach(k=>{ if(!BACKUP_SKIP.includes(k)) out[k] = state[k]; });
+  return out;
+}
+function stateHasData(j){
+  if(!j || typeof j !== "object") return false;
+  const sc = j.scroll || {};
+  return !!(j.username || (sc.log || []).length || Object.keys(sc.auto || {}).length
+    || Object.keys(j.questsDone || {}).length || (j.goals || []).length);
+}
+let mirrorAt = 0;
+function saveMirror(force){
+  const now = Date.now();
+  if(!force && now - mirrorAt < 60000) return;
+  mirrorAt = now;
+  try{ localStorage.setItem(LS_MIRROR, JSON.stringify(stateSlim())); }
+  catch(e){ try{ localStorage.removeItem(LS_MIRROR); }catch(_){} }   // never let the mirror fill the tank
 }
 // A silent save failure used to mean data quietly stopped persisting. Say so instead —
 // and before giving up, drop the things we can always rebuild.
 let saveFailed = false;
 function save(){
+  if(saveLock) return;        // the state didn't load; writing now would bury the real thing
   try{
     localStorage.setItem(LS_KEY, JSON.stringify(state));
     saveFailed = false;
+    saveMirror();
+    vaultMark();
     return;
   }catch(e){}
   // Out of room. The quest database and wiki cache are ~90% of the payload and both
@@ -2602,6 +2671,8 @@ function save(){
     delete state.questDB; delete state.wikiCache; delete state.clogDB; delete state.boostDB; delete state.caDB; delete state.diaryDB;
     localStorage.setItem(LS_KEY, JSON.stringify(state));
     saveFailed = false;
+    saveMirror();
+    vaultMark();
     toast("Storage was full — cleared the quest cache to make room. It'll reload itself.", true);
     return;
   }catch(e2){}
@@ -2609,6 +2680,73 @@ function save(){
     saveFailed = true;
     try{ toast("Couldn't save — storage is full. Export a backup from Settings.", true); }catch(_){}
   }
+}
+// ---- backup files on disk (desktop) ----
+// One on launch, one an hour while anything changes, and one before anything risky. Twenty are
+// kept, oldest dropped. They're plain JSON in Documents\OSRS Buddy\backups, openable anywhere.
+const VAULT_GAP = 3600e3;
+let vaultDirty = false, vaultAt = 0, vaultBusy = false, vaultFiles = null;
+function vaultOn(){ return ceDesktop(); }
+function vaultMark(){ vaultDirty = true; }
+function vaultName(tag){
+  const d = new Date(), p = n => String(n).padStart(2, "0");
+  return `osrs-buddy-${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${tag ? "-" + tag : ""}.json`;
+}
+async function vaultSave(tag){
+  if(!vaultOn() || vaultBusy || saveLock) return null;
+  if(!stateHasData(state)) return null;            // never write an empty file over good ones
+  vaultBusy = true;
+  try{
+    const payload = Object.assign({}, stateSlim(), {__profiles: profStore(), __at: Date.now()});
+    const path = await ceInvoke("vault_write", {name: vaultName(tag), text: JSON.stringify(payload)});
+    vaultDirty = false; vaultAt = Date.now(); vaultFiles = null;
+    return path;
+  }catch(e){ return null; }
+  finally{ vaultBusy = false; }
+}
+function vaultStart(){
+  if(!vaultOn()) return;
+  setTimeout(()=>vaultSave("open"), 4000);
+  setInterval(()=>{ if(vaultDirty && Date.now()-vaultAt > VAULT_GAP) vaultSave(); }, 60000);
+  // closing the window is the moment most likely to lose a write
+  window.addEventListener("beforeunload", ()=>{ saveMirror(true); });
+  document.addEventListener("visibilitychange", ()=>{ if(document.hidden){ saveMirror(true); if(vaultDirty) vaultSave("close"); } });
+}
+// If the state didn't load, ask before anything is written. Saving stays blocked until then.
+async function vaultRescue(){
+  if(!loadTrouble) return;
+  let files = [];
+  if(vaultOn()){
+    try{ files = await ceInvoke("vault_list"); }catch(e){}
+  }
+  const newest = files && files.length ? files[0] : null;
+  const when = newest ? new Date(newest.modified).toLocaleString() : null;
+  if(loadedFrom === "mirror"){
+    // the mirror had it: carry on, but say so, and get a file written straight away
+    saveLock = false;
+    toast("Your data was restored from the backup copy on this device.", true);
+    save(); vaultSave("mirror-recovery");
+    return;
+  }
+  if(newest){
+    const msg = `OSRS Buddy couldn't read your saved data.\n\nThere's a backup file from ${when}.\n\n`
+      + `OK restores it. Cancel starts empty — your backups are kept either way, in Documents\\OSRS Buddy\\backups.`;
+    if(confirm(msg)){
+      try{
+        const text = await ceInvoke("vault_read", {name: newest.name});
+        const j = JSON.parse(text);
+        saveLock = false;
+        mergeImportedState(j);
+        toast("Restored from " + when);
+        renderAll();
+        return;
+      }catch(e){ alert("That backup wouldn't open. Nothing has been overwritten: your files are in Documents\\OSRS Buddy\\backups."); }
+    }
+  } else if(vaultOn() && (loadTrouble === "unreadable" || Object.keys(profStore().stash || {}).length)){
+    // "missing" with no backups and no other characters is a first run, not a loss
+    alert("OSRS Buddy couldn't read your saved data and there's no backup file yet.\n\nNothing has been written over. If you have a backup JSON, use Import in Settings.");
+  }
+  saveLock = false;        // from here on, this session is a fresh start and may save
 }
 // Bud caches every wiki page he reads. Useful, but it only ever grew.
 const WIKI_CACHE_MAX = 120;
@@ -2782,6 +2920,9 @@ function deleteProfile(key){
   const p = profStore();
   delete p.stash[key];
   profSaveStore(p);
+}
+function vaultBoot(){
+  vaultRescue().finally(vaultStart);
 }
 function ensure(){
   state.goals = state.goals || [];
@@ -8893,6 +9034,269 @@ function qpRouteHtml(scope, db){
 // out of the old pinned-plan chips rather than sitting beside them, so there's still
 // only one list of "quests I care about"; a card just says a lot more than a chip did.
 const QP_BOARD_MAX = 30;
+// ============ SYNC OVER YOUR OWN WI-FI ============
+// RuneLite only runs on a PC, so a phone can't see the Character Export files by itself. Instead
+// of putting anyone's data on a server, the desktop app hands it over directly while both devices
+// are on the same network (see sync.rs for the listening half).
+//
+// The PC shares and the phone fetches. Pairing is a six-character code, typed once; after that the
+// phone keeps a token and finds the PC again by itself, even if the address changed.
+const SYNC_PORTS = [8787, 8788, 8789, 8790, 8791, 8792];
+const SYNC_TICK = 3000;
+let syncTimer = null, syncBusy = false;
+function syncCfg(){
+  state.sync = state.sync || {};
+  state.sync.pairs = state.sync.pairs || [];     // on the PC: devices allowed to fetch
+  return state.sync;
+}
+function syncCanHost(){ return ceDesktop(); }    // only the desktop app has the RuneLite files
+// Everything worth carrying between devices. The same shape as a backup, minus the wiki data,
+// which each device downloads for itself.
+function syncSnapshotText(){
+  const out = {};
+  Object.keys(state).forEach(k=>{ if(!BACKUP_SKIP.includes(k) && k !== "sync") out[k] = state[k]; });
+  out.__from = "desktop";
+  out.__at = Date.now();
+  return JSON.stringify(out);
+}
+// ---- the PC's half ----
+async function syncHostStart(){
+  if(!syncCanHost()) return;
+  const c = syncCfg();
+  try{
+    const info = await ceInvoke("sync_start", {pairs: c.pairs});
+    c.on = true; c.info = info; save();
+    await ceInvoke("sync_snapshot", {text: syncSnapshotText()});
+    if(syncTimer) clearInterval(syncTimer);
+    syncTimer = setInterval(syncHostTick, SYNC_TICK);
+    renderSyncSetting();
+  }catch(e){
+    c.on = false; c.err = String((e && e.message) || e); save();
+    renderSyncSetting();
+  }
+}
+async function syncHostStop(){
+  const c = syncCfg();
+  if(syncTimer){ clearInterval(syncTimer); syncTimer = null; }
+  try{ await ceInvoke("sync_stop"); }catch(e){}
+  c.on = false; save();
+  renderSyncSetting();
+}
+// While sharing is on: keep the snapshot current, remember any device that pairs, and take in
+// whatever a phone sent back.
+async function syncHostTick(){
+  const c = syncCfg();
+  if(!c.on || syncBusy) return;
+  syncBusy = true;
+  try{
+    const info = await ceInvoke("sync_status");
+    c.info = info;
+    let touched = false;
+    (info.new_pairs || []).forEach(pr=>{
+      if(!c.pairs.some(x=>x.token === pr.token)){
+        c.pairs.push(pr);
+        toast("📱 " + pr.device + " is paired");
+        touched = true;
+      }
+    });
+    (info.inbox || []).forEach(text=>{
+      try{
+        mergeImportedState(JSON.parse(text));
+        toast("📱 Changes from your phone are in");
+        touched = true;
+      }catch(e){ /* a phone that sent nonsense shouldn't break the session */ }
+    });
+    await ceInvoke("sync_snapshot", {text: syncSnapshotText()});
+    if(touched){ save(); renderAll(); }
+    renderSyncSetting();
+  }catch(e){ /* the listener died or the app is closing; the next tick tries again */ }
+  syncBusy = false;
+}
+// ---- the phone's half ----
+// Ask the Rust side for this device's address, then knock on every house in the same street.
+async function syncFind(onProgress){
+  let base = "";
+  try{
+    const info = await ceInvoke("sync_status");          // works on the phone too, just not listening
+    base = info.ip || "";
+  }catch(e){}
+  if(!base || base.indexOf(".") < 0) return [];
+  const prefix = base.split(".").slice(0, 3).join(".");
+  const found = [];
+  for(const port of SYNC_PORTS){
+    const tries = [];
+    for(let i = 1; i <= 254; i++){
+      const ip = `${prefix}.${i}`;
+      tries.push(syncPing(ip, port).then(host=>{ if(host) found.push({ip, port, host}); }));
+    }
+    await Promise.all(tries);
+    if(onProgress) onProgress(port, found.length);
+    if(found.length) break;                               // nearly always on the first port
+  }
+  return found;
+}
+function syncPing(ip, port){
+  return new Promise(resolve=>{
+    const ctl = new AbortController();
+    const t = setTimeout(()=>{ ctl.abort(); resolve(null); }, 1200);
+    fetch(`http://${ip}:${port}/ping`, {signal: ctl.signal})
+      .then(r=> r.ok ? r.json() : null)
+      .then(j=>{ clearTimeout(t); resolve(j && j.app === "osrs-buddy" ? (j.host || "A PC") : null); })
+      .catch(()=>{ clearTimeout(t); resolve(null); });
+  });
+}
+async function syncPair(peer, code){
+  const device = (state.username ? state.username + "'s phone" : "A phone");
+  const r = await fetch(`http://${peer.ip}:${peer.port}/pair`, {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({code: String(code || "").toUpperCase().replace(/[^A-Z0-9]/g, ""), device})
+  });
+  if(!r.ok) throw new Error(r.status === 403 ? "That code didn't match. Check the one on your PC." : "Couldn't pair (" + r.status + ")");
+  const j = await r.json();
+  const c = syncCfg();
+  c.peer = {ip: peer.ip, port: peer.port, token: j.token, host: j.host || peer.host};
+  save();
+  return c.peer;
+}
+// Pull what the PC has, merge it, and send back what this device changed.
+async function syncNow(){
+  const c = syncCfg();
+  let peer = c.peer;
+  if(!peer || !peer.token) throw new Error("Pair with your PC first");
+  let r = await syncTry(peer);
+  if(!r){
+    // the PC's address can change: look for it again on the same network
+    const found = await syncFind();
+    const hit = found.find(f=>f.host === peer.host) || found[0];
+    if(!hit) throw new Error("Couldn't find your PC. Is it on, with sharing turned on?");
+    peer = Object.assign({}, peer, {ip: hit.ip, port: hit.port});
+    c.peer = peer; save();
+    r = await syncTry(peer);
+    if(!r) throw new Error("Found your PC but it wouldn't answer. Try pairing again.");
+  }
+  mergeImportedState(r);
+  const mine = JSON.parse(syncSnapshotText());
+  mine.__from = "phone";
+  await fetch(`http://${peer.ip}:${peer.port}/push`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json", "Authorization": "Bearer " + peer.token},
+    body: JSON.stringify(mine)
+  }).catch(()=>{});
+  c.lastSync = Date.now(); save();
+  renderAll();
+  return true;
+}
+async function syncTry(peer){
+  try{
+    const r = await fetch(`http://${peer.ip}:${peer.port}/pull`, {headers: {"Authorization": "Bearer " + peer.token}});
+    if(!r.ok) return null;
+    return await r.json();
+  }catch(e){ return null; }
+}
+// ---- settings ----
+let syncFinding = false, syncFound = [], syncPick = null;
+async function renderVaultSetting(){
+  const el = $("#vaultSetting"); if(!el) return;
+  if(!vaultOn()){
+    el.innerHTML = `<p class="small muted" style="margin:0">The desktop app keeps plain backup files in your Documents folder. In a browser there's nowhere safe to put them, so use ⇓ Backup instead.</p>`;
+    return;
+  }
+  if(vaultFiles === null){
+    el.innerHTML = `<div class="small muted">Reading your backups…</div>`;
+    try{ vaultFiles = await ceInvoke("vault_list"); }catch(e){ vaultFiles = []; }
+  }
+  let dir = "";
+  try{ dir = await ceInvoke("vault_dir"); }catch(e){}
+  const rows = (vaultFiles || []).slice(0, 8).map(f=>{
+    const d = new Date(f.modified);
+    return `<div class="bk-row"><span class="grow">${d.toLocaleString()} <span class="muted">${Math.round(f.bytes/1024)} KB</span></span>
+      <button class="ghost small" data-vrest="${escapeHtml(f.name)}">Restore</button></div>`;
+  }).join("");
+  el.innerHTML = `<p class="small muted" style="margin:0 0 8px">Plain JSON files, written on launch, hourly while you play, and before anything risky. They live outside the app's own storage, so they survive it being cleared.${dir ? ` <span class="muted">${escapeHtml(dir)}</span>` : ""}</p>
+    ${rows || `<div class="small muted">No files yet. One is written a few seconds after launch.</div>`}
+    <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="vaultNow">Back up now</button></div>`;
+  $("#vaultNow").onclick = async ()=>{
+    const path = await vaultSave("manual");
+    vaultFiles = null;
+    toast(path ? "Backup written" : "Couldn't write the backup", !path);
+    renderVaultSetting();
+  };
+  $$("#vaultSetting [data-vrest]").forEach(b=>b.onclick=async ()=>{
+    const name = b.dataset.vrest;
+    if(!confirm("Restore this backup?\n\nAnything in the app now is kept where it doesn't clash, and a snapshot is taken first, so this is undoable.")) return;
+    try{
+      const text = await ceInvoke("vault_read", {name});
+      mergeImportedState(JSON.parse(text));
+      renderAll();
+      toast("Restored from " + name);
+    }catch(e){ toast("Couldn't read that file", true); }
+  });
+}
+function renderSyncSetting(){
+  const el = $("#syncSetting"); if(!el) return;
+  const c = syncCfg();
+  if(syncCanHost()){
+    const i = c.info || {};
+    el.innerHTML = c.on
+      ? `<div class="ce-ok"><span class="ce-badge">✓ Sharing</span>
+           On this network as <b>${escapeHtml(i.host || "this PC")}</b> at <span class="muted">${escapeHtml(i.ip || "")}:${i.port || ""}</span>.</div>
+         <div class="sync-code">Code <b>${escapeHtml((i.code || "").replace(/^(.{3})(.{3})$/, "$1-$2"))}</b></div>
+         <p class="small muted" style="margin:6px 0 0">On your phone, open Settings, tap Find my PC, and type that code. You only do this once.</p>
+         ${c.pairs.length ? `<p class="small muted" style="margin:6px 0 0">Paired: ${c.pairs.map(x=>escapeHtml(x.device)).join(", ")}</p>` : ""}
+         <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="syncOff">Stop sharing</button>
+           ${c.pairs.length ? `<button class="ghost small" id="syncForget">Forget devices</button>` : ""}</div>`
+      : `<p class="small muted" style="margin:0 0 8px">Hand your quests, collection log and journal to your phone over your own Wi-Fi. Nothing leaves the house, and nothing is stored anywhere else.</p>
+         <button class="ghost small" id="syncOn">Share with my phone</button>
+         ${c.err ? `<div class="small" style="color:var(--red); margin-top:6px">${escapeHtml(c.err)}</div>` : ""}`;
+    const on = $("#syncOn"); if(on) on.onclick = syncHostStart;
+    const off = $("#syncOff"); if(off) off.onclick = syncHostStop;
+    const fg = $("#syncForget"); if(fg) fg.onclick = ()=>{ c.pairs = []; save(); syncHostStop(); toast("Devices forgotten"); };
+    return;
+  }
+  // the phone's side
+  const peer = c.peer;
+  el.innerHTML = peer && peer.token
+    ? `<div class="ce-ok"><span class="ce-badge">✓ Paired</span> with <b>${escapeHtml(peer.host || "your PC")}</b>
+         <span class="muted">${escapeHtml(peer.ip)}</span>.${c.lastSync ? ` Last sync ${fmtDay(isoDate(new Date(c.lastSync)))}.` : ""}</div>
+       <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="syncGo">Sync now</button>
+         <button class="ghost small" id="syncUnpair">Unpair</button></div>
+       <div class="small muted" id="syncMsg" style="margin-top:6px"></div>`
+    : `<p class="small muted" style="margin:0 0 8px">Turn on sharing in the desktop app, then find it here. Both devices need to be on the same Wi-Fi.</p>
+       ${syncFound.length ? `<div class="row" style="gap:6px; flex-wrap:wrap; margin-bottom:8px">${syncFound.map((f,i)=>
+           `<button class="ghost small ${syncPick===i?"on":""}" data-syncpick="${i}">🖥 ${escapeHtml(f.host)} <span class="muted">${escapeHtml(f.ip)}</span></button>`).join("")}</div>
+         <div class="row" style="gap:6px"><input type="text" id="syncCode" placeholder="Code from your PC" maxlength="7" style="max-width:190px" autocomplete="off">
+           <button class="ghost small" id="syncPairGo">Pair</button></div>` : ""}
+       <button class="ghost small" id="syncFind" ${syncFinding?"disabled":""}>${syncFinding ? "Looking…" : "Find my PC"}</button>
+       <div class="small muted" id="syncMsg" style="margin-top:6px">${syncFinding ? "Checking every device on your network, this takes a few seconds." : ""}</div>`;
+  const fb = $("#syncFind");
+  if(fb) fb.onclick = async ()=>{
+    syncFinding = true; syncFound = []; syncPick = null; renderSyncSetting();
+    syncFound = await syncFind();
+    syncFinding = false;
+    if(syncFound.length === 1) syncPick = 0;
+    renderSyncSetting();
+    const m = $("#syncMsg");
+    if(m && !syncFound.length) m.textContent = "Nothing found. Check sharing is on in the desktop app, and that you're on the same Wi-Fi, not mobile data.";
+  };
+  $$("#syncSetting [data-syncpick]").forEach(b=>b.onclick=()=>{ syncPick = +b.dataset.syncpick; renderSyncSetting(); });
+  const pg = $("#syncPairGo");
+  if(pg) pg.onclick = async ()=>{
+    const pick = syncFound[syncPick == null ? 0 : syncPick];
+    const code = ($("#syncCode") || {}).value;
+    if(!pick){ toast("Pick your PC first", true); return; }
+    try{ await syncPair(pick, code); toast("📱 Paired with " + (c.peer.host || "your PC")); renderSyncSetting(); }
+    catch(e){ toast(String(e.message || e), true); }
+  };
+  const go = $("#syncGo");
+  if(go) go.onclick = async ()=>{
+    const m = $("#syncMsg"); if(m) m.textContent = "Syncing…";
+    try{ await syncNow(); if(m) m.textContent = "Up to date."; toast("✓ Synced with your PC"); renderSyncSetting(); }
+    catch(e){ if(m) m.textContent = String(e.message || e); }
+  };
+  const up = $("#syncUnpair");
+  if(up) up.onclick = ()=>{ delete c.peer; save(); renderSyncSetting(); };
+}
+
 // ============ REACH ============
 // "Can I do this yet, and if not, how far off is it?" asked once, in one place, so every part of
 // the app answers it the same way. Hand it requirements, get back what's missing, how much work
@@ -10845,7 +11249,7 @@ function renderStorage(){
     + (r.pct>70?`<br><span style="color:var(--gold)">Songs for the rhythm game are stored separately and don't count toward this.</span>`:"");
 }
 function openSettings(){
-  renderFontSeg(); renderNumSeg(); renderUpdSetting(); renderBackups(); renderStorage(); renderCeSetting();
+  renderFontSeg(); renderNumSeg(); renderUpdSetting(); renderBackups(); renderStorage(); renderCeSetting(); renderVaultSetting(); renderSyncSetting();
   renderDevSection(); devWireSettings();
   const bb = $("#bugBtn");
   if(bb){
@@ -11965,6 +12369,7 @@ const PATCH_NOTES = [
   {v:"1.8", date:"in progress", title:"The Coffer", notes:[
     "New section: the Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
     "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
+    "Your PC can hand its data to your phone over your own Wi-Fi. Turn on sharing in the desktop app, type the six-character code on the phone once, and from then on the phone finds your PC itself and syncs both ways. Nothing is stored anywhere but your own devices, and the phone keeps working on WiseOldMan when the PC is off.",
     "The day popup's Log button works again, and it's on every day now, not only empty ones. It opens the Journal with that date filled in. Before, it was missing whenever the day had XP from the game, and on empty days it quietly did nothing, because the composer sits in a section the click never opened.",
     "Methods are grouped by how far away they are: ready now, within reach (a session or two of work), and further off. Distance is measured in experience, since five levels at 40 is an evening and five at 90 is a month, and quests you still need count too. The same measure is built to be reused elsewhere in the app.",
     "Each method shows what it pays an hour, where it happens, what you're still short on, and whether the wiki marks it risky. Recurring ones show what a single run pays and how often you can do it again.",
@@ -12422,6 +12827,7 @@ $("#sbBackdrop").onclick = closeSidebar;
 function mergeImportedState(inc){
   if(!inc || typeof inc !== "object" || Array.isArray(inc)) throw new Error("bad backup");
   snapshotNow("before importing a backup"); // an import merges into live data — keep an out
+  vaultSave("before-import");
   // profile-aware backups carry the other characters too — restore any not already here
   if(inc.__profiles && inc.__profiles.stash){
     const p = profStore(), curKey = profKey(profName());
@@ -13675,9 +14081,13 @@ setTimeout(clogDbEnsure, 1600);  // the full collection log list, same idea
 setTimeout(boostDbEnsure, 2400); // what can boost each skill, for the quest planner's tooltip
 setTimeout(diaryDbEnsure, 3200);  // every diary task, for Achievements
 setTimeout(caDbEnsure, 4000);     // every combat achievement, for Achievements
+// If the saved state didn't load, decide what to do about it before anything is written, and
+// start the hourly backup files either way.
+vaultBoot();
 // Setup opens by itself only on a genuinely fresh install: no character, no other profiles,
-// nothing logged. Anyone with data reaches it from Settings instead.
-if(!state.setupDone && !state.username && !Object.keys(profStore().stash||{}).length && !(state.scroll.log||[]).length){
+// nothing logged. Anyone with data reaches it from Settings instead. A state that failed to load
+// isn't a fresh install, and setup would be the worst possible thing to show.
+if(!loadTrouble && !state.setupDone && !state.username && !Object.keys(profStore().stash||{}).length && !(state.scroll.log||[]).length){
   setTimeout(openSetup, 400);
 }
 // Desktop app: pick up anything the plugin saved since last time, then keep watching.

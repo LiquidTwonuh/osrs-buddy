@@ -110,9 +110,13 @@ fn ce_read(path: String) -> Result<Vec<CeFile>, String> {
   Ok(out)
 }
 
+mod sync;
+mod vault;
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
+    .manage(sync::SyncState::default())
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(
@@ -123,7 +127,19 @@ pub fn run() {
       }
       Ok(())
     })
-    .invoke_handler(tauri::generate_handler![ce_default_dir, ce_stamp, ce_read])
+    .invoke_handler(tauri::generate_handler![
+      ce_default_dir,
+      ce_stamp,
+      ce_read,
+      sync::sync_start,
+      sync::sync_stop,
+      sync::sync_status,
+      sync::sync_snapshot,
+      vault::vault_dir,
+      vault::vault_write,
+      vault::vault_list,
+      vault::vault_read
+    ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
