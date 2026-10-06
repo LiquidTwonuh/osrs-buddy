@@ -784,7 +784,7 @@ window.__pageRunningFrom = "built-in";
   /* browse-by-status filters */
   .qp-filters{display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:8px}
   /* ---- Quest board ---- */
-  .qb-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr)); gap:9px}
+  .qb-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(258px,1fr)); gap:9px}
   .qb{display:flex; gap:9px; align-items:flex-start; padding:10px 11px; border-radius:12px; cursor:pointer;
     background:var(--panel2); border:1px solid var(--border); position:relative;
     transition:border-color .13s, transform .13s, opacity .13s}
@@ -1220,8 +1220,9 @@ window.__pageRunningFrom = "built-in";
      is a map, not prose — it gets the whole window. */
   /* no transition here: animating between a length and min() leaves the computed
      value stuck in a half-resolved calc() when the view is hidden at toggle time */
-  .content-inner{max-width:1800px; margin:0 auto}
-  body[data-wide] .content-inner{max-width:2600px}
+  .content-inner{max-width:1280px; margin:0 auto}
+  /* The Map is a map: it earns more room than the reading views, but not the whole monitor. */
+  body[data-wide] .content-inner{max-width:1640px}
   /* Prose stays at a readable measure however wide the window gets — long lines are
      genuinely harder to read, so text blocks cap themselves instead of the app doing it. */
   .pn-block, .ask-msg, .empty, .goals-blurb, .qpd-give, .rg-lib{max-width:78ch}
@@ -1341,9 +1342,6 @@ window.__pageRunningFrom = "built-in";
       background:var(--bg); padding:12px 2px 10px; border-bottom:1px solid var(--border); margin-bottom:6px}
     .pagehead{display:none}
     .sb-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:39}
-  }
-
-
   }
 
   .panel{background:var(--panel); border:1px solid var(--border); border-radius:10px;
@@ -1758,6 +1756,8 @@ window.__pageRunningFrom = "built-in";
     .cf-opts{flex-direction:column}
     .cf-opts button{width:100%}
     .stat{flex:1 1 45%}
+  }
+  /* narrower than a folded phone: give up and stack two columns */
   @media(max-width:330px){ .skills-grid{grid-template-columns:repeat(2,1fr)} }
 </style>
 </head>
@@ -1882,6 +1882,7 @@ window.__pageRunningFrom = "built-in";
       <div class="set-sec">
         <div class="set-h">Stats</div>
         <label class="chk small"><input type="checkbox" id="autoRefresh"> Auto-refresh from the hiscores every 15 minutes</label>
+        <label class="chk small"><input type="checkbox" id="autoActivity"> Fill in days from your game stats, so the Scroll shows XP you never logged by hand</label>
       </div>
       <div class="set-sec">
         <div class="set-h">RuneLite data</div>
@@ -2064,7 +2065,7 @@ window.__pageRunningFrom = "built-in";
       <div class="heat-focus" id="heatFocusWrap"></div>
       <div class="heatwrap big"><div id="heatmap" class="heatgrid"></div></div>
       <div class="act-legend" id="actLegend"></div>
-      <label class="chk small muted" style="justify-content:center; margin-top:8px"><input type="checkbox" id="autoActivity"> Auto-fill days from my game stats <span class="muted">(via WiseOldMan)</span></label>
+
     </div>
       <!-- Recap isn't a tab. It's a look back over everything, so it gets its own panel under the map. -->
       <div class="panel recap-cta" id="recapCta" role="button" tabindex="0" title="Open your recap">
