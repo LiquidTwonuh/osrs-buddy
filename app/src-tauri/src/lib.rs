@@ -116,6 +116,16 @@ mod vault;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
+    // Must be registered first. A second launch hands its arguments here and exits, instead of
+    // opening another window on the same storage.
+    .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+      use tauri::Manager;
+      if let Some(w) = app.get_webview_window("main") {
+        let _ = w.unminimize();
+        let _ = w.show();
+        let _ = w.set_focus();
+      }
+    }))
     .manage(sync::SyncState::default())
     .setup(|app| {
       if cfg!(debug_assertions) {

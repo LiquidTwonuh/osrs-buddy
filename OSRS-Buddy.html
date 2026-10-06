@@ -2819,18 +2819,19 @@ async function vaultRescue(){
     return;
   }
   if(newest){
-    const msg = `OSRS Buddy couldn't read your saved data.\n\nThere's a backup file from ${when}.\n\n`
-      + `OK restores it. Cancel starts empty — your backups are kept either way, in Documents\\OSRS Buddy\\backups.`;
-    if(confirm(msg)){
-      try{
-        const text = await ceInvoke("vault_read", {name: newest.name});
-        const j = JSON.parse(text);
-        saveLock = false;
-        mergeImportedState(j);
-        toast("Restored from " + when);
-        renderAll();
-        return;
-      }catch(e){ alert("That backup wouldn't open. Nothing has been overwritten: your files are in Documents\\OSRS Buddy\\backups."); }
+    // Being asked "shall I restore?" on every launch is just a slower way to lose your data, so
+    // it goes back by itself and tells you afterwards. Nothing is thrown away: the backup files
+    // stay, and a snapshot is taken before the merge, so Settings can undo it.
+    try{
+      const text = await ceInvoke("vault_read", {name: newest.name});
+      const j = JSON.parse(text);
+      saveLock = false;
+      mergeImportedState(j);
+      renderAll();
+      toast("Your data didn't load, so it was restored from the backup made " + when, true);
+      return;
+    }catch(e){
+      alert("OSRS Buddy couldn't read your saved data, and the backup from " + when + " wouldn't open either. Nothing has been written over: your backups are in Documents\OSRS Buddy\backups.");
     }
   } else if(vaultOn() && (loadTrouble === "unreadable" || Object.keys(profStore().stash || {}).length)){
     // "missing" with no backups and no other characters is a first run, not a loss
