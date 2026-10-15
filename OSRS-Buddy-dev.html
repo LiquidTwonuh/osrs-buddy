@@ -2756,11 +2756,13 @@ function saveMirror(force){
 let saveFailed = false;
 function save(){
   if(saveLock) return;        // the state didn't load; writing now would bury the real thing
+  state.__savedAt = Date.now();   // so two copies of the state can be told apart by age
   try{
     localStorage.setItem(LS_KEY, JSON.stringify(state));
     saveFailed = false;
     saveMirror();
     vaultMark();
+    stateFileQueue();
     return;
   }catch(e){}
   // Out of room. The quest database and wiki cache are ~90% of the payload and both
@@ -2772,6 +2774,7 @@ function save(){
     saveFailed = false;
     saveMirror();
     vaultMark();
+    stateFileQueue();
     toast("Storage was full — cleared the quest cache to make room. It'll reload itself.", true);
     return;
   }catch(e2){}
@@ -2779,6 +2782,50 @@ function save(){
     saveFailed = true;
     try{ toast("Couldn't save — storage is full. Export a backup from Settings.", true); }catch(_){}
   }
+}
+// ---- the save file (desktop) ----
+// Browser storage reset itself twice in a fortnight with the files still sitting on disk, so the
+// desktop app keeps its own copy of the state in a plain file and writes it a moment after every
+// change. On launch, whichever copy is newer wins. The hourly backups stay as the long memory;
+// this is the short one, and it's what makes a storage reset a non-event instead of a restore.
+let stateFileTimer = null, stateFileBusy = false, stateFileAgain = false;
+function stateFileQueue(){
+  if(!vaultOn()) return;
+  clearTimeout(stateFileTimer);
+  stateFileTimer = setTimeout(stateFileWrite, 1500);
+}
+async function stateFileWrite(){
+  if(!vaultOn() || saveLock) return;
+  if(stateFileBusy){ stateFileAgain = true; return; }
+  stateFileBusy = true;
+  try{ await ceInvoke("state_write", {text: JSON.stringify(Object.assign({}, stateSlim(), {__profiles: profStore()}))}); }
+  catch(e){ /* the hourly backups still happen; this is the fast path, not the only one */ }
+  stateFileBusy = false;
+  if(stateFileAgain){ stateFileAgain = false; stateFileQueue(); }
+}
+// Called first thing on a desktop launch, before the backup files are considered. Adopts the
+// save file when storage came up empty, or when the file is simply newer than what loaded.
+async function stateFileAdopt(){
+  if(!vaultOn()) return false;
+  let text = null;
+  try{ text = await ceInvoke("state_read"); }catch(e){ return false; }
+  if(!text) return false;
+  let j;
+  try{ j = JSON.parse(text); }catch(e){ return false; }
+  if(!stateHasData(j)) return false;
+  const fileAt = j.__savedAt || 0, haveAt = state.__savedAt || 0;
+  if(!loadTrouble && fileAt <= haveAt) return false;        // storage is fine and up to date
+  const keep = {};
+  BACKUP_SKIP.forEach(k=>{ if(state[k] !== undefined) keep[k] = state[k]; });
+  if(j.__profiles){ profSaveStore(j.__profiles); delete j.__profiles; }
+  state = Object.assign({}, j, keep);
+  live = null;
+  ensure();
+  saveLock = false;
+  save();
+  renderAll();
+  if(loadTrouble) toast("Picked up from the app's own save file.");
+  return true;
 }
 // ---- backup files on disk (desktop) ----
 // One on launch, one an hour while anything changes, and one before anything risky. Twenty are
@@ -2813,6 +2860,9 @@ function vaultStart(){
 }
 // If the state didn't load, ask before anything is written. Saving stays blocked until then.
 async function vaultRescue(){
+  // the save file is newer and more exact than any hourly backup, so it goes first, and it also
+  // catches the quiet case where storage loaded fine but is simply behind the file
+  if(await stateFileAdopt()) return;
   if(!loadTrouble) return;
   let files = [];
   if(vaultOn()){
@@ -3035,6 +3085,9 @@ function ensure(){
   state.scroll.log = state.scroll.log || [];
   state.scroll.auto = state.scroll.auto || {};
   if(state.scroll.autoOn === undefined) state.scroll.autoOn = true;
+  // Restores had been carrying autoOn:false in from old backups (fixed 2026-10-15). Turn it back
+  // on once, then leave it wherever you set it.
+  if(!state.scroll.autoOnReset){ state.scroll.autoOn = true; state.scroll.autoOnReset = true; }
   state.priorities = state.priorities || [];
   state.notes = state.notes || [];
   if(state.autoRefresh === undefined) state.autoRefresh = false;
@@ -13004,6 +13057,9 @@ function mergeImportedState(inc){
   if(!inc || typeof inc !== "object" || Array.isArray(inc)) throw new Error("bad backup");
   snapshotNow("before importing a backup"); // an import merges into live data — keep an out
   vaultSave("before-import");
+  // Filling days in from your game stats is a preference for this device, like the theme. A
+  // backup from a day it was off, or a phone that had it off, shouldn't switch it off here.
+  if(inc.scroll && typeof inc.scroll === "object") delete inc.scroll.autoOn;
   // profile-aware backups carry the other characters too — restore any not already here
   if(inc.__profiles && inc.__profiles.stash){
     const p = profStore(), curKey = profKey(profName());

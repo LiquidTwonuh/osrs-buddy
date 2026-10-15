@@ -149,7 +149,9 @@ pub fn run() {
       vault::vault_dir,
       vault::vault_write,
       vault::vault_list,
-      vault::vault_read
+      vault::vault_read,
+      vault::state_write,
+      vault::state_read
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

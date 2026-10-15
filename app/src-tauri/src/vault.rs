@@ -115,3 +115,35 @@ pub fn vault_read(name: String) -> Result<String, String> {
   let name = safe_name(&name)?;
   fs::read_to_string(dir.join(name)).map_err(|e| e.to_string())
 }
+
+
+// ---- The save file ----
+// Browser storage reset itself twice in a fortnight with nothing obviously wrong on disk ("Creating
+// DB since it was missing" while CURRENT sat there). Arguing with it is pointless, so the desktop
+// app also keeps its own save file next to the WebView data, written a moment after every change
+// and read back on launch. Whichever copy is newer wins. Same temp-then-rename write as the backups.
+fn state_path() -> Result<PathBuf, String> {
+  let base = std::env::var("LOCALAPPDATA")
+    .or_else(|_| std::env::var("HOME"))
+    .map_err(|_| "Couldn't find your app data folder")?;
+  let dir = Path::new(&base).join("com.joshf.osrsbuddy");
+  fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+  Ok(dir.join("state.json"))
+}
+
+#[tauri::command]
+pub fn state_write(text: String) -> Result<(), String> {
+  let path = state_path()?;
+  let tmp = path.with_extension("json.part");
+  fs::write(&tmp, text.as_bytes()).map_err(|e| e.to_string())?;
+  fs::rename(&tmp, &path).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn state_read() -> Result<Option<String>, String> {
+  let path = state_path()?;
+  if !path.is_file() {
+    return Ok(None);
+  }
+  fs::read_to_string(&path).map(Some).map_err(|e| e.to_string())
+}
