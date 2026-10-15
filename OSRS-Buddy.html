@@ -2783,6 +2783,21 @@ function save(){
     try{ toast("Couldn't save — storage is full. Export a backup from Settings.", true); }catch(_){}
   }
 }
+// ---- what happened at launch ----
+// When storage fails to load, the only way to know why the fallback did what it did is to have
+// written it down at the time. The last eight launches are kept, and shown under Backup files.
+const BOOT_KEY = "osrs_boots";
+let bootRec = {at: Date.now(), trouble: loadTrouble, from: loadedFrom, note: ""};
+function bootNote(text){
+  bootRec.note = text;
+  try{
+    const list = JSON.parse(localStorage.getItem(BOOT_KEY) || "[]");
+    const i = list.findIndex(b=>b.at === bootRec.at);
+    if(i === -1) list.push(bootRec); else list[i] = bootRec;
+    localStorage.setItem(BOOT_KEY, JSON.stringify(list.slice(-8)));
+  }catch(e){}
+}
+function bootList(){ try{ return JSON.parse(localStorage.getItem(BOOT_KEY) || "[]"); }catch(e){ return []; } }
 // ---- the save file (desktop) ----
 // Browser storage reset itself twice in a fortnight with the files still sitting on disk, so the
 // desktop app keeps its own copy of the state in a plain file and writes it a moment after every
@@ -2798,7 +2813,7 @@ async function stateFileWrite(){
   if(!vaultOn() || saveLock) return;
   if(stateFileBusy){ stateFileAgain = true; return; }
   stateFileBusy = true;
-  try{ await ceInvoke("state_write", {text: JSON.stringify(Object.assign({}, stateSlim(), {__profiles: profStore()}))}); }
+  try{ await ceInvoke("state_write", {text: JSON.stringify(Object.assign({}, stateSlim(), {__profiles: profStore(), __boots: bootList()}))}); }
   catch(e){ /* the hourly backups still happen; this is the fast path, not the only one */ }
   stateFileBusy = false;
   if(stateFileAgain){ stateFileAgain = false; stateFileQueue(); }
@@ -2806,15 +2821,21 @@ async function stateFileWrite(){
 // Called first thing on a desktop launch, before the backup files are considered. Adopts the
 // save file when storage came up empty, or when the file is simply newer than what loaded.
 async function stateFileAdopt(){
-  if(!vaultOn()) return false;
-  let text = null;
-  try{ text = await ceInvoke("state_read"); }catch(e){ return false; }
-  if(!text) return false;
+  if(!vaultOn()){ bootNote("not the desktop app, no save file"); return false; }
+  let text = null, err = null;
+  for(let tries = 0; tries < 2 && text === null; tries++){
+    try{ text = await ceInvoke("state_read"); err = null; }
+    catch(e){ err = String((e && e.message) || e); await new Promise(r=>setTimeout(r, 400)); }
+  }
+  if(err){ bootNote("save file read failed: " + err); return false; }
+  if(!text){ bootNote("no save file yet"); return false; }
   let j;
-  try{ j = JSON.parse(text); }catch(e){ return false; }
-  if(!stateHasData(j)) return false;
+  try{ j = JSON.parse(text); }catch(e){ bootNote("save file wouldn't parse"); return false; }
+  if(!stateHasData(j)){ bootNote("save file was empty"); return false; }
   const fileAt = j.__savedAt || 0, haveAt = state.__savedAt || 0;
-  if(!loadTrouble && fileAt <= haveAt) return false;        // storage is fine and up to date
+  if(!loadTrouble && fileAt <= haveAt){ bootNote("storage loaded fine and was current"); return false; }   // the normal launch
+  bootNote(loadTrouble ? "storage didn't load, took the save file from " + new Date(fileAt).toLocaleString()
+                       : "save file was newer than storage, took it");
   const keep = {};
   BACKUP_SKIP.forEach(k=>{ if(state[k] !== undefined) keep[k] = state[k]; });
   if(j.__profiles){ profSaveStore(j.__profiles); delete j.__profiles; }
@@ -2872,6 +2893,7 @@ async function vaultRescue(){
   const when = newest ? new Date(newest.modified).toLocaleString() : null;
   if(loadedFrom === "mirror"){
     // the mirror had it: carry on, but say so, and get a file written straight away
+    bootNote("storage key unreadable, loaded the mirror copy");
     saveLock = false;
     toast("Your data was restored from the backup copy on this device.", true);
     save(); vaultSave("mirror-recovery");
@@ -2887,6 +2909,7 @@ async function vaultRescue(){
       saveLock = false;
       mergeImportedState(j);
       renderAll();
+      bootNote("fell back to the hourly backup from " + when);
       toast("Your data didn't load, so it was restored from the backup made " + when, true);
       return;
     }catch(e){
@@ -9423,7 +9446,10 @@ async function renderVaultSetting(){
   }).join("");
   el.innerHTML = `<p class="small muted" style="margin:0 0 8px">Plain JSON files, written on launch, hourly while you play, and before anything risky. They live outside the app's own storage, so they survive it being cleared.${dir ? ` <span class="muted">${escapeHtml(dir)}</span>` : ""}</p>
     ${rows || `<div class="small muted">No files yet. One is written a few seconds after launch.</div>`}
-    <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="vaultNow">Back up now</button></div>`;
+    <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="vaultNow">Back up now</button></div>
+    <details style="margin-top:10px"><summary class="small muted" style="cursor:pointer">Last launches</summary>
+      <div class="small muted" style="margin-top:6px; line-height:1.6">${bootList().slice().reverse().map(b=>
+        `${new Date(b.at).toLocaleString()} · storage ${b.trouble ? "<b>" + escapeHtml(b.trouble) + "</b>" : "ok"} · ${escapeHtml(b.note || "")}`).join("<br>") || "nothing recorded yet"}</div></details>`;
   $("#vaultNow").onclick = async ()=>{
     const path = await vaultSave("manual");
     vaultFiles = null;
