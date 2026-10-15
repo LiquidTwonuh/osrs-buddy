@@ -666,6 +666,16 @@ window.__pageRunningFrom = "built-in";
   .cf-chipslide{width:110px; accent-color:var(--gold); vertical-align:middle}
   .cf-chips{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
   /* picks: cards that match the quest board, with the pay where the progress bar would be */
+  .cf-why{font-size:12px; color:var(--gold); opacity:.9; margin-top:3px}
+  .cf-skills{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; max-width:560px; margin:0 auto}
+  .cf-skills button{display:inline-flex; align-items:center; gap:6px; padding:7px 11px}
+  .cf-skills button.on{border-color:var(--gold); color:var(--gold)}
+  .cf-skico{width:16px; height:16px}
+  .cf-chipval{color:var(--text); padding:0 4px}
+  .cf-full > summary{cursor:pointer; list-style:none}
+  .cf-full > summary::-webkit-details-marker{display:none}
+  .cf-full > summary::before{content:"▸ "; color:var(--muted)}
+  .cf-full[open] > summary::before{content:"▾ "}
   .cf-card{cursor:pointer}
   .cf-card.on{border-color:var(--gold)}
   .cf-cardpay{font-family:var(--font-display); font-weight:700; color:var(--gold); font-size:18px; margin:3px 0 2px}
@@ -9748,19 +9758,27 @@ function mmgGaps(m){
   return v;
 }
 // ---- the quiz: six questions that set the filters ----
+// ---- the questions ----
+// Twelve, and they earn their place: every answer either filters the list or decides what the
+// curated page leads with. Account, ironman, session length and gear rarely change, so once
+// answered they just sit in the filter strip.
 const COFFER_QUIZ = [
   {id:"members", q:"Are you a member?", opts:[["yes","Yes, members"],["no","Free-to-play"]]},
+  {id:"iron",    q:"Ironman?", opts:[["no","No, a main"],["yes","Yes, an iron"]], hint:"Irons don't see the buy-and-sell methods."},
   {id:"style",   q:"What do you actually enjoy?", opts:[["any","A bit of everything"],["combat","Combat and bossing"],["skilling","Skilling"],["gather","Gathering and processing"]]},
+  {id:"skills",  q:"Any skills you like training?", multi:true, hint:"Pick as many as you like. Methods that train them move up."},
   {id:"pace",    q:"How busy do you want to be?", opts:[["any","Don't mind"],["Low","AFK, barely touching it"],["Moderate","Somewhere in between"],["High","Hands on the whole time"]]},
+  {id:"session", q:"How long is a normal session?", opts:[["short","20 minutes or so"],["hour","About an hour"],["long","A long evening"]], hint:"Short sessions skip raids and anything with a long setup."},
+  {id:"gear",    q:"How's your gear?", opts:[["mid","Getting there"],["good","Solid"],["max","Near max"]], hint:"The wiki's boss rates assume strong gear. This keeps them honest."},
+  {id:"xp",      q:"Does the XP matter, or just the GP?", opts:[["gp","Just the GP"],["both","XP too, ideally"]]},
   {id:"wildy",   q:"Risky methods, where you can be attacked or lose your stuff?", opts:[["ok","I'll risk it"],["no","No thanks"]]},
   {id:"reach",   q:"Methods you can't do yet?", opts:[["ready","Hide them"],["close","Show the near ones"],["all","Show everything"]]},
+  {id:"goal",    q:"Saving for something?", number:true, hint:"Roughly how much. Leave it empty if not, and it won't nag."},
   {id:"floor",   q:"What's worth your time?", slider:true},
 ];
-const COFFER_DEFAULTS = {members:"yes", style:"any", pace:"any", wildy:"ok", reach:"close", floor:"0"};
-// The quiz's answers double as the filter strip under the picks, so they can be nudged without
-// retaking it.
-// The slider's steps: fine at the bottom where most methods sit, coarser at the top where the
-// difference between 6m and 8m an hour hardly matters.
+const COFFER_DEFAULTS = {members:"yes", iron:"no", style:"any", skills:[], pace:"any", session:"hour", gear:"good", xp:"gp", wildy:"ok", reach:"close", goal:"", floor:"0"};
+// The answers double as the filter strip under the picks, so they can be nudged without
+// retaking the lot.
 const CF_FLOOR = [0,25000,50000,75000,100000,150000,200000,250000,300000,400000,500000,600000,
   700000,800000,900000,1000000,1250000,1500000,1750000,2000000,2500000,3000000,4000000,5000000,7500000,10000000];
 function cfGp(n){
@@ -9779,22 +9797,58 @@ function cfFloorIdx(v){
 function cofferPrefs(){
   state.coffer = state.coffer || {};
   state.coffer.prefs = Object.assign({}, COFFER_DEFAULTS, state.coffer.prefs || {});
-  // the old two-way answer became three bands
   const pf = state.coffer.prefs;
-  if(pf.reach === "hide") pf.reach = "ready";
+  if(pf.reach === "hide") pf.reach = "ready";        // older two-way answers
   if(pf.reach === "show") pf.reach = "all";
+  if(!Array.isArray(pf.skills)) pf.skills = [];
   return pf;
 }
 function cofferSet(k, v){ cofferPrefs()[k] = v; save(); renderCoffer(); }
+// hard filters: these decide whether a method is shown at all
 function cofferMatches(m, pf){
   if(pf.members === "no" && !m.f2p) return false;
   if(pf.wildy === "no" && m.risky) return false;
-  if(pf.pace !== "any" && m.pace !== pf.pace) return false;
+  if(pf.pace !== "any" && m.pace && m.pace !== pf.pace) return false;
   if(pf.floor !== "0" && m.profit < +pf.floor) return false;
   if(pf.style === "combat" && m.group !== "Combat") return false;
   if(pf.style === "skilling" && m.group !== "Skilling") return false;
   if(pf.style === "gather" && !["Collecting","Processing"].includes(m.group)) return false;
+  if(pf.iron === "yes" && /^(Buying|Selling|Flipping|Merching)\b/i.test(m.name)) return false;
   return true;
+}
+// the skill a method is filed under, from a category like "Skilling/Herblore"
+function mmgCatSkill(m){
+  const part = (m.cat || "").split("/")[1];
+  if(!part) return null;
+  const k = mmgSkillKey(part.split(/[ ,(]/)[0]);
+  return SKILL_ORDER.includes(k) ? k : null;
+}
+const RAID_RE = /Chambers of Xeric|Theatre of Blood|Tombs of Amascut|Inferno|Colosseum|Gauntlet|Nightmare|Nex\b/i;
+// Soft scoring: what the curated page leads with. Pay is the base; your answers nudge it, and
+// each nudge is written down so the page can say why something is where it is.
+function cofferWhy(m, pf){
+  const why = []; let mult = 1;
+  if(pf.style !== "any" && cofferMatches(m, Object.assign({}, COFFER_DEFAULTS, {style: pf.style}))){ /* passed the style filter already */ }
+  if(pf.pace !== "any" && m.pace === pf.pace){ why.push(pf.pace === "Low" ? "AFK, like you asked" : "the pace you asked for"); mult *= 1.2; }
+  const sk = mmgCatSkill(m);
+  if(sk && pf.skills.includes(sk)){ why.push("trains " + nice(sk)); mult *= 1.4; }
+  if(pf.xp === "both" && ["Skilling","Processing"].includes(m.group)){ why.push("XP as well as GP"); mult *= 1.15; }
+  if(/^Combat\/High/.test(m.cat)){
+    if(pf.gear === "mid"){ why.push("assumes gear you said you're still getting"); mult *= 0.35; }
+    else if(pf.gear === "good") mult *= 0.8;
+  }
+  if(pf.session === "short"){
+    if(RAID_RE.test(m.name)){ why.push("long setup for a short session"); mult *= 0.25; }
+    else if(m.pace === "High") mult *= 0.7;
+  } else if(pf.session === "long" && RAID_RE.test(m.name)){ why.push("worth it with a long evening"); mult *= 1.1; }
+  if(m.risky && pf.wildy === "ok") why.push(m.wildy ? "Wilderness, you said that's fine" : "risky, you said that's fine");
+  return {score: m.profit * mult, why};
+}
+function cofferGoalText(m, pf){
+  const goal = +String(pf.goal || "").replace(/[^\d]/g, "");
+  if(!goal || !m.profit || m.recur) return "";
+  const h = goal / m.profit;
+  return h < 1 ? "under an hour to your goal" : `about ${h < 10 ? h.toFixed(1).replace(/\.0$/, "") : Math.round(h)}h to your goal`;
 }
 // "48:00:00" is the wiki's way of saying every two days
 function mmgEvery(t){
@@ -9878,77 +9932,95 @@ function renderCoffer(){
     const b = $("#cfRetry"); if(b) b.onclick = ()=>mmgDbEnsure(true);
     return;
   }
-  // the quiz, first time through or when you ask for it again
-  if(!state.coffer || !state.coffer.done || state.coffer.quizOpen){
-    const step = Math.min(state.coffer && state.coffer.step || 0, COFFER_QUIZ.length-1);
-    const qq = COFFER_QUIZ[step], pf = cofferPrefs();
-    el.innerHTML = `<div class="panel cf-quiz">
-      <div class="cf-step">Question ${step+1} of ${COFFER_QUIZ.length}</div>
-      <h3 class="cf-q">${qq.q}</h3>
-      ${qq.slider ? `<div class="cf-slide">
+  const pf = cofferPrefs();
+  // ---- the quiz: first time through, when you ask for it again, or one step from the strip ----
+  if(!state.coffer.done || state.coffer.quizOpen){
+    const step = Math.min(state.coffer.step || 0, COFFER_QUIZ.length-1);
+    const qq = COFFER_QUIZ[step], single = !!state.coffer.single, last = step === COFFER_QUIZ.length-1;
+    let body;
+    if(qq.slider){
+      body = `<div class="cf-slide">
           <div class="cf-slideval" id="cfFloorVal">${cfGp(pf.floor)==="Anything" ? "Anything's worth doing" : cfGp(pf.floor) + " an hour or better"}</div>
           <input type="range" id="cfFloor" min="0" max="${CF_FLOOR.length-1}" value="${cfFloorIdx(pf.floor)}">
           <div class="row small muted" style="justify-content:space-between"><span>Anything</span><span>${cfGp(CF_FLOOR[CF_FLOOR.length-1])}/hr</span></div>
-          <button class="primary" id="cfFloorGo" style="margin-top:12px">Show me the list</button>
-        </div>`
-        : `<div class="cf-opts">${qq.opts.map(([v,label])=>
-        `<button class="ghost ${pf[qq.id]===v?"on":""}" data-cfans="${v}">${label}</button>`).join("")}</div>
-        <button class="primary cf-next" id="cfNext">${step === COFFER_QUIZ.length-1 ? "Show me the list" : "Next →"}</button>`}
+        </div>`;
+    } else if(qq.multi){
+      body = `<div class="cf-skills">${SKILL_ORDER.map(k=>`<button class="ghost small ${pf.skills.includes(k)?"on":""}" data-cfskill="${k}">
+          <img src="${skillIconUrl(k)}" alt="" class="cf-skico">${nice(k)}</button>`).join("")}</div>`;
+    } else if(qq.number){
+      body = `<div class="cf-slide"><input type="text" id="cfGoal" inputmode="numeric" placeholder="e.g. 50m or 50000000" value="${escapeHtml(pf.goal || "")}" style="width:100%; text-align:center; font-size:16px"></div>`;
+    } else {
+      body = `<div class="cf-opts">${qq.opts.map(([v,label])=>
+        `<button class="ghost ${pf[qq.id]===v?"on":""}" data-cfans="${v}">${label}</button>`).join("")}</div>`;
+    }
+    el.innerHTML = `<div class="panel cf-quiz">
+      <div class="cf-step">${single ? "Change one answer" : `Question ${step+1} of ${COFFER_QUIZ.length}`}</div>
+      <h3 class="cf-q">${qq.q}</h3>
+      ${qq.hint ? `<div class="small muted" style="margin:-10px 0 14px">${qq.hint}</div>` : ""}
+      ${body}
+      <button class="primary cf-next" id="cfNext">${single || last ? "Show me the list" : "Next →"}</button>
       <div class="cf-foot">
-        ${step ? `<button class="ghost small" id="cfBack">← Back</button>` : `<span class="grow"></span>`}
+        ${step && !single ? `<button class="ghost small" id="cfBack">← Back</button>` : `<span class="grow"></span>`}
         <span class="grow"></span>
-        <button class="ghost small" id="cfSkip" title="The answers shape everything below">Skip for now <span class="muted">(not recommended)</span></button>
+        ${single ? `<button class="ghost small" id="cfSkip">Cancel</button>`
+                 : `<button class="ghost small" id="cfSkip" title="The answers shape everything below">Skip for now <span class="muted">(not recommended)</span></button>`}
       </div></div>`;
-    // Tapping picks, Next moves on. Advancing on a tap made it too easy to shoot past a
-    // question, especially on a phone.
+    // tapping picks, Next moves on: advancing on a tap made it too easy to shoot past a question
     $$("#cofferView [data-cfans]").forEach(b=>b.onclick=()=>{
-      cofferPrefs()[qq.id] = b.dataset.cfans;
+      pf[qq.id] = b.dataset.cfans;
       $$("#cofferView [data-cfans]").forEach(x=>x.classList.toggle("on", x === b));
     });
-    const next = $("#cfNext");
-    if(next) next.onclick = ()=>{
-      state.coffer.step = step + 1;
-      if(state.coffer.step >= COFFER_QUIZ.length){ state.coffer.done = true; state.coffer.quizOpen = false; state.coffer.step = 0; }
-      save(); renderCoffer();
-    };
+    $$("#cofferView [data-cfskill]").forEach(b=>b.onclick=()=>{
+      const k = b.dataset.cfskill, i = pf.skills.indexOf(k);
+      if(i === -1) pf.skills.push(k); else pf.skills.splice(i, 1);
+      b.classList.toggle("on", i === -1);
+    });
     const sl = $("#cfFloor");
-    if(sl){
-      const show = ()=>{ const v = CF_FLOOR[+sl.value];
-        $("#cfFloorVal").textContent = v ? cfGp(v) + " an hour or better" : "Anything's worth doing"; };
-      sl.oninput = show;
-      $("#cfFloorGo").onclick = ()=>{
-        cofferPrefs().floor = String(CF_FLOOR[+sl.value]);
-        state.coffer.done = true; state.coffer.quizOpen = false; state.coffer.step = 0;
-        save(); renderCoffer();
-      };
-    }
+    if(sl) sl.oninput = ()=>{ const v = CF_FLOOR[+sl.value]; $("#cfFloorVal").textContent = v ? cfGp(v) + " an hour or better" : "Anything's worth doing"; };
+    const finish = ()=>{ state.coffer.done = true; state.coffer.quizOpen = false; state.coffer.single = false; state.coffer.step = 0; save(); renderCoffer(); };
+    $("#cfNext").onclick = ()=>{
+      if(sl) pf.floor = String(CF_FLOOR[+sl.value]);
+      const g = $("#cfGoal"); if(g) pf.goal = cfParseGp(g.value);
+      if(single || last){ finish(); return; }
+      state.coffer.step = step + 1; save(); renderCoffer();
+    };
     if($("#cfBack")) $("#cfBack").onclick = ()=>{ state.coffer.step = step-1; save(); renderCoffer(); };
-    $("#cfSkip").onclick = ()=>{ state.coffer.done = true; state.coffer.quizOpen = false; state.coffer.step = 0; save(); renderCoffer(); };
+    $("#cfSkip").onclick = finish;
     return;
   }
-  const pf = cofferPrefs();
+
+  // ---- the curated page ----
   const all = db.methods.map(m=>Object.assign({}, m, {gap: mmgGaps(m)}));
   const byName = {}; all.forEach(m=>{ byName[m.name] = m; });
-  const picked = all.filter(m=>cofferMatches(m, pf)).sort((a,b)=>b.profit-a.profit);
-  const ready = picked.filter(m=>m.gap.ok && !m.recur);
-  const dailies = picked.filter(m=>m.gap.ok && m.recur);
-  const byBand = id => picked.filter(m=>m.gap.band===id && !m.recur).sort((a,b)=> a.gap.effort-b.gap.effort || b.profit-a.profit);
-  const close = byBand("close"), far = byBand("far");
+  const picked = all.filter(m=>cofferMatches(m, pf));
+  picked.forEach(m=>{ const w = cofferWhy(m, pf); m.score = w.score; m.why = w.why; });
+  const byScore = (a,b)=> b.score - a.score;
+  const ready = picked.filter(m=>m.gap.ok && !m.recur).sort(byScore);
+  const dailies = picked.filter(m=>m.gap.ok && m.recur).sort((a,b)=>b.profit-a.profit);
+  const close = picked.filter(m=>m.gap.band==="close" && !m.recur).sort((a,b)=> b.score - a.score);
+  const far = picked.filter(m=>m.gap.band==="far" && !m.recur).sort((a,b)=> a.gap.effort-b.gap.effort || b.profit-a.profit);
   const pins = cofferPins().filter(n=>byName[n]);
   const sel = state.coffer.sel && byName[state.coffer.sel] ? byName[state.coffer.sel] : null;
+  const top = ready.slice(0, 3), more = ready.slice(3, 9), train = close.slice(0, 3);
+  const inTop = new Set(top.map(m=>m.name).concat(more.map(m=>m.name)));
 
+  const stepOf = id => COFFER_QUIZ.findIndex(q=>q.id===id);
   const chip = (id, label)=>{
-    const q = COFFER_QUIZ.find(x=>x.id===id);
+    const q = COFFER_QUIZ[stepOf(id)];
     if(q.slider) return `<span class="cf-chip"><b>${label}</b>
       <input type="range" class="cf-chipslide" id="cfFloorChip" min="0" max="${CF_FLOOR.length-1}" value="${cfFloorIdx(pf.floor)}">
       <span id="cfFloorChipVal">${cfGp(pf.floor)}${+pf.floor?"/hr":""}</span></span>`;
+    if(q.multi) return `<span class="cf-chip"><b>${label}</b><span class="cf-chipval">${pf.skills.length ? pf.skills.map(nice).join(", ") : "any"}</span><button data-cfstep="${stepOf(id)}">edit</button></span>`;
+    if(q.number) return `<span class="cf-chip"><b>${label}</b><span class="cf-chipval">${pf.goal ? cfGp(+pf.goal) : "none"}</span><button data-cfstep="${stepOf(id)}">edit</button></span>`;
     return `<span class="cf-chip"><b>${label}</b>${q.opts.map(([v,t])=>
       `<button class="${pf[id]===v?"on":""}" data-cfset="${id}" data-cfval="${v}">${t}</button>`).join("")}</span>`;
   };
-  const rowHtml = m=>{
+  const rowHtml = (m, showWhy)=>{
     const need = m.gap.text;
     const rec = m.gap.soft.map(g=>`${g.lvl} ${nice(g.skill)}`).join(", ");
     const on = pins.includes(m.name);
+    const goal = cofferGoalText(m, pf);
+    const why = showWhy ? (m.why || []).concat(goal ? [goal] : []) : (goal ? [goal] : []);
     return `<div class="cf-row ${m.gap.ok?"":"short"} ${on?"pinned":""} ${sel && sel.name===m.name?"sel":""}" data-cfopen="${escapeHtml(m.name)}">
       <div class="cf-gp">${cofferPayHtml(m)}</div>
       <div class="cf-b">
@@ -9956,14 +10028,16 @@ function renderCoffer(){
         <div class="cf-sub">${need ? `Needs ${need}` : rec ? `Wiki recommends ${rec}` : "You've got the levels for this"}${
           m.gap.ok ? "" : ` <span class="cf-eff">${xpText(m.gap.effort)} of work away</span>`}${
           m.loc ? `<span class="muted"> · ${escapeHtml(m.loc)}</span>` : ""}</div>
+        ${why.length ? `<div class="cf-why">${why.map(escapeHtml).join(" · ")}</div>` : ""}
       </div>
       <button class="qp-pin ${on?"on":""}" data-cfpin="${escapeHtml(m.name)}" title="${on?"On your picks":"Add to your picks"}">${on?"📌":"+"}</button>
     </div>`;
   };
-  const section = (title, sub, list, max, emptyText)=> `<div class="panel">
+  const section = (title, sub, list, max, emptyText, showWhy)=> `<div class="panel">
       <div class="section-title" style="margin-top:0"><h3>${title}</h3><span class="small muted">${sub}</span></div>
-      <div class="cf-list">${list.slice(0, max).map(rowHtml).join("") || `<div class="empty">${emptyText}</div>`}</div>
+      <div class="cf-list">${list.slice(0, max).map(m=>rowHtml(m, showWhy)).join("") || `<div class="empty">${emptyText}</div>`}</div>
     </div>`;
+  const styleWord = {any:"your answers", combat:"combat", skilling:"skilling", gather:"gathering and processing"}[pf.style] || "your answers";
 
   el.innerHTML = `
     <div class="panel">
@@ -9974,18 +10048,25 @@ function renderCoffer(){
     </div>
     ${sel ? cofferDetailHtml(sel) : ""}
     <div class="panel">
-      <div class="cf-chips">${chip("members","Account")}${chip("style","Enjoy")}${chip("pace","Pace")}${chip("wildy","Risk")}${chip("reach","Out of reach")}${chip("floor","At least")}</div>
+      <div class="cf-chips">${chip("members","Account")}${chip("iron","Iron")}${chip("style","Enjoy")}${chip("skills","Skills")}${chip("pace","Pace")}${chip("session","Session")}${chip("gear","Gear")}${chip("xp","XP")}${chip("wildy","Risk")}${chip("reach","Out of reach")}${chip("goal","Goal")}${chip("floor","At least")}</div>
       <div class="row" style="gap:8px; margin-top:10px; align-items:center">
         <span class="small muted grow">${fmt(ready.length + dailies.length)} you can do now, out of ${fmt(db.methods.length)} the wiki lists${live?"":" · load your stats to check them against your levels"}</span>
         <button class="ghost small" id="cfQuiz">↻ Retake the quiz</button>
         <button class="ghost small" id="cfRefresh" title="Re-read the wiki">⟲ Refresh</button>
       </div></div>
-    ${section("✅ Ready now", `${fmt(ready.length)} method${ready.length===1?"":"s"}`, ready, 60, "Nothing matches those filters. Loosen one above.")}
-    ${dailies.length ? section("🌱 Every day or two", "start it, walk away, come back", dailies, 30, "") : ""}
-    ${pf.reach!=="ready" && close.length ? section("🎯 Within reach", "a session or two of work", close, 40, "") : ""}
-    ${pf.reach==="all" && far.length ? section("🧗 Further off", "closest first", far, 40, "") : ""}`;
+    ${section("✦ Best for you tonight", `the top of the list for ${styleWord}`, top, 3, "Nothing you can do yet fits those answers. Loosen one above, or look under Worth training for.", true)}
+    ${more.length ? section("More in your style", "the next few, same reasoning", more, 6, "", true) : ""}
+    ${pf.reach!=="ready" && train.length ? section("🎯 Worth training for", "big earners a session or two away", train, 3, "", true) : ""}
+    ${dailies.length ? section("🌱 Your dailies", "start it, walk away, come back", dailies, 8, "", false) : ""}
+    <details class="panel cf-full" ${state.coffer.full ? "open" : ""}><summary><h3 style="display:inline">The full list</h3> <span class="small muted">${fmt(ready.length)} you can do now${pf.reach!=="ready" ? ` · ${fmt(close.length)} within reach` : ""}${pf.reach==="all" ? ` · ${fmt(far.length)} further off` : ""}</span></summary>
+      <div class="section-title"><h3>✅ Ready now</h3></div>
+      <div class="cf-list">${ready.filter(m=>!inTop.has(m.name)).slice(0, 80).map(m=>rowHtml(m, false)).join("") || `<div class="empty">That's all of them above.</div>`}</div>
+      ${pf.reach!=="ready" && close.length ? `<div class="section-title"><h3>🎯 Within reach</h3></div><div class="cf-list">${close.slice(0, 40).map(m=>rowHtml(m, false)).join("")}</div>` : ""}
+      ${pf.reach==="all" && far.length ? `<div class="section-title"><h3>🧗 Further off</h3></div><div class="cf-list">${far.slice(0, 40).map(m=>rowHtml(m, false)).join("")}</div>` : ""}
+    </details>`;
 
   $$("#cofferView [data-cfset]").forEach(b=>b.onclick=()=>cofferSet(b.dataset.cfset, b.dataset.cfval));
+  $$("#cofferView [data-cfstep]").forEach(b=>b.onclick=()=>{ state.coffer.quizOpen = true; state.coffer.single = true; state.coffer.step = +b.dataset.cfstep; save(); renderCoffer(); });
   const fc = $("#cfFloorChip");
   if(fc){
     // dragging updates the label as you go, and the list once you let go
@@ -9993,7 +10074,8 @@ function renderCoffer(){
     fc.onchange = ()=>cofferSet("floor", String(CF_FLOOR[+fc.value]));
   }
   $("#cfRefresh").onclick = ()=>mmgDbEnsure(true);
-  $("#cfQuiz").onclick = ()=>{ state.coffer.quizOpen = true; state.coffer.step = 0; save(); renderCoffer(); };
+  $("#cfQuiz").onclick = ()=>{ state.coffer.quizOpen = true; state.coffer.single = false; state.coffer.step = 0; save(); renderCoffer(); };
+  const full = $("#cofferView .cf-full"); if(full) full.ontoggle = ()=>{ state.coffer.full = full.open; save(); };
   $$("#cofferView [data-cfpin]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferPinToggle(b.dataset.cfpin); });
   $$("#cofferView [data-cfunpin]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferPinToggle(b.dataset.cfunpin); });
   // a row or a card opens the detail panel; opening it again closes it
@@ -10005,6 +10087,13 @@ function renderCoffer(){
     const d = $("#cfDetail"); if(d) d.scrollIntoView({behavior:"smooth", block:"nearest"});
   });
   const cl = $("#cfClose"); if(cl) cl.onclick = ()=>{ state.coffer.sel = null; save(); renderCoffer(); };
+}
+// "50m", "2.5m", "800k" or a plain number, as people actually type gp
+function cfParseGp(t){
+  const m = /^\s*([\d.,]+)\s*([kmb])?/i.exec(String(t || ""));
+  if(!m) return "";
+  const n = parseFloat(m[1].replace(/,/g, "")) * ({k:1e3, m:1e6, b:1e9}[(m[2]||"").toLowerCase()] || 1);
+  return n > 0 ? String(Math.round(n)) : "";
 }
 
 // ============ THE MAP ============
@@ -12726,6 +12815,7 @@ const PATCH_NOTES = [
     "The Coffer's quiz has a Next button instead of jumping forward the moment you tap an answer, and the top of the profit slider now reads 10m an hour, which is what it always was.",
     "Your PC can hand its data to your phone over your own Wi-Fi. Turn on sharing in the desktop app, type the six-character code on the phone once, and from then on the phone finds your PC itself and syncs both ways. Nothing is stored anywhere but your own devices, and the phone keeps working on WiseOldMan when the PC is off.",
     "The day popup's Log button works again, and it's on every day now, not only empty ones. It opens the Journal with that date filled in. Before, it was missing whenever the day had XP from the game, and on empty days it quietly did nothing, because the composer sits in a section the click never opened.",
+    "The Coffer's quiz asks twelve questions now, and the answers build a page rather than a list: Best for you tonight, with a line on why each one is there, More in your style, Worth training for, Your dailies, and the full list folded away underneath. Ironman hides the buy-and-sell methods, short sessions push raids down, mid gear keeps the wiki's boss rates honest, a goal shows how many hours each method is from it, and skills you enjoy move up.",
     "The Coffer works like the Map now. Pin any method and it sits at the top as a card, click one and a detail panel shows the pay, where it is, every requirement against your levels, the quests it needs and what the wiki says to bring. The quiz's answers also stay on screen as a filter strip you can nudge any time.",
     "Methods are grouped by how far away they are: ready now, within reach (a session or two of work), and further off. Distance is measured in experience, since five levels at 40 is an evening and five at 90 is a month, and quests you still need count too. The same measure is built to be reused elsewhere in the app.",
     "Each method shows what it pays an hour, where it happens, what you're still short on, and whether the wiki marks it risky. Recurring ones show what a single run pays and how often you can do it again.",
