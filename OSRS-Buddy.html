@@ -2719,6 +2719,10 @@ let saveLock = false;        // true while we don't trust what's in memory
 // --- state ---
 let state = load();
 let live = null;          // latest snapshot data {skills,bosses,activities,computed}
+// The sidebar, Home and every "you're level X" used to wait for WiseOldMan on each launch, and
+// while they waited the app looked like it had forgotten you. Now the last answer is kept and
+// shown at once; the fresh one replaces it when it arrives.
+function liveFromCache(){ const c = state.liveCache; return (c && c.skills) ? c : null; }
 let refreshTimer = null;
 
 // Everything you've ever logged lives under one key. On 5 October 2026 that key came back
@@ -2866,7 +2870,7 @@ async function stateFileAdopt(){
   if(j.__profiles){ profSaveStore(j.__profiles); delete j.__profiles; }
   state = Object.assign({}, j, keep);
   live = null;
-  ensure();
+  ensure();                       // which also brings the cached stats back
   saveLock = false;
   save();
   renderAll();
@@ -3063,7 +3067,7 @@ async function restoreBackup(i){
   state = Object.assign({}, b.state, keep);
   if(b.profiles) profSaveStore(b.profiles);
   live = null;
-  ensure(); save();
+  ensure(); save();              // ensure() reseeds live from the restored cache
   return true;
 }
 // once a day is enough to catch "yesterday was fine"
@@ -3123,6 +3127,7 @@ function vaultBoot(){
   vaultRescue().finally(vaultStart);
 }
 function ensure(){
+  if(live === null) live = liveFromCache();
   state.goals = state.goals || [];
   state.manual = state.manual || [];
   state.username = state.username || "";
@@ -3239,6 +3244,7 @@ async function loadCharacter(opts){
     const snap = p.latestSnapshot && p.latestSnapshot.data;
     if(!snap) throw new Error("No stats returned for that player.");
     live = snap;
+    state.liveCache = snap;          // shown straight away next launch, until WOM answers
     state.username = name;
     state.lastUpdatedAt = p.updatedAt || new Date().toISOString();
     state.playerMeta = {displayName:p.displayName||name, type:p.type, combat:p.combatLevel};
@@ -3333,6 +3339,11 @@ function renderSideChar(){
     $("#scTotal").textContent = (live.skills && live.skills.overall ? fmt(live.skills.overall.level) : "—") + " total";
     // fold away the onboarding-opened search once a character exists (never slam a user-opened one)
     if(pop.dataset.onboard){ pop.classList.add("hidden"); delete pop.dataset.onboard; }
+  } else if(state.username){
+    // we know who you are, WOM just hasn't answered yet: say so, don't open the picker
+    $("#scCombat").textContent = m && m.combat!=null ? m.combat : "?";
+    $("#scName").textContent = (m && m.displayName) || state.username;
+    $("#scTotal").textContent = "loading…";
   } else {
     $("#scCombat").textContent = "?";
     $("#scName").textContent = "Add character";
@@ -4096,7 +4107,7 @@ function prioIconHtml(p){
 }
 function dueBadge(p){
   const t = prioTier(p);
-  if(t==="snoozed") return `<span class="due snoozed">💤 until ${p.snoozeUntil}</span>`;
+  if(t==="snoozed") return `<span class="due snoozed">💤 ${dayDiff(todayISO(), p.snoozeUntil) > 3000 ? "until you say" : "until " + p.snoozeUntil}</span>`;
   if(t==="unknown") return `<span class="due soft" title="No touch recorded yet — work on it, tag it on a log entry, or hit ✓">? unknown</span>`;
   const d = prioDays(p);
   return `<span class="due ${t}">${t==="ok"?"✓ ":""}${d===0?"today":d+"d ago"}</span>`;
@@ -4211,7 +4222,7 @@ function renderPriorities(){
       </div>
       ${dueBadge(p)}
       <button class="pbtn" data-ptouch="${p.id}" title="Mark as worked on today">✓</button>
-      <button class="pbtn" data-psnooze="${p.id}" title="${prioSnoozed(p)?"Unsnooze":"Snooze for 3 days (planned break)"}">💤</button>
+      <button class="pbtn" data-psnooze="${p.id}" title="${prioSnoozed(p)?"Unsnooze":"Snooze (pick how long)"}">💤</button>
       <button class="pbtn" data-pedit="${p.id}" title="Edit — change rank, tracking, anything">✎</button>
       <button class="pbtn" data-pdel="${p.id}" title="Delete">✕</button>
     </div>`).join("");
@@ -4219,11 +4230,24 @@ function renderPriorities(){
     const p=state.priorities.find(x=>x.id===b.dataset.ptouch);
     if(p){ touchPriority(p); save(); renderPriorities(); renderGlance(); }
   });
-  $$("#prioList [data-psnooze]").forEach(b=>b.onclick=()=>{
+  // 💤 asks how long. It used to be a flat three days, which just meant the alert came back
+  // before the break was over.
+  $$("#prioList [data-psnooze]").forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
     const p=state.priorities.find(x=>x.id===b.dataset.psnooze); if(!p) return;
-    if(prioSnoozed(p)) p.snoozeUntil=null;
-    else { const d=new Date(); d.setDate(d.getDate()+3); p.snoozeUntil=isoDate(d); }
-    save(); renderPriorities(); renderGlance();
+    if(prioSnoozed(p)){ p.snoozeUntil=null; save(); renderPriorities(); renderGlance(); return; }
+    const row = b.closest(".prio-row");
+    if(row.querySelector(".qb-folds")) return;
+    const pick = document.createElement("div");
+    pick.className = "qb-folds";
+    pick.innerHTML = [[3,"3 days"],[7,"A week"],[30,"A month"],[3650,"Until I say"]].map(([d,t])=>
+      `<button class="ghost small" data-snz="${d}">💤 ${t}</button>`).join("") + `<button class="ghost small" data-snz="">Cancel</button>`;
+    row.appendChild(pick);
+    [...pick.querySelectorAll("[data-snz]")].forEach(x=>x.onclick=ev=>{
+      ev.stopPropagation();
+      if(x.dataset.snz){ const d=new Date(); d.setDate(d.getDate()+(+x.dataset.snz)); p.snoozeUntil=isoDate(d); save(); }
+      renderPriorities(); renderGlance();
+    });
   });
   $$("#prioList [data-pedit]").forEach(b=>b.onclick=()=>editPriority(b.dataset.pedit));
   $$("#prioList [data-pdel]").forEach(b=>b.onclick=()=>{
@@ -12815,6 +12839,7 @@ const PATCH_NOTES = [
     "The Coffer's quiz has a Next button instead of jumping forward the moment you tap an answer, and the top of the profit slider now reads 10m an hour, which is what it always was.",
     "Your PC can hand its data to your phone over your own Wi-Fi. Turn on sharing in the desktop app, type the six-character code on the phone once, and from then on the phone finds your PC itself and syncs both ways. Nothing is stored anywhere but your own devices, and the phone keeps working on WiseOldMan when the PC is off.",
     "The day popup's Log button works again, and it's on every day now, not only empty ones. It opens the Journal with that date filled in. Before, it was missing whenever the day had XP from the game, and on empty days it quietly did nothing, because the composer sits in a section the click never opened.",
+    "Your character shows the moment the app opens, from the last stats it saw, instead of reading Add character until WiseOldMan answers. Snoozing a priority now asks how long: three days, a week, a month, or until you say.",
     "The Coffer's quiz asks twelve questions now, and the answers build a page rather than a list: Best for you tonight, with a line on why each one is there, More in your style, Worth training for, Your dailies, and the full list folded away underneath. Ironman hides the buy-and-sell methods, short sessions push raids down, mid gear keeps the wiki's boss rates honest, a goal shows how many hours each method is from it, and skills you enjoy move up.",
     "The Coffer works like the Map now. Pin any method and it sits at the top as a card, click one and a detail panel shows the pay, where it is, every requirement against your levels, the quests it needs and what the wiki says to bring. The quiz's answers also stay on screen as a filter strip you can nudge any time.",
     "Methods are grouped by how far away they are: ready now, within reach (a session or two of work), and further off. Distance is measured in experience, since five levels at 40 is an evening and five at 90 is a month, and quests you still need count too. The same measure is built to be reused elsewhere in the app.",
