@@ -665,6 +665,21 @@ window.__pageRunningFrom = "built-in";
   .cf-slide input[type=range]{width:100%; accent-color:var(--gold)}
   .cf-chipslide{width:110px; accent-color:var(--gold); vertical-align:middle}
   .cf-chips{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+  /* picks: cards that match the quest board, with the pay where the progress bar would be */
+  .cf-card{cursor:pointer}
+  .cf-card.on{border-color:var(--gold)}
+  .cf-cardpay{font-family:var(--font-display); font-weight:700; color:var(--gold); font-size:18px; margin:3px 0 2px}
+  .cf-cardpay .muted{font-size:11px; font-weight:500}
+  .cf-row{cursor:pointer}
+  .cf-row.pinned{border-left:3px solid var(--gold)}
+  .cf-row.sel{border-color:var(--gold)}
+  .cf-row .qp-pin{flex:none}
+  /* the detail panel, laid out like a quest's details on the Map */
+  .cf-detail{border-color:color-mix(in oklab, var(--gold) 45%, var(--border))}
+  .cf-dhead{display:flex; gap:16px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap}
+  .cf-dtitle{font-size:22px; margin:2px 0 0}
+  .cf-dpay{font-family:var(--font-display); font-weight:700; color:var(--gold); font-size:26px; white-space:nowrap}
+  .cf-dpay .muted{font-size:12px; font-weight:500}
   .cf-chip{display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:999px; background:var(--inset); border:1px solid var(--border); font-size:12px}
   .cf-chip b{color:var(--muted); font-weight:600; margin-right:2px}
   .cf-chip button{border:0; background:none; color:var(--text); font:inherit; padding:2px 7px; border-radius:999px; cursor:pointer; opacity:.6}
@@ -9613,7 +9628,7 @@ function reachText(v){
 // skills it wants, a category and how busy it keeps you. We read it, check every skill against
 // your own levels, and let the quiz do the filtering for you. The quiz is only a friendly way to
 // set the filters: they stay on screen afterwards and you can change any of them.
-const MMG_VERSION = 1;
+const MMG_VERSION = 2;   // 2: items and notes from each method's page
 const MMG_PAGE = "Money making guide";
 let mmgBusy = false;
 function mmgDB(){ const d = state.mmgDB; return (d && d.v===MMG_VERSION && d.methods && d.methods.length) ? d : null; }
@@ -9694,6 +9709,8 @@ async function mmgDetails(methods){
         const wt = pg.revisions[0].slots.main.content;
         const field = k => (new RegExp("\\|\\s*" + k + "\\s*=([\\s\\S]*?)\\n\\|", "i").exec(wt) || [])[1] || "";
         m.loc = plain(field("Location")).slice(0, 120);
+        m.items = plain(field("Item")).slice(0, 400);
+        m.other = plain(field("Other")).slice(0, 300);
         m.wildy = /wilderness/i.test(field("Location"));
         const mem = plain(field("Members"));
         if(/^(yes|no)$/i.test(mem)) m.f2p = /^no$/i.test(mem);
@@ -9740,6 +9757,8 @@ const COFFER_QUIZ = [
   {id:"floor",   q:"What's worth your time?", slider:true},
 ];
 const COFFER_DEFAULTS = {members:"yes", style:"any", pace:"any", wildy:"ok", reach:"close", floor:"0"};
+// The quiz's answers double as the filter strip under the picks, so they can be nudged without
+// retaking it.
 // The slider's steps: fine at the bottom where most methods sit, coarser at the top where the
 // difference between 6m and 8m an hour hardly matters.
 const CF_FLOOR = [0,25000,50000,75000,100000,150000,200000,250000,300000,400000,500000,600000,
@@ -9784,11 +9803,77 @@ function mmgEvery(t){
   if(h === 24) return "day";
   return h ? h + "h" : String(t);
 }
+// ---- picks ----
+// The methods you've decided on sit at the top as cards, the way pinned quests sit on the Map's
+// board. Click one for the full picture; the list underneath is for finding the next one.
+function cofferPins(){ const c = state.coffer = state.coffer || {}; c.pins = c.pins || []; return c.pins; }
+function cofferPinToggle(name){
+  const pins = cofferPins(), i = pins.indexOf(name);
+  if(i === -1) pins.push(name); else pins.splice(i, 1);
+  save(); renderCoffer();
+  toast(i === -1 ? "📌 " + name + " added to your picks" : name + " taken off your picks");
+}
+function cofferGuideUrl(m){ return "https://oldschool.runescape.wiki/w/" + encodeURIComponent(m.page || (MMG_PAGE + "/" + m.name)); }
+function cofferPayHtml(m){
+  return m.recur ? `${fmt(m.perRun)}<span class="muted">/run</span>` : `${fmt(m.profit)}<span class="muted">/hr</span>`;
+}
+function cofferTagsHtml(m){
+  return `${m.risky?`<span class="cf-tag wild">${m.wildy?"Wilderness":"Risky"}</span>`:""}
+    ${m.recur && m.every?`<span class="cf-tag">every ${escapeHtml(mmgEvery(m.every))}</span>`:""}
+    ${m.f2p?`<span class="cf-tag">F2P</span>`:""}
+    <span class="cf-tag">${escapeHtml(m.cat)}</span>
+    ${m.pace?`<span class="cf-tag">${escapeHtml(m.pace)}</span>`:""}`;
+}
+// one card on the picks board
+function cofferCardHtml(m, on){
+  const band = reachBand(m.gap.band);
+  return `<div class="qb cf-card ${m.gap.band} ${on?"on":""}" data-cfopen="${escapeHtml(m.name)}">
+    <div class="qb-b">
+      <div class="qb-h"><b>${escapeHtml(m.name)}</b><span class="qb-pill ${m.gap.ok?"ready":m.gap.band==="close"?"prog":"blocked"}">${band.icon} ${band.label}</span></div>
+      <div class="cf-cardpay">${cofferPayHtml(m)}</div>
+      <div class="qb-sub">${m.gap.ok ? (m.loc ? escapeHtml(m.loc) : "Ready when you are") : `Needs ${m.gap.text}`}</div>
+    </div>
+    <div class="qb-acts"><button class="qb-x" data-cfunpin="${escapeHtml(m.name)}" title="Take off your picks">✕</button></div>
+  </div>`;
+}
+// the full picture for one method: pay, where, what it wants from you, what to bring
+function cofferDetailHtml(m){
+  const skills = (m.skills || []).map(r=>{
+    const have = lvlOf(r.skill), ok = have >= r.lvl;
+    return `<div class="qpd-row"><span class="${ok?"":"muted"}">${ok?"✅":"⬜"}</span> ${r.lvl} ${nice(r.skill)}${r.soft?` <span class="muted">recommended</span>`:""}
+      <span class="muted" style="margin-left:auto">${live?`you're ${have}`:""}</span></div>`;
+  }).join("");
+  const quests = (m.quests || []).map(q=>`<div class="qpd-row"><span>${questDone(q)?"✅":"⬜"}</span> ${escapeHtml(qpLabel(q))}</div>`).join("");
+  const band = reachBand(m.gap.band);
+  return `<div class="panel cf-detail" id="cfDetail">
+    <div class="cf-dhead">
+      <div>
+        <div class="sh-eyebrow">${band.icon} ${band.label}${m.gap.ok ? "" : ` · ${xpText(m.gap.effort)} of work away`}</div>
+        <h3 class="cf-dtitle">${escapeHtml(m.name)}</h3>
+        <div class="cf-h" style="margin-top:4px">${cofferTagsHtml(m)}</div>
+      </div>
+      <div class="cf-dpay">${cofferPayHtml(m)}</div>
+    </div>
+    <div class="qpd-grid" style="margin-top:14px">
+      <div class="qpd-sec"><h5>Requirements</h5><div class="qpd-list">${skills || `<div class="muted small">No skill requirements listed.</div>`}</div></div>
+      <div class="qpd-sec"><h5>Quests</h5><div class="qpd-list">${quests || `<div class="muted small">None needed.</div>`}</div></div>
+      <div class="qpd-sec"><h5>Where</h5><div class="small">${m.loc ? escapeHtml(m.loc) : `<span class="muted">The wiki doesn't say.</span>`}</div>
+        ${m.other ? `<h5 style="margin-top:10px">Also</h5><div class="small">${escapeHtml(m.other)}</div>` : ""}</div>
+    </div>
+    ${m.items ? `<div class="qpd-sec" style="margin-top:12px"><h5>Bring</h5><div class="small">${escapeHtml(m.items)}</div></div>` : ""}
+    <div class="row" style="gap:6px; margin-top:14px">
+      <button class="ghost small" data-cfpin="${escapeHtml(m.name)}">${cofferPins().includes(m.name) ? "📌 On your picks" : "📌 Add to picks"}</button>
+      <a class="ghost small" href="${cofferGuideUrl(m)}" target="_blank" rel="noopener">Wiki guide ↗</a>
+      <span class="grow"></span>
+      <button class="ghost small" id="cfClose">Close</button>
+    </div>
+  </div>`;
+}
 function renderCoffer(){
   const el = $("#cofferView"); if(!el) return;
   const db = mmgDB();
   if(!db){
-    el.innerHTML = `<div class="panel"><div class="empty">${mmgBusy ? "Reading the money making guide off the wiki…"
+    el.innerHTML = `<div class="panel"><div class="empty">${mmgBusy ? "Reading the money making guide off the wiki, and every method's own page…"
       : `Couldn't read the guide. <div style="margin-top:9px"><button class="primary" id="cfRetry">📥 Try again</button></div>`}</div></div>`;
     const b = $("#cfRetry"); if(b) b.onclick = ()=>mmgDbEnsure(true);
     return;
@@ -9812,7 +9897,7 @@ function renderCoffer(){
       <div class="cf-foot">
         ${step ? `<button class="ghost small" id="cfBack">← Back</button>` : `<span class="grow"></span>`}
         <span class="grow"></span>
-        <button class="ghost small" id="cfSkip">Skip the questions</button>
+        <button class="ghost small" id="cfSkip" title="The answers shape everything below">Skip for now <span class="muted">(not recommended)</span></button>
       </div></div>`;
     // Tapping picks, Next moves on. Advancing on a tap made it too easy to shoot past a
     // question, especially on a phone.
@@ -9843,11 +9928,14 @@ function renderCoffer(){
   }
   const pf = cofferPrefs();
   const all = db.methods.map(m=>Object.assign({}, m, {gap: mmgGaps(m)}));
+  const byName = {}; all.forEach(m=>{ byName[m.name] = m; });
   const picked = all.filter(m=>cofferMatches(m, pf)).sort((a,b)=>b.profit-a.profit);
   const ready = picked.filter(m=>m.gap.ok && !m.recur);
   const dailies = picked.filter(m=>m.gap.ok && m.recur);
   const byBand = id => picked.filter(m=>m.gap.band===id && !m.recur).sort((a,b)=> a.gap.effort-b.gap.effort || b.profit-a.profit);
   const close = byBand("close"), far = byBand("far");
+  const pins = cofferPins().filter(n=>byName[n]);
+  const sel = state.coffer.sel && byName[state.coffer.sel] ? byName[state.coffer.sel] : null;
 
   const chip = (id, label)=>{
     const q = COFFER_QUIZ.find(x=>x.id===id);
@@ -9860,42 +9948,43 @@ function renderCoffer(){
   const rowHtml = m=>{
     const need = m.gap.text;
     const rec = m.gap.soft.map(g=>`${g.lvl} ${nice(g.skill)}`).join(", ");
-    return `<div class="cf-row ${m.gap.ok?"":"short"}">
-      <div class="cf-gp">${m.recur ? `${fmt(m.perRun)}<span class="muted">/run</span>` : `${fmt(m.profit)}<span class="muted">/hr</span>`}</div>
+    const on = pins.includes(m.name);
+    return `<div class="cf-row ${m.gap.ok?"":"short"} ${on?"pinned":""} ${sel && sel.name===m.name?"sel":""}" data-cfopen="${escapeHtml(m.name)}">
+      <div class="cf-gp">${cofferPayHtml(m)}</div>
       <div class="cf-b">
-        <div class="cf-h"><b>${escapeHtml(m.name)}</b>
-          ${m.risky?`<span class="cf-tag wild">${m.wildy?"Wilderness":"Risky"}</span>`:""}
-          ${m.recur && m.every?`<span class="cf-tag">every ${escapeHtml(mmgEvery(m.every))}</span>`:""}
-          ${m.f2p?`<span class="cf-tag">F2P</span>`:""}
-          <span class="cf-tag">${escapeHtml(m.cat)}</span>
-          <span class="cf-tag">${escapeHtml(m.pace)}</span></div>
+        <div class="cf-h"><b>${escapeHtml(m.name)}</b>${cofferTagsHtml(m)}</div>
         <div class="cf-sub">${need ? `Needs ${need}` : rec ? `Wiki recommends ${rec}` : "You've got the levels for this"}${
           m.gap.ok ? "" : ` <span class="cf-eff">${xpText(m.gap.effort)} of work away</span>`}${
           m.loc ? `<span class="muted"> · ${escapeHtml(m.loc)}</span>` : ""}</div>
       </div>
-      <a class="ghost small" href="https://oldschool.runescape.wiki/w/${encodeURIComponent(m.page || (MMG_PAGE+"/"+m.name))}" target="_blank" rel="noopener">Guide ↗</a>
+      <button class="qp-pin ${on?"on":""}" data-cfpin="${escapeHtml(m.name)}" title="${on?"On your picks":"Add to your picks"}">${on?"📌":"+"}</button>
     </div>`;
   };
-  el.innerHTML = `<div class="panel">
+  const section = (title, sub, list, max, emptyText)=> `<div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>${title}</h3><span class="small muted">${sub}</span></div>
+      <div class="cf-list">${list.slice(0, max).map(rowHtml).join("") || `<div class="empty">${emptyText}</div>`}</div>
+    </div>`;
+
+  el.innerHTML = `
+    <div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>📌 Your picks</h3>
+        <span class="small muted">${pins.length ? `${pins.length} method${pins.length===1?"":"s"} · ${pins.filter(n=>byName[n].gap.ok).length} ready now` : "nothing picked yet"}</span></div>
+      ${pins.length ? `<div class="qb-grid">${pins.map(n=>cofferCardHtml(byName[n], sel && sel.name===n)).join("")}</div>`
+        : `<div class="empty">Hit + on anything below to keep it up here. Your picks hold between visits, like the quest board.</div>`}
+    </div>
+    ${sel ? cofferDetailHtml(sel) : ""}
+    <div class="panel">
       <div class="cf-chips">${chip("members","Account")}${chip("style","Enjoy")}${chip("pace","Pace")}${chip("wildy","Risk")}${chip("reach","Out of reach")}${chip("floor","At least")}</div>
       <div class="row" style="gap:8px; margin-top:10px; align-items:center">
         <span class="small muted grow">${fmt(ready.length + dailies.length)} you can do now, out of ${fmt(db.methods.length)} the wiki lists${live?"":" · load your stats to check them against your levels"}</span>
         <button class="ghost small" id="cfQuiz">↻ Retake the quiz</button>
         <button class="ghost small" id="cfRefresh" title="Re-read the wiki">⟲ Refresh</button>
       </div></div>
-    <div class="panel">
-      <div class="section-title" style="margin-top:0"><h3>✅ Ready now</h3><span class="small muted">${fmt(ready.length)} method${ready.length===1?"":"s"}</span></div>
-      <div class="cf-list">${ready.slice(0,60).map(rowHtml).join("") || `<div class="empty">Nothing matches those answers. Loosen a filter above.</div>`}</div>
-    </div>
-    ${dailies.length ? `<div class="panel">
-      <div class="section-title" style="margin-top:0"><h3>Every day or two</h3><span class="small muted">start it, walk away, come back</span></div>
-      <div class="cf-list">${dailies.slice(0,30).map(rowHtml).join("")}</div></div>` : ""}
-    ${pf.reach!=="ready" && close.length ? `<div class="panel">
-      <div class="section-title" style="margin-top:0"><h3>🎯 Within reach</h3><span class="small muted">a session or two of work</span></div>
-      <div class="cf-list">${close.slice(0,40).map(rowHtml).join("")}</div></div>` : ""}
-    ${pf.reach==="all" && far.length ? `<div class="panel">
-      <div class="section-title" style="margin-top:0"><h3>🧗 Further off</h3><span class="small muted">closest first</span></div>
-      <div class="cf-list">${far.slice(0,40).map(rowHtml).join("")}</div></div>` : ""}`;
+    ${section("✅ Ready now", `${fmt(ready.length)} method${ready.length===1?"":"s"}`, ready, 60, "Nothing matches those filters. Loosen one above.")}
+    ${dailies.length ? section("🌱 Every day or two", "start it, walk away, come back", dailies, 30, "") : ""}
+    ${pf.reach!=="ready" && close.length ? section("🎯 Within reach", "a session or two of work", close, 40, "") : ""}
+    ${pf.reach==="all" && far.length ? section("🧗 Further off", "closest first", far, 40, "") : ""}`;
+
   $$("#cofferView [data-cfset]").forEach(b=>b.onclick=()=>cofferSet(b.dataset.cfset, b.dataset.cfval));
   const fc = $("#cfFloorChip");
   if(fc){
@@ -9903,8 +9992,19 @@ function renderCoffer(){
     fc.oninput = ()=>{ const v = CF_FLOOR[+fc.value]; $("#cfFloorChipVal").textContent = cfGp(v) + (v ? "/hr" : ""); };
     fc.onchange = ()=>cofferSet("floor", String(CF_FLOOR[+fc.value]));
   }
-  $("#cfQuiz").onclick = ()=>{ state.coffer.quizOpen = true; state.coffer.step = 0; save(); renderCoffer(); };
   $("#cfRefresh").onclick = ()=>mmgDbEnsure(true);
+  $("#cfQuiz").onclick = ()=>{ state.coffer.quizOpen = true; state.coffer.step = 0; save(); renderCoffer(); };
+  $$("#cofferView [data-cfpin]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferPinToggle(b.dataset.cfpin); });
+  $$("#cofferView [data-cfunpin]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferPinToggle(b.dataset.cfunpin); });
+  // a row or a card opens the detail panel; opening it again closes it
+  $$("#cofferView [data-cfopen]").forEach(x=>x.onclick=e=>{
+    if(e.target.closest("button, a")) return;
+    const n = x.dataset.cfopen;
+    state.coffer.sel = state.coffer.sel === n ? null : n;
+    save(); renderCoffer();
+    const d = $("#cfDetail"); if(d) d.scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
+  const cl = $("#cfClose"); if(cl) cl.onclick = ()=>{ state.coffer.sel = null; save(); renderCoffer(); };
 }
 
 // ============ THE MAP ============
@@ -12626,6 +12726,7 @@ const PATCH_NOTES = [
     "The Coffer's quiz has a Next button instead of jumping forward the moment you tap an answer, and the top of the profit slider now reads 10m an hour, which is what it always was.",
     "Your PC can hand its data to your phone over your own Wi-Fi. Turn on sharing in the desktop app, type the six-character code on the phone once, and from then on the phone finds your PC itself and syncs both ways. Nothing is stored anywhere but your own devices, and the phone keeps working on WiseOldMan when the PC is off.",
     "The day popup's Log button works again, and it's on every day now, not only empty ones. It opens the Journal with that date filled in. Before, it was missing whenever the day had XP from the game, and on empty days it quietly did nothing, because the composer sits in a section the click never opened.",
+    "The Coffer works like the Map now. Pin any method and it sits at the top as a card, click one and a detail panel shows the pay, where it is, every requirement against your levels, the quests it needs and what the wiki says to bring. The quiz's answers also stay on screen as a filter strip you can nudge any time.",
     "Methods are grouped by how far away they are: ready now, within reach (a session or two of work), and further off. Distance is measured in experience, since five levels at 40 is an evening and five at 90 is a month, and quests you still need count too. The same measure is built to be reused elsewhere in the app.",
     "Each method shows what it pays an hour, where it happens, what you're still short on, and whether the wiki marks it risky. Recurring ones show what a single run pays and how often you can do it again.",
   ]},
