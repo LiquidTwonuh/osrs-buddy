@@ -26,13 +26,18 @@ pub struct BackupFile {
   pub modified: u64,
 }
 
-fn backup_dir() -> Result<PathBuf, String> {
+// Both editions of the app share this code, so every folder is named after the app that's
+// running. Otherwise one edition would read the other's save file on launch.
+fn product_name(app: &tauri::AppHandle) -> String {
+  app.config().product_name.clone().unwrap_or_else(|| "OSRS Buddy".into())
+}
+fn backup_dir(app: &tauri::AppHandle) -> Result<PathBuf, String> {
   let home = std::env::var("USERPROFILE")
     .or_else(|_| std::env::var("HOME"))
     .map_err(|_| "Couldn't find your user folder")?;
   let docs = Path::new(&home).join("Documents");
   let base = if docs.is_dir() { docs } else { Path::new(&home).to_path_buf() };
-  let dir = base.join("OSRS Buddy").join("backups");
+  let dir = base.join(product_name(app)).join("backups");
   fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
   Ok(dir)
 }
@@ -58,15 +63,15 @@ fn safe_name(name: &str) -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn vault_dir() -> Result<String, String> {
-  Ok(backup_dir()?.to_string_lossy().into_owned())
+pub fn vault_dir(app: tauri::AppHandle) -> Result<String, String> {
+  Ok(backup_dir(&app)?.to_string_lossy().into_owned())
 }
 
 // Write a backup, then drop the oldest ones. Writing to a temporary file first means a crash
 // halfway through leaves the previous backup whole instead of a truncated one.
 #[tauri::command]
-pub fn vault_write(name: String, text: String) -> Result<String, String> {
-  let dir = backup_dir()?;
+pub fn vault_write(app: tauri::AppHandle, name: String, text: String) -> Result<String, String> {
+  let dir = backup_dir(&app)?;
   let name = safe_name(&name)?;
   let tmp = dir.join(format!("{name}.part"));
   fs::write(&tmp, text.as_bytes()).map_err(|e| e.to_string())?;
@@ -92,8 +97,8 @@ pub fn vault_write(name: String, text: String) -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn vault_list() -> Result<Vec<BackupFile>, String> {
-  let dir = backup_dir()?;
+pub fn vault_list(app: tauri::AppHandle) -> Result<Vec<BackupFile>, String> {
+  let dir = backup_dir(&app)?;
   let mut out: Vec<BackupFile> = fs::read_dir(&dir)
     .map_err(|e| e.to_string())?
     .flatten()
@@ -110,8 +115,8 @@ pub fn vault_list() -> Result<Vec<BackupFile>, String> {
 }
 
 #[tauri::command]
-pub fn vault_read(name: String) -> Result<String, String> {
-  let dir = backup_dir()?;
+pub fn vault_read(app: tauri::AppHandle, name: String) -> Result<String, String> {
+  let dir = backup_dir(&app)?;
   let name = safe_name(&name)?;
   fs::read_to_string(dir.join(name)).map_err(|e| e.to_string())
 }
@@ -122,26 +127,26 @@ pub fn vault_read(name: String) -> Result<String, String> {
 // DB since it was missing" while CURRENT sat there). Arguing with it is pointless, so the desktop
 // app also keeps its own save file next to the WebView data, written a moment after every change
 // and read back on launch. Whichever copy is newer wins. Same temp-then-rename write as the backups.
-fn state_path() -> Result<PathBuf, String> {
+fn state_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
   let base = std::env::var("LOCALAPPDATA")
     .or_else(|_| std::env::var("HOME"))
     .map_err(|_| "Couldn't find your app data folder")?;
-  let dir = Path::new(&base).join("com.joshf.osrsbuddy");
+  let dir = Path::new(&base).join(&app.config().identifier);
   fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
   Ok(dir.join("state.json"))
 }
 
 #[tauri::command]
-pub fn state_write(text: String) -> Result<(), String> {
-  let path = state_path()?;
+pub fn state_write(app: tauri::AppHandle, text: String) -> Result<(), String> {
+  let path = state_path(&app)?;
   let tmp = path.with_extension("json.part");
   fs::write(&tmp, text.as_bytes()).map_err(|e| e.to_string())?;
   fs::rename(&tmp, &path).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-pub fn state_read() -> Result<Option<String>, String> {
-  let path = state_path()?;
+pub fn state_read(app: tauri::AppHandle) -> Result<Option<String>, String> {
+  let path = state_path(&app)?;
   if !path.is_file() {
     return Ok(None);
   }
