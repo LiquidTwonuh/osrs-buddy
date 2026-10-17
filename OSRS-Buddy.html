@@ -9977,7 +9977,7 @@ function reachText(v){
 // skills it wants, a category and how busy it keeps you. We read it, check every skill against
 // your own levels, and let the quiz do the filtering for you. The quiz is only a friendly way to
 // set the filters: they stay on screen afterwards and you can change any of them.
-const MMG_VERSION = 4;   // 4: skill levels read off each method's own page
+const MMG_VERSION = 5;   // 5: skill levels read off each method's own page
 const MMG_PAGE = "Money making guide";
 let mmgBusy = false;
 function mmgDB(){ const d = state.mmgDB; return (d && d.v===MMG_VERSION && d.methods && d.methods.length) ? d : null; }
@@ -10063,7 +10063,7 @@ async function mmgDetails(methods){
         const pageSkills = [];
         field("Skill").split("\n").forEach(line=>{
           const soft = /recommend/i.test(line) && !/\d+\+?\s*\([^)]*recommend/i.test(line);
-          const re = /\{\{SCP\|([A-Za-z ]+?)(?:\|(\d+))?[^}]*\}\}\s*(\d+)?/g;
+          const re = /\{\{SCP\|([A-Za-z ]+)(?:\|(\d+)\+?)?[^}]*\}\}\s*(\d+)?/g;
           let x;
           while((x = re.exec(line))){
             const k = mmgSkillKey(x[1]);
