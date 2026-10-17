@@ -6,13 +6,14 @@ use std::{
 
 // The RuneLite "Character Export" plugin writes one folder per account, each holding these
 // files. The app only ever reads these names, never anything else on disk.
-const CE_FILES: [&str; 6] = [
+const CE_FILES: [&str; 7] = [
   "quests",
   "collection_log",
   "diaries",
   "combat_achievements",
   "character",
   "equipment",
+  "bank",
 ];
 
 fn modified_ms(p: &Path) -> u64 {

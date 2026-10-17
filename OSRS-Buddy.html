@@ -154,7 +154,7 @@ window.__pageRunningFrom = "built-in";
   .navitem.active{background:var(--active); color:var(--gold); box-shadow:inset 3px 0 0 var(--gold)}
   .navitem .ni-ic{font-size:16px; width:20px; text-align:center; flex:0 0 auto}
   /* group labels — the list passed the point where a flat run of items reads well */
-  /* Scroll sub-nav in the sidebar, only while the Scroll is open */
+  /* Scroll sub-nav in the sidebar, only while Scroll is open */
   .nav-sub{display:flex; flex-direction:column; gap:1px; margin:2px 0 4px 10px;
     padding-left:9px; border-left:1px solid var(--border)}
   .nav-sub.hidden{display:none}
@@ -646,7 +646,7 @@ window.__pageRunningFrom = "built-in";
   .qp-list .qb.over{border-color:var(--gold)}
   .qp-list .qb.drag{opacity:.45}
   .qp-drop{grid-column:1/-1; margin:0}
-  /* the Coffer */
+  /* Coffer */
   .cf-quiz{text-align:center; padding:30px 22px 22px; max-width:620px; margin-left:auto; margin-right:auto}
   .cf-step{font-size:12px; color:var(--muted); letter-spacing:.04em}
   .cf-q{margin:8px 0 18px; font-size:21px}
@@ -667,6 +667,27 @@ window.__pageRunningFrom = "built-in";
   .cf-chips{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
   /* picks: cards that match the quest board, with the pay where the progress bar would be */
   .cf-why{font-size:12px; color:var(--gold); opacity:.9; margin-top:3px}
+  /* Vault */
+  .vt-hero{display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; align-items:flex-end}
+  .vt-total{font-family:var(--font-display); font-weight:700; font-size:34px; color:var(--gold); line-height:1.1; font-variant-numeric:tabular-nums}
+  .vt-total .muted{font-size:14px; font-weight:500}
+  .vt-changes{display:flex; gap:22px; font-size:15px; font-weight:600}
+  .vt-up{color:var(--green, #57e86b)} .vt-down{color:var(--red)}
+  .vt-chart{display:flex; align-items:flex-end; gap:3px; height:90px; margin-top:16px; padding:0 2px}
+  .vt-bar{flex:1; min-width:4px; background:color-mix(in oklab, var(--gold) 70%, var(--panel2)); border-radius:3px 3px 0 0}
+  .vt-bar:last-child{background:var(--gold)}
+  .vt-list{display:flex; flex-direction:column; gap:6px}
+  .vt-row{display:flex; align-items:center; gap:10px; padding:7px 10px; border-radius:10px; border:1px solid var(--border); background:var(--inset)}
+  .vt-ico{width:28px; height:28px; object-fit:contain; flex:none; image-rendering:pixelated}
+  .vt-val{text-align:right; font-weight:700; color:var(--gold); font-variant-numeric:tabular-nums}
+  /* Flip */
+  .fl-list{display:flex; flex-direction:column; gap:6px}
+  .fl-row{display:grid; grid-template-columns:28px minmax(140px,1.4fr) repeat(5, minmax(72px,1fr)) 32px; align-items:center; gap:10px; padding:7px 10px;
+    border-radius:10px; border:1px solid var(--border); background:var(--inset); font-variant-numeric:tabular-nums}
+  .fl-row.on{border-left:3px solid var(--gold)}
+  .fl-col{font-size:13px} .fl-col .small{display:block; font-size:10.5px}
+  .fl-margin{color:var(--gold); font-weight:700} .fl-per{font-weight:700}
+  @media(max-width:820px){ .fl-row{grid-template-columns:28px 1fr 1fr 32px} .fl-row .fl-col:nth-child(3), .fl-row .fl-col:nth-child(4), .fl-row .fl-col:nth-child(6){display:none} }
   .cf-skills{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; max-width:560px; margin:0 auto}
   .cf-skills button{display:inline-flex; align-items:center; gap:6px; padding:7px 11px}
   .cf-skills button.on{border-color:var(--gold); color:var(--gold)}
@@ -684,7 +705,7 @@ window.__pageRunningFrom = "built-in";
   .cf-row.pinned{border-left:3px solid var(--gold)}
   .cf-row.sel{border-color:var(--gold)}
   .cf-row .qp-pin{flex:none}
-  /* the detail panel, laid out like a quest's details on the Map */
+  /* the detail panel, laid out like a quest's details on Map */
   .cf-detail{border-color:color-mix(in oklab, var(--gold) 45%, var(--border))}
   .cf-dhead{display:flex; gap:16px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap}
   .cf-dtitle{font-size:22px; margin:2px 0 0}
@@ -1255,7 +1276,7 @@ window.__pageRunningFrom = "built-in";
   /* no transition here: animating between a length and min() leaves the computed
      value stuck in a half-resolved calc() when the view is hidden at toggle time */
   .content-inner{max-width:1280px; margin:0 auto}
-  /* The Map is a map: it earns more room than the reading views, but not the whole monitor. */
+  /* Map is a map: it earns more room than the reading views, but not the whole monitor. */
   body[data-wide] .content-inner{max-width:1640px}
   /* Prose stays at a readable measure however wide the window gets — long lines are
      genuinely harder to read, so text blocks cap themselves instead of the app doing it. */
@@ -1808,9 +1829,10 @@ window.__pageRunningFrom = "built-in";
       <div class="nav-sec">Planning</div>
       <button class="navitem" data-view="goals"><span class="ni-ic">✅</span>Goals</button>
       <button class="navitem" data-view="start"><span class="ni-ic">🗺️</span>Roadmap</button>
-      <button class="navitem" data-view="quests"><span class="ni-ic">🧭</span>The Map</button>
+      <button class="navitem" data-view="quests"><span class="ni-ic">🧭</span>Map</button>
       <div class="nav-sub hidden" id="navSubMap"></div>
-      <button class="navitem" data-view="coffer"><span class="ni-ic">🪙</span>The Coffer</button>
+      <button class="navitem" data-view="coffer"><span class="ni-ic">🪙</span>Coffer</button>
+      <div class="nav-sub hidden" id="navSubCoffer"></div>
       <button class="navitem" data-view="notes"><span class="ni-ic">📝</span>Notes</button>
       <div class="nav-sec">Tools</div>
       <button class="navitem" data-view="ask"><span class="ni-ic">💬</span>Ask Bud</button>
@@ -1916,7 +1938,7 @@ window.__pageRunningFrom = "built-in";
       <div class="set-sec">
         <div class="set-h">Stats</div>
         <label class="chk small"><input type="checkbox" id="autoRefresh"> Auto-refresh from the hiscores every 15 minutes</label>
-        <label class="chk small"><input type="checkbox" id="autoActivity"> Fill in days from your game stats, so the Scroll shows XP you never logged by hand</label>
+        <label class="chk small"><input type="checkbox" id="autoActivity"> Fill in days from your game stats, so Scroll shows XP you never logged by hand</label>
       </div>
       <div class="set-sec">
         <div class="set-h">RuneLite data</div>
@@ -2223,7 +2245,7 @@ window.__pageRunningFrom = "built-in";
     </div>
     </div>
 
-    <!-- Recap reads the Scroll's own data, so it lives here as another view of it -->
+    <!-- Recap reads Scroll's own data, so it lives here as another view of it -->
     <div class="scroll-sec hidden" data-ssec="recap">
         <div class="panel">
           <div class="section-title" style="margin-top:0"><h3>📊 Recap</h3><span class="small muted" id="recapSub"></span>
@@ -2278,7 +2300,7 @@ window.__pageRunningFrom = "built-in";
     <div class="panel">
       <div class="goals-head">
         <div class="sh-eyebrow" id="mapEyebrow">Planner</div>
-        <h2>🧭 The Map</h2>
+        <h2>🧭 Map</h2>
         <p class="goals-blurb" id="mapBlurb"></p>
         <span class="small muted" id="qpSub"></span>
       </div>
@@ -2304,13 +2326,14 @@ window.__pageRunningFrom = "built-in";
   <div class="view hidden" id="view-coffer">
     <div class="panel">
       <div class="goals-head">
-        <div class="sh-eyebrow">Earn</div>
-        <h2>🪙 The Coffer</h2>
-        <p class="goals-blurb">Every money maker the wiki lists, measured against your own levels. Answer a few questions
-        and it shows the ones worth your time.</p>
+        <div class="sh-eyebrow" id="cofferEyebrow">Earn</div>
+        <h2>🪙 Coffer</h2>
+        <p class="goals-blurb" id="cofferBlurb"></p>
       </div>
     </div>
-    <div id="cofferView"></div>
+    <div class="cf-sec" data-csec="earn"><div id="cofferView"></div></div>
+    <div class="cf-sec hidden" data-csec="vault"><div id="vaultView"></div></div>
+    <div class="cf-sec hidden" data-csec="flip"><div id="flipView"></div></div>
   </div>
 
   <!-- VIEW: GOALS (to-do list + tracked-goal builder) -->
@@ -2991,7 +3014,7 @@ function storageReport(){
 // are ~96% of the bytes and re-download themselves, so they're excluded.
 const BACKUP_KEY = "osrs_todo_backups_v1";   // legacy home; migrated out on first run
 const BACKUP_KEEP = 8;
-const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB"];
+const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap"];
 // Snapshots live in IndexedDB, not localStorage. Keeping eight copies of your data in
 // a 5MB bucket meant the backup system was the thing that would eventually fill it —
 // journal history alone costs ~86KB/year, so the data is fine for decades; nine copies
@@ -3082,7 +3105,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB"];
+const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -3251,7 +3274,7 @@ async function loadCharacter(opts){
     save();
     autoTouchPriorities(); // detect XP/KC gains since last load → mark mapped priorities as worked on
     renderAll();
-    refreshAutoActivity(); // pull WOM history → auto-fill the Scroll heatmap (async, re-renders when done)
+    refreshAutoActivity(); // pull WOM history → auto-fill Scroll heatmap (async, re-renders when done)
     if(opts.silent) { /* no toast on background/auto refresh */ }
     else if(throttled) toast("Already refreshed within the last minute — showing latest stored stats.");
     else if(opts.live!==false) toast("Pulled fresh stats from the game ✓");
@@ -4264,7 +4287,7 @@ function renderGlance(){
   const ps = state.priorities;
   $("#glanceSub").textContent = "";
   if(!ps.length){
-    el.innerHTML = `<div class="empty">No priorities set — add them on the Scroll page and neglect alerts will show up here.</div>`;
+    el.innerHTML = `<div class="empty">No priorities set — add them on Scroll page and neglect alerts will show up here.</div>`;
     return;
   }
   const alerts = ps.filter(p=>!prioSnoozed(p) && prioTier(p)!=="ok").sort((a,b)=> prioScore(b)-prioScore(a));
@@ -4551,7 +4574,7 @@ function drawWeekStrip(id, tbd){
   }
   el.innerHTML = `<div class="week-strip">${cells}</div>`;
 }
-// Home's own range and display switches. Same options as the Scroll, stored separately.
+// Home's own range and display switches. Same options as Scroll, stored separately.
 function renderHomeHeatControls(){
   const r = $("#homeHeatRange"), m = $("#homeHeatStyle");
   if(r){
@@ -6438,7 +6461,7 @@ function renderDevSection(){
   if(!devOn()) return;
   const store = msStore(), dated = Object.values(store).filter(v=>v!=="pre").length;
   const info = $("#devMsInfo");
-  if(info) info.textContent = `${Object.keys(store).length} milestones known · ${dated} dated on the Scroll`;
+  if(info) info.textContent = `${Object.keys(store).length} milestones known · ${dated} dated on Scroll`;
 }
 // A plausible "next" milestone for this account, so the test looks like the real thing.
 function devNextMilestone(){
@@ -8433,7 +8456,7 @@ async function renderArcade(){
 }
 
 // ============ RECAP ============
-// Everything here comes from data the Scroll already collects — per-day XP from your
+// Everything here comes from data Scroll already collects — per-day XP from your
 // game stats, manual log entries, and the milestone record. Nothing new is fetched.
 const RECAP_RANGES = [["week","7 days"],["month","30 days"],["3mo","3 months"],["6mo","6 months"],["1y","1 year"],["all","All time"]];
 function recapWindow(range){
@@ -8586,7 +8609,7 @@ function recapCluesHtml(d){
       : `<div class="small muted" style="text-align:center">No tier breakdown saved for these days.</div>`}`;
 }
 // ---- Recap heatmap ----
-// The same drawers as the Scroll's heatmap, drawn into the Recap and used to choose what the
+// The same drawers as Scroll's heatmap, drawn into the Recap and used to choose what the
 // Recap covers: click a day for just that day, shift-click another for a span, or click a
 // week's bar for that week. The selection isn't saved; changing the range clears it.
 let recapSel = null;   // {from, to}, or null for the whole range
@@ -8603,7 +8626,7 @@ function drawRecapHeat(range){
   heatPrioDays = priorityDoneDays();
   heatMileDays = milestoneDays();
   heatMsDays = {}; Object.keys(msDayMap()).forEach(iso=>{ heatMsDays[iso] = msTierOfDay(iso); });
-  const savedFocus = heatFocus; heatFocus = null;   // the Scroll's skill focus doesn't apply here
+  const savedFocus = heatFocus; heatFocus = null;   // Scroll's skill focus doesn't apply here
   const mode = state.recapMode || "bars";
   try{
     if(mode==="bars"){
@@ -9591,6 +9614,284 @@ function renderSyncSetting(){
   if(up) up.onclick = ()=>{ delete c.peer; save(); renderSyncSetting(); };
 }
 
+// ============ COFFER SECTIONS ============
+// Earn is what you can do for GP. Vault is what you've got, valued live from your bank. Flip is
+// the Grand Exchange's margins, for the trading kind of GP.
+const COFFER_SECTIONS = [
+  {id:"earn",  label:"Earn",  icon:"⛏️"},
+  {id:"vault", label:"Vault", icon:"🏦"},
+  {id:"flip",  label:"Flip",  icon:"📈"},
+];
+const COFFER_BLURB = {
+  earn:  "Every money maker the wiki lists, measured against your own levels. Answer a few questions and it shows the ones worth your time.",
+  vault: "Your bank, valued at today's prices and tracked over time. It updates whenever you open your bank in game.",
+  flip:  "What the Grand Exchange is paying right now: buy and sell prices, the margin after tax, and how much actually trades.",
+};
+function cofferSec(){ const x = state.cofferSec; return COFFER_SECTIONS.some(c=>c.id===x) ? x : "earn"; }
+function setCofferSec(id){ state.cofferSec = id; save(); applyCofferSec(); renderNavSubCoffer(); window.scrollTo(0,0); }
+function applyCofferSec(){
+  const cur = cofferSec();
+  $$("#view-coffer .cf-sec").forEach(el=>el.classList.toggle("hidden", el.dataset.csec !== cur));
+  const eb = $("#cofferEyebrow"); if(eb) eb.textContent = (COFFER_SECTIONS.find(c=>c.id===cur)||{}).label || "";
+  const bl = $("#cofferBlurb"); if(bl) bl.textContent = COFFER_BLURB[cur];
+  if(cur==="vault"){ renderVault(); vaultData(true); }
+  else if(cur==="flip"){ renderFlip(); flipData(true); }
+  else { renderCoffer(); mmgDbEnsure(); }
+}
+function renderNavSubCoffer(){
+  const el = $("#navSubCoffer"); if(!el) return;
+  const on = state.lastView === "coffer";
+  el.classList.toggle("hidden", !on);
+  if(!on){ el.innerHTML = ""; return; }
+  const cur = cofferSec();
+  el.innerHTML = COFFER_SECTIONS.map(c=>`<button class="navsub${c.id===cur?" active":""}" data-csec-nav="${c.id}">${c.icon} ${c.label}</button>`).join("");
+  $$("#navSubCoffer [data-csec-nav]").forEach(b=>b.onclick=()=>{ setCofferSec(b.dataset.csecNav); closeSidebar(); });
+}
+
+// ============ PRICES ============
+// The wiki's real-time price API: the item list (ids, names, buy limits) once a week, and the
+// latest prices plus five-minute volumes when a tab that needs them opens, no more than every
+// few minutes. It's the same source the wiki's own pages show, read by thousands of tools.
+const PRICES_API = "https://prices.runescape.wiki/api/v1/osrs/";
+const PRICEMAP_VERSION = 1;
+let priceLatest = null, priceVol = null, priceAt = 0, priceBusy = false, priceMapBusy = false;
+function priceMap(){ const d = state.priceMap; return (d && d.v===PRICEMAP_VERSION && d.items) ? d : null; }
+async function priceMapEnsure(force){
+  const have = priceMap();
+  if(priceMapBusy || (!force && have && Date.now()-have.ts < 7*86400e3)) return;
+  priceMapBusy = true;
+  try{
+    const r = await fetch(PRICES_API + "mapping");
+    const list = await r.json();
+    const items = {};
+    (list || []).forEach(it=>{ if(it && it.id) items[it.id] = [it.name, it.limit || 0, it.members ? 1 : 0, it.highalch || 0]; });
+    if(Object.keys(items).length > 1000){ state.priceMap = {v:PRICEMAP_VERSION, ts:Date.now(), items}; save(); }
+  }catch(e){ /* offline: the tabs say so */ }
+  priceMapBusy = false;
+}
+async function priceLatestEnsure(force){
+  if(priceBusy || (!force && priceLatest && Date.now()-priceAt < 5*60e3)) return false;
+  priceBusy = true;
+  let ok = false;
+  try{
+    const [a, b] = await Promise.all([fetch(PRICES_API + "latest"), fetch(PRICES_API + "5m")]);
+    const la = await a.json(), vo = await b.json();
+    if(la && la.data){ priceLatest = la.data; priceVol = (vo && vo.data) || {}; priceAt = Date.now(); ok = true; }
+  }catch(e){}
+  priceBusy = false;
+  return ok;
+}
+// a fair single number for an item: the middle of the latest buy and sell
+function itemPrice(id){
+  if(id === 995) return 1;               // coins
+  if(id === 13204) return 1000;          // platinum tokens
+  const p = priceLatest && priceLatest[id]; if(!p) return 0;
+  const h = p.high || 0, l = p.low || 0;
+  return h && l ? Math.round((h + l) / 2) : (h || l);
+}
+function itemName(id){
+  if(id === 995) return "Coins";
+  if(id === 13204) return "Platinum tokens";
+  const m = priceMap(); return m && m.items[id] ? m.items[id][0] : "Item " + id;
+}
+function itemIcon(id){ return `https://static.runelite.net/cache/item/icon/${id}.png`; }
+// the GE's 1% tax on a sale, floored, capped at 5m, and skipped on anything under 50 gp
+function geTax(sell){ return sell < 50 ? 0 : Math.min(Math.floor(sell * 0.01), 5000000); }
+function gpShort(n){
+  n = Math.round(+n || 0);
+  const a = Math.abs(n), sign = n < 0 ? "-" : "";
+  if(a >= 1e9) return sign + (a/1e9).toFixed(2).replace(/\.?0+$/, "") + "b";
+  if(a >= 1e6) return sign + (a/1e6).toFixed(a >= 1e8 ? 0 : 1).replace(/\.0$/, "") + "m";
+  if(a >= 1e4) return sign + Math.round(a/1e3) + "k";
+  return sign + fmt(a);
+}
+
+// ============ VAULT ============
+// Your bank comes through the RuneLite sync as [id, quantity] pairs, stamped with when you last
+// opened it. Valued at the middle of the latest buy and sell, so one spiky trade can't swing it.
+// The history keeps one point whenever the value moves, so the chart shows where you've been.
+let bankBusy = false;
+function vaultBank(){ const ce = state.charExport; return ce && Array.isArray(ce.bank) ? ce.bank : null; }
+function vaultHistory(){ const v = state.vault = state.vault || {}; v.history = v.history || []; return v.history; }
+async function vaultData(force){
+  if(bankBusy) return;
+  bankBusy = true;
+  await priceMapEnsure();
+  await priceLatestEnsure(force);
+  bankBusy = false;
+  renderVault();
+}
+function vaultValue(){
+  const bank = vaultBank(); if(!bank || !priceLatest) return null;
+  let total = 0, priced = 0, unpriced = 0;
+  const rows = bank.map(([id, qty])=>{
+    const p = itemPrice(id), v = p * qty;
+    if(p) priced++; else unpriced++;
+    total += v;
+    return {id, qty, p, v};
+  }).sort((a,b)=>b.v-a.v);
+  return {total, rows, priced, unpriced};
+}
+function vaultRecord(total){
+  const h = vaultHistory(), now = Date.now(), last = h[h.length-1];
+  if(!total) return;
+  // a new point when it's the first, the value moved by more than 1%, or six hours passed
+  if(!last || Math.abs(total-last.v)/Math.max(1,last.v) > 0.01 || now-last.t > 6*3600e3){
+    h.push({t:now, v:total});
+    if(h.length > 400) h.splice(0, h.length-400);
+    save();
+  }
+}
+function vaultChange(sinceMs){
+  const h = vaultHistory(); if(h.length < 2) return null;
+  const cut = Date.now() - sinceMs, cur = h[h.length-1].v;
+  let base = null;
+  for(const pt of h){ if(pt.t <= cut) base = pt; }
+  if(!base) base = h[0];
+  if(base.t > cut && h.length < 2) return null;
+  return {diff: cur - base.v, pct: base.v ? (cur-base.v)/base.v*100 : 0};
+}
+function renderVault(){
+  const el = $("#vaultView"); if(!el) return;
+  const bank = vaultBank();
+  if(!bank){
+    el.innerHTML = `<div class="panel"><div class="empty">${ceDesktop()
+      ? "Open your bank in game while RuneLite's Character Export plugin is running, and it shows up here. The desktop app watches the folder on its own."
+      : "Import RuneLite's <b>bank.json</b> from Settings and your bank shows up here. On the desktop app it updates itself."}</div></div>`;
+    return;
+  }
+  if(!priceLatest){
+    el.innerHTML = `<div class="panel"><div class="empty">${priceBusy ? "Fetching today's prices…" : `Couldn't fetch prices. <div style="margin-top:9px"><button class="primary" id="vtRetry">Try again</button></div>`}</div></div>`;
+    const b = $("#vtRetry"); if(b) b.onclick = ()=>vaultData(true);
+    return;
+  }
+  const v = vaultValue();
+  vaultRecord(v.total);
+  const day = vaultChange(86400e3), week = vaultChange(7*86400e3);
+  const chg = c => c ? `<span class="${c.diff>=0?"vt-up":"vt-down"}">${c.diff>=0?"+":""}${gpShort(c.diff)} <span class="muted">(${c.pct>=0?"+":""}${c.pct.toFixed(1)}%)</span></span>` : `<span class="muted">not enough history yet</span>`;
+  const when = state.charExport.bankAt ? new Date(state.charExport.bankAt) : null;
+  const top = v.rows.filter(r=>r.v > 0).slice(0, 12);
+  const hist = vaultHistory().slice(-40);
+  const hi = Math.max(...hist.map(h=>h.v), 1);
+  el.innerHTML = `<div class="panel">
+      <div class="vt-hero">
+        <div><div class="sh-eyebrow">Bank value</div><div class="vt-total">${fmt(v.total)} <span class="muted">gp</span></div>
+          <div class="small muted">${when ? `as of ${fmtDay(isoDate(when))} at ${when.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}` : ""} · ${fmt(bank.length)} items, ${v.unpriced ? `${v.unpriced} untradeable or unpriced` : "all priced"}</div></div>
+        <div class="vt-changes"><div><span class="small muted">Today</span><br>${chg(day)}</div><div><span class="small muted">This week</span><br>${chg(week)}</div></div>
+      </div>
+      ${hist.length > 1 ? `<div class="vt-chart">${hist.map(h=>`<div class="vt-bar" style="height:${Math.max(3, Math.round(h.v/hi*100))}%" title="${new Date(h.t).toLocaleString()} · ${fmt(h.v)} gp"></div>`).join("")}</div>
+        <div class="row small muted" style="justify-content:space-between"><span>${new Date(hist[0].t).toLocaleDateString()}</span><span>${new Date(hist[hist.length-1].t).toLocaleDateString()}</span></div>` : `<div class="small muted" style="margin-top:8px">The chart draws itself as the value changes. Check back after a few bank trips.</div>`}
+    </div>
+    <div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>Biggest holdings</h3><span class="small muted">what's carrying the number</span></div>
+      <div class="vt-list">${top.map(r=>`<div class="vt-row">
+          <img class="vt-ico" src="${itemIcon(r.id)}" alt="" loading="lazy">
+          <div class="grow" style="min-width:0"><b>${escapeHtml(itemName(r.id))}</b><div class="small muted">${fmt(r.qty)} × ${fmt(r.p)} gp</div></div>
+          <div class="vt-val">${gpShort(r.v)}<div class="small muted">${(r.v/v.total*100).toFixed(1)}%</div></div>
+        </div>`).join("")}</div>
+      <p class="small muted" style="margin:10px 0 0">Prices are the middle of the latest Grand Exchange buy and sell. Untradeable items count as nothing here, which is why a bank full of capes can look poor.</p>
+    </div>`;
+}
+
+// ============ FLIP ============
+// A margins table, not a bot. It shows what the last trades suggest you could buy at, sell at,
+// and keep after tax, and how much of the item actually moves. You do the trading.
+let flipBusy = false;
+function flipPrefs(){
+  const f = state.flip = state.flip || {};
+  f.budget = f.budget || "any"; f.vol = f.vol || "100"; f.sort = f.sort || "limit"; f.watch = f.watch || [];
+  return f;
+}
+async function flipData(force){
+  if(flipBusy) return;
+  flipBusy = true;
+  await priceMapEnsure();
+  await priceLatestEnsure(force);
+  flipBusy = false;
+  renderFlip();
+}
+function flipRows(){
+  const m = priceMap(); if(!m || !priceLatest) return [];
+  const pf = flipPrefs(), members = cofferPrefs().members !== "no";
+  const out = [];
+  for(const id in priceLatest){
+    const it = m.items[id]; if(!it) continue;
+    if(!members && it[2]) continue;
+    const p = priceLatest[id], buy = p.low || 0, sell = p.high || 0;
+    if(!buy || !sell || sell <= buy) continue;
+    // stale quotes (hours old) say nothing about now
+    const age = Math.max(Date.now()/1000 - (p.highTime||0), Date.now()/1000 - (p.lowTime||0));
+    if(age > 6*3600) continue;
+    const vol5 = priceVol && priceVol[id] ? (priceVol[id].highPriceVolume||0) + (priceVol[id].lowPriceVolume||0) : 0;
+    const perHour = vol5 * 12;
+    const margin = sell - geTax(sell) - buy;
+    if(margin <= 0) continue;
+    const limit = it[1] || 0;
+    const perLimit = margin * (limit ? Math.min(limit, Math.max(1, perHour)) : 1);
+    out.push({id:+id, name:it[0], buy, sell, margin, roi: margin/buy*100, perHour, limit, perLimit, members: !!it[2]});
+  }
+  return out;
+}
+function flipFiltered(rows){
+  const pf = flipPrefs();
+  const maxBuy = pf.budget === "any" ? Infinity : +pf.budget;
+  const minVol = +pf.vol || 0;
+  let list = rows.filter(r=>r.buy <= maxBuy && r.perHour >= minVol);
+  const key = {limit:"perLimit", margin:"margin", roi:"roi", volume:"perHour"}[pf.sort] || "perLimit";
+  list.sort((a,b)=>b[key]-a[key]);
+  return list;
+}
+function flipRowHtml(r, watching){
+  return `<div class="fl-row ${watching?"on":""}">
+    <img class="vt-ico" src="${itemIcon(r.id)}" alt="" loading="lazy">
+    <div class="fl-name"><b>${escapeHtml(r.name)}</b><div class="small muted">limit ${r.limit ? fmt(r.limit) : "none"} · ${r.members ? "members" : "F2P"}</div></div>
+    <div class="fl-col"><span class="small muted">buy</span>${fmt(r.buy)}</div>
+    <div class="fl-col"><span class="small muted">sell</span>${fmt(r.sell)}</div>
+    <div class="fl-col fl-margin"><span class="small muted">margin</span>+${fmt(r.margin)}<div class="small muted">${r.roi.toFixed(1)}%</div></div>
+    <div class="fl-col"><span class="small muted">traded/hr</span>${gpShort(r.perHour)}</div>
+    <div class="fl-col fl-per"><span class="small muted">per limit</span>${gpShort(r.perLimit)}</div>
+    <button class="qp-pin ${watching?"on":""}" data-flwatch="${r.id}" title="${watching?"Watching":"Watch this item"}">${watching?"👁":"+"}</button>
+  </div>`;
+}
+function renderFlip(){
+  const el = $("#flipView"); if(!el) return;
+  const m = priceMap();
+  if(!m || !priceLatest){
+    el.innerHTML = `<div class="panel"><div class="empty">${(priceBusy||priceMapBusy) ? "Fetching the Grand Exchange…" : `Couldn't fetch prices. <div style="margin-top:9px"><button class="primary" id="flRetry">Try again</button></div>`}</div></div>`;
+    const b = $("#flRetry"); if(b) b.onclick = ()=>flipData(true);
+    return;
+  }
+  const pf = flipPrefs();
+  const all = flipRows(), list = flipFiltered(all);
+  const byId = {}; all.forEach(r=>{ byId[r.id] = r; });
+  const watch = pf.watch.map(id=>byId[id]).filter(Boolean);
+  const seg = (k, label, opts)=>`<span class="cf-chip"><b>${label}</b>${opts.map(([v,t])=>`<button class="${pf[k]===v?"on":""}" data-flset="${k}" data-flval="${v}">${t}</button>`).join("")}</span>`;
+  el.innerHTML = `<div class="panel">
+      <div class="cf-chips">
+        ${seg("budget","Buy under",[["any","Anything"],["100000","100k"],["1000000","1m"],["10000000","10m"],["100000000","100m"]])}
+        ${seg("vol","Trades/hr",[["0","Any"],["100","100+"],["1000","1k+"],["10000","10k+"]])}
+        ${seg("sort","Sort by",[["limit","Per limit"],["margin","Margin"],["roi","ROI"],["volume","Volume"]])}
+      </div>
+      <div class="row" style="gap:8px; margin-top:10px; align-items:center">
+        <span class="small muted grow">${fmt(list.length)} items with a margin right now · prices from ${new Date(priceAt).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}${cofferPrefs().members==="no" ? " · F2P items only, from your Earn answers" : ""}</span>
+        <button class="ghost small" id="flRefresh">⟲ Refresh prices</button>
+      </div></div>
+    ${watch.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>👁 Watching</h3><span class="small muted">${watch.length} item${watch.length===1?"":"s"}</span></div>
+      <div class="fl-list">${watch.map(r=>flipRowHtml(r, true)).join("")}</div></div>` : ""}
+    <div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>📈 Margins</h3><span class="small muted">after the 1% tax · "per limit" is the margin times how many you could move in an hour, capped by the buy limit</span></div>
+      <div class="fl-list">${list.slice(0, 50).map(r=>flipRowHtml(r, pf.watch.includes(r.id))).join("") || `<div class="empty">Nothing matches. Loosen a filter.</div>`}</div>
+      <p class="small muted" style="margin:10px 0 0">Prices come from the wiki's real-time API and change by the minute. A margin is what the last trades suggest, not a promise: the gap can close while your offer sits.</p>
+    </div>`;
+  $$("#flipView [data-flset]").forEach(b=>b.onclick=()=>{ pf[b.dataset.flset] = b.dataset.flval; save(); renderFlip(); });
+  $("#flRefresh").onclick = ()=>flipData(true);
+  $$("#flipView [data-flwatch]").forEach(b=>b.onclick=()=>{
+    const id = +b.dataset.flwatch, i = pf.watch.indexOf(id);
+    if(i === -1) pf.watch.push(id); else pf.watch.splice(i, 1);
+    save(); renderFlip();
+  });
+}
+
 // ============ REACH ============
 // "Can I do this yet, and if not, how far off is it?" asked once, in one place, so every part of
 // the app answers it the same way. Hand it requirements, get back what's missing, how much work
@@ -9882,7 +10183,7 @@ function mmgEvery(t){
   return h ? h + "h" : String(t);
 }
 // ---- picks ----
-// The methods you've decided on sit at the top as cards, the way pinned quests sit on the Map's
+// The methods you've decided on sit at the top as cards, the way pinned quests sit on Map's
 // board. Click one for the full picture; the list underneath is for finding the next one.
 function cofferPins(){ const c = state.coffer = state.coffer || {}; c.pins = c.pins || []; return c.pins; }
 function cofferPinToggle(name){
@@ -11512,7 +11813,7 @@ async function budTrainAnswer(sk){
   if(db){
     const rows = Object.keys(db.quests).map(n=>({n, xp:(db.quests[n].rewards||{})[sk]||0}))
       .filter(r=>r.xp>0 && !questDone(r.n)).sort((a,b)=>b.xp-a.xp).slice(0,3);
-    if(rows.length) qline = ` Quests still holding ${nice(sk)} XP for you: ${rows.map(r=>`<b>${qpLabel(r.n)}</b> (+${fmt(r.xp)})`).join(" · ")} — the Map charts the route.`;
+    if(rows.length) qline = ` Quests still holding ${nice(sk)} XP for you: ${rows.map(r=>`<b>${qpLabel(r.n)}</b> (+${fmt(r.xp)})`).join(" · ")} — Map charts the route.`;
   }
   let path = "", link = "";
   const lad = await budTrainLadder(sk);
@@ -11790,14 +12091,14 @@ function openSkillModal(key){
   } else {
     quests = `<div class="b-note">${qdbBuilding?"Quest data is still loading — check back in a moment.":"Quest data hasn't loaded yet — it'll fetch automatically."}</div>`;
   }
-  // ⭐ = a skill-tag priority the Scroll watches: XP in the skill counts as working on
+  // ⭐ = a skill-tag priority Scroll watches: XP in the skill counts as working on
   // it, rank 8 so starred-skill days earn the gold ring on the heatmap
   const tagKey = skillColorKey(key);
   const starred = state.priorities.some(p=>p.kind==="tag" && p.metric===tagKey);
   $("#skillModal").innerHTML = `
     <div class="dp-head"><span><img src="${skillIconUrl(key)}" alt="" width="20" height="20" style="vertical-align:-4px"> ${nice(key)}</span>
       <span style="margin-left:auto; display:flex; gap:2px">
-        <button class="dp-x" id="skillStar" title="${starred?"Starred — the Scroll is watching this skill. Click to unstar.":"Star this skill — makes it a priority the Scroll watches"}">${starred?"⭐":"☆"}</button>
+        <button class="dp-x" id="skillStar" title="${starred?"Starred — Scroll is watching this skill. Click to unstar.":"Star this skill — makes it a priority Scroll watches"}">${starred?"⭐":"☆"}</button>
         <button class="dp-x" id="skillX" aria-label="Close">✕</button>
       </span></div>
     <div class="sk-hero">
@@ -11828,7 +12129,7 @@ function openSkillModal(key){
         label: tagKey==="Combat" ? "Combat" : nice(key),
         kind:"tag", metric:tagKey, weight:8,
         createdAt:todayISO(), lastTouched:null, lastValue:null, snoozeUntil:null});
-      toast("⭐ "+nice(key)+" is now a priority — the Scroll will watch it");
+      toast("⭐ "+nice(key)+" is now a priority — Scroll will watch it");
     }
     save(); renderPriorities(); renderGlance(); renderPrioPicker();
     openSkillModal(key); // repaint with the new star state
@@ -11922,7 +12223,7 @@ $("#themeBtn").onclick = ()=>{
 // ============ INSIGHTS ENGINE ============
 // One place that reads your stats, history and goals and works out what's worth saying.
 // Generators are pure: they take a context and return insight cards. Nothing renders in
-// here — the Scroll draws them, and later features (the GP hub, quest detection) can ask
+// here — Scroll draws them, and later features (the GP hub, quest detection) can ask
 // the same engine rather than each growing their own copy of "what's interesting".
 //
 // An insight is {id, kind, icon, title, body, weight, act?}. Weight sorts them; the
@@ -12831,21 +13132,23 @@ function renderPrestige(){
 // ============ PATCH NOTES ============
 const APP_VERSION = "1.8";
 const PATCH_NOTES = [
-  {v:"1.8", date:"in progress", title:"The Coffer", notes:[
-    "New section: the Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
+  {v:"1.8", date:"in progress", title:"Coffer", notes:[
+    "New section: Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
     "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
     "The phone can take the app itself from your PC. Pair them, tap Update app from PC, and it keeps that copy and runs it from then on, so a change doesn't mean installing an APK again. If a copy ever fails to load, the built-in one comes back by itself.",
     "The phone layout is tighter: the menu button clears the camera cutout, panels and headings take less room, and all 24 skills fit on one screen instead of three.",
-    "The Coffer's quiz has a Next button instead of jumping forward the moment you tap an answer, and the top of the profit slider now reads 10m an hour, which is what it always was.",
+    "Coffer's quiz has a Next button instead of jumping forward the moment you tap an answer, and the top of the profit slider now reads 10m an hour, which is what it always was.",
     "Your PC can hand its data to your phone over your own Wi-Fi. Turn on sharing in the desktop app, type the six-character code on the phone once, and from then on the phone finds your PC itself and syncs both ways. Nothing is stored anywhere but your own devices, and the phone keeps working on WiseOldMan when the PC is off.",
     "The day popup's Log button works again, and it's on every day now, not only empty ones. It opens the Journal with that date filled in. Before, it was missing whenever the day had XP from the game, and on empty days it quietly did nothing, because the composer sits in a section the click never opened.",
     "Your character shows the moment the app opens, from the last stats it saw, instead of reading Add character until WiseOldMan answers. Snoozing a priority now asks how long: three days, a week, a month, or until you say.",
-    "The Coffer's quiz asks twelve questions now, and the answers build a page rather than a list: Best for you tonight, with a line on why each one is there, More in your style, Worth training for, Your dailies, and the full list folded away underneath. Ironman hides the buy-and-sell methods, short sessions push raids down, mid gear keeps the wiki's boss rates honest, a goal shows how many hours each method is from it, and skills you enjoy move up.",
-    "The Coffer works like the Map now. Pin any method and it sits at the top as a card, click one and a detail panel shows the pay, where it is, every requirement against your levels, the quests it needs and what the wiki says to bring. The quiz's answers also stay on screen as a filter strip you can nudge any time.",
+    "Coffer has two more tabs. Vault values your bank at today's prices, tracks it over time, and shows what's carrying the number. Flip is a Grand Exchange margins table: buy, sell, the margin after tax, how much trades an hour, and a watchlist. Your bank comes through the RuneLite sync whenever you open it in game.",
+    "Map, Coffer and Scroll dropped their articles. It reads better.",
+    "Coffer's quiz asks twelve questions now, and the answers build a page rather than a list: Best for you tonight, with a line on why each one is there, More in your style, Worth training for, Your dailies, and the full list folded away underneath. Ironman hides the buy-and-sell methods, short sessions push raids down, mid gear keeps the wiki's boss rates honest, a goal shows how many hours each method is from it, and skills you enjoy move up.",
+    "Coffer works like Map now. Pin any method and it sits at the top as a card, click one and a detail panel shows the pay, where it is, every requirement against your levels, the quests it needs and what the wiki says to bring. The quiz's answers also stay on screen as a filter strip you can nudge any time.",
     "Methods are grouped by how far away they are: ready now, within reach (a session or two of work), and further off. Distance is measured in experience, since five levels at 40 is an evening and five at 90 is a month, and quests you still need count too. The same measure is built to be reused elsewhere in the app.",
     "Each method shows what it pays an hour, where it happens, what you're still short on, and whether the wiki marks it risky. Recurring ones show what a single run pays and how often you can do it again.",
   ]},
-  {v:"1.7", date:"September 24, 2026", title:"RuneLite data, The Map, and XP on the right day", notes:[
+  {v:"1.7", date:"September 24, 2026", title:"RuneLite data, Map, and XP on the right day", notes:[
     "The desktop app keeps your RuneLite data in sync on its own. Point it at the Character Export folder once in Setup, and while the app is open it picks up newly finished quests, boss drops and diaries within a few seconds of the plugin saving them.",
     "Setup finds the plugin's folder by itself when it's in the usual place. If it isn't, paste the path.",
     "Settings has a new RuneLite data section. It says plainly when you're connected, which folder and account it syncs from and when it last updated, with Sync now, Pause and Change folder. Changing the folder opens its own RuneLite window instead of walking through Setup again.",
@@ -12856,12 +13159,12 @@ const PATCH_NOTES = [
     "The Collection log is now part of a new Achievements tab, with Diaries and Combat achievements beside it in the sidebar.",
     "Diaries lists every task in all twelve regions from the OSRS Wiki, with skill and quest requirements checked against your character, and ticks off the tasks you've done from the Character Export plugin. Open a diary's journal in game to load its tasks.",
     "Combat achievements lists every task from the OSRS Wiki by tier and boss, with points, type filters, search and an option to hide what you've done, and marks the tasks you've completed.",
-    "The quest planner is now The Map, with its own tabs. The Planner works exactly as it did, Folders shows your board and your own named lists together, with quests dragged between them, and a 📁 button on every quest in the planner files one straight into a folder, and the Optimal guide follows the wiki's quest order, ticking off quests, levels and diaries from your own data. There's an ironman order too.",
+    "The quest planner is now Map, with its own tabs. The Planner works exactly as it did, Folders shows your board and your own named lists together, with quests dragged between them, and a 📁 button on every quest in the planner files one straight into a folder, and the Optimal guide follows the wiki's quest order, ticking off quests, levels and diaries from your own data. There's an ironman order too.",
     "XP lands on the day you earned it. The hiscores only update when you log out, so a session running past midnight, or a day you never logged out, used to count on the next day. With RuneLite connected in the desktop app, OSRS Buddy now reads your XP as it changes and splits it at midnight. WiseOldMan still covers mobile, boss kills and clues.",
     "Auto-refresh asks WiseOldMan every 15 minutes instead of every 5, and not at all while RuneLite shows you playing on this PC. Each ask saves a snapshot on WiseOldMan, so the old pace filled your history with hundreds of identical ones a day.",
     "Importing a backup now brings everything across: your WiseOldMan day history, achievement edits, RuneLite data, quest board and settings. Before, it only carried goals, the journal and quest ticks, so a backup opened on a new computer lost most of its history.",
     "A quick refresh could replace a full day of XP with just its last few hours. Each day now keeps its fuller record.",
-    "Heatmaps open as bars over the last 30 days, on the Scroll, on Home and in the Recap. The Bars button comes first, and calendar and every other range are one click away.",
+    "Heatmaps open as bars over the last 30 days, on Scroll, on Home and in the Recap. The Bars button comes first, and calendar and every other range are one click away.",
     "The Recap has its own heatmap at the top, with a time range and a calendar or bars view. Click a day to see the Recap for just that day, shift-click a second day for a span, or click a week's bar for that week. A single day also shows its badges, and any selection lists the journal entries written in it.",
     "Boss kills, questing, clues and High Alch no longer take a colour on the heatmap, which now shows skill colours only. Click a day to see them as badges with their in-game icons, like 3 boss kills or 2 clues. The Recap folds High Alch into the Magic bar as a gold stripe, and the skill colours are spread further apart so no two look alike.",
     "Combat XP is split by skill. Attack, Strength, Defence, Ranged, Magic and Hitpoints each have their own colour on the heatmap, in the Recap and in Wrapped, instead of sharing one Combat bar, so you can see where the XP actually went. Boss kills and entries you log as Combat still show as Combat.",
@@ -12876,19 +13179,19 @@ const PATCH_NOTES = [
     "If the import disagrees with a quest you marked as done yourself, it lists the conflict and lets you choose, quest by quest. Nothing is unticked unless you pick it.",
     "Quests you've started in game show as In progress in the quest planner: in search, on the board, in quest details and on the route.",
   ]},
-  {v:"1.5", date:"September 13, 2026", title:"The Scroll, upgraded", notes:[
-    "The Scroll opens with Highlights, cards drawn from your own history. Streaks and personal records, this week against last, which skill is eating your month, one that's gone quiet, and how close you are to the next level worth having. Suggestions come with a button that turns them into a tracked goal.",
+  {v:"1.5", date:"September 13, 2026", title:"Scroll, upgraded", notes:[
+    "Scroll opens with Highlights, cards drawn from your own history. Streaks and personal records, this week against last, which skill is eating your month, one that's gone quiet, and how close you are to the next level worth having. Suggestions come with a button that turns them into a tracked goal.",
     "Added the Trophy cabinet: milestones that matter, sorted by how close you are. Barrows gloves, the quest cape, fire and infernal capes, base 60s through 90s, the raids, Piety and Rigour, and more, each with real item art, what it needs, and what you're still short on. Things the hiscores can't see, like graceful and diaries, you tick yourself.",
     "The heatmap got a visual pass. Cells are outlined in their own colour instead of near-black, with a soft sheen and a lift on hover, replacing the old blurred glow that muddied the colours.",
     "Base-level milestones show real progress, so you get 'Base 60s, 96%, needs 60 Sailing' rather than a yes or no.",
     "The Overview ends with a Quick entry box. Type what you did and press Log it (or Enter), and a log window opens with the date, skills, milestone and priorities. It picks skills out of what you typed, so 'questing and a slayer task' already has Questing and Slayer ticked. Untick anything it guessed wrong. Ctrl+Enter saves, Esc closes.",
     "Date pickers match the rest of the app now, in your theme's colours, instead of the browser's white box.",
-    "Both heatmaps, on the Scroll and on Home, open on All time every time you go to them. Pick another range and it holds while you stay on that page. There's also a new 1 year option.",
+    "Both heatmaps, on Scroll and on Home, open on All time every time you go to them. Pick another range and it holds while you stay on that page. There's also a new 1 year option.",
     "Long ranges on the bar chart stay readable. When there isn't room for a full bar per day, as at six months or a year on a normal window, each bar becomes one week in the same style, and the chart says so underneath. Hovering a week shows its dates and skills, and clicking it opens its busiest day.",
     "The bar chart is slimmer. On short ranges each bar used to stretch across its whole column, so a month came out as thirty wide blocks. Bars are now capped to a slim width with the gap as spacing, and days with several skills show them as stacked bands instead of diagonal stripes.",
     "The recap now lists kill counts for every boss you fought in the window, with each boss's all-time count beside it, and breaks your clues down by tier.",
     "Fixed clue scrolls being counted twice. The hiscores list each clue under its tier and again in the all-clues total, and both were being added. Recent days are rebuilt from your stats history on the next refresh, and older days are corrected.",
-    "The Scroll has a proper title banner, and the row of section tabs is gone from the top of the page. Switch sections from the sidebar, which already listed them. Recap is no longer a tab. It has its own panel under the heatmap: click anywhere on it. It shows three of your standout numbers from the last 30 days, chosen by how much they stand out, and a Back button inside the recap takes you out again.",
+    "Scroll has a proper title banner, and the row of section tabs is gone from the top of the page. Switch sections from the sidebar, which already listed them. Recap is no longer a tab. It has its own panel under the heatmap: click anywhere on it. It shows three of your standout numbers from the last 30 days, chosen by how much they stand out, and a Back button inside the recap takes you out again.",
     "The XP tile above the heatmap says 'xp this week' and 'xp in 3 months' rather than 'xp over week'.",
     "Fixed percentages that were worked out from levels instead of experience. Levels are not evenly spaced, so level 92 is only half the XP of a 99. Total level progress, trophy progress and max cape progress now all measure XP, and a trophy like Rigour shows how much of the Prayer XP you have rather than one requirement out of two.",
     "Sailing is now counted in max cape and max total level figures, which were still assuming 23 skills.",
@@ -12908,9 +13211,9 @@ const PATCH_NOTES = [
     "Pin to board on a charted quest now adds it to your quest board. Before, it said pinned but the quest never showed up. Any quest's details also have a Pin button.",
     "With two or more quests pinned, a row of tabs above the chart lets you switch between them, with arrows to step through in order.",
     "A charted quest's details (requirements, the quests it needs, what it opens up, rewards) now sit at the top of the plan instead of under the tree.",
-    "The Activity section on Home now has the same range and display controls as the Scroll, so you can put it on bars instead of the calendar. Home keeps its own two settings, since it's a different shape of space.",
+    "The Activity section on Home now has the same range and display controls as Scroll, so you can put it on bars instead of the calendar. Home keeps its own two settings, since it's a different shape of space.",
     "Fixed the heatmap being silently cut off on narrow windows. Month labels were overriding their own column width, the bar chart ran out of room for its gaps before its bars, and the week strip assumed a cell size that did not always fit. All three are sized to the space now, and the bar chart scrolls rather than clipping when a range genuinely cannot fit.",
-    "The Scroll is split into sections now: Overview, Trophies, Journal, Priorities and Recap, with sub-tabs in the sidebar. The heatmap leads, because it's the reason anyone opens the page, and it sits under a row of numbers: streak, active days, XP in range, best single day.",
+    "Scroll is split into sections now: Overview, Trophies, Journal, Priorities and Recap, with sub-tabs in the sidebar. The heatmap leads, because it's the reason anyone opens the page, and it sits under a row of numbers: streak, active days, XP in range, best single day.",
   ]},
   {v:"1.4", date:"September 9, 2026", title:"Gielinor Survivors and boss drops", notes:[
     "The heatmap can focus on a single skill. Pick one from the Show dropdown and the map recolours by how much of it you did each day, dark for a quiet session through to full colour for your biggest. It works in all three views — calendar, week and bars — and the legend turns into the intensity key.",
@@ -12932,7 +13235,7 @@ const PATCH_NOTES = [
     "Finishing every step of a to-do no longer marks the to-do itself as done. Steps are usually prerequisites — completing them means you're ready to start, not that you've finished. They now drive the progress bar, and you tick the goal off yourself. Anything you previously completed this way will show full progress but untick'd; tick the ones you actually finished.",
     "To-do items on Home can be ticked off in place, and their steps checked without leaving the page.",
     "Reorganised the sidebar into sections, and moved the games into a Game corner so more can be added without crowding it.",
-    "Recap moved onto the Scroll page as a Journal / Recap switch, since it reads the same data. Patch notes moved into Settings.",
+    "Recap moved onto Scroll page as a Journal / Recap switch, since it reads the same data. Patch notes moved into Settings.",
     "Added two themes: Dark, and Pitch black for OLED screens.",
     "Data snapshots moved out of the browser's small storage allowance and into proper local storage. At eight snapshots they were the only thing that would ever have filled it — your journal alone would take decades.",
     "If storage does fill, the app now clears the quest cache to make room rather than failing to save. Settings shows what's using space.",
@@ -12946,7 +13249,7 @@ const PATCH_NOTES = [
     "Reworked the Home layout. Skills now takes the full width as the main block, with clue scrolls and boss kill counts paired underneath — previously they sat in a side column that left a tall empty gap on a large window.",
   ]},
   {v:"1.3", date:"August 8, 2026", title:"Milestones, Recap, and a rhythm game", notes:[
-    "Milestones are detected automatically from your stats — every 100 total levels, combat milestones, base levels, and every 99. Crossing one shows a celebration next time you open the app, and the day is marked on the Scroll. Existing milestones in your history are found and marked once, without a celebration.",
+    "Milestones are detected automatically from your stats — every 100 total levels, combat milestones, base levels, and every 99. Crossing one shows a celebration next time you open the app, and the day is marked on Scroll. Existing milestones in your history are found and marked once, without a celebration.",
     "Added Recap: your activity summarised over a week, month, three months, six months or all time. Total experience with a comparison against the previous period, days played, longest streak, biggest day, a ranked breakdown of where the time went, and the milestones you hit.",
     "Added Dance Dance RuneScape. Load your own music and the game charts it by listening to the track — no beatmap needed. Four difficulties set by note density, adjustable scroll speed and sync offset, rebindable keys, pause and restart, and a library that remembers your songs and best scores.",
     "The whole app now uses the width of your window instead of a fixed column. Home lays out as a dashboard, with skills taking the space they deserve.",
@@ -12962,7 +13265,7 @@ const PATCH_NOTES = [
     "Fixed the activity heatmap showing at most three skills per day. Days with more now show up to six, so a varied day looks varied.",
     "Added High Alch. Magic experience is normally counted as combat, so alching was invisible; open a day and use the button on the Magic row to mark it as alching, and the day recolours gold. The choice is remembered per day.",
     "Quest rewards now list the items you receive with their pictures, and unlocks separately. Items you can merely equip or buy afterwards are no longer listed as rewards.",
-    "Skills can be starred from the Home skill panel to make them priorities the Scroll watches.",
+    "Skills can be starred from the Home skill panel to make them priorities Scroll watches.",
     "Ask Bud answers training questions with the wiki's recommended methods for your current level range.",
     "Added a bug report link in Settings.",
   ]},
@@ -12976,7 +13279,7 @@ const PATCH_NOTES = [
     "Plans can be pinned. Pinned plans appear under the goal picker with their progress.",
     "Skill requirements in a plan expand to show every quest that rewards XP in that skill.",
     "Home skill tiles open a detail panel: level progress, XP gained this week, a track record of how often you train it, quests that reward it, and a shortcut to ask Bud how to train it.",
-    "Skills can be starred from that panel to make them priorities the Scroll watches.",
+    "Skills can be starred from that panel to make them priorities Scroll watches.",
     "Ask Bud answers training questions with the wiki's recommended methods for your level range.",
     "Priorities can be edited, including their rank.",
     "Empty days on the heatmap offer a shortcut to log them.",
@@ -13034,7 +13337,7 @@ const PATCH_NOTES = [
   ]},
   {v:"0.2", date:"July 15, 2026", title:"Renamed to OSRS Buddy", notes:[
     "Renamed the app from \"Quest Log\" to OSRS Buddy.",
-    "Added the Scroll: a daily journal with an activity heatmap and streak counter.",
+    "Added Scroll: a daily journal with an activity heatmap and streak counter.",
     "Refresh now pulls current hiscores rather than a cached snapshot. Note that XP only posts to the hiscores after you log out in-game.",
     "Added a Start Here page for new players, containing a roadmap, quest finder, combat helper, and gear goals.",
   ]},
@@ -13062,7 +13365,7 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"The Map", coffer:"The Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"Map", coffer:"Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
 // ---- Scroll sections ----
 // The page got big enough that one long scroll stopped working. Same data, five
 // sections, heatmap first because that's what people open the page for.
@@ -13106,7 +13409,7 @@ function applyScrollMode(){
   else if(cur==="heat"){ renderHeatmap(); renderHeatStats(); renderInsights(); wireQuickLog(); }
   else if(cur==="trophies") renderPrestige();
 }
-// Sidebar sub-nav, shown only while you're actually on the Scroll.
+// Sidebar sub-nav, shown only while you're actually on Scroll.
 function renderNavSub(){
   const el = $("#navSubScroll"); if(!el) return;
   const on = state.lastView === "scroll";
@@ -13269,13 +13572,13 @@ function switchView(name){
   // the board shows live status against your stats and quest progress, so it has to be
   // rebuilt on entry rather than left as whatever it was at launch
   if(name==="quests") applyMapSec();
-  if(name==="coffer"){ renderCoffer(); mmgDbEnsure(); }
+  if(name==="coffer") applyCofferSec();
   if(name==="arcade") renderArcade();
-  // the recap is something you open and close, not a place, so coming back to the Scroll
+  // the recap is something you open and close, not a place, so coming back to Scroll
   // always lands on the Overview
   if(name==="scroll"){ if(state.scrollSec==="recap") state.scrollSec = "heat"; applyScrollMode(); }
   if(name==="clog") applyAchSec();
-  renderNavSub(); renderNavSubAch(); renderNavSubMap();
+  renderNavSub(); renderNavSubAch(); renderNavSubMap(); renderNavSubCoffer();
   // Recap and Patch notes lost their nav entries; keep old saved views working
   if(name==="recap"){ switchView("scroll"); return; }
   if(name==="rhythm"){
@@ -13446,7 +13749,7 @@ function renderSetup(){
 }
 
 // ---- Character Export files ----
-const CE_FILES = ["quests","collection_log","diaries","combat_achievements","character","equipment"];
+const CE_FILES = ["quests","collection_log","diaries","combat_achievements","character","equipment","bank"];
 // The plugin names Recipe for Disaster's parts differently from the wiki.
 const CE_RFD = {"Another Cook's Quest":"Another Cook's Quest", "Mountain Dwarf":"Freeing the Mountain Dwarf",
   "Wartface & Bentnoze":"Freeing the Goblin generals", "Pirate Pete":"Freeing Pirate Pete",
@@ -13712,7 +14015,10 @@ function ceApply(pv, acc, account, unticks){
     clog: acc.collection_log ? ceMergeClog(same ? prev.clog : null, acc.collection_log.tabs) : (same ? prev.clog : undefined),
     ca: acc.combat_achievements ? acc.combat_achievements.summary : (same ? prev.ca : undefined),
     caTiers: acc.combat_achievements && acc.combat_achievements.tiers ? acc.combat_achievements.tiers : (same ? prev.caTiers : undefined),
-    equipment: acc.equipment && Array.isArray(acc.equipment.items) ? acc.equipment.items : (same ? prev.equipment : undefined)};
+    equipment: acc.equipment && Array.isArray(acc.equipment.items) ? acc.equipment.items : (same ? prev.equipment : undefined),
+    // the bank, as [id, quantity] pairs: enough to value it, small enough to keep
+    bank: acc.bank && Array.isArray(acc.bank.items) ? acc.bank.items.filter(i=>i && i.id > 0).map(i=>[i.id, i.quantity || 0]) : (same ? prev.bank : undefined),
+    bankAt: acc.bank && Array.isArray(acc.bank.items) ? (ceTime(acc.bank.exported_at) || Date.now()) : (same ? prev.bankAt : undefined)};
   return {out, changed: out.length > 0};
 }
 // The plugin starts a fresh collection_log.json each session holding only the pages opened in
@@ -13882,7 +14188,7 @@ const SU_VIEW = {
         <label class="su-lbl" style="margin:0; gap:10px">Rank <input type="range" id="suPRank" min="1" max="10" value="5"> <b id="suPRankV" style="color:var(--gold)">5</b></label>
         <button class="primary" id="suPAdd" style="margin-left:auto">Add priority</button>
       </div>
-      <p class="su-note">You can change these any time on the Scroll, under Priorities.</p>`;
+      <p class="su-note">You can change these any time on Scroll, under Priorities.</p>`;
   },
   look: ()=>{
     const cur = state.theme || DEFAULT_THEME, f = state.font || "garamond", num = state.exactNums ? "exact" : "short";
@@ -14544,7 +14850,7 @@ setTimeout(async ()=>{
     if(!fresh.length) return;
     if(fresh[0].firstRun){
       const dated = fresh.filter(f=>f.iso);
-      if(dated.length) toast(`Found ${dated.length} milestone${dated.length>1?"s":""} in your history — marked on the Scroll`);
+      if(dated.length) toast(`Found ${dated.length} milestone${dated.length>1?"s":""} in your history — marked on Scroll`);
     } else {
       showCelebration(fresh);
     }
