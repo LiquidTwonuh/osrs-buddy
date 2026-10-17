@@ -127,6 +127,7 @@ pub fn run() {
         let _ = w.set_focus();
       }
     }))
+    .plugin(tauri_plugin_opener::init())
     .manage(sync::SyncState::default())
     .setup(|app| {
       if cfg!(debug_assertions) {

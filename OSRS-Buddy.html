@@ -5072,6 +5072,17 @@ function openDayPopover(iso, anchor){
   });
 }
 function closeDayPopover(){ const p=$("#dayPop"); if(p) p.classList.add("hidden"); }
+// In the desktop app a plain link to the web goes nowhere: the window is the app, not a browser.
+// Hand those to the system browser instead.
+document.addEventListener("click", e=>{
+  const a = e.target.closest("a[href]");
+  if(!a || !ceDesktop()) return;
+  const href = a.getAttribute("href") || "";
+  if(!/^https?:\/\//i.test(href)) return;
+  e.preventDefault();
+  try{ window.__TAURI__.core.invoke("plugin:opener|open_url", {url: href}); }
+  catch(err){ toast("Couldn't open the browser", true); }
+}, true);
 document.addEventListener("click", e=>{
   const day=e.target.closest("[data-iso]");
   if(day && day.closest("#heatmap, #heatmapHome")){ e.stopPropagation(); openDayPopover(day.dataset.iso, day); return; }
@@ -9911,6 +9922,9 @@ const REACH_BANDS = [
 const REACH_CLOSE = 2000000;      // work you could get through in a session or two
 const REACH_QUEST = 400000;       // a quest you could start today
 const REACH_LOCKED = 1200000;     // one that's behind other quests
+// The wiki calls a lot of real requirements "recommended" (Nex: 90 Attack, 95 Strength...). Within
+// a few levels that's advice; further under it, it's the difference between doable and not.
+const REACH_SOFT_GRACE = 5;
 function reachBand(id){ return REACH_BANDS.find(b=>b.id===id) || REACH_BANDS[2]; }
 // quest points you hold right now, counted off the quests you've ticked
 function reachQP(){
@@ -9922,9 +9936,9 @@ function reachOf(req){
   const skills = [], quests = [], other = (req.other || []).slice();
   let xp = 0;
   (req.skills || []).forEach(r=>{
-    if(r.soft) return;                                  // "recommended" isn't a requirement
     const have = lvlOf(r.skill);
     if(have >= r.lvl) return;
+    if(r.soft && have >= r.lvl - REACH_SOFT_GRACE) return;   // close enough that "recommended" is advice
     const gap = Math.max(0, xpForLevel(r.lvl) - liveSkillXp(r.skill));
     xp += gap;
     skills.push({skill:r.skill, lvl:r.lvl, have, xp:gap});
@@ -9963,7 +9977,7 @@ function reachText(v){
 // skills it wants, a category and how busy it keeps you. We read it, check every skill against
 // your own levels, and let the quiz do the filtering for you. The quiz is only a friendly way to
 // set the filters: they stay on screen afterwards and you can change any of them.
-const MMG_VERSION = 2;   // 2: items and notes from each method's page
+const MMG_VERSION = 4;   // 4: skill levels read off each method's own page
 const MMG_PAGE = "Money making guide";
 let mmgBusy = false;
 function mmgDB(){ const d = state.mmgDB; return (d && d.v===MMG_VERSION && d.methods && d.methods.length) ? d : null; }
@@ -10043,15 +10057,37 @@ async function mmgDetails(methods){
         if(!m || !pg.revisions) return;
         const wt = pg.revisions[0].slots.main.content;
         const field = k => (new RegExp("\\|\\s*" + k + "\\s*=([\\s\\S]*?)\\n\\|", "i").exec(wt) || [])[1] || "";
+        // The page's own skill list is the authority. Levels come either inside the template
+        // ({{SCP|Attack|90+}}) or just after it ({{SCP|Cooking}} 90+ (99 Recommended)). A level
+        // is only "recommended" when the line says so and doesn't also give a lower hard one.
+        const pageSkills = [];
+        field("Skill").split("\n").forEach(line=>{
+          const soft = /recommend/i.test(line) && !/\d+\+?\s*\([^)]*recommend/i.test(line);
+          const re = /\{\{SCP\|([A-Za-z ]+?)(?:\|(\d+))?[^}]*\}\}\s*(\d+)?/g;
+          let x;
+          while((x = re.exec(line))){
+            const k = mmgSkillKey(x[1]);
+            const lvl = parseInt(x[2] || x[3] || "", 10);
+            if(SKILL_ORDER.includes(k) && lvl > 0) pageSkills.push({skill:k, lvl, soft});
+          }
+        });
+        if(pageSkills.length){
+          const have = new Set(pageSkills.map(x=>x.skill));
+          m.skills = pageSkills.concat((m.skills || []).filter(x=>!have.has(x.skill)));
+        }
         m.loc = plain(field("Location")).slice(0, 120);
         m.items = plain(field("Item")).slice(0, 400);
         m.other = plain(field("Other")).slice(0, 300);
         m.wildy = /wilderness/i.test(field("Location"));
         const mem = plain(field("Members"));
         if(/^(yes|no)$/i.test(mem)) m.f2p = /^no$/i.test(mem);
-        // quests the method needs, kept only when we know the quest ourselves
-        const qs = [...field("Quest").matchAll(/\[\[([^\]|]+)/g)].map(x=>x[1].trim());
+        // quests the method needs: the ones we know get checked against your record; the rest
+        // (miniquests, "easy Combat Achievements") are still requirements, shown as text
+        // "(must have defeated [[Dad]])" is a note, not a requirement: drop bracketed asides first
+        const qf = field("Quest").replace(/\([^)]*\)/g, "");
+        const qs = [...qf.matchAll(/\[\[([^\]|]+)/g)].map(x=>x[1].trim());
         m.quests = db ? [...new Set(qs.filter(q=>db.quests[q]))] : [];
+        m.needs = /^\s*none/i.test(plain(qf)) ? [] : [...new Set(qs.filter(q=>!(db && db.quests[q]) && !/^(miniquest|quest|quests)$/i.test(q)))].slice(0, 4);
       });
     }catch(e){ /* one bad batch shouldn't cost the whole list */ }
   }
@@ -10078,8 +10114,8 @@ async function mmgTags(methods){
 }
 // what a method still wants from you, plus the levels the wiki only recommends
 function mmgGaps(m){
-  const v = reachOf({skills:m.skills, quests:m.quests});
-  v.soft = (m.skills || []).filter(r=>r.soft && lvlOf(r.skill) < r.lvl);
+  const v = reachOf({skills:m.skills, quests:m.quests, other:(m.needs || []).map(n=>n + " (the app can't tick this for you)")});
+  v.soft = (m.skills || []).filter(r=>r.soft && lvlOf(r.skill) < r.lvl && lvlOf(r.skill) >= r.lvl - REACH_SOFT_GRACE);
   return v;
 }
 // ---- the quiz: six questions that set the filters ----
@@ -13141,6 +13177,8 @@ const PATCH_NOTES = [
     "Your PC can hand its data to your phone over your own Wi-Fi. Turn on sharing in the desktop app, type the six-character code on the phone once, and from then on the phone finds your PC itself and syncs both ways. Nothing is stored anywhere but your own devices, and the phone keeps working on WiseOldMan when the PC is off.",
     "The day popup's Log button works again, and it's on every day now, not only empty ones. It opens the Journal with that date filled in. Before, it was missing whenever the day had XP from the game, and on empty days it quietly did nothing, because the composer sits in a section the click never opened.",
     "Your character shows the moment the app opens, from the last stats it saw, instead of reading Add character until WiseOldMan answers. Snoozing a priority now asks how long: three days, a week, a month, or until you say.",
+    "Ready now means it. A level the wiki only recommends still counts when you're more than five levels under it, and a method that needs a miniquest the app can't tick for you says so instead of pretending you're set. Nex no longer shows as doable at 82 Attack.",
+    "Links to the wiki open in your browser from the desktop app. They'd been doing nothing.",
     "Coffer has two more tabs. Vault values your bank at today's prices, tracks it over time, and shows what's carrying the number. Flip is a Grand Exchange margins table: buy, sell, the margin after tax, how much trades an hour, and a watchlist. Your bank comes through the RuneLite sync whenever you open it in game.",
     "Map, Coffer and Scroll dropped their articles. It reads better.",
     "Coffer's quiz asks twelve questions now, and the answers build a page rather than a list: Best for you tonight, with a line on why each one is there, More in your style, Worth training for, Your dailies, and the full list folded away underneath. Ironman hides the buy-and-sell methods, short sessions push raids down, mid gear keeps the wiki's boss rates honest, a goal shows how many hours each method is from it, and skills you enjoy move up.",
