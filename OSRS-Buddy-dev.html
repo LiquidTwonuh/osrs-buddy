@@ -14874,7 +14874,9 @@ if(!loadTrouble && !state.setupDone && !state.username && !Object.keys(profStore
   setTimeout(openSetup, 400);
 }
 // Desktop app: pick up anything the plugin saved since last time, then keep watching.
-if(ceDesktop()) setTimeout(()=>{ ceSyncNow(); ceStartWatch(); }, 3000);
+// The folder only re-reads when a file is newer than last time. bank.json joined the list after
+// that stamp was taken, so the first launch with it reads the folder once regardless.
+if(ceDesktop()) setTimeout(()=>{ ceSyncNow({force: !!(state.charExport && state.charExport.bank === undefined)}); ceStartWatch(); }, 3000);
 </script>
 </body>
 </html>
