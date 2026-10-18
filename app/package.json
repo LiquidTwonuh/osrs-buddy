@@ -3,7 +3,7 @@
   "private": true,
   "version": "2.0.0",
   "scripts": {
-    "sync": "node -e \"require('fs').copyFileSync('../OSRS-Buddy.html','dist/index.html'); console.log('dist/index.html <- OSRS-Buddy.html')\"",
+    "sync": "node -e \"const fs=require('fs');fs.copyFileSync('../OSRS-Buddy.html','dist/index.html');fs.copyFileSync('../sw.js','dist/sw.js');console.log('dist/index.html + dist/sw.js <- OSRS-Buddy.html, sw.js')\"",
     "build": "npm run sync && tauri build",
     "build:beta": "npm run sync && tauri build --config src-tauri/tauri.beta.conf.json"
   },

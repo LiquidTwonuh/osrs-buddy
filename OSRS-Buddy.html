@@ -6,45 +6,33 @@
 <title>OSRS Buddy — character companion</title>
 <meta http-equiv="Cache-Control" content="no-store">
 <script>
-// ---- the copy from your PC ----
-// The phone's app is whatever page was inside the APK the day it was built. Reinstalling to see a
-// change is painful on Android, so the phone can take the PC's page over Wi-Fi and keep it here.
-// This runs before anything else and swaps the document for the stored copy when there is a newer
-// one. If a stored page ever fails to finish loading, the flag below is still set next launch and
-// the copy is thrown away, so a bad page can't lock you out: the built-in one always comes back.
-window.__pageRunningFrom = "built-in";
+// ---- the copy from your PC or GitHub ----
+// The phone's app is whatever page was inside the APK the day it was built. Rather than reinstall
+// to see a change, the phone keeps a newer page in the browser cache, and a service worker (sw.js)
+// serves that page as the real document on the next load, so its scripts run fresh. If a stored
+// page fails to boot, the flag below is still set next launch, the stored page is thrown away and
+// the built-in one comes back. Nothing here can lock you out.
+window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]') || {}).content || "built-in";
 (function(){
-  if(window.__fromCache) return;                      // this IS the stored copy, carry on
+  // The flag has two states. The updater sets "pending" just before the stored page's first load.
+  // The stored page turns it into "booting" as it starts and clears it when it's up. So:
+  //   stored page sees "pending": its first try, carry on
+  //   stored page sees "booting": an earlier try of it never finished, throw it away
+  //   built-in page sees either: the stored page never made it, throw it away and say so
   var TRY = "osrs_page_try";
   try{
-    var failed = localStorage.getItem(TRY);
-    if(failed){
-      localStorage.removeItem(TRY);
-      indexedDB.deleteDatabase("osrsbuddy-page");      // it didn't boot last time: back to built-in
-      window.__pageFailed = failed;
+    var flag = localStorage.getItem(TRY);
+    if(!flag) return;
+    var stored = window.__pageRunningFrom !== "built-in";
+    if(stored && flag === "pending"){ localStorage.setItem(TRY, "booting"); return; }
+    localStorage.removeItem(TRY);
+    if(stored){
+      if(window.caches) caches.open("osrs-page").then(function(c){ return c.delete("current"); }).then(function(){ location.reload(); });
       return;
     }
-  }catch(e){ return; }
-  var rq;
-  try{ rq = indexedDB.open("osrsbuddy-page", 1); }catch(e){ return; }
-  rq.onupgradeneeded = function(){ try{ rq.result.createObjectStore("page"); }catch(e){} };
-  rq.onsuccess = function(){
-    var db = rq.result, get;
-    try{ get = db.transaction("page", "readonly").objectStore("page").get("current"); }
-    catch(e){ return; }
-    get.onsuccess = function(){
-      var rec = get.result;
-      if(!rec || !rec.html || rec.html.length < 50000) return;
-      var mine = (/const APP_VERSION = "([^"]+)"/.exec(document.documentElement.outerHTML) || [])[1] || "";
-      if(rec.version && mine && rec.version === mine) return;   // same build, nothing to do
-      try{ localStorage.setItem(TRY, rec.version || "?"); }catch(e){}
-      // the built-in app has had a moment to start: stop its timers before the document goes
-      for(var i = 1; i < 5000; i++){ clearTimeout(i); clearInterval(i); }
-      window.__fromCache = true;
-      window.__pageRunningFrom = "pc";
-      document.open(); document.write(rec.html); document.close();
-    };
-  };
+    window.__pageFailed = flag;
+    if(window.caches) caches.open("osrs-page").then(function(c){ c.delete("current"); });
+  }catch(e){}
 })();
 </script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
@@ -9489,47 +9477,53 @@ async function syncTry(peer){
   }catch(e){ return null; }
 }
 // ---- the phone's copy of the app ----
-// The page the APK ships with is whatever was built that day. Rather than reinstall to see a
-// change, the phone can take the PC's copy and keep it. It's stored in IndexedDB (too big for
-// localStorage), and booted at the very top of the next launch, before anything else runs.
-const PAGE_DB = "osrsbuddy-page", PAGE_STORE = "page";
-function pageIdb(){
-  return new Promise((res, rej)=>{
-    const rq = indexedDB.open(PAGE_DB, 1);
-    rq.onupgradeneeded = ()=>{ rq.result.createObjectStore(PAGE_STORE); };
-    rq.onsuccess = ()=>res(rq.result);
-    rq.onerror = ()=>rej(rq.error);
-  });
+// A newer page is kept in the browser cache under one key; sw.js answers the next page load with
+// it. Stored with a marker saying where it came from, so Settings can say so.
+const PAGE_CACHE = "osrs-page";
+async function pagePut(html, from){
+  if(!window.caches) throw new Error("This app can't keep an updated page");
+  const marked = html.replace("<head>", `<head><meta name="buddy-page-from" content="${from}">`);
+  const c = await caches.open(PAGE_CACHE);
+  await c.put("current", new Response(marked, {headers: {"Content-Type": "text/html; charset=utf-8"}}));
 }
-function pagePut(rec){
-  return pageIdb().then(db=>new Promise((res, rej)=>{
-    const tx = db.transaction(PAGE_STORE, "readwrite");
-    tx.objectStore(PAGE_STORE).put(rec, "current");
-    tx.oncomplete = res; tx.onerror = ()=>rej(tx.error);
-  }));
+async function pageGet(){
+  try{ const c = await caches.open(PAGE_CACHE); const r = await c.match("current"); return r ? await r.text() : null; }catch(e){ return null; }
 }
-function pageGet(){
-  return pageIdb().then(db=>new Promise((res, rej)=>{
-    const tx = db.transaction(PAGE_STORE, "readonly");
-    const rq = tx.objectStore(PAGE_STORE).get("current");
-    rq.onsuccess = ()=>res(rq.result || null);
-    rq.onerror = ()=>rej(rq.error);
-  })).catch(()=>null);
+async function pageForget(){ try{ const c = await caches.open(PAGE_CACHE); await c.delete("current"); }catch(e){} }
+// the worker that serves the stored page; registered once, harmless when nothing is stored
+function pageWorkerStart(){
+  if(!("serviceWorker" in navigator)) return;
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
 }
-// Take the PC's page. Checked, stored, and only used from the next launch, so a bad one can't
-// take the app down mid-session.
+function pageCheck(html){
+  const ver = (/const APP_VERSION = "(\d[^"]*)"/.exec(html) || [])[1];
+  if(!html || html.length < 50000 || !ver || html.indexOf("OSRS Buddy") === -1) throw new Error("That didn't look like OSRS Buddy");
+  return ver;
+}
+// Take the PC's page. Checked, stored, and used from the next load.
 async function pageUpdateFromPC(){
   const c = syncCfg(), peer = c.peer;
   if(!peer || !peer.token) throw new Error("Pair with your PC first");
   const r = await fetch(`http://${peer.ip}:${peer.port}/app`, {headers: {"Authorization": "Bearer " + peer.token}});
   if(!r.ok) throw new Error(r.status === 404 ? "Your PC hasn't offered a copy yet. Turn sharing off and on." : "Couldn't fetch it (" + r.status + ")");
   const html = await r.text();
-  const ver = (/const APP_VERSION = "([^"]+)"/.exec(html) || [])[1];
-  if(!html || html.length < 50000 || !ver) throw new Error("That didn't look like OSRS Buddy");
-  await pagePut({html, version: ver, at: Date.now()});
+  const ver = pageCheck(html);
+  await pagePut(html, "pc");
+  try{ localStorage.setItem("osrs_page_try", "pending"); }catch(e){}
   return ver;
 }
-async function pageForget(){ try{ await pagePut(null); }catch(e){} }
+// The same thing, but from the repo: whatever is on the main branch right now. No PC needed, no
+// APK to install. The page is checked the same way before it's kept.
+const PAGE_GITHUB = "https://raw.githubusercontent.com/LiquidTwonuh/osrs-buddy/main/OSRS-Buddy.html";
+async function pageUpdateFromGitHub(){
+  const r = await fetch(PAGE_GITHUB + "?t=" + Date.now(), {cache: "no-store"});
+  if(!r.ok) throw new Error("GitHub answered " + r.status);
+  const html = await r.text();
+  const ver = pageCheck(html);
+  await pagePut(html, "github");
+  try{ localStorage.setItem("osrs_page_try", "pending"); }catch(e){}
+  return ver;
+}
 // ---- settings ----
 let syncFinding = false, syncFound = [], syncPick = null;
 const pageRunningFrom = window.__pageRunningFrom || "built-in";
@@ -9589,12 +9583,28 @@ function renderSyncSetting(){
       : `<p class="small muted" style="margin:0 0 8px">Hand your quests, collection log and journal to your phone over your own Wi-Fi. Nothing leaves the house, and nothing is stored anywhere else.</p>
          <button class="ghost small" id="syncOn">Share with my phone</button>
          ${c.err ? `<div class="small" style="color:var(--red); margin-top:6px">${escapeHtml(c.err)}</div>` : ""}`;
+    el.insertAdjacentHTML("beforeend", `<label class="chk small" style="margin-top:10px"><input type="checkbox" id="phonePrev"> Phone preview: restart this app at phone size, behaving like the phone</label>`);
+    $("#phonePrev").onchange = async e=>{
+      try{ localStorage.setItem("osrs_phone_preview", e.target.checked ? "1" : "0"); }catch(err){}
+      if(e.target.checked){
+        try{ const w = window.__TAURI__.window.getCurrentWindow(); await w.setSize(new window.__TAURI__.window.LogicalSize(430, 900)); }catch(err){}
+      }
+      location.reload();
+    };
     const on = $("#syncOn"); if(on) on.onclick = syncHostStart;
     const off = $("#syncOff"); if(off) off.onclick = syncHostStop;
     const fg = $("#syncForget"); if(fg) fg.onclick = ()=>{ c.pairs = []; save(); syncHostStop(); toast("Devices forgotten"); };
     return;
   }
   // the phone's side
+  if(phonePreview && window.__TAURI__){
+    el.insertAdjacentHTML("afterbegin", `<div class="small muted" style="margin-bottom:8px">Phone preview is on. <button class="ghost small" id="phonePrevOff">Back to the desktop app</button></div>`);
+    setTimeout(()=>{ const b = $("#phonePrevOff"); if(b) b.onclick = async ()=>{
+      try{ localStorage.setItem("osrs_phone_preview", "0"); }catch(err){}
+      try{ const w = window.__TAURI__.window.getCurrentWindow(); await w.setSize(new window.__TAURI__.window.LogicalSize(1180, 860)); }catch(err){}
+      location.reload();
+    }; }, 0);
+  }
   const peer = c.peer;
   el.innerHTML = peer && peer.token
     ? `<div class="ce-ok"><span class="ce-badge">✓ Paired</span> with <b>${escapeHtml(peer.host || "your PC")}</b>
@@ -9602,13 +9612,16 @@ function renderSyncSetting(){
        <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="syncGo">Sync now</button>
          <button class="ghost small" id="syncApp">Update app from PC</button>
          <button class="ghost small" id="syncUnpair">Unpair</button></div>
-       <div class="small muted" id="syncMsg" style="margin-top:6px">${pageRunningFrom === "pc" ? "Running the copy from your PC." : ""}</div>`
+       <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="syncGit">Update app from GitHub</button>
+         <span class="small muted">the latest build, straight from the repo, no PC needed</span></div>
+       <div class="small muted" id="syncMsg" style="margin-top:6px">${pageRunningFrom === "pc" ? "Running the copy from your PC." : pageRunningFrom === "github" ? "Running the latest build from GitHub." : "Running the built-in page."}</div>`
     : `<p class="small muted" style="margin:0 0 8px">Turn on sharing in the desktop app, then find it here. Both devices need to be on the same Wi-Fi.</p>
        ${syncFound.length ? `<div class="row" style="gap:6px; flex-wrap:wrap; margin-bottom:8px">${syncFound.map((f,i)=>
            `<button class="ghost small ${syncPick===i?"on":""}" data-syncpick="${i}">🖥 ${escapeHtml(f.host)} <span class="muted">${escapeHtml(f.ip)}</span></button>`).join("")}</div>
          <div class="row" style="gap:6px"><input type="text" id="syncCode" placeholder="Code from your PC" maxlength="7" style="max-width:190px" autocomplete="off">
            <button class="ghost small" id="syncPairGo">Pair</button></div>` : ""}
        <button class="ghost small" id="syncFind" ${syncFinding?"disabled":""}>${syncFinding ? "Looking…" : "Find my PC"}</button>
+       <button class="ghost small" id="syncGit">Update app from GitHub</button>
        <div class="small muted" id="syncMsg" style="margin-top:6px">${syncFinding ? "Checking every device on your network, this takes a few seconds." : ""}</div>`;
   const fb = $("#syncFind");
   if(fb) fb.onclick = async ()=>{
@@ -9646,6 +9659,16 @@ function renderSyncSetting(){
   };
   const up = $("#syncUnpair");
   if(up) up.onclick = ()=>{ delete c.peer; save(); renderSyncSetting(); };
+  const gh = $("#syncGit");
+  if(gh) gh.onclick = async ()=>{
+    const m = $("#syncMsg"); if(m) m.textContent = "Fetching the latest build from GitHub…";
+    gh.disabled = true;
+    try{
+      const ver = await pageUpdateFromGitHub();
+      if(m) m.textContent = `Version ${ver} is ready. Restarting…`;
+      setTimeout(()=>location.reload(), 900);
+    }catch(e){ if(m) m.textContent = String(e.message || e); gh.disabled = false; }
+  };
 }
 
 // ============ COFFER SECTIONS ============
@@ -13255,6 +13278,7 @@ const PATCH_NOTES = [
     "Your PC can hand its data to your phone over your own Wi-Fi. Turn on sharing in the desktop app, type the six-character code on the phone once, and from then on the phone finds your PC itself and syncs both ways. Nothing is stored anywhere but your own devices, and the phone keeps working on WiseOldMan when the PC is off.",
     "The day popup's Log button works again, and it's on every day now, not only empty ones. It opens the Journal with that date filled in. Before, it was missing whenever the day had XP from the game, and on empty days it quietly did nothing, because the composer sits in a section the click never opened.",
     "Your character shows the moment the app opens, from the last stats it saw, instead of reading Add character until WiseOldMan answers. Snoozing a priority now asks how long: three days, a week, a month, or until you say.",
+    "The phone can update itself from GitHub: Settings, Update app from GitHub, and it restarts into the latest build. No PC and no APK needed. The Windows Beta app has a Phone preview switch that restarts it at phone size behaving like the phone.",
     "The quiz's skills question is three buckets now: Love, Like, Hate, one tap each, and anything you leave alone is neutral. Love leads the page, Like gets a bump, Hate stays out of your picks. The gear question is gone; the app works out your stage from your levels, quests and bank, says why, and you can override it. Session length can be Doesn't matter. The top three are cards.",
     "Ready now means it. A level the wiki only recommends still counts when you're more than five levels under it, and a method that needs a miniquest the app can't tick for you says so instead of pretending you're set. Nex no longer shows as doable at 82 Attack.",
     "Links to the wiki open in your browser from the desktop app. They'd been doing nothing.",
@@ -14078,7 +14102,11 @@ function suGuard(text){
 // commands (see app/src-tauri/src/lib.rs) that only read the Character Export plugin's own
 // files. Once a folder is set, the app checks it every 15 seconds and imports what changed.
 // Automatic syncing only ever ADDS: it never unticks. Conflicts wait in Settings for a person.
-const IS_ANDROID = /Android/i.test(navigator.userAgent || "");
+// "Phone preview" in the Beta app's Settings makes the Windows app behave like the phone: same
+// narrow layout, no RuneLite folder, the phone's update buttons. Rough, but it catches layout and
+// flow problems without a device in hand. Touch can't be faked; dragging still needs the phone.
+let phonePreview = false; try{ phonePreview = localStorage.getItem("osrs_phone_preview") === "1"; }catch(e){}
+const IS_ANDROID = /Android/i.test(navigator.userAgent || "") || phonePreview;
 function ceDesktop(){ return !IS_ANDROID && !!(window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke); }
 function ceInvoke(cmd, args){ return window.__TAURI__.core.invoke(cmd, args || {}); }
 function ceGroup(files){
@@ -14982,7 +15010,8 @@ setTimeout(caDbEnsure, 4000);     // every combat achievement, for Achievements
 // start the hourly backup files either way.
 // we're up: whichever copy this is, it loaded, so clear the "didn't boot" flag
 try{ localStorage.removeItem("osrs_page_try"); }catch(e){}
-if(window.__pageFailed) setTimeout(()=>toast("The copy from your PC wouldn't load, so the built-in app is back.", true), 1200);
+if(window.__pageFailed) setTimeout(()=>toast("The updated copy wouldn't load, so the built-in app is back.", true), 1200);
+pageWorkerStart();
 vaultBoot();
 // Setup opens by itself only on a genuinely fresh install: no character, no other profiles,
 // nothing logged. Anyone with data reaches it from Settings instead. A state that failed to load
