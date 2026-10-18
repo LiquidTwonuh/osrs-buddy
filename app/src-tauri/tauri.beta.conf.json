@@ -8,16 +8,14 @@
     "beforeBuildCommand": ""
   },
   "app": {
-    "windows": [
-      {
-        "title": "OSRS Buddy Beta",
-        "width": 1180,
-        "height": 860,
-        "minWidth": 420,
-        "minHeight": 560,
-        "resizable": true,
-        "fullscreen": false
-      }
+    "windows": []
+  },
+  "bundle": {
+    "icon": [
+      "icons-beta/32x32.png",
+      "icons-beta/128x128.png",
+      "icons-beta/128x128@2x.png",
+      "icons-beta/icon.ico"
     ]
   }
 }

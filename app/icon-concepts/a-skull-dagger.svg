@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+<rect x="12" y="12" width="1000" height="1000" rx="188" fill="#26211a" stroke="#8a6f2e" stroke-width="16"/>
+
+<g transform="rotate(-22 512 480)">
+  <circle cx="512" cy="52" r="26" fill="#e6c35c"/>
+  <rect x="494" y="60" width="36" height="104" rx="8" fill="#8a6f2e"/>
+  <rect x="432" y="158" width="160" height="30" rx="12" fill="#e6c35c"/>
+</g>
+<path fill="#efe6d0" d="M512 196 C658 196 766 300 766 436 C766 506 736 556 696 592 L696 706 C696 734 676 750 646 750 L378 750 C348 750 328 734 328 706 L328 592 C288 556 258 506 258 436 C258 300 366 196 512 196 Z"/>
+<ellipse cx="428" cy="456" rx="60" ry="68" fill="#26211a"/>
+<ellipse cx="596" cy="456" rx="60" ry="68" fill="#26211a"/>
+<path fill="#26211a" d="M512 532 L544 596 L480 596 Z"/>
+<g stroke="#26211a" stroke-width="12" stroke-linecap="round">
+  <line x1="340" y1="664" x2="684" y2="664"/>
+  <line x1="430" y1="664" x2="430" y2="746"/><line x1="471" y1="664" x2="471" y2="746"/>
+  <line x1="512" y1="664" x2="512" y2="746"/><line x1="553" y1="664" x2="553" y2="746"/><line x1="594" y1="664" x2="594" y2="746"/>
+</g>
+<g transform="rotate(-22 512 480)">
+  <path fill="#c9342b" d="M478 736 L546 736 L512 950 Z"/><path fill="#e8a39b" d="M512 736 L546 736 L512 950 Z" opacity="0.35"/>
+</g>
+
+</svg>

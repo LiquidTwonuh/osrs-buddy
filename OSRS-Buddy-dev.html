@@ -9591,6 +9591,7 @@ function renderSyncSetting(){
       }
       location.reload();
     };
+    if(isBetaApp()){ el.insertAdjacentHTML("beforeend", `<div id="followSet" style="margin-top:12px"></div>`); renderFollowSetting(); }
     const on = $("#syncOn"); if(on) on.onclick = syncHostStart;
     const off = $("#syncOff"); if(off) off.onclick = syncHostStop;
     const fg = $("#syncForget"); if(fg) fg.onclick = ()=>{ c.pairs = []; save(); syncHostStop(); toast("Devices forgotten"); };
@@ -9614,7 +9615,7 @@ function renderSyncSetting(){
          <button class="ghost small" id="syncUnpair">Unpair</button></div>
        <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="syncGit">Update app from GitHub</button>
          <span class="small muted">the latest build, straight from the repo, no PC needed</span></div>
-       <div class="small muted" id="syncMsg" style="margin-top:6px">${pageRunningFrom === "pc" ? "Running the copy from your PC." : pageRunningFrom === "github" ? "Running the latest build from GitHub." : "Running the built-in page."}</div>`
+       <div class="small muted" id="syncMsg" style="margin-top:6px">${pageRunningFrom === "pc" ? "Running the copy from your PC." : pageRunningFrom === "github" ? "Running the latest build from GitHub." : pageRunningFrom === "file" ? "Running a page file from this PC." : "Running the built-in page."}</div>`
     : `<p class="small muted" style="margin:0 0 8px">Turn on sharing in the desktop app, then find it here. Both devices need to be on the same Wi-Fi.</p>
        ${syncFound.length ? `<div class="row" style="gap:6px; flex-wrap:wrap; margin-bottom:8px">${syncFound.map((f,i)=>
            `<button class="ghost small ${syncPick===i?"on":""}" data-syncpick="${i}">🖥 ${escapeHtml(f.host)} <span class="muted">${escapeHtml(f.ip)}</span></button>`).join("")}</div>
@@ -9669,6 +9670,36 @@ function renderSyncSetting(){
       setTimeout(()=>location.reload(), 900);
     }catch(e){ if(m) m.textContent = String(e.message || e); gh.disabled = false; }
   };
+}
+
+// ---- following a page file (Beta only) ----
+// The Beta can run a page file straight from disk instead of the page built into it. Edit the
+// file, press Reload, and that's the new app: no build, no installer. The desktop app does the
+// serving (see follow_* in app/src-tauri/src/lib.rs); the page only sets the path.
+async function renderFollowSetting(){
+  const el = $("#followSet"); if(!el) return;
+  let cur = null, def = null;
+  try{ cur = await ceInvoke("follow_get"); }catch(e){}
+  try{ def = await ceInvoke("follow_default"); }catch(e){}
+  const running = window.__pageRunningFrom === "file";
+  el.innerHTML = `
+    <div class="set-h" style="font-size:13px">Page file</div>
+    <p class="small muted" style="margin:0 0 6px">Run a page file from this PC instead of the page built into the app. Edit the file, press Reload, and that's the app. Nothing to install.</p>
+    ${cur ? `<div class="ce-ok"><span class="ce-badge">${running ? "✓ Running" : "Following"}</span> <span class="small" style="word-break:break-all">${escapeHtml(cur)}</span></div>
+            ${running ? "" : `<p class="small muted" style="margin:6px 0 0">Reload to switch to it.</p>`}
+            <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="followReload">Reload</button><button class="ghost small" id="followStop">Stop following</button></div>`
+          : `<div class="row" style="gap:6px"><input id="followPath" placeholder="C:\\path\\to\\OSRS-Buddy-dev.html" value="${escapeHtml(def || "")}" style="flex:1; min-width:0"><button class="ghost small" id="followGo">Follow</button></div>`}
+    <div class="small" id="followMsg" style="color:var(--red); margin-top:6px"></div>`;
+  const go = $("#followGo");
+  if(go) go.onclick = async ()=>{
+    const path = ($("#followPath") || {}).value || "";
+    try{ await ceInvoke("follow_set", {path}); location.reload(); }
+    catch(e){ const m = $("#followMsg"); if(m) m.textContent = String(e.message || e); }
+  };
+  const st = $("#followStop");
+  if(st) st.onclick = async ()=>{ try{ await ceInvoke("follow_set", {path: null}); }catch(e){} location.reload(); };
+  const rl = $("#followReload");
+  if(rl) rl.onclick = ()=>location.reload();
 }
 
 // ============ COFFER SECTIONS ============
@@ -14109,6 +14140,10 @@ let phonePreview = false; try{ phonePreview = localStorage.getItem("osrs_phone_p
 const IS_ANDROID = /Android/i.test(navigator.userAgent || "") || phonePreview;
 function ceDesktop(){ return !IS_ANDROID && !!(window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke); }
 function ceInvoke(cmd, args){ return window.__TAURI__.core.invoke(cmd, args || {}); }
+// Which build this is. The desktop app answers with its identifier; the Beta's ends in ".beta".
+let appIdent = "";
+if(window.__TAURI__ && window.__TAURI__.core) ceInvoke("app_identifier").then(v=>{ appIdent = String(v || ""); }).catch(()=>{});
+function isBetaApp(){ return /\.beta$/.test(appIdent); }
 function ceGroup(files){
   const groups = {};
   (files||[]).forEach(f=>{

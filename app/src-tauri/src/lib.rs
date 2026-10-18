@@ -114,6 +114,67 @@ fn ce_read(path: String) -> Result<Vec<CeFile>, String> {
 mod sync;
 mod vault;
 
+
+// ---- following a page file ----
+// Every page change used to mean a rebuild and an installer. The Beta can instead follow a page
+// file on disk: the window asks for its page, and if a file is being followed, that file is what
+// it gets. Edit the file, reload the app, done. The followed path lives in a one-line text file
+// in the app's own data folder, so a build never has a path baked in.
+fn follow_marker(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+  use tauri::Manager;
+  let dir = app.path().app_local_data_dir().map_err(|e| e.to_string())?;
+  fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+  Ok(dir.join("follow-page.txt"))
+}
+fn follow_read(marker: &Path) -> Option<PathBuf> {
+  let t = fs::read_to_string(marker).ok()?;
+  let t = t.trim();
+  if t.is_empty() { return None; }
+  let p = PathBuf::from(t);
+  if p.is_file() { Some(p) } else { None }
+}
+// Serves the followed file in place of the built-in page. Only the page itself: sw.js and
+// anything else still come from the build.
+fn follow_serve(marker: &Path, req: &tauri::http::Request<Vec<u8>>, resp: &mut tauri::http::Response<std::borrow::Cow<'static, [u8]>>) {
+  let path = req.uri().path();
+  if path != "/" && path != "/index.html" { return; }
+  let Some(file) = follow_read(marker) else { return; };
+  let Ok(html) = fs::read_to_string(&file) else { return; };
+  let marked = html.replacen("<head>", "<head><meta name=\"buddy-page-from\" content=\"file\">", 1);
+  resp.headers_mut().remove("content-length");
+  resp.headers_mut().insert("content-type", "text/html; charset=utf-8".parse().unwrap());
+  *resp.status_mut() = tauri::http::StatusCode::OK;
+  *resp.body_mut() = std::borrow::Cow::Owned(marked.into_bytes());
+}
+#[tauri::command]
+fn follow_get(app: tauri::AppHandle) -> Result<Option<String>, String> {
+  let m = follow_marker(&app)?;
+  Ok(follow_read(&m).map(|p| p.to_string_lossy().to_string()))
+}
+#[tauri::command]
+fn follow_set(app: tauri::AppHandle, path: Option<String>) -> Result<Option<String>, String> {
+  let m = follow_marker(&app)?;
+  match path.map(|p| p.trim().to_string()).filter(|p| !p.is_empty()) {
+    None => { let _ = fs::remove_file(&m); Ok(None) }
+    Some(p) => {
+      if !Path::new(&p).is_file() { return Err("There's no file at that path.".into()); }
+      fs::write(&m, &p).map_err(|e| e.to_string())?;
+      Ok(Some(p))
+    }
+  }
+}
+// A likely dev file, offered as the default: the checkout next to Downloads, if it's there.
+#[tauri::command]
+fn follow_default() -> Option<String> {
+  let home = std::env::var("USERPROFILE").ok()?;
+  let p = Path::new(&home).join("Downloads").join("OSRS-Buddy").join("OSRS-Buddy-dev.html");
+  if p.is_file() { Some(p.to_string_lossy().to_string()) } else { None }
+}
+#[tauri::command]
+fn app_identifier(app: tauri::AppHandle) -> String {
+  app.config().identifier.clone()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
@@ -130,6 +191,22 @@ pub fn run() {
     .plugin(tauri_plugin_opener::init())
     .manage(sync::SyncState::default())
     .setup(|app| {
+      // A build whose config lists no windows (the Beta) gets its window here, so the page it
+      // loads can come from a followed file. Other builds keep the window from their config.
+      {
+        use tauri::Manager;
+        if app.webview_windows().is_empty() {
+          let title = app.config().product_name.clone().unwrap_or_else(|| "OSRS Buddy".into());
+          let marker = follow_marker(&app.handle().clone())?;
+          tauri::WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::default())
+            .title(title)
+            .inner_size(1180.0, 860.0)
+            .min_inner_size(420.0, 560.0)
+            .resizable(true)
+            .on_web_resource_request(move |req, resp| follow_serve(&marker, &req, resp))
+            .build()?;
+        }
+      }
       if cfg!(debug_assertions) {
         app.handle().plugin(
           tauri_plugin_log::Builder::default()
@@ -153,7 +230,11 @@ pub fn run() {
       vault::vault_list,
       vault::vault_read,
       vault::state_write,
-      vault::state_read
+      vault::state_read,
+      follow_get,
+      follow_set,
+      follow_default,
+      app_identifier
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
