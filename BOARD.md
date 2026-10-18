@@ -3,10 +3,20 @@
 Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or from the chat. Same file, both see it. Tick a box in the app and it ticks here.
 
 ## Now
+- [ ] Rebrand to **Mortimeter** (decided 2026-10-18, pronounced mor-tih-mee-ter). "OSRS Buddy" was too close to RSBuddy/OSBuddy. Runners-up, logged in case a sister tool ever needs a name: Elder, Sage. Tagline: "for Old School RuneScape" (an app called "OSRS Companion" already exists, so not that)
+  - [ ] Page: title, header, every "OSRS Buddy" in copy, the patch-notes name, Ask Bud's self-references
+  - [ ] Desktop: product names (Mortimeter, Mortimeter Beta), identifiers (com.joshf.mortimeter, .beta), window titles, backups folder Documents\Mortimeter
+  - [ ] Save migration: on first launch of the new identifier, if its data folder is empty and the old one (com.joshf.osrsbuddy) has state.json, copy it over and adopt old backups. Nobody loses a save
+  - [ ] Android: app label and package, one fresh APK, then updates flow as before
+  - [ ] Repo: GitHub rename to mortimeter (Josh does this on GitHub; old links redirect, including the raw page URL the phone updates from), README, releases table
+  - [ ] Icon brief: our own Mortimer, skull in a crested teal helm, a meter in it (gauge arc or needle eyes). Never Jagex's art
+  - [ ] Krystal Klear stays Krystal Klear, built from the renamed page
+  - [ ] Farewell to OSRS Buddy (Josh asked that it not just poof). Decided 2026-10-18: patch notes stay professional, a short "Farewell Buddy, hello Mortimeter" with the reasoning, no letter. Josh's letter (he's finishing it) lives in the easter egg only. Trophy: yes. Museum: yes, screenshots of every stage are in museum/, with a hidden Museum page to come; an About-footer line "formerly OSRS Buddy, Aug to Oct 2026"; the gold theme keeps its place in the cycle, named "Buddy"; a Trophy-cabinet trophy auto-awarded to any save that existed before the rename, never earnable later; the old diamond icon kept under archive/; one quiet first-launch card after the update, shown once. The save key osrs_todo_state_v1 never changes
 - [ ] Coffer redesign: strip for the answers, podium for the top three, ledger bars for the rest. First pass is in, needs Josh's eyes in the Beta
 - [ ] New app icons: Josh is generating candidates elsewhere (Wise Old Man, Mortimer). Claude converts, then one installer per edition (stable, Beta, Krystal Klear)
 
 ## Next
+- [ ] Wise Old Claude: Bud takes an Anthropic API key in Settings (key stays on the machine, the person pays per question), gets the app's context in one tidy prompt, and the upgrade is told as lore, Bud ascending. Provider picker with only Anthropic for now, OpenAI and Gemini fit the same slot later. Bud's name may change with the rebrand, so this waits for the name
 - [ ] Map cleanup: too much on screen at once. Keep every bit of info, calm the layout
 - [ ] Quest steps from the wiki, shown when you click a quest on the Map. Clean, accurate, licence-safe. Likely a scheduled task (routine) that scrapes and checks, then Claude wires it in
 - [ ] Coffer: tune the stage thresholds once a few people have seen "Auto"
