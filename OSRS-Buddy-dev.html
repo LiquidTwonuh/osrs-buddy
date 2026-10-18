@@ -736,6 +736,75 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-sub{font-size:12px; color:var(--muted); margin-top:2px}
   .cf-tag{font-size:10px; padding:1px 7px; border-radius:999px; background:var(--panel); border:1px solid var(--border); color:var(--muted)}
   .cf-eff{color:var(--gold); opacity:.85}
+  /* the board */
+  .board-md{line-height:1.55; font-size:14px}
+  .board-md h2{font-size:22px; margin:14px 0 6px}
+  .board-md h3{font-size:17px; margin:16px 0 4px; color:var(--gold)}
+  .board-md h4{font-size:14px; margin:12px 0 4px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em}
+  .board-md ul{margin:4px 0 8px 18px; padding:0}
+  .board-md li{margin:2px 0}
+  .board-md li.task{list-style:none; margin-left:-18px}
+  .board-md li.task label{display:flex; gap:8px; align-items:flex-start; cursor:pointer}
+  .board-md li.task input{accent-color:var(--gold); margin-top:4px}
+  .board-md li.task.done span{color:var(--muted); text-decoration:line-through}
+  .board-md p{margin:6px 0}
+  .board-md code{background:var(--inset); border:1px solid var(--border); border-radius:5px; padding:0 5px; font-size:12.5px}
+  .board-md pre{background:var(--inset); border:1px solid var(--border); border-radius:8px; padding:10px; font-size:12.5px; overflow:auto}
+  .board-md hr{border:0; border-top:1px solid var(--border); margin:14px 0}
+  .board-ed textarea{width:100%; min-height:62vh; font-family:ui-monospace, Consolas, monospace; font-size:13px; line-height:1.5; background:var(--inset); color:var(--text); border:1px solid var(--border); border-radius:10px; padding:12px; resize:vertical; box-sizing:border-box}
+  /* the strip: your answers as a line of words, the controls folded under it */
+  .cf-strip{padding:10px 14px}
+  .cf-stripbar{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .cf-profile{flex:1 1 auto; display:flex; flex-wrap:wrap; align-items:center; gap:3px 7px; font-size:13px; min-width:0}
+  .cf-profile .cf-dot{color:var(--gold3)}
+  .cf-count{white-space:nowrap}
+  .cf-tune{display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1)}
+  .cf-strip.open .cf-tune{grid-template-rows:1fr}
+  .cf-tune > div{overflow:hidden; min-height:0}
+  .cf-tunein{padding-top:12px}
+  .cf-intro{font-size:12.5px; color:var(--gold); background:color-mix(in oklab, var(--gold) 10%, var(--inset)); border:1px solid color-mix(in oklab, var(--gold) 40%, var(--border)); border-radius:8px; padding:7px 10px; margin-bottom:10px}
+  /* the podium */
+  .cf-hero{background:radial-gradient(ellipse at 24% 28%, var(--glow), transparent 58%), var(--panel)}
+  .cf-podium{display:grid; grid-template-columns:minmax(0, 1.45fr) minmax(0, 1fr); grid-auto-rows:min-content; gap:10px}
+  .cf-hc{position:relative; display:flex; gap:12px; padding:14px 14px 12px 44px; border-radius:12px; border:1px solid var(--border); background:var(--inset); cursor:pointer}
+  .cf-hc:hover{border-color:color-mix(in oklab, var(--gold) 50%, var(--border))}
+  .cf-hc.pinned{border-color:var(--gold)}
+  .cf-hc.first{grid-row:1/3; flex-direction:column; align-items:center; text-align:center; padding:28px 18px 18px; border-color:color-mix(in oklab, var(--gold) 45%, var(--border)); box-shadow:inset 0 0 0 1px color-mix(in oklab, var(--gold) 18%, transparent), 0 10px 30px rgba(0,0,0,.25)}
+  .cf-hrank{position:absolute; top:50%; transform:translateY(-50%); left:11px; width:24px; height:24px; border-radius:50%; border:1px solid var(--gold); color:var(--gold); font-family:var(--font-display); font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center}
+  .cf-hc.first .cf-hrank{top:10px; left:10px; transform:none; width:30px; height:30px; font-size:16px; background:color-mix(in oklab, var(--gold) 18%, var(--inset))}
+  .cf-hico{flex:none; width:40px; height:40px; display:flex; align-items:center; justify-content:center; font-size:26px}
+  .cf-hico img{width:32px; height:32px; object-fit:contain}
+  .cf-hc.first .cf-hico{width:60px; height:60px; font-size:42px}
+  .cf-hc.first .cf-hico img{width:50px; height:50px}
+  .cf-hbody{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:4px}
+  .cf-hc.first .cf-hbody{align-items:center}
+  .cf-hname{font-weight:700; font-size:15px}
+  .cf-hc.first .cf-hname{font-size:19px}
+  .cf-hpay{font-family:var(--font-display); font-weight:700; color:var(--gold); font-size:22px; line-height:1.1}
+  .cf-hpay .muted{font-size:11px; font-weight:500}
+  .cf-hc.first .cf-hpay{font-size:38px; margin-top:2px}
+  .cf-hacts{gap:6px; margin-top:6px}
+  /* the ledger: a bar per method, measured against the best on the page */
+  .cf-ledger{display:flex; flex-direction:column; gap:3px}
+  .cf-lrow{display:grid; grid-template-columns:minmax(150px, 30%) minmax(0, 1fr) auto; grid-template-areas:"name track pin" "sub sub pin"; column-gap:12px; row-gap:3px; align-items:center; padding:7px 10px; border-radius:10px; border:1px solid transparent; cursor:pointer}
+  .cf-lrow:hover{background:var(--inset); border-color:var(--border)}
+  .cf-lrow.sel{border-color:var(--gold); background:var(--inset)}
+  .cf-lrow.pinned .cf-lname b{color:var(--gold)}
+  .cf-lrow.short{opacity:.78}
+  .cf-lname{grid-area:name; display:flex; align-items:center; gap:7px; min-width:0; font-size:13.5px}
+  .cf-lname b{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .cf-lgroup{font-size:14px}
+  .cf-ltrack{grid-area:track; position:relative; height:22px; border-radius:6px; background:var(--inset); border:1px solid var(--catbd); display:flex; align-items:center; overflow:hidden; min-width:0}
+  .cf-ltrack.slim{height:6px; width:100%; margin:4px 0 2px; border:0; background:var(--catbd)}
+  .cf-hc.first .cf-ltrack.slim{max-width:260px}
+  .cf-lbar{height:100%; border-radius:5px; background:linear-gradient(90deg, var(--gold3), var(--gold)); animation:cfgrow .7s cubic-bezier(.2,.8,.2,1)}
+  .cf-lrow.short .cf-lbar{background:repeating-linear-gradient(135deg, var(--gold3) 0 5px, transparent 5px 9px)}
+  .cf-lgp{position:absolute; right:8px; font-weight:700; font-size:12.5px; color:var(--text); text-shadow:0 1px 2px rgba(0,0,0,.8)}
+  .cf-lgp .muted{font-size:10px; font-weight:500}
+  .cf-lrow .qp-pin{grid-area:pin}
+  .cf-lsub{grid-area:sub; display:flex; flex-wrap:wrap; gap:3px 8px; align-items:center; font-size:12px; color:var(--muted); min-width:0}
+  .cf-lsub .cf-why{margin:0}
+  @keyframes cfgrow{from{width:0}}
   .sync-code{margin-top:8px; font-size:13px}
   .sync-code b{font-size:20px; letter-spacing:3px; color:var(--gold); font-family:ui-monospace, monospace}
   .cf-tag.wild{color:var(--red); border-color:color-mix(in oklab, var(--red) 40%, var(--border))}
@@ -1810,6 +1879,11 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     .cf-opts button{padding:12px 15px}
     .cf-next{width:100%; margin-top:14px; padding:12px}
     .gd-list, .cf-list{max-height:none}
+    .cf-podium{grid-template-columns:1fr}
+    .cf-hc.first{grid-row:auto; padding:24px 14px 14px}
+    .cf-hc.first .cf-hpay{font-size:30px}
+    .cf-lrow{grid-template-columns:minmax(0, 1fr) auto; grid-template-areas:"name pin" "track pin" "sub pin"; column-gap:8px; padding:7px 8px}
+    .cf-count{white-space:normal}
   }
   /* Folded, the screen is narrow but still fits three columns, which is what keeps all 24 skills
      on one screen. Two columns would push the last eight below the fold. */
@@ -1845,6 +1919,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <button class="navitem" data-view="coffer"><span class="ni-ic">🪙</span>Coffer</button>
       <div class="nav-sub hidden" id="navSubCoffer"></div>
       <button class="navitem" data-view="notes"><span class="ni-ic">📝</span>Notes</button>
+      <button class="navitem hidden" data-view="board" id="navBoard"><span class="ni-ic">📋</span>Board</button>
       <div class="nav-sec">Tools</div>
       <button class="navitem" data-view="ask"><span class="ni-ic">💬</span>Ask Bud</button>
       <button class="navitem" data-view="clog"><span class="ni-ic">🎖️</span>Achievements</button>
@@ -2431,6 +2506,20 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   </div>
 
   <!-- VIEW: NOTES (free-form stickies) -->
+  <div class="view hidden" id="view-board">
+    <div class="panel">
+      <div class="section-title" style="margin-top:0">
+        <h3>📋 Board</h3>
+        <span class="small muted" id="boardSub"></span>
+        <span class="grow"></span>
+        <button class="ghost small" id="boardReload" title="Read the file again">⟲</button>
+        <button class="ghost small" id="boardMode">✎ Edit</button>
+      </div>
+      <p class="muted small" style="margin:0 2px 8px">One file, two editors. You change it here, Claude changes it from the chat, and both of you read the same page. Tick a box to tick it in the file.</p>
+      <div class="board-md" id="boardMd"></div>
+      <div class="board-ed hidden" id="boardEd"><textarea id="boardText" spellcheck="false"></textarea><div class="small muted" id="boardStatus" style="margin-top:6px"></div></div>
+    </div>
+  </div>
   <div class="view hidden" id="view-notes">
     <div class="panel">
       <div class="section-title" style="margin-top:0">
@@ -5866,6 +5955,110 @@ function addNote(){
   save(); renderNotes();
   const first = $("#notesGrid textarea"); if(first) first.focus();
 }
+// ============ THE BOARD ============
+// A Markdown file the Beta shows as a page and edits in place. Headings, bullets, ticks, bold,
+// code and rules are enough for a planning board; it isn't trying to be a full renderer.
+let boardDoc = null, boardTimer = 0, boardPoll = 0, boardEditing = false;
+function boardAgo(ms){ const m = Math.round((Date.now() - ms) / 60000); return m < 1 ? "just now" : m < 60 ? m + " min ago" : m < 1440 ? Math.round(m/60) + " h ago" : Math.round(m/1440) + " days ago"; }
+const BOARD_SEED = `# OSRS Buddy board
+
+Shared between the two of us. Edit it here or in the chat; both see the same file.
+
+## Now
+- [ ] (what's being worked on)
+
+## Next
+- [ ] (what's queued)
+
+## Ideas
+- (anything, however rough)
+
+## Parked
+- (decided to wait, and why)
+`;
+function boardMd(text){
+  const lines = String(text || "").split("\n");
+  let out = "", inList = false, inCode = false;
+  const inline = t => escapeHtml(t)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<i>$2</i>")
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const closeList = ()=>{ if(inList){ out += "</ul>"; inList = false; } };
+  lines.forEach((raw, i)=>{
+    const l = raw.replace(/\s+$/, "");
+    if(/^```/.test(l)){ closeList(); inCode = !inCode; out += inCode ? "<pre>" : "</pre>"; return; }
+    if(inCode){ out += escapeHtml(l) + "\n"; return; }
+    let m;
+    if((m = /^(#{1,3})\s+(.*)/.exec(l))){ closeList(); out += `<h${m[1].length + 1}>${inline(m[2])}</h${m[1].length + 1}>`; return; }
+    if(/^(-{3,}|\*{3,})$/.test(l)){ closeList(); out += "<hr>"; return; }
+    if((m = /^(\s*)[-*]\s+\[([ xX])\]\s*(.*)/.exec(l))){
+      if(!inList){ out += "<ul>"; inList = true; }
+      const done = m[2] !== " ";
+      out += `<li class="task ${done ? "done" : ""}" style="margin-left:${m[1].length * 10}px"><label><input type="checkbox" data-bline="${i}" ${done ? "checked" : ""}> <span>${inline(m[3])}</span></label></li>`; return;
+    }
+    if((m = /^(\s*)[-*]\s+(.*)/.exec(l))){
+      if(!inList){ out += "<ul>"; inList = true; }
+      out += `<li style="margin-left:${m[1].length * 10}px">${inline(m[2])}</li>`; return;
+    }
+    closeList();
+    if(!l.trim()){ return; }
+    out += `<p>${inline(l)}</p>`;
+  });
+  closeList(); if(inCode) out += "</pre>";
+  return out;
+}
+async function boardLoad(){
+  try{ boardDoc = await ceInvoke("board_read"); }
+  catch(e){ boardDoc = {text: "", path: "", modified: 0, err: String(e.message || e)}; }
+  if(boardDoc && !boardDoc.text && !boardDoc.err) boardDoc.text = BOARD_SEED;
+  return boardDoc;
+}
+function boardRender(){
+  const d = boardDoc; if(!d) return;
+  const md = $("#boardMd"), ed = $("#boardEd"), ta = $("#boardText");
+  md.innerHTML = d.err ? `<div class="empty">${escapeHtml(d.err)}</div>` : boardMd(d.text);
+  if(!boardEditing) ta.value = d.text;
+  md.classList.toggle("hidden", boardEditing); ed.classList.toggle("hidden", !boardEditing);
+  $("#boardMode").textContent = boardEditing ? "📖 Read" : "✎ Edit";
+  const name = (d.path || "").split(/[\\/]/).pop();
+  $("#boardSub").textContent = d.path ? `${name}${d.modified ? " · changed " + boardAgo(d.modified) : ""}` : "";
+  $$("#boardMd [data-bline]").forEach(cb=>cb.onchange = ()=>{
+    const lines = boardDoc.text.split("\n"), i = +cb.dataset.bline;
+    lines[i] = cb.checked ? lines[i].replace(/\[[ ]\]/, "[x]") : lines[i].replace(/\[[xX]\]/, "[ ]");
+    boardDoc.text = lines.join("\n"); boardSave(true);
+  });
+}
+async function boardSave(now){
+  clearTimeout(boardTimer);
+  const go = async ()=>{
+    const st = $("#boardStatus");
+    try{ boardDoc.modified = await ceInvoke("board_write", {text: boardDoc.text}); if(st) st.textContent = "Saved."; if(!boardEditing) boardRender(); }
+    catch(e){ if(st) st.textContent = "Couldn't save: " + String(e.message || e); toast("The board didn't save", true); }
+  };
+  if(now) return go();
+  boardTimer = setTimeout(go, 900);
+}
+async function boardOpen(){
+  await boardLoad(); boardRender();
+  // while the page is open, pick up edits made from the chat
+  clearInterval(boardPoll);
+  boardPoll = setInterval(async ()=>{
+    const v = $("#view-board"); if(!v || v.classList.contains("hidden")){ clearInterval(boardPoll); return; }
+    if(boardEditing) return;
+    const before = boardDoc && boardDoc.modified;
+    await boardLoad(); if(boardDoc.modified !== before) boardRender();
+  }, 8000);
+}
+(function(){
+  const mode = $("#boardMode"); if(!mode) return;
+  mode.onclick = ()=>{ boardEditing = !boardEditing; if(!boardEditing) boardSave(true); boardRender(); if(boardEditing) $("#boardText").focus(); };
+  $("#boardReload").onclick = async ()=>{ boardEditing = false; await boardLoad(); boardRender(); };
+  const ta = $("#boardText");
+  ta.oninput = ()=>{ boardDoc.text = ta.value; const st = $("#boardStatus"); if(st) st.textContent = "Saving…"; boardSave(false); };
+  ta.onkeydown = e=>{ if((e.ctrlKey || e.metaKey) && e.key === "s"){ e.preventDefault(); boardDoc.text = ta.value; boardSave(true); } };
+})();
+
 function renderNotes(){
   const el = $("#notesGrid"); if(!el) return;
   $("#notesSub").textContent = state.notes.length ? `${state.notes.length} note${state.notes.length===1?"":"s"}` : "";
@@ -10316,7 +10509,8 @@ function cofferGoalText(m, pf){
 }
 // "48:00:00" is the wiki's way of saying every two days
 function mmgEvery(t){
-  const h = parseInt(String(t).split(":")[0], 10) || 0;
+  const parts = String(t).split(":"), h = parseInt(parts[0], 10) || 0, mins = parseInt(parts[1], 10) || 0;
+  if(!h && mins) return mins + " min";
   if(h >= 48 && h % 24 === 0) return (h/24) + " days";
   if(h === 24) return "day";
   return h ? h + "h" : String(t);
@@ -10387,6 +10581,7 @@ function cofferDetailHtml(m){
     </div>
   </div>`;
 }
+let cfTuneTimer = 0;
 function renderCoffer(){
   const el = $("#cofferView"); if(!el) return;
   const db = mmgDB();
@@ -10442,7 +10637,11 @@ function renderCoffer(){
     });
     const sl = $("#cfFloor");
     if(sl) sl.oninput = ()=>{ const v = CF_FLOOR[+sl.value]; $("#cfFloorVal").textContent = v ? cfGp(v) + " an hour or better" : "Anything's worth doing"; };
-    const finish = ()=>{ state.coffer.done = true; state.coffer.quizOpen = false; state.coffer.single = false; state.coffer.step = 0; save(); renderCoffer(); };
+    const finish = ()=>{
+      state.coffer.done = true; state.coffer.quizOpen = false; state.coffer.step = 0;
+      if(!single){ state.coffer.tune = true; state.coffer.tuneIntro = !state.coffer.tuneSeen; state.coffer.tuneSeen = true; }
+      state.coffer.single = false; save(); renderCoffer();
+    };
     $("#cfNext").onclick = ()=>{
       if(sl) pf.floor = String(CF_FLOOR[+sl.value]);
       const g = $("#cfGoal"); if(g) pf.goal = cfParseGp(g.value);
@@ -10489,75 +10688,116 @@ function renderCoffer(){
     return `<span class="cf-chip"><b>${label}</b>${q.opts.map(([v,t])=>
       `<button class="${pf[id]===v?"on":""}" data-cfset="${id}" data-cfval="${v}">${t}</button>`).join("")}</span>`;
   };
-  const rowHtml = (m, showWhy)=>{
+  // ---- the ledger: every method drawn as a bar against the best on the page ----
+  const groupIcon = m => m.group==="Combat"?"⚔️":m.group==="Collecting"?"🧺":m.group==="Processing"?"🔨":"⛏️";
+  const topPay = Math.max(1, ...picked.filter(m=>!m.recur && m.gap.ok).map(m=>m.profit||0));
+  const ledgerRow = (m, showWhy, scale)=>{
     const need = m.gap.text;
     const rec = m.gap.soft.map(g=>`${g.lvl} ${nice(g.skill)}`).join(", ");
     const on = pins.includes(m.name);
     const goal = cofferGoalText(m, pf);
     const why = showWhy ? (m.why || []).concat(goal ? [goal] : []) : (goal ? [goal] : []);
-    return `<div class="cf-row ${m.gap.ok?"":"short"} ${on?"pinned":""} ${sel && sel.name===m.name?"sel":""}" data-cfopen="${escapeHtml(m.name)}">
-      <div class="cf-gp">${cofferPayHtml(m)}</div>
-      <div class="cf-b">
-        <div class="cf-h"><b>${escapeHtml(m.name)}</b>${cofferTagsHtml(m)}</div>
-        <div class="cf-sub">${need ? `Needs ${need}` : rec ? `Wiki recommends ${rec}` : "You've got the levels for this"}${
-          m.gap.ok ? "" : ` <span class="cf-eff">${xpText(m.gap.effort)} of work away</span>`}${
-          m.loc ? `<span class="muted"> · ${escapeHtml(m.loc)}</span>` : ""}</div>
-        ${why.length ? `<div class="cf-why">${why.map(escapeHtml).join(" · ")}</div>` : ""}
-      </div>
+    const pay = m.recur ? m.perRun : m.profit;
+    const pct = Math.max(2.5, Math.min(100, 100 * (pay || 0) / (scale || topPay)));
+    const sk = mmgCatSkill(m);
+    return `<div class="cf-lrow ${m.gap.ok?"":"short"} ${on?"pinned":""} ${sel && sel.name===m.name?"sel":""}" data-cfopen="${escapeHtml(m.name)}">
+      <div class="cf-lname">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : `<span class="cf-lgroup">${groupIcon(m)}</span>`}<b>${escapeHtml(m.name)}</b></div>
+      <div class="cf-ltrack"><div class="cf-lbar" style="width:${pct.toFixed(1)}%"></div><span class="cf-lgp">${cofferPayHtml(m)}</span></div>
       <button class="qp-pin ${on?"on":""}" data-cfpin="${escapeHtml(m.name)}" title="${on?"On your picks":"Add to your picks"}">${on?"📌":"+"}</button>
+      <div class="cf-lsub">${cofferTagsHtml(m)}<span>${need ? `Needs ${need}` : rec ? `Wiki recommends ${rec}` : "You've got the levels"}${
+        m.gap.ok ? "" : ` <span class="cf-eff">${xpText(m.gap.effort)} away</span>`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}</span>${
+        why.length ? `<span class="cf-why">${why.map(escapeHtml).join(" · ")}</span>` : ""}</div>
     </div>`;
   };
-  const section = (title, sub, list, max, emptyText, showWhy)=> `<div class="panel">
+  const ledger = (title, sub, list, max, emptyText, showWhy, scale)=> `<div class="panel">
       <div class="section-title" style="margin-top:0"><h3>${title}</h3><span class="small muted">${sub}</span></div>
-      <div class="cf-list">${list.slice(0, max).map(m=>rowHtml(m, showWhy)).join("") || `<div class="empty">${emptyText}</div>`}</div>
+      <div class="cf-ledger">${list.slice(0, max).map(m=>ledgerRow(m, showWhy, scale)).join("") || `<div class="empty">${emptyText}</div>`}</div>
     </div>`;
-  const styleWord = {any:"your answers", combat:"combat", skilling:"skilling", gather:"gathering and processing"}[pf.style] || "your answers";
+  // ---- the podium: the best three, the first standing taller ----
+  const heroCard = (m, i)=>{
+    const sk = mmgCatSkill(m), goal = cofferGoalText(m, pf), why = (m.why || []).concat(goal ? [goal] : []);
+    const pct = Math.max(2.5, Math.min(100, 100 * (m.profit || 0) / topPay));
+    const on = pins.includes(m.name);
+    return `<div class="cf-hc ${i ? "" : "first"} ${on?"pinned":""}" data-cfopen="${escapeHtml(m.name)}">
+      <div class="cf-hrank">${i+1}</div>
+      <div class="cf-hico">${sk ? `<img src="${skillIconUrl(sk)}" alt="">` : `<span>${groupIcon(m)}</span>`}</div>
+      <div class="cf-hbody">
+        <div class="cf-hname">${escapeHtml(m.name)}</div>
+        <div class="cf-hpay">${cofferPayHtml(m)}</div>
+        <div class="cf-ltrack slim"><div class="cf-lbar" style="width:${pct.toFixed(1)}%"></div></div>
+        <div class="cf-h">${cofferTagsHtml(m)}</div>
+        ${why.length ? `<div class="cf-why">${why.map(escapeHtml).join(" · ")}</div>` : ""}
+        ${m.loc ? `<div class="small muted">${escapeHtml(m.loc)}</div>` : ""}
+        <div class="row cf-hacts">
+          <button class="ghost small" data-cfpin="${escapeHtml(m.name)}">${on ? "📌 On your picks" : "📌 Pick"}</button>
+          <a class="ghost small" href="${cofferGuideUrl(m)}" target="_blank" rel="noopener">Guide ↗</a>
+        </div>
+      </div>
+    </div>`;
+  };
+  // ---- the strip: your answers in a line of words, with the controls folded underneath ----
+  const optLabel = id => { const q = COFFER_QUIZ[stepOf(id)]; const o = (q.opts || []).find(o=>o[0]===pf[id]); return o ? o[1].replace(/^(Yes|No),\s*/, "") : ""; };
+  const st = cofferStage(pf);
+  const loves = Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(nice);
+  const words = [optLabel("iron"), optLabel("members"), st.label + (st.auto ? "" : ", your call"), optLabel("style"), optLabel("session"),
+    pf.xp === "xp" ? "XP too" : "", +pf.floor ? cfGp(pf.floor) + "/hr or better" : "", loves.length ? "❤️ " + loves.join(", ") : ""].filter(w=>w && !/^(Doesn't matter|Don't mind|A bit of everything)$/.test(w));
+  const tuneOpen = !!state.coffer.tune;
+  const dailyTop = Math.max(1, ...dailies.map(m=>m.perRun || 0));
 
   el.innerHTML = `
-    <div class="panel">
+    <div class="panel cf-strip ${tuneOpen ? "open" : ""}">
+      <div class="cf-stripbar">
+        <span class="cf-profile">${words.map(escapeHtml).join('<span class="cf-dot">·</span>')}</span>
+        <span class="small muted cf-count">${fmt(ready.length + dailies.length)} ready now of ${fmt(db.methods.length)}${live ? "" : " · load your stats to check them against your levels"}</span>
+        <button class="ghost small" id="cfTune">${tuneOpen ? "Done" : "⚙ Tune"}</button>
+      </div>
+      <div class="cf-tune"><div><div class="cf-tunein">
+        ${state.coffer.tuneIntro ? `<div class="cf-intro">Your answers live here. Change any one and the page follows. This tucks away on its own; Tune brings it back.</div>` : ""}
+        <div class="cf-chips">${chip("members","Account")}${chip("iron","Iron")}${chip("style","Enjoy")}${chip("skills","Skills")}${chip("pace","Pace")}${chip("session","Session")}${chip("stage","Stage")}${chip("xp","XP")}${chip("wildy","Risk")}${chip("reach","Out of reach")}${chip("goal","Goal")}${chip("floor","At least")}</div>
+        <div class="row" style="gap:8px; margin-top:10px; align-items:center">
+          <span class="grow"></span>
+          <button class="ghost small" id="cfQuiz">↻ Retake the quiz</button>
+          <button class="ghost small" id="cfRefresh" title="Re-read the wiki">⟲ Refresh</button>
+        </div>
+      </div></div></div>
+    </div>
+    ${pins.length ? `<div class="panel">
       <div class="section-title" style="margin-top:0"><h3>📌 Your picks</h3>
-        <span class="small muted">${pins.length ? `${pins.length} method${pins.length===1?"":"s"} · ${pins.filter(n=>byName[n].gap.ok).length} ready now` : "nothing picked yet"}</span></div>
-      ${pins.length ? `<div class="qb-grid">${pins.map(n=>cofferCardHtml(byName[n], sel && sel.name===n)).join("")}</div>`
-        : `<div class="empty">Hit + on anything below to keep it up here. Your picks hold between visits, like the quest board.</div>`}
-    </div>
+        <span class="small muted">${pins.length} method${pins.length===1?"":"s"} · ${pins.filter(n=>byName[n].gap.ok).length} ready now</span></div>
+      <div class="qb-grid">${pins.map(n=>cofferCardHtml(byName[n], sel && sel.name===n)).join("")}</div>
+    </div>` : ""}
     ${sel ? cofferDetailHtml(sel) : ""}
-    <div class="panel">
-      <div class="cf-chips">${chip("members","Account")}${chip("iron","Iron")}${chip("style","Enjoy")}${chip("skills","Skills")}${chip("pace","Pace")}${chip("session","Session")}${chip("stage","Stage")}${chip("xp","XP")}${chip("wildy","Risk")}${chip("reach","Out of reach")}${chip("goal","Goal")}${chip("floor","At least")}</div>
-      <div class="row" style="gap:8px; margin-top:10px; align-items:center">
-        <span class="small muted grow">${fmt(ready.length + dailies.length)} you can do now, out of ${fmt(db.methods.length)} the wiki lists${live?"":" · load your stats to check them against your levels"}</span>
-        <button class="ghost small" id="cfQuiz">↻ Retake the quiz</button>
-        <button class="ghost small" id="cfRefresh" title="Re-read the wiki">⟲ Refresh</button>
-      </div></div>
-    <div class="panel">
-      <div class="section-title" style="margin-top:0"><h3>✦ Best for you tonight</h3><span class="small muted">${cofferStage(pf).label}${cofferStage(pf).auto ? "" : " (your call)"} · ${escapeHtml(cofferStage(pf).why)}</span></div>
-      ${top.length ? `<div class="cf-top">${top.map((m, i)=>{
-        const sk = mmgCatSkill(m), goal = cofferGoalText(m, pf), why = (m.why || []).concat(goal ? [goal] : []);
-        return `<div class="cf-topcard ${pins.includes(m.name)?"pinned":""}" data-cfopen="${escapeHtml(m.name)}">
-          <div class="cf-toprank">${["🥇","🥈","🥉"][i]}</div>
-          <div class="cf-topico">${sk ? `<img src="${skillIconUrl(sk)}" alt="">` : `<span>${m.group==="Combat"?"⚔️":m.group==="Collecting"?"🧺":m.group==="Processing"?"🔨":"⛏️"}</span>`}</div>
-          <div class="cf-topname">${escapeHtml(m.name)}</div>
-          <div class="cf-toppay">${cofferPayHtml(m)}</div>
-          <div class="cf-h" style="justify-content:center">${cofferTagsHtml(m)}</div>
-          ${why.length ? `<div class="cf-why" style="text-align:center">${why.map(escapeHtml).join(" · ")}</div>` : ""}
-          ${m.loc ? `<div class="small muted" style="text-align:center">${escapeHtml(m.loc)}</div>` : ""}
-          <div class="row" style="justify-content:center; gap:6px; margin-top:8px">
-            <button class="ghost small" data-cfpin="${escapeHtml(m.name)}">${pins.includes(m.name) ? "📌 On your picks" : "📌 Pick"}</button>
-            <a class="ghost small" href="${cofferGuideUrl(m)}" target="_blank" rel="noopener">Guide ↗</a>
-          </div>
-        </div>`; }).join("")}</div>`
-      : `<div class="empty">Nothing you can do yet fits those answers. Loosen one above, or look under Worth training for.</div>`}
+    <div class="panel cf-hero">
+      <div class="section-title" style="margin-top:0"><h3>✦ Best for you tonight</h3><span class="small muted">${st.label}${st.auto ? "" : " (your call)"} · ${escapeHtml(st.why)}</span></div>
+      ${top.length ? `<div class="cf-podium">${top.map(heroCard).join("")}</div>`
+      : `<div class="empty">Nothing you can do yet fits those answers. Loosen one under Tune, or look under Worth training for.</div>`}
     </div>
-    ${more.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>More in your style</h3><span class="small muted">the next few, same reasoning</span></div>
-      <div class="cf-list cf-grid">${more.map(m=>rowHtml(m, true)).join("")}</div></div>` : ""}
-    ${pf.reach!=="ready" && train.length ? section("🎯 Worth training for", "big earners a session or two away", train, 3, "", true) : ""}
-    ${dailies.length ? section("🌱 Your dailies", "start it, walk away, come back", dailies, 8, "", false) : ""}
+    ${more.length ? ledger("More in your style", "measured against tonight's best", more, 9, "", true) : ""}
+    ${pf.reach!=="ready" && train.length ? ledger("🎯 Worth training for", "big earners a session or two away", train, 3, "", true) : ""}
+    ${dailies.length ? ledger("🌱 Your dailies", "start it, walk away, come back", dailies, 8, "", false, dailyTop) : ""}
     <details class="panel cf-full" ${state.coffer.full ? "open" : ""}><summary><h3 style="display:inline">The full list</h3> <span class="small muted">${fmt(ready.length)} you can do now${pf.reach!=="ready" ? ` · ${fmt(close.length)} within reach` : ""}${pf.reach==="all" ? ` · ${fmt(far.length)} further off` : ""}</span></summary>
       <div class="section-title"><h3>✅ Ready now</h3></div>
-      <div class="cf-list">${ready.filter(m=>!inTop.has(m.name)).slice(0, 80).map(m=>rowHtml(m, false)).join("") || `<div class="empty">That's all of them above.</div>`}</div>
-      ${pf.reach!=="ready" && close.length ? `<div class="section-title"><h3>🎯 Within reach</h3></div><div class="cf-list">${close.slice(0, 40).map(m=>rowHtml(m, false)).join("")}</div>` : ""}
-      ${pf.reach==="all" && far.length ? `<div class="section-title"><h3>🧗 Further off</h3></div><div class="cf-list">${far.slice(0, 40).map(m=>rowHtml(m, false)).join("")}</div>` : ""}
+      <div class="cf-ledger">${ready.filter(m=>!inTop.has(m.name)).slice(0, 80).map(m=>ledgerRow(m, false)).join("") || `<div class="empty">That's all of them above.</div>`}</div>
+      ${pf.reach!=="ready" && close.length ? `<div class="section-title"><h3>🎯 Within reach</h3></div><div class="cf-ledger">${close.slice(0, 40).map(m=>ledgerRow(m, false)).join("")}</div>` : ""}
+      ${pf.reach==="all" && far.length ? `<div class="section-title"><h3>🧗 Further off</h3></div><div class="cf-ledger">${far.slice(0, 40).map(m=>ledgerRow(m, false)).join("")}</div>` : ""}
     </details>`;
 
+  // the strip opens and closes in place, no re-render, so it can animate
+  $("#cfTune").onclick = ()=>{
+    clearTimeout(cfTuneTimer);
+    state.coffer.tune = !state.coffer.tune; state.coffer.tuneIntro = false; save();
+    const strip = $("#cofferView .cf-strip"); if(strip) strip.classList.toggle("open", state.coffer.tune);
+    $("#cfTune").textContent = state.coffer.tune ? "Done" : "⚙ Tune";
+    const intro = $("#cofferView .cf-intro"); if(intro) intro.remove();
+  };
+  if(state.coffer.tuneIntro){
+    clearTimeout(cfTuneTimer);
+    cfTuneTimer = setTimeout(()=>{
+      state.coffer.tuneIntro = false; state.coffer.tune = false; save();
+      const strip = $("#cofferView .cf-strip"); if(strip) strip.classList.remove("open");
+      const b = $("#cfTune"); if(b) b.textContent = "⚙ Tune";
+    }, 6000);
+  }
   $$("#cofferView [data-cfset]").forEach(b=>b.onclick=()=>cofferSet(b.dataset.cfset, b.dataset.cfval));
   $$("#cofferView [data-cfstep]").forEach(b=>b.onclick=()=>{ state.coffer.quizOpen = true; state.coffer.single = true; state.coffer.step = +b.dataset.cfstep; save(); renderCoffer(); });
   const fc = $("#cfFloorChip");
@@ -13537,7 +13777,7 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", start:"Roadmap", ask:"Ask Bud", quests:"Map", coffer:"Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", board:"Board", start:"Roadmap", ask:"Ask Bud", quests:"Map", coffer:"Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
 // ---- Scroll sections ----
 // The page got big enough that one long scroll stopped working. Same data, five
 // sections, heatmap first because that's what people open the page for.
@@ -13745,6 +13985,7 @@ function switchView(name){
   // rebuilt on entry rather than left as whatever it was at launch
   if(name==="quests") applyMapSec();
   if(name==="coffer") applyCofferSec();
+  if(name==="board") boardOpen();
   if(name==="arcade") renderArcade();
   // the recap is something you open and close, not a place, so coming back to Scroll
   // always lands on the Overview
@@ -14144,6 +14385,9 @@ function ceInvoke(cmd, args){ return window.__TAURI__.core.invoke(cmd, args || {
 let appIdent = "";
 if(window.__TAURI__ && window.__TAURI__.core) ceInvoke("app_identifier").then(v=>{ appIdent = String(v || ""); }).catch(()=>{});
 function isBetaApp(){ return /\.beta$/.test(appIdent); }
+// Beta only, and only once the app has said which build it is
+function boardNavShow(){ const b = $("#navBoard"); if(b && isBetaApp()) b.classList.remove("hidden"); }
+if(window.__TAURI__ && window.__TAURI__.core) setTimeout(boardNavShow, 400);
 function ceGroup(files){
   const groups = {};
   (files||[]).forEach(f=>{

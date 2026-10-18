@@ -175,6 +175,37 @@ fn app_identifier(app: tauri::AppHandle) -> String {
   app.config().identifier.clone()
 }
 
+
+// ---- the board ----
+// A shared planning file for the two people working on the app: a person editing it in the
+// Beta, and Claude editing it with its tools. It lives next to the followed page file (so in
+// the repo), or in the app's data folder when no file is followed.
+#[derive(serde::Serialize)]
+struct BoardDoc { text: String, path: String, modified: u64 }
+fn board_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+  use tauri::Manager;
+  let m = follow_marker(app)?;
+  if let Some(f) = follow_read(&m) {
+    if let Some(dir) = f.parent() { return Ok(dir.join("BOARD.md")); }
+  }
+  let dir = app.path().app_local_data_dir().map_err(|e| e.to_string())?;
+  Ok(dir.join("BOARD.md"))
+}
+#[tauri::command]
+fn board_read(app: tauri::AppHandle) -> Result<BoardDoc, String> {
+  let p = board_path(&app)?;
+  let text = fs::read_to_string(&p).unwrap_or_default();
+  Ok(BoardDoc { text, path: p.to_string_lossy().to_string(), modified: modified_ms(&p) })
+}
+#[tauri::command]
+fn board_write(app: tauri::AppHandle, text: String) -> Result<u64, String> {
+  let p = board_path(&app)?;
+  let tmp = p.with_extension("md.part");
+  fs::write(&tmp, text.as_bytes()).map_err(|e| e.to_string())?;
+  fs::rename(&tmp, &p).map_err(|e| e.to_string())?;
+  Ok(modified_ms(&p))
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
@@ -234,7 +265,9 @@ pub fn run() {
       follow_get,
       follow_set,
       follow_default,
-      app_identifier
+      app_identifier,
+      board_read,
+      board_write
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
