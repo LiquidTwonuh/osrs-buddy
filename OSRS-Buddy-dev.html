@@ -722,6 +722,10 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-dpay .muted{font-size:12px; font-weight:500}
   .cf-chip{display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:999px; background:var(--inset); border:1px solid var(--border); font-size:12px}
   .cf-chip b{color:var(--muted); font-weight:600; margin-right:2px}
+  .cf-chiprow{display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--inset); color:var(--text); font:inherit; font-size:14px; cursor:pointer}
+  .cf-chiprow b{color:var(--muted); font-weight:600; flex:0 0 92px}
+  .cf-chiprow span:not(.muted){flex:1 1 auto; min-width:0}
+  .cf-chips:has(.cf-chiprow){flex-direction:column; align-items:stretch; gap:6px}
   .cf-chip button{border:0; background:none; color:var(--text); font:inherit; padding:2px 7px; border-radius:999px; cursor:pointer; opacity:.6}
   .cf-chip button.on{background:color-mix(in oklab, var(--gold) 22%, var(--panel)); color:var(--gold); opacity:1}
   .cf-list{display:flex; flex-direction:column; gap:6px; max-height:70vh; overflow:auto}
@@ -10247,7 +10251,7 @@ function reachText(v){
 // skills it wants, a category and how busy it keeps you. We read it, check every skill against
 // your own levels, and let the quiz do the filtering for you. The quiz is only a friendly way to
 // set the filters: they stay on screen afterwards and you can change any of them.
-const MMG_VERSION = 5;   // 5: skill levels read off each method's own page
+const MMG_VERSION = 6;   // 6: "must have defeated X" no longer reads as a quest
 const MMG_PAGE = "Money making guide";
 let mmgBusy = false;
 function mmgDB(){ const d = state.mmgDB; return (d && d.v===MMG_VERSION && d.methods && d.methods.length) ? d : null; }
@@ -10354,7 +10358,7 @@ async function mmgDetails(methods){
         // quests the method needs: the ones we know get checked against your record; the rest
         // (miniquests, "easy Combat Achievements") are still requirements, shown as text
         // "(must have defeated [[Dad]])" is a note, not a requirement: drop bracketed asides first
-        const qf = field("Quest").replace(/\([^)]*\)/g, "");
+        const qf = field("Quest").replace(/\([^)]*\)/g, "").replace(/\b(must have )?(defeated|defeat|killed|kill)\s+\[\[[^\]]+\]\]/gi, "");
         const qs = [...qf.matchAll(/\[\[([^\]|]+)/g)].map(x=>x[1].trim());
         m.quests = db ? [...new Set(qs.filter(q=>db.quests[q]))] : [];
         m.needs = /^\s*none/i.test(plain(qf)) ? [] : [...new Set(qs.filter(q=>!(db && db.quests[q]) && !/^(miniquest|quest|quests)$/i.test(q)))].slice(0, 4);
@@ -10670,8 +10674,17 @@ function renderCoffer(){
   const inTop = new Set(top.map(m=>m.name).concat(more.map(m=>m.name)));
 
   const stepOf = id => COFFER_QUIZ.findIndex(q=>q.id===id);
+  const narrow = IS_ANDROID || window.innerWidth < 700;
   const chip = (id, label)=>{
     const q = COFFER_QUIZ[stepOf(id)];
+    if(narrow && !q.slider){
+      let val;
+      if(q.tiers){ const n = Object.keys(pf.skillTiers).length; val = n ? `${n} skill${n===1?"":"s"} rated` : "no strong feelings"; }
+      else if(q.number) val = pf.goal ? cfGp(+pf.goal) : "none";
+      else if(id === "stage"){ const st = cofferStage(pf); val = pf.stage === "auto" || !pf.stage ? "Auto: " + st.autoLabel : st.label; }
+      else { const o = (q.opts || []).find(o=>o[0]===pf[id]); val = o ? o[1] : "not set"; }
+      return `<button class="cf-chiprow" data-cfstep="${stepOf(id)}"><b>${label}</b><span>${escapeHtml(val)}</span><span class="muted">›</span></button>`;
+    }
     if(q.slider) return `<span class="cf-chip"><b>${label}</b>
       <input type="range" class="cf-chipslide" id="cfFloorChip" min="0" max="${CF_FLOOR.length-1}" value="${cfFloorIdx(pf.floor)}">
       <span id="cfFloorChipVal">${cfGp(pf.floor)}${+pf.floor?"/hr":""}</span></span>`;

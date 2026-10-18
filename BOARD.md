@@ -13,8 +13,8 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 - [ ] Android layout polish, touch dragging untested
 
 ## Small fixes spotted
-- [ ] Coffer: the answer chips are a wall on the phone. Fold them into a picker per question
-- [ ] Coffer: General Graardor shows "Needs Dad", a quest link the parser mistakes for a requirement
+- [x] Coffer: the answer chips are a wall on the phone. On a phone each answer is now one row that opens that question
+- [x] Coffer: General Graardor showed "Needs Dad". "Must have defeated X" no longer reads as a quest
 
 ## Ideas
 - Wise Old Bud gets smarter from a wiki scrape
@@ -26,6 +26,10 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 - Lumped XP day splitter (WOM lands several days' XP on one day). Parked until the day popup is reworked
 - Selling the app: blocked by the wiki's non-commercial licence. Free with a tip jar is the fallback
 - Roadmap redo and priorities redesign: after Map
+
+## Routines (scheduled tasks)
+- Wiki watch, daily at 9: checks the wiki's money making guides for new, gone or sharply changed methods and notes them under "Wiki watch" at the bottom of this file. First routine, mostly to see how they behave
+- Next candidate: quest steps from the wiki for the Map
 
 ## How we work
 - Dev page is `OSRS-Buddy-dev.html`. The Beta follows it: edit, press Reload in the Beta
