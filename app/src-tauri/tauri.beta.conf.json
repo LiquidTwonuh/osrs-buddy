@@ -1,0 +1,23 @@
+{
+  "productName": "OSRS Buddy Beta",
+  "mainBinaryName": "OSRS Buddy Beta",
+  "identifier": "com.joshf.osrsbuddy.beta",
+  "version": "1.8.0",
+  "build": {
+    "frontendDist": "../dist",
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "OSRS Buddy Beta",
+        "width": 1180,
+        "height": 860,
+        "minWidth": 420,
+        "minHeight": 560,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ]
+  }
+}
