@@ -12,7 +12,7 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
   - [ ] Icon brief: our own Mortimer, skull in a crested teal helm, a meter in it (gauge arc or needle eyes). Never Jagex's art
   - [ ] Krystal Klear stays Krystal Klear, built from the renamed page
   - [x] Farewell to OSRS Buddy, built 2026-10-19: plays once for saves born before the rename, numbers frozen that night; replay by typing buddy or clicking the old name under About; Old Buddy trophy; Buddy theme; the museum view (type museum, or from the farewell). Josh may still replace the letter text (FAREWELL_LETTER). Decided 2026-10-18: patch notes stay professional, a short "Farewell Buddy, hello Mortimeter" with the reasoning, no letter. Josh's letter (he's finishing it) lives in the easter egg only. Trophy: yes. Museum: yes, screenshots of every stage are in museum/, with a hidden Museum page to come; an About-footer line "formerly OSRS Buddy, Aug to Oct 2026"; the gold theme keeps its place in the cycle, named "Buddy"; a Trophy-cabinet trophy auto-awarded to any save that existed before the rename, never earnable later; the old diamond icon kept under archive/; one quiet first-launch card after the update, shown once. The save key osrs_todo_state_v1 never changes
-- [ ] Coffer redesign: strip for the answers, podium for the top three, ledger bars for the rest. First pass is in, needs Josh's eyes in the Beta
+- [ ] Coffer redesign: strip, podium, ledger bars (in). Rounds (2026-10-19): the dailies are a checklist that knows the game's clock; tick one and it comes back at 00:00 UTC, Wednesday for weeklies, or after its interval; routines the wiki doesn't list (Tears, Bert, Geoffrey, Cromperty, Zaff, kingdom, NMZ herb boxes, Robin, bird houses, herb and tree runs) are gated by quest and diary; a Rounds panel on Home. The lens: tap a loved skill under the strip and the whole page re-measures through it. Still to do: Josh's eyes on all of it; more routines as people suggest them
 - [ ] New app icons: Josh is generating candidates elsewhere (Wise Old Man, Mortimer). Claude converts, then one installer per edition (stable, Beta, Krystal Klear)
 
 ## Next
@@ -23,6 +23,8 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 - [ ] Android layout polish, touch dragging untested
 
 ## Small fixes spotted
+- [ ] Flip trusts the latest high/low trade as a price. Yellow beads showed a margin nobody could buy at (Josh tried 2k each). Re-assess: use the 5-minute and hour averages, require real volume (trades per hour), show it, and hide thin items by default. Also show the buy limit next to the margin
+- [ ] Rename Map and Coffer once Coffer is finished; Josh wants better names (Scroll stays)
 - [x] Coffer: the answer chips are a wall on the phone. On a phone each answer is now one row that opens that question
 - [x] Coffer: General Graardor showed "Needs Dad". "Must have defeated X" no longer reads as a quest
 

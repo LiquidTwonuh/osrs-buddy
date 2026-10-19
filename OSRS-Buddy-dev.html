@@ -839,6 +839,30 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-lsub{grid-area:sub; display:flex; flex-wrap:wrap; gap:3px 8px; align-items:center; font-size:12px; color:var(--muted); min-width:0}
   .cf-lsub .cf-why{margin:0}
   @keyframes cfgrow{from{width:0}}
+  /* rounds: a checklist that knows the clock */
+  .rd-list{display:flex; flex-direction:column; gap:4px}
+  .rd-row{display:flex; align-items:center; gap:10px; padding:7px 10px; border-radius:10px; border:1px solid transparent; cursor:pointer}
+  .rd-row:hover{background:var(--inset); border-color:var(--border)}
+  .rd-row.wait{opacity:.62}
+  .rd-row.short{opacity:.7}
+  .rd-tick{flex:none; width:30px; height:30px; border-radius:50%; border:1px solid var(--border); background:var(--inset); color:var(--muted); font-size:15px; cursor:pointer}
+  .rd-tick.on{border-color:var(--gold); color:var(--gold); background:color-mix(in oklab, var(--gold) 16%, var(--inset))}
+  .rd-tick:disabled{opacity:.35; cursor:default}
+  .rd-b{flex:1 1 auto; min-width:0}
+  .rd-h{display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:13.5px}
+  .rd-sub{font-size:12px; color:var(--muted); margin-top:2px}
+  .rd-when.up{color:var(--green); font-weight:600}
+  .rd-pay{flex:none; text-align:right; font-weight:700; color:var(--gold); font-size:13.5px; max-width:180px}
+  .rd-pay .muted{font-size:10px; font-weight:500}
+  .rd-chips{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+  .rd-chip{border:1px solid var(--border); background:var(--inset); color:var(--text); border-radius:999px; padding:5px 11px; font:inherit; font-size:12.5px; cursor:pointer}
+  .rd-chip:hover{border-color:var(--gold)}
+  .rd-next{margin-left:4px}
+  /* the lens */
+  .cf-lens{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:8px}
+  .cf-lens button{display:inline-flex; align-items:center; gap:5px; border:1px solid var(--border); background:var(--inset); color:var(--muted); border-radius:999px; padding:4px 10px; font:inherit; font-size:12.5px; cursor:pointer}
+  .cf-lens button.on{color:var(--gold); border-color:var(--gold); background:color-mix(in oklab, var(--gold) 14%, var(--inset))}
+  .cf-lens select{font-size:12px; padding:3px 6px; border-radius:999px; background:var(--inset); color:var(--muted); border:1px solid var(--border)}
   .sync-code{margin-top:8px; font-size:13px}
   .sync-code b{font-size:20px; letter-spacing:3px; color:var(--gold); font-family:ui-monospace, monospace}
   .cf-tag.wild{color:var(--red); border-color:color-mix(in oklab, var(--red) 40%, var(--border))}
@@ -2204,6 +2228,15 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       </div>
       </div>
 
+      <div class="panel hidden" id="homeRounds">
+        <div class="section-title" style="margin-top:0">
+          <h3>Rounds</h3>
+          <span class="small muted" id="homeRoundsSub"></span>
+          <button class="ghost small right" id="homeRoundsOpen">Open Coffer →</button>
+        </div>
+        <div class="rd-chips" id="homeRoundsList"></div>
+      </div>
+
       <div class="panel">
         <div class="section-title" style="margin-top:0">
           <h3>Activity</h3>
@@ -3480,6 +3513,7 @@ function renderProfiles(){
 }
 function renderAll(){
   renderProfiles();
+  renderRoundsHome();
   renderSummary();
   populateMetricDropdown();
   renderQuickAdd();
@@ -10065,6 +10099,149 @@ async function renderFollowSetting(){
   if(rl) rl.onclick = ()=>location.reload();
 }
 
+// ============ ROUNDS ============
+// The recurring money makers from the wiki, plus the routines it doesn't call money makers, as a
+// checklist that knows the game's clock. Tick one and it greys out until the game lets you do it
+// again: daily things come back at 00:00 UTC, weekly things on Wednesday 00:00 UTC, timed things
+// (bird houses, herb runs) after their interval. Ticks live in state.rounds, keyed by name.
+const ROUND_WEEK_RESET_DOW = 3;   // Wednesday, the game's weekly reset
+// Routines the wiki's recurring table leaves out, or gates the table doesn't mention. `match`
+// attaches a diary gate to a wiki row of the same name; entries without a wiki twin stand alone.
+const ROUNDS_EXTRA = [
+  {id:"tears", name:"Tears of Guthix", every:"week", pays:"XP in your lowest skill", why:"A few minutes a week of free XP in whatever skill is lowest.", quests:["Tears of Guthix"], loc:"Lumbridge Swamp caves", wiki:"Tears_of_Guthix"},
+  {id:"bert", name:"Bert's buckets of sand", every:"day", pays:"84 buckets of sand", why:"Free sand every day for glassblowing, delivered to your bank with the Ardougne elite diary.", quests:["The Hand in the Sand"], loc:"Yanille", wiki:"The_Hand_in_the_Sand", match:/sand from bert|bert'?s sand|buckets of sand/i},
+  {id:"flax", name:"Geoffrey's flax", every:"day", pays:"30 flax", why:"Free flax from the Seers' Village field, for bowstrings.", diary:["Kandarin","easy"], loc:"Seers' Village", wiki:"Geoffrey", match:/flax from geoffrey|geoffrey/i},
+  {id:"cromperty", name:"Wizard Cromperty's essence", every:"day", pays:"150 pure essence", why:"Pure essence handed over daily, more with the elite diary.", diary:["Ardougne","medium"], loc:"East Ardougne", wiki:"Wizard_Cromperty", match:/cromperty|pure essence from/i},
+  {id:"zaff", name:"Zaff's battlestaves", every:"day", pays:"Battlestaves below market price", why:"Zaff sells battlestaves cheap once a day; the harder the Varrock diary, the more he sells.", diary:["Varrock","easy"], loc:"Varrock", wiki:"Zaff", match:/battlestaves? from zaff|zaff/i},
+  {id:"kingdom", name:"Managing Miscellania", every:"day", pays:"Resources from your kingdom", why:"Top up the coffers and approval and the kingdom gathers for you while you're away.", quests:["Throne of Miscellania"], loc:"Miscellania", wiki:"Managing_Miscellania", match:/miscellania|kingdom/i},
+  {id:"nmz-herbs", name:"Herb boxes from Nightmare Zone", every:"day", pays:"15 herb boxes", why:"Fifteen boxes of random herbs a day for points you already have.", quests:["Dream Mentor"], loc:"Yanille", wiki:"Nightmare_Zone#Rewards", match:/herb box/i},
+  {id:"bonemeal", name:"Robin's bonemeal and slime", every:"day", pays:"13 bonemeal and buckets of slime", why:"Free prayer XP from Robin in Port Phasmatys with the Morytania diary.", diary:["Morytania","hard"], loc:"Port Phasmatys", wiki:"Robin", match:/robin|bonemeal/i},
+  {id:"birdhouses", name:"Bird house run", every:"00:50:00", pays:"Bird nests and Hunter XP", why:"Four houses on Fossil Island, fifty minutes apart.", quests:["Bone Voyage"], loc:"Fossil Island", wiki:"Bird_house_trapping", match:/bird ?house/i},
+  {id:"herbs", name:"Herb run", every:"01:20:00", pays:"Herbs from every patch you've unlocked", why:"The classic round. Eighty minutes from planting to picking.", skills:[{skill:"farming", lvl:32}], loc:"Your patches", wiki:"Farming_training#Herb_runs", match:/herb run/i},
+  {id:"trees", name:"Tree run", every:"day", pays:"Farming XP", why:"Trees take most of a day, so once a day is the rhythm.", skills:[{skill:"farming", lvl:15}], loc:"Your patches", wiki:"Farming_training#Tree_runs", match:/tree run/i},
+];
+function roundRule(every){
+  const t = String(every || "").trim().toLowerCase();
+  if(!t) return {kind:"day"};
+  if(/week/.test(t)) return {kind:"week"};
+  const m = /^(\d+):(\d+):(\d+)$/.exec(t);
+  if(m){
+    const h = +m[1], mi = +m[2];
+    if(h === 24 && !mi) return {kind:"day"};
+    if(h >= 24 && h % 24 === 0) return {kind:"interval", ms:h * 36e5};
+    return {kind:"interval", ms:(h * 60 + mi) * 6e4};
+  }
+  if(/day/.test(t)) return {kind:"day"};
+  const mm = /(\d+)\s*(min|hour|h\b)/.exec(t);
+  if(mm) return {kind:"interval", ms:+mm[1] * (/min/.test(mm[2]) ? 6e4 : 36e5)};
+  return {kind:"day"};
+}
+function roundNextAt(rule, doneAt){
+  if(!doneAt) return 0;
+  if(rule.kind === "interval") return doneAt + rule.ms;
+  const d = new Date(doneAt);
+  if(rule.kind === "day") return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1);
+  let add = (ROUND_WEEK_RESET_DOW - d.getUTCDay() + 7) % 7; if(!add) add = 7;
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + add);
+}
+function roundWhen(ms){
+  const d = ms - Date.now();
+  if(d <= 0) return "up now";
+  const m = Math.ceil(d / 6e4);
+  if(m < 60) return `back in ${m} min`;
+  const h = Math.floor(m / 60);
+  if(h < 24) return `back in ${h}h${m % 60 ? " " + (m % 60) + "m" : ""}`;
+  return "back " + new Date(ms).toLocaleString([], {weekday:"short", hour:"2-digit", minute:"2-digit"});
+}
+function roundEveryText(every){
+  const r = roundRule(every);
+  return r.kind === "day" ? "daily" : r.kind === "week" ? "weekly" : "every " + mmgEvery(every);
+}
+// is a diary tier done? null when the diaries haven't been read yet
+function diaryTierDone(region, tier){
+  const dd = diaryData(); if(!dd) return null;
+  const r = dd.regions.find(x=>x.name === region); if(!r) return null;
+  const t = r.tiers.find(x=>x.tier === tier); if(!t) return null;
+  return !!t.complete;
+}
+// Every round, measured. Wiki rows come in already shaped like methods; the extras are built to
+// match, so the rest of the page can treat them alike.
+function roundsAll(db){
+  const wiki = db ? db.methods.filter(m=>m.recur) : [];
+  const out = wiki.map(m=>Object.assign({}, m, {gap: mmgGaps(m), key:m.name}));
+  ROUNDS_EXTRA.forEach(x=>{
+    const twin = x.match ? out.find(m=>x.match.test(m.name)) : null;
+    const other = [];
+    let diaryOk = true;
+    if(x.diary){
+      const d = diaryTierDone(x.diary[0], x.diary[1]);
+      if(d === false){ other.push(`${x.diary[0]} ${x.diary[1]} diary`); diaryOk = false; }
+      else if(d === null) other.push(`${x.diary[0]} ${x.diary[1]} diary (not checked yet)`);
+    }
+    if(twin){
+      // the wiki has it; add the gate it forgot
+      if(other.length){ twin.gap = reachOf({skills:twin.skills, quests:twin.quests, other:(twin.needs || []).concat(other)}); }
+      if(!twin.loc && x.loc) twin.loc = x.loc;
+      twin.every = twin.every || x.every;
+      return;
+    }
+    out.push({name:x.name, key:"x:" + x.id, recur:true, every:x.every, perRun:0, pays:x.pays, why:[x.why], loc:x.loc, wiki:x.wiki,
+      cat:"Routine", group:"Routine", skills:x.skills || [], quests:x.quests || [], needs:[], extra:true,
+      gap: reachOf({skills:x.skills || [], quests:x.quests || [], other})});
+  });
+  return out;
+}
+function roundStatus(m){
+  const doneAt = (state.rounds || {})[m.key] || 0;
+  const rule = roundRule(m.every);
+  const next = roundNextAt(rule, doneAt);
+  const up = !next || next <= Date.now();
+  return {doneAt, next, up, text: up ? (doneAt ? "up again" : "up now") : roundWhen(next)};
+}
+function roundTick(key){
+  state.rounds = state.rounds || {};
+  if(state.rounds[key]) delete state.rounds[key]; else state.rounds[key] = Date.now();
+  save(); renderCoffer(); renderRoundsHome();
+}
+// the rows: up first by pay, then the waiting ones by how soon, then the ones you can't do yet
+function roundsSorted(list){
+  return list.map(m=>Object.assign({st: roundStatus(m)}, m)).sort((a,b)=>{
+    const ra = a.gap.ok ? (a.st.up ? 0 : 1) : 2, rb = b.gap.ok ? (b.st.up ? 0 : 1) : 2;
+    if(ra !== rb) return ra - rb;
+    if(ra === 1) return a.st.next - b.st.next;
+    return (b.perRun || 0) - (a.perRun || 0);
+  });
+}
+function roundRowHtml(m, pins){
+  const st = m.st, on = pins.includes(m.name), sk = mmgCatSkill(m);
+  const pay = m.perRun ? `${fmt(m.perRun)}<span class="muted">/run</span>` : escapeHtml(m.pays || "");
+  const need = m.gap.ok ? "" : `Needs ${m.gap.text}`;
+  return `<div class="rd-row ${m.gap.ok ? (st.up ? "up" : "wait") : "short"}" data-cfopen="${escapeHtml(m.name)}">
+      <button class="rd-tick ${st.up ? "" : "on"}" data-rdtick="${escapeHtml(m.key)}" ${m.gap.ok ? "" : "disabled"} title="${st.up ? "Done it? Tick it" : "Untick"}">${st.up ? "○" : "✓"}</button>
+      <div class="rd-b">
+        <div class="rd-h">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : `<span class="cf-lgroup">🌱</span>`}<b>${escapeHtml(m.name)}</b><span class="cf-tag">${roundEveryText(m.every)}</span>${m.extra ? "" : cofferTagsHtml(m).replace(/<span class="cf-tag">every [^<]*<\/span>/, "")}</div>
+        <div class="rd-sub">${need ? `<span class="cf-eff">${need}</span>` : `<span class="rd-when ${st.up ? "up" : ""}">${st.text}</span>`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}${m.why && m.why.length && m.extra ? ` · ${escapeHtml(m.why[0])}` : ""}</div>
+      </div>
+      <div class="rd-pay">${pay}</div>
+      <button class="qp-pin ${on ? "on" : ""}" data-cfpin="${escapeHtml(m.name)}" title="${on ? "On your picks" : "Add to your picks"}">${on ? "📌" : "+"}</button>
+    </div>`;
+}
+// the line on Home: what's up right now, and the next thing coming back
+function renderRoundsHome(){
+  const el = $("#homeRoundsList"), panel = $("#homeRounds"); if(!el || !panel) return;
+  const db = mmgDB();
+  const rows = roundsSorted(roundsAll(db).filter(m=>m.gap.ok));
+  if(!rows.length){ panel.classList.add("hidden"); return; }
+  panel.classList.remove("hidden");
+  const up = rows.filter(m=>m.st.up), waiting = rows.filter(m=>!m.st.up);
+  $("#homeRoundsSub").textContent = up.length ? `${up.length} up now` : "all done for now";
+  el.innerHTML = up.slice(0, 8).map(m=>`<button class="rd-chip" data-rdtick="${escapeHtml(m.key)}" title="Tick when done">○ ${escapeHtml(m.name)}</button>`).join("")
+    + (waiting.length ? `<span class="small muted rd-next">${escapeHtml(waiting[0].name)} ${escapeHtml(roundWhen(waiting[0].st.next))}</span>` : "");
+  $$("#homeRoundsList [data-rdtick]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); roundTick(b.dataset.rdtick); });
+}
+// countdowns move: while the page is open, keep them honest
+setInterval(()=>{ if(document.hidden) return; const v = $("#view-home"); if(v && !v.classList.contains("hidden")) renderRoundsHome(); const c = $("#view-coffer"); if(c && !c.classList.contains("hidden") && $("#cofferView .rd-row")) renderCoffer(); }, 60000);
+
 // ============ COFFER SECTIONS ============
 // Earn is what you can do for GP. Vault is what you've got, valued live from your bank. Flip is
 // the Grand Exchange's margins, for the trading kind of GP.
@@ -10681,6 +10858,7 @@ function cofferGoalText(m, pf){
 function mmgEvery(t){
   const parts = String(t).split(":"), h = parseInt(parts[0], 10) || 0, mins = parseInt(parts[1], 10) || 0;
   if(!h && mins) return mins + " min";
+  if(h < 24 && mins) return h + "h " + mins + "m";
   if(h >= 48 && h % 24 === 0) return (h/24) + " days";
   if(h === 24) return "day";
   return h ? h + "h" : String(t);
@@ -10829,10 +11007,14 @@ function renderCoffer(){
   const picked = all.filter(m=>cofferMatches(m, pf));
   picked.forEach(m=>{ const w = cofferWhy(m, pf); m.score = w.score; m.why = w.why; m.beyond = w.why.some(x=>/beyond/.test(x)); });
   const byScore = (a,b)=> b.score - a.score;
-  const ready = picked.filter(m=>m.gap.ok && !m.recur).sort(byScore);
-  const dailies = picked.filter(m=>m.gap.ok && m.recur).sort((a,b)=>b.profit-a.profit);
-  const close = picked.filter(m=>m.gap.band==="close" && !m.recur).sort((a,b)=> b.score - a.score);
-  const far = picked.filter(m=>m.gap.band==="far" && !m.recur).sort((a,b)=> a.gap.effort-b.gap.effort || b.profit-a.profit);
+  const lens = state.coffer.lens || "";
+  const inLens = m => !lens || mmgCatSkill(m) === lens || (m.skills || []).some(r=>r.skill === lens);
+  const ready = picked.filter(m=>m.gap.ok && !m.recur && inLens(m)).sort(byScore);
+  const f2pOnly = /free/i.test((((COFFER_QUIZ.find(q=>q.id==="members") || {}).opts || []).find(o=>o[0]===pf.members) || [])[1] || "");
+  const rounds = roundsSorted(roundsAll(db).filter(m=>(!f2pOnly || m.f2p) && inLens(m)));
+  const dailies = rounds.filter(m=>m.gap.ok);
+  const close = picked.filter(m=>m.gap.band==="close" && !m.recur && inLens(m)).sort((a,b)=> b.score - a.score);
+  const far = picked.filter(m=>m.gap.band==="far" && !m.recur && inLens(m)).sort((a,b)=> a.gap.effort-b.gap.effort || b.profit-a.profit);
   const pins = cofferPins().filter(n=>byName[n]);
   const sel = state.coffer.sel && byName[state.coffer.sel] ? byName[state.coffer.sel] : null;
   const fit = ready.filter(m=>!m.beyond), rest = ready.filter(m=>m.beyond);
@@ -10921,7 +11103,6 @@ function renderCoffer(){
   const words = [optLabel("iron"), optLabel("members"), st.label + (st.auto ? "" : ", your call"), optLabel("style"), optLabel("session"),
     pf.xp === "xp" ? "XP too" : "", +pf.floor ? cfGp(pf.floor) + "/hr or better" : "", loves.length ? "❤️ " + loves.join(", ") : ""].filter(w=>w && !/^(Doesn't matter|Don't mind|A bit of everything)$/.test(w));
   const tuneOpen = !!state.coffer.tune;
-  const dailyTop = Math.max(1, ...dailies.map(m=>m.perRun || 0));
 
   el.innerHTML = `
     <div class="panel cf-strip ${tuneOpen ? "open" : ""}">
@@ -10929,6 +11110,12 @@ function renderCoffer(){
         <span class="cf-profile">${words.map(escapeHtml).join('<span class="cf-dot">·</span>')}</span>
         <span class="small muted cf-count">${fmt(ready.length + dailies.length)} ready now of ${fmt(db.methods.length)}${live ? "" : " · load your stats to check them against your levels"}</span>
         <button class="ghost small" id="cfTune">${tuneOpen ? "Done" : "⚙ Tune"}</button>
+      </div>
+      <div class="cf-lens"><span class="small muted">Lens</span>
+        <button class="${lens ? "" : "on"}" data-lens="">Everything</button>
+        ${Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(k=>`<button class="${lens===k ? "on" : ""}" data-lens="${k}"><img src="${skillIconUrl(k)}" alt="" class="cf-skico">${nice(k)}</button>`).join("")}
+        ${lens && pf.skillTiers[lens] !== "love" ? `<button class="on" data-lens="${lens}"><img src="${skillIconUrl(lens)}" alt="" class="cf-skico">${nice(lens)}</button>` : ""}
+        <select id="cfLensSel" class="small"><option value="">another skill…</option>${SKILL_ORDER.filter(k=>k!==lens).map(k=>`<option value="${k}">${nice(k)}</option>`).join("")}</select>
       </div>
       <div class="cf-tune"><div><div class="cf-tunein">
         ${state.coffer.tuneIntro ? `<div class="cf-intro">Your answers live here. Change any one and the page follows. This tucks away on its own; Tune brings it back.</div>` : ""}
@@ -10953,7 +11140,8 @@ function renderCoffer(){
     </div>
     ${more.length ? ledger("More in your style", "measured against tonight's best", more, 9, "", true) : ""}
     ${pf.reach!=="ready" && train.length ? ledger("🎯 Worth training for", "big earners a session or two away", train, 3, "", true) : ""}
-    ${dailies.length ? ledger("🌱 Your dailies", "start it, walk away, come back", dailies, 8, "", false, dailyTop) : ""}
+    ${rounds.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>🌱 Your rounds</h3><span class="small muted">tick it when it's done; it comes back when the game lets you</span></div>
+      <div class="rd-list">${rounds.slice(0, 14).map(m=>roundRowHtml(m, pins)).join("")}</div></div>` : ""}
     <details class="panel cf-full" ${state.coffer.full ? "open" : ""}><summary><h3 style="display:inline">The full list</h3> <span class="small muted">${fmt(ready.length)} you can do now${pf.reach!=="ready" ? ` · ${fmt(close.length)} within reach` : ""}${pf.reach==="all" ? ` · ${fmt(far.length)} further off` : ""}</span></summary>
       <div class="section-title"><h3>✅ Ready now</h3></div>
       <div class="cf-ledger">${ready.filter(m=>!inTop.has(m.name)).slice(0, 80).map(m=>ledgerRow(m, false)).join("") || `<div class="empty">That's all of them above.</div>`}</div>
@@ -10986,6 +11174,9 @@ function renderCoffer(){
     fc.onchange = ()=>cofferSet("floor", String(CF_FLOOR[+fc.value]));
   }
   $("#cfRefresh").onclick = ()=>mmgDbEnsure(true);
+  $$("#cofferView [data-lens]").forEach(b=>b.onclick = ()=>{ state.coffer.lens = b.dataset.lens === lens ? "" : b.dataset.lens; save(); renderCoffer(); });
+  const ls = $("#cfLensSel"); if(ls) ls.onchange = ()=>{ if(ls.value){ state.coffer.lens = ls.value; save(); renderCoffer(); } };
+  $$("#cofferView [data-rdtick]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); roundTick(b.dataset.rdtick); });
   $("#cfQuiz").onclick = ()=>{ state.coffer.quizOpen = true; state.coffer.single = false; state.coffer.step = 0; save(); renderCoffer(); };
   const full = $("#cofferView .cf-full"); if(full) full.ontoggle = ()=>{ state.coffer.full = full.open; save(); };
   $$("#cofferView [data-cfpin]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferPinToggle(b.dataset.cfpin); });
@@ -14195,6 +14386,7 @@ function switchView(name){
   else if(VS.on) vsQuit();          // and it stops the horde
 }
 $$(".navitem").forEach(n=>n.onclick=()=>switchView(n.dataset.view));
+  const hro = $("#homeRoundsOpen"); if(hro) hro.onclick = ()=>{ state.cofferSec = "earn"; switchView("coffer"); };
 
 function openSidebar(){ $("#sidebar").classList.add("open"); $("#sbBackdrop").classList.remove("hidden"); }
 function closeSidebar(){ $("#sidebar").classList.remove("open"); $("#sbBackdrop").classList.add("hidden"); }
