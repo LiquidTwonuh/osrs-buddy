@@ -751,8 +751,8 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .fw-line.in{opacity:1; transform:none}
   .fw-line.big{font-size:40px; color:#e6c35c; letter-spacing:.02em; margin-top:6px}
   .fw-line.dim{font-size:15px; color:#a99b7d; margin-bottom:14px}
-  .fw-line.stat{font-size:18px}
-  .fw-line.stat b{color:#e6c35c; font-weight:700}
+  .fw-line.fwstat{font-size:18px}
+  .fw-line.fwstat b{color:#e6c35c; font-weight:700}
   .fw-line.letter{font-family:var(--font-body); font-size:16px; line-height:1.55; max-width:600px; margin:12px auto 0; color:#d8d0bf}
   .fw-line.letter:first-of-type{margin-top:22px}
   .fw-mark{opacity:0; transition:opacity 1.6s ease}
@@ -6055,12 +6055,12 @@ function farewellPlay(replay){
   const lines = [];
   lines.push(["OSRS Buddy", "big"]);
   lines.push(["15 July to 18 October 2026", "dim"]);
-  lines.push([`<b>${fmt(st.days)}</b> days together`, "stat"]);
-  if(st.levels) lines.push([`<b>${fmt(st.levels)}</b> levels watched${st.xp ? ` · <b>${fmt(st.xp)}</b> XP seen` : ""}`, "stat"]);
-  else if(st.xp) lines.push([`<b>${fmt(st.xp)}</b> XP seen`, "stat"]);
-  if(st.quests) lines.push([`<b>${fmt(st.quests)}</b> quests charted${st.bosses ? ` · <b>${fmt(st.bosses)}</b> bosses logged` : ""}`, "stat"]);
-  if(st.entries || st.notes) lines.push([`<b>${fmt(st.entries)}</b> journal entries${st.notes ? ` · <b>${fmt(st.notes)}</b> notes` : ""}`, "stat"]);
-  if(st.active) lines.push([`<b>${fmt(st.active)}</b> days with XP in them`, "stat"]);
+  lines.push([`<b>${fmt(st.days)}</b> days together`, "fwstat"]);
+  if(st.levels) lines.push([`<b>${fmt(st.levels)}</b> levels watched${st.xp ? ` · <b>${fmt(st.xp)}</b> XP seen` : ""}`, "fwstat"]);
+  else if(st.xp) lines.push([`<b>${fmt(st.xp)}</b> XP seen`, "fwstat"]);
+  if(st.quests) lines.push([`<b>${fmt(st.quests)}</b> quests charted${st.bosses ? ` · <b>${fmt(st.bosses)}</b> bosses logged` : ""}`, "fwstat"]);
+  if(st.entries || st.notes) lines.push([`<b>${fmt(st.entries)}</b> journal entries${st.notes ? ` · <b>${fmt(st.notes)}</b> notes` : ""}`, "fwstat"]);
+  if(st.active) lines.push([`<b>${fmt(st.active)}</b> days with XP in them`, "fwstat"]);
   FAREWELL_LETTER.forEach(t=>lines.push([escapeHtml(t), "letter"]));
   const box = $("#fwLines"), gem = $("#fwGem"), mark = $("#fwMark"), acts = $("#fwActs");
   box.innerHTML = lines.map(([h, c])=>`<div class="fw-line ${c}">${h}</div>`).join("");
