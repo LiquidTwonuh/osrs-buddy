@@ -42,6 +42,8 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 - Next candidate: quest steps from the wiki for the Map
 
 ## How we work
+- The repo lives at C:/Users/joshf/Projects/mortimeter since 2026-10-19 (moved out of Downloads, renamed with the app). Krystal Klear is beside it in mortimeter-private. Open Claude sessions on the mortimeter folder; CLAUDE.md there holds the standing rules
+- Design keepers go in design/. ChatGPT is for iterating on art; finals land there
 - Dev page is `OSRS-Buddy-dev.html`. The Beta follows it: edit, press Reload in the Beta
 - Stable only changes when Josh says ship
 - Krystal Klear is private and never goes in this repo
