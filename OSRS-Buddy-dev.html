@@ -9213,7 +9213,7 @@ function renderUpdateBanner(){
   el.innerHTML = `<a class="upd-btn" href="${u.dl}" target="_blank" rel="noopener" title="${escapeHtml(u.title||"")}">
       ⬆ Update available <span class="upd-v">${escapeHtml(u.tag)}</span></a>
     <div class="small muted" style="text-align:center; margin-top:3px">
-      you're on v${APP_VERSION} · <a href="${u.page}" target="_blank" rel="noopener" class="upd-notes">what's new</a></div>`;
+      you're on v${APP_LABEL} · <a href="${u.page}" target="_blank" rel="noopener" class="upd-notes">what's new</a></div>`;
 }
 function startUpdateCheck(){
   renderUpdateBanner();                       // show a cached result immediately
@@ -12548,12 +12548,12 @@ function renderNumSeg(){
   });
 }
 function renderUpdSetting(msg){
-  const cur=$("#updCur"); if(cur) cur.textContent = APP_VERSION;
+  const cur=$("#updCur"); if(cur) cur.textContent = APP_LABEL;
   const el=$("#updStatus"); if(!el) return;
   const u=updateAvailable();
   if(msg) el.innerHTML = msg;
-  else if(u) el.innerHTML = `v${APP_VERSION} · <b style="color:var(--gold)">${escapeHtml(u.tag)} is available</b> — <a href="${u.dl}" target="_blank" rel="noopener">download</a>`;
-  else el.innerHTML = `Mortimeter v${APP_VERSION}${state.updCheck&&state.updCheck.ts?` · up to date`:``}`;
+  else if(u) el.innerHTML = `v${APP_LABEL} · <b style="color:var(--gold)">${escapeHtml(verLabel(String(u.tag).replace(/^v/, "")))} is available</b> — <a href="${u.dl}" target="_blank" rel="noopener">download</a>`;
+  else el.innerHTML = `Mortimeter v${APP_LABEL}${state.updCheck&&state.updCheck.ts?` · up to date`:``}`;
 }
 async function renderBackups(){
   await bkLoad();
@@ -12606,7 +12606,7 @@ function openSettings(){
   renderDevSection(); devWireSettings();
   const bb = $("#bugBtn");
   if(bb){
-    const body = encodeURIComponent("**What happened**\n\n\n**What I expected**\n\n\n---\nversion: "+APP_VERSION+"\nbrowser: "+navigator.userAgent);
+    const body = encodeURIComponent("**What happened**\n\n\n**What I expected**\n\n\n---\nversion: "+APP_LABEL+" (build "+APP_VERSION+")"\nbrowser: "+navigator.userAgent);
     bb.href = "https://github.com/"+GH_REPO+"/issues/new?labels=bug&body="+body;
   }
   $("#settingsWrap").classList.remove("hidden");
@@ -13721,6 +13721,11 @@ function renderPrestige(){
 
 // ============ PATCH NOTES ============
 const APP_VERSION = "2.0";
+// What people see. Mortimeter starts at 1.0 on the surface; underneath, the number keeps counting
+// from where OSRS Buddy left off (2.0), so installers, tags and the update check always know a
+// newer build when they meet one. The rule: shown = internal major minus one. 2.0 is 1.0, 2.1 is 1.1.
+function verLabel(v){ const m = /^(\d+)(\.\d+.*)?$/.exec(String(v || "")); if(!m || +m[1] < 2) return String(v || ""); return (+m[1] - 1) + (m[2] || ""); }
+const APP_LABEL = verLabel(APP_VERSION);
 const PATCH_NOTES = [
   {v:"2.0", date:"in progress", title:"Farewell Buddy, hello Mortimeter", notes:[
     "The app is now Mortimeter. OSRS Buddy was one letter away from OSBuddy, a third-party client from years ago that this app has nothing to do with, and the name needed to be ours. Nothing about your save, your backups or your files changes.",
@@ -13949,13 +13954,13 @@ function renderPatchNotes(){
   const el = $("#patchList"); if(!el) return;
   const vb = $("#verBadge");
   if(vb){
-    vb.textContent = "v"+APP_VERSION;
+    vb.textContent = "v"+APP_LABEL;
     if(!vb.dataset.wired){ vb.dataset.wired="1"; vb.style.cursor="default"; vb.onclick = devTap; }
   }
-  $("#pnSub").textContent = "current: v"+APP_VERSION;
+  $("#pnSub").textContent = "current: v"+APP_LABEL;
   el.innerHTML = PATCH_NOTES.map(p=>`
     <div class="pn-block">
-      <div class="pn-head"><h3>v${p.v} — ${p.title}</h3><span class="pn-date">${p.date}</span></div>
+      <div class="pn-head"><h3>v${verLabel(p.v)} — ${p.title}</h3><span class="pn-date">${p.date}</span></div>
       <ul>${p.notes.map(n=>`<li>${n}</li>`).join("")}</ul>
       ${p.sign?`<div class="pn-sign">${p.sign}</div>`:""}
     </div>`).join("");
