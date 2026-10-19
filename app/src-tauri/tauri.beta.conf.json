@@ -1,8 +1,8 @@
 {
-  "productName": "OSRS Buddy Beta",
-  "mainBinaryName": "OSRS Buddy Beta",
+  "productName": "Mortimeter Beta",
+  "mainBinaryName": "Mortimeter Beta",
   "identifier": "com.joshf.osrsbuddy.beta",
-  "version": "1.8.0",
+  "version": "2.0.0",
   "build": {
     "frontendDist": "../dist",
     "beforeBuildCommand": ""

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>OSRS Buddy — character companion</title>
+<title>Mortimeter · for Old School RuneScape</title>
 <meta http-equiv="Cache-Control" content="no-store">
 <script>
 // ---- the copy from your PC or GitHub ----
@@ -740,6 +740,36 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-sub{font-size:12px; color:var(--muted); margin-top:2px}
   .cf-tag{font-size:10px; padding:1px 7px; border-radius:999px; background:var(--panel); border:1px solid var(--border); color:var(--muted)}
   .cf-eff{color:var(--gold); opacity:.85}
+  /* the farewell: Buddy's own gold on black, whatever the theme */
+  .fw{position:fixed; inset:0; z-index:9999; background:#050505; display:flex; align-items:center; justify-content:center; text-align:center; color:#e8e0cf; font-family:var(--font-display); overflow:auto; padding:24px}
+  body.fw-on{overflow:hidden}
+  .fw-stage{max-width:720px; width:100%}
+  .fw-gem{width:132px; height:132px; opacity:0; transition:opacity 1.4s ease; animation:fwbreathe 3.4s ease-in-out infinite; filter:drop-shadow(0 0 26px rgba(230,195,92,.32)); margin-bottom:14px}
+  .fw-gem.in{opacity:1}
+  .fw-gem.out{opacity:0; transition:opacity 1.3s ease}
+  .fw-line{opacity:0; transform:translateY(6px); transition:opacity 1.1s ease, transform 1.1s ease; font-size:20px; margin:5px 0; color:#e8e0cf}
+  .fw-line.in{opacity:1; transform:none}
+  .fw-line.big{font-size:40px; color:#e6c35c; letter-spacing:.02em; margin-top:6px}
+  .fw-line.dim{font-size:15px; color:#a99b7d; margin-bottom:14px}
+  .fw-line.stat{font-size:18px}
+  .fw-line.stat b{color:#e6c35c; font-weight:700}
+  .fw-line.letter{font-family:var(--font-body); font-size:16px; line-height:1.55; max-width:600px; margin:12px auto 0; color:#d8d0bf}
+  .fw-line.letter:first-of-type{margin-top:22px}
+  .fw-mark{opacity:0; transition:opacity 1.6s ease}
+  .fw-mark.in{opacity:1}
+  .fw-name{font-size:52px; color:#e6c35c; letter-spacing:.02em}
+  .fw-name span{color:#e8e0cf}
+  .fw-tag{font-size:15px; color:#a99b7d; margin-top:4px}
+  .fw-acts{margin-top:26px; display:flex; gap:10px; justify-content:center; align-items:center}
+  .fw-skip{position:fixed; right:18px; bottom:16px; opacity:.55}
+  @keyframes fwbreathe{0%,100%{transform:scale(1)} 50%{transform:scale(1.045)}}
+  /* the museum */
+  .mu-list{display:flex; flex-direction:column; gap:26px}
+  .mu-room{max-width:860px}
+  .mu-date{font-family:var(--font-display); color:var(--gold); font-size:17px; margin-bottom:6px}
+  .mu-img{display:block; width:100%; border:1px solid var(--border); border-radius:10px; background:var(--inset); min-height:80px}
+  .mu-img.gone{display:none}
+  .mu-cap{font-size:13.5px; color:var(--muted); margin-top:6px; line-height:1.5}
   /* the board */
   .board-md{line-height:1.55; font-size:14px}
   .board-md h2{font-size:22px; margin:14px 0 6px}
@@ -1909,7 +1939,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
 <div class="app">
 
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><span>⚔️</span> OSRS Buddy <span class="ver" id="verBadge"></span></div>
+    <div class="brand"><span>⚔️</span> Mortimeter <span class="ver" id="verBadge"></span></div>
     <nav class="nav">
       <div class="nav-sec">Character</div>
       <button class="navitem active" data-view="home"><span class="ni-ic">🏠</span>Home</button>
@@ -2045,7 +2075,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <div class="set-sec">
         <div class="set-h">Version</div>
         <div class="row" style="gap:6px; flex-wrap:nowrap; align-items:center">
-          <span class="grow small" id="updStatus">OSRS Buddy v<span id="updCur"></span></span>
+          <span class="grow small" id="updStatus">Mortimeter v<span id="updCur"></span></span>
           <button class="ghost small" id="updCheckBtn">Check for updates</button>
         </div>
       </div>
@@ -2084,6 +2114,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
         <div class="set-h">About</div>
         <button class="ghost small" id="openPatch">📋 What's new</button>
         <p class="small muted" style="margin:6px 0 0">Patch notes for this and every previous version.</p>
+        <p class="small muted" id="aboutOld" style="margin:6px 0 0">Mortimeter, formerly OSRS Buddy, 15 July to 18 October 2026.</p>
       </div>
       <div class="set-sec">
         <div class="set-h">Storage</div>
@@ -2103,7 +2134,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
    <div class="content-inner">
     <div class="topbar">
       <button class="hamb" id="hamb" aria-label="Menu">☰</button>
-      <span class="tb-title">⚔️ OSRS Buddy</span>
+      <span class="tb-title">⚔️ Mortimeter</span>
       <span style="width:38px"></span>
     </div>
 
@@ -2111,7 +2142,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <div class="ph-row">
         <span class="ph-line"></span>
         <span class="ph-orn">◆</span>
-        <h1>OSRS <span>Buddy</span></h1>
+        <h1>Morti<span>meter</span></h1>
         <span class="ph-orn">◆</span>
         <span class="ph-line flip"></span>
       </div>
@@ -2510,6 +2541,22 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   </div>
 
   <!-- VIEW: NOTES (free-form stickies) -->
+  <div id="farewell" class="fw hidden" aria-live="polite">
+    <button class="ghost small fw-skip" id="fwSkip">Skip</button>
+    <div class="fw-stage">
+      <img class="fw-gem" id="fwGem" src="data:image/png;base64,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" alt="">
+      <div class="fw-lines" id="fwLines"></div>
+      <div class="fw-mark hidden" id="fwMark"><div class="fw-name">Morti<span>meter</span></div><div class="fw-tag">for Old School RuneScape</div></div>
+      <div class="fw-acts hidden" id="fwActs"><button class="primary" id="fwGo">Carry on</button><button class="ghost small" id="fwMuseum">Visit the museum</button></div>
+    </div>
+  </div>
+  <div class="view hidden" id="view-museum">
+    <div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>🏛️ The museum</h3><span class="small muted">every stage of the app, from the first page</span><span class="grow"></span><button class="ghost small" id="museumBack">← Back</button></div>
+      <p class="muted small" style="margin:0 2px 10px">Screenshots taken with the developer's own account, in the version that was current that day. New rooms are added as the app changes.</p>
+      <div class="mu-list" id="museumList"></div>
+    </div>
+  </div>
   <div class="view hidden" id="view-board">
     <div class="panel">
       <div class="section-title" style="margin-top:0">
@@ -3006,14 +3053,14 @@ async function stateFileAdopt(){
 }
 // ---- backup files on disk (desktop) ----
 // One on launch, one an hour while anything changes, and one before anything risky. Twenty are
-// kept, oldest dropped. They're plain JSON in Documents\OSRS Buddy\backups, openable anywhere.
+// kept, oldest dropped. They're plain JSON in Documents\Mortimeter\backups, openable anywhere.
 const VAULT_GAP = 3600e3;
 let vaultDirty = false, vaultAt = 0, vaultBusy = false, vaultFiles = null;
 function vaultOn(){ return ceDesktop(); }
 function vaultMark(){ vaultDirty = true; }
 function vaultName(tag){
   const d = new Date(), p = n => String(n).padStart(2, "0");
-  return `osrs-buddy-${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${tag ? "-" + tag : ""}.json`;
+  return `mortimeter-${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${tag ? "-" + tag : ""}.json`;
 }
 async function vaultSave(tag){
   if(!vaultOn() || vaultBusy || saveLock) return null;
@@ -3069,11 +3116,11 @@ async function vaultRescue(){
       toast("Your data didn't load, so it was restored from the backup made " + when, true);
       return;
     }catch(e){
-      alert("OSRS Buddy couldn't read your saved data, and the backup from " + when + " wouldn't open either. Nothing has been written over: your backups are in Documents\OSRS Buddy\backups.");
+      alert("Mortimeter couldn't read your saved data, and the backup from " + when + " wouldn't open either. Nothing has been written over: your backups are in Documents\OSRS Buddy\backups.");
     }
   } else if(vaultOn() && (loadTrouble === "unreadable" || Object.keys(profStore().stash || {}).length)){
     // "missing" with no backups and no other characters is a first run, not a loss
-    alert("OSRS Buddy couldn't read your saved data and there's no backup file yet.\n\nNothing has been written over. If you have a backup JSON, use Import in Settings.");
+    alert("Mortimeter couldn't read your saved data and there's no backup file yet.\n\nNothing has been written over. If you have a backup JSON, use Import in Settings.");
   }
   saveLock = false;        // from here on, this session is a fresh start and may save
 }
@@ -3254,6 +3301,12 @@ function vaultBoot(){
   vaultRescue().finally(vaultStart);
 }
 function ensure(){
+  // Saves that were here before the name changed get the Old Buddy trophy and the farewell; a
+  // save born after never does. Decided once, the first time the renamed page meets the save.
+  if(!state.born){
+    const had = !!(state.username || Object.keys(state.questsDone || {}).length || (state.scroll && (state.scroll.log || []).length) || (state.notes || []).length || (state.profiles || []).length > 1);
+    state.born = had ? "before" : "after";
+  }
   if(live === null) live = liveFromCache();
   state.goals = state.goals || [];
   state.manual = state.manual || [];
@@ -5959,12 +6012,125 @@ function addNote(){
   save(); renderNotes();
   const first = $("#notesGrid textarea"); if(first) first.focus();
 }
+// ============ THE FAREWELL ============
+// Shown once, the first time the renamed app meets a save that was here before. Played again by
+// typing "buddy" anywhere outside a text box, or by clicking the old name under About. The numbers
+// are frozen the night it first plays, so running it back years later still shows that night.
+// It's deliberately in Buddy's own gold, whatever theme is on: this is the one screen that isn't
+// Mortimeter's.
+const FAREWELL_LETTER = [
+  "What began as a simple tool to help me keep track of everything I wanted to experience in the world of OSRS became so much more, in such a short amount of time.",
+  "OSRS Buddy was my first real passion project in app development. The name never had much thought put into it, if any at all. With how much it has grown, it deserves an identity that is truly our own.",
+  "Thank you, Buddy.",
+  "See you next time, space cowboy. o7",
+];
+function farewellStats(){
+  let xp = 0, active = 0, entries = 0, bosses = 0;
+  try{ const r = recapCollect(recapWindow("all").days); xp = r.totalXp || 0; active = r.activeDays || 0; entries = r.entries || 0; bosses = r.bosses || 0; }catch(e){}
+  return {
+    days: Math.max(1, Math.round((Date.now() - Date.parse("2026-07-15T00:00:00")) / 864e5)),
+    active, xp, entries, bosses,
+    levels: totalLvl() || 0,
+    quests: Object.keys(state.questsDone || {}).length,
+    notes: (state.notes || []).length,
+  };
+}
+let fwTimers = [];
+function farewellChime(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)(); const t = ctx.currentTime;
+    [[523.25, 0], [783.99, .38]].forEach(([f, d])=>{
+      const o = ctx.createOscillator(), g = ctx.createGain(); o.type = "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t + d); g.gain.linearRampToValueAtTime(.07, t + d + .06); g.gain.exponentialRampToValueAtTime(.0001, t + d + 1.8);
+      o.connect(g).connect(ctx.destination); o.start(t + d); o.stop(t + d + 1.9);
+    });
+  }catch(e){}
+}
+function farewellPlay(replay){
+  const el = $("#farewell"); if(!el) return;
+  const first = !state.farewell;
+  if(first) state.farewell = {at: Date.now(), stats: farewellStats()};
+  const st = state.farewell.stats || farewellStats();
+  if(first) save();
+  const lines = [];
+  lines.push(["OSRS Buddy", "big"]);
+  lines.push(["15 July to 18 October 2026", "dim"]);
+  lines.push([`<b>${fmt(st.days)}</b> days together`, "stat"]);
+  if(st.levels) lines.push([`<b>${fmt(st.levels)}</b> levels watched${st.xp ? ` · <b>${fmt(st.xp)}</b> XP seen` : ""}`, "stat"]);
+  else if(st.xp) lines.push([`<b>${fmt(st.xp)}</b> XP seen`, "stat"]);
+  if(st.quests) lines.push([`<b>${fmt(st.quests)}</b> quests charted${st.bosses ? ` · <b>${fmt(st.bosses)}</b> bosses logged` : ""}`, "stat"]);
+  if(st.entries || st.notes) lines.push([`<b>${fmt(st.entries)}</b> journal entries${st.notes ? ` · <b>${fmt(st.notes)}</b> notes` : ""}`, "stat"]);
+  if(st.active) lines.push([`<b>${fmt(st.active)}</b> days with XP in them`, "stat"]);
+  FAREWELL_LETTER.forEach(t=>lines.push([escapeHtml(t), "letter"]));
+  const box = $("#fwLines"), gem = $("#fwGem"), mark = $("#fwMark"), acts = $("#fwActs");
+  box.innerHTML = lines.map(([h, c])=>`<div class="fw-line ${c}">${h}</div>`).join("");
+  gem.classList.remove("in", "out"); mark.classList.add("hidden"); mark.classList.remove("in"); acts.classList.add("hidden");
+  el.classList.remove("hidden"); document.body.classList.add("fw-on");
+  fwTimers.forEach(clearTimeout); fwTimers = [];
+  const at = (ms, fn)=>fwTimers.push(setTimeout(fn, ms));
+  let t = 400; at(t, ()=>gem.classList.add("in"));
+  const nodes = $$("#fwLines .fw-line");
+  t = 1900;
+  nodes.forEach((n, i)=>{ at(t, ()=>n.classList.add("in")); t += n.classList.contains("letter") ? 2700 : n.classList.contains("big") ? 1500 : 1250; });
+  const finish = ()=>{
+    fwTimers.forEach(clearTimeout); fwTimers = [];
+    nodes.forEach(n=>n.classList.remove("in")); gem.classList.add("out");
+    at(1500, ()=>{ box.innerHTML = ""; mark.classList.remove("hidden"); requestAnimationFrame(()=>mark.classList.add("in")); farewellChime(); });
+    at(3000, ()=>acts.classList.remove("hidden"));
+  };
+  at(t + 1600, finish);
+  $("#fwSkip").onclick = finish;
+  const close = ()=>{ fwTimers.forEach(clearTimeout); fwTimers = []; el.classList.add("hidden"); document.body.classList.remove("fw-on"); if(first) toast("🏆 Old Buddy is in your Trophy cabinet"); };
+  $("#fwGo").onclick = close;
+  $("#fwMuseum").onclick = ()=>{ close(); switchView("museum"); };
+}
+// the secret: letters typed anywhere but a text box
+(function(){
+  let buf = "";
+  document.addEventListener("keydown", e=>{
+    const t = e.target;
+    if(t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+    if(!e.key || e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return;
+    buf = (buf + e.key.toLowerCase()).slice(-8);
+    if(buf.endsWith("buddy")){ buf = ""; farewellPlay(true); }
+    else if(buf.endsWith("museum")){ buf = ""; switchView("museum"); }
+  });
+  const a = $("#aboutOld"); if(a){ a.style.cursor = "pointer"; a.onclick = ()=>farewellPlay(true); }
+})();
+
+// ============ THE MUSEUM ============
+// Screenshots of every stage, kept in the repo so the app stays small; loaded when the room is
+// opened. Add a line here and a file under museum/ whenever the app visibly changes.
+function museumBase(){ return "https://raw.githubusercontent.com/" + GH_REPO + "/main/museum/"; }   // GH_REPO is declared further down
+const MUSEUM = [
+  ["2026-07-16-pre-redesign.jpg", "16 July 2026", "The first page. One column, parchment, a Load button. Renamed from \"Quest Log\" to OSRS Buddy the day before."],
+  ["2026-07-16-data-rescue-page.jpg", "16 July 2026", "The first data loss, and the first rescue, on day one."],
+  ["2026-07-24-pre-palette-sidebar.jpg", "24 July 2026", "The sidebar arrives, and with it Home, Scroll, Goals and the Roadmap."],
+  ["2026-07-26-v0.7-parchment.jpg", "26 July 2026", "v0.7. Ask Bud appears in the sidebar."],
+  ["2026-08-06-v1.0.jpg", "6 August 2026", "v1.0, the first release, with the quest planner."],
+  ["2026-08-07-v1.2.jpg", "7 August 2026", "v1.2. The update banner learns to tell you what's new."],
+  ["2026-09-09-v1.4-heatmap-home.jpg", "9 September 2026", "v1.4. The dark theme, the heatmap on Home, and alerts that nag about neglected skills."],
+  ["2026-09-13-v1.5.jpg", "13 September 2026", "v1.5. \"110 quests stand between you and the quest cape.\""],
+  ["2026-09-13-v1.6.jpg", "13 September 2026", "v1.6. The journal, and Home that counts your entries."],
+  ["2026-09-24-v1.7-the-map.jpg", "24 September 2026", "v1.7. The Map replaces the quest planner; Achievements replaces the collection log."],
+  ["2026-10-18-osrs-buddy-1.8-home.jpg", "18 October 2026", "The last day as OSRS Buddy. The Coffer was built, the phone could update itself, and the name was decided that night."],
+];
+function renderMuseum(){
+  const el = $("#museumList"); if(!el) return;
+  el.innerHTML = MUSEUM.map(([f, date, cap])=>`<div class="mu-room">
+      <div class="mu-date">${escapeHtml(date)}</div>
+      <img class="mu-img" loading="lazy" src="${museumBase()}${f}" alt="" onerror="this.classList.add('gone')">
+      <div class="mu-cap">${escapeHtml(cap)}</div>
+    </div>`).join("");
+  const b = $("#museumBack"); if(b) b.onclick = ()=>switchView("home");
+}
+
 // ============ THE BOARD ============
 // A Markdown file the Beta shows as a page and edits in place. Headings, bullets, ticks, bold,
 // code and rules are enough for a planning board; it isn't trying to be a full renderer.
 let boardDoc = null, boardTimer = 0, boardPoll = 0, boardEditing = false;
 function boardAgo(ms){ const m = Math.round((Date.now() - ms) / 60000); return m < 1 ? "just now" : m < 60 ? m + " min ago" : m < 1440 ? Math.round(m/60) + " h ago" : Math.round(m/1440) + " days ago"; }
-const BOARD_SEED = `# OSRS Buddy board
+const BOARD_SEED = `# Mortimeter board
 
 Shared between the two of us. Edit it here or in the chat; both see the same file.
 
@@ -6095,7 +6261,7 @@ $("#addNoteBtn").onclick = addNote;
 
 // ============ THEMES (the elements) ============
 const THEMES = [
-  ["parchment","Parchment","Papyrus.png"],
+  ["parchment","Buddy","Papyrus.png"],
   ["crystal","Crystal","Crystal_shard_1.png"],
   ["nature","Nature","Nature_rune.png"],
   ["shadow","Shadow","Soul_rune.png"],
@@ -9028,7 +9194,7 @@ async function checkForUpdate(force){
     const r = await fetch(`https://api.github.com/repos/${GH_REPO}/releases/latest`, {headers:{Accept:"application/vnd.github+json"}});
     if(!r.ok) return cached;
     const j = await r.json();
-    const asset = (j.assets||[]).find(a=>/OSRS-Buddy-setup\.exe$/i.test(a.name));
+    const asset = (j.assets||[]).find(a=>/(Mortimeter|OSRS-Buddy)[^/]*setup\.exe$/i.test(a.name));
     const info = { ts:Date.now(), tag:j.tag_name||"", title:j.name||"", page:j.html_url||"",
                    dl: asset ? asset.browser_download_url : (j.html_url||"") };
     state.updCheck = info; save();
@@ -9587,7 +9753,7 @@ async function syncOfferPage(){
   try{
     const r = await fetch(location.href.split("#")[0], {cache: "no-store"});
     const html = await r.text();
-    if(html && html.length > 50000 && html.indexOf("OSRS Buddy") !== -1){
+    if(html && html.length > 50000 && (html.indexOf("Mortimeter") !== -1 || html.indexOf("OSRS Buddy") !== -1)){
       await ceInvoke("sync_page", {text: html});
     }
   }catch(e){ /* without this the phone simply has no update to take */ }
@@ -9694,7 +9860,7 @@ function pageWorkerStart(){
 }
 function pageCheck(html){
   const ver = (/const APP_VERSION = "(\d[^"]*)"/.exec(html) || [])[1];
-  if(!html || html.length < 50000 || !ver || html.indexOf("OSRS Buddy") === -1) throw new Error("That didn't look like OSRS Buddy");
+  if(!html || html.length < 50000 || !ver || (html.indexOf("Mortimeter") === -1 && html.indexOf("OSRS Buddy") === -1)) throw new Error("That didn't look like Mortimeter");
   return ver;
 }
 // Take the PC's page. Checked, stored, and used from the next load.
@@ -9885,7 +10051,7 @@ async function renderFollowSetting(){
     ${cur ? `<div class="ce-ok"><span class="ce-badge">${running ? "✓ Running" : "Following"}</span> <span class="small" style="word-break:break-all">${escapeHtml(cur)}</span></div>
             ${running ? "" : `<p class="small muted" style="margin:6px 0 0">Reload to switch to it.</p>`}
             <div class="row" style="gap:6px; margin-top:8px"><button class="ghost small" id="followReload">Reload</button><button class="ghost small" id="followStop">Stop following</button></div>`
-          : `<div class="row" style="gap:6px"><input id="followPath" placeholder="C:\\path\\to\\OSRS-Buddy-dev.html" value="${escapeHtml(def || "")}" style="flex:1; min-width:0"><button class="ghost small" id="followGo">Follow</button></div>`}
+          : `<div class="row" style="gap:6px"><input id="followPath" placeholder="C:\\path\\to\\the-dev-page.html" value="${escapeHtml(def || "")}" style="flex:1; min-width:0"><button class="ghost small" id="followGo">Follow</button></div>`}
     <div class="small" id="followMsg" style="color:var(--red); margin-top:6px"></div>`;
   const go = $("#followGo");
   if(go) go.onclick = async ()=>{
@@ -12387,7 +12553,7 @@ function renderUpdSetting(msg){
   const u=updateAvailable();
   if(msg) el.innerHTML = msg;
   else if(u) el.innerHTML = `v${APP_VERSION} · <b style="color:var(--gold)">${escapeHtml(u.tag)} is available</b> — <a href="${u.dl}" target="_blank" rel="noopener">download</a>`;
-  else el.innerHTML = `OSRS Buddy v${APP_VERSION}${state.updCheck&&state.updCheck.ts?` · up to date`:``}`;
+  else el.innerHTML = `Mortimeter v${APP_VERSION}${state.updCheck&&state.updCheck.ts?` · up to date`:``}`;
 }
 async function renderBackups(){
   await bkLoad();
@@ -13091,6 +13257,9 @@ function renderFunFact(reroll){
 // on purpose: "what's impressive" is a judgement call, not something to scrape.
 // reqs = skill levels; quests = quest names as the planner knows them; fn = anything else.
 const PRESTIGE = [
+  {id:"old-buddy", name:"Old Buddy", img:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAYAAACohjseAAAGB0lEQVR42t2bS2xUZRTH/+f7vrntzNy2jO3wKDSgIYYWKJLwEogoaFxYNsayABaaEBMxiOEhsjIuDI8GIUEl0UjYGGPZGMHUFSgCItUqKeVhkIihIC1DWzozbed+DxfTaYdHyLS993bKSSYzq5n55fzP4zvfuYR+q6+v5atWHVa1tVX28umFm6TSb8a6ZHl7h0S8V5FSyCvjHLALuYlGBJ4o4TcDnH3R2JLcc/C7y90ZFgCgbLid71QvLQrxAzfanVmNFxNobU+hN6WhNfLSGAMKLYbJUQvzKsOYEg20dMflW9s+af45w0SZD3Xvzn7NEuzr080JceZ8XIHALMGIMeS1aQ2kpDYw0Atn2nxxta0caVZv3Xeuvr62lhMA7N4469mCgDjx/eku3nI1qe0Q5wBgDMaEEaXf40mlqp4MsleWjNMpaZa9t+/cKf7B+iq7qDDQcLo5Ef39UlwXhznXYwTsfgsWMHa9LaUB4k9Nsp6bPWPcIVZWZG1q65BPnznfrewQ50pjzJrSgB3i/NeWuLrVoaZPLSvcwqTUGxovJgwIjDD2jQAQEWu8EDeOwtuiK67LWttTsATDWJXmPUnHAJYgam130NmtSllbhzS9KY18z5ZDLR99KY22DsewRI8iv+ocYwTmUyBoAyR6NTG/kgpnhGSPRCIp/YPUgC/CFJwQ60rhxcUTsfKFctzp6oPg/kAKP+DudKWwYtEE7NhUjYBg6EtpHP3pBkpLLEjlbWZjfsAtXzQBe7fPhdFAb5/Cri1zsPL5csS6Up57kvkB9/H7c0EApNIwBnCkxs7N/kAKv+AcqQeSi9IG6IcEgCM/eidX4TkcAY6j78mcjAhKG5A0nkMKzz13H1w2pNQaRrJByOM3UDrOXUjhlywfmgCIoLQGJHnmSTFacH7JVYwm3P1yRbZcXYIUow13D6TSMHBXriIf4LKbcbdLiPCqFAwb0uWYFF6WgpFAulVCxGjL8pGeVBroj0kD4OgwIMVQ4iPWfyrYuz0DZ8A97CM5J2gNSGWwe8szIAKOHLuBSIkFneN8ReQKl+yReHnJROzYNAdSakhpwBj5MvWWSkNKjY82VoMzQsOJmwgFRU6QOQEaA1C/ZJpabqMvlb6oIAJ8mVOZ9H8IBTkcR4OIch5K5whoECzkOH62Hd1JibUrKyClgTEGRATvMKn/NwDL4jj07TWcaoqhOCygjXE3BrU2KLEDaLrQCc4Ia2oqIFX6YoaIvHIcGBEKLIb6H1rxy593UGwHco6/IWdRpQ2KQgKN5zsAAKtrKgBkIF2GM+nvLLAYvmloxak/YrBDYkhww6qDShvYWZBraiogXYbMwFkZuKYY7PDQ4Ybdyeh7PGn6IY0rkA/13DDhRtSLDnqyEwBhTc2UEUMOwAUY6kcgS9dOE9pFuWZ7rr6hFSddgHPlPKhdSDwPyLJpZLJ0/UT/YOLJXa7ZsnQbztWZzHA86XZC8XyqNpQS4mYp8HUumksJ8cNznk62H1VCMk26m6VgVO4mskvIV0evQ3A24MFMb3nSYzjPr8+y5WoArK2pAGPwNOZ8vx8ckGtzByxBsAIMJ5tiKPIBzhfAQblynG1OZ1c7xH2BS8+RfNquMCYde36uiDECRDjIDSOQX5B+GSMgHGSGRSOCCiyWtyuTw92uKLAYxkcCxCJF/PbkqGVS0pjHYZeLEZCSxpRHAyZSxO+wAMen86vCBGMeh00umPSQTM+vtIlz+oz90967Z0KEX1kw0+bxpFJ8DK90cZbeGV1QZfNJpfzv2z3xOlZ38HK3knh9abWtK6cF2d2EUkTuD5Hg8UIsEXA3odWMqUG2dI5tpKPf+HD/lbu8vraWrzt47NqKeeP/qpwWfNWA+L//9SmpQZwRMTb4Bfn4Mgboc4xxpNELZ9r8pYXFUEqt3byv+fuBlebM3vauDbOWhcPiQGubrPztYhyt7Q76Ujpv1yxZ/4mkvCyA+VU2pkTFpXjSrN+2/9zxgaV03PdYwYY104urptpbHYl1sU45oa3DQaJHU75BZupcNBJA2Thxy+Lsy6YrnXWfH77alf1Ywf9j3QDpNaMbOAAAAABJRU5ErkJggg==", tier:"early",
+   why:"Was here when it was OSRS Buddy. Can't be earned any more.",
+   fn:()=>state.born === "before", hideUntil:()=>state.born === "before"},
   {id:"barrows-gloves", name:"Barrows gloves", icon:"Barrows_gloves.png", tier:"mid",
    why:"Best-in-slot gloves for almost everything, and the reason anyone does Recipe for Disaster.",
    quests:["Recipe for Disaster"], wiki:"Barrows_gloves"},
@@ -13500,7 +13669,7 @@ function renderWrap(){
 
 function renderPrestige(){
   const el = $("#prestigeGrid"); if(!el) return;
-  const rows = PRESTIGE.map(p=>({p, s:prestigeState(p)}));
+  const rows = PRESTIGE.filter(p=>!p.hideUntil || p.hideUntil()).map(p=>({p, s:prestigeState(p)}));
   const done = rows.filter(r=>r.s.done);
   // closest first; binary ones have no percentage to sort on, so fall back to difficulty
   const TIER_ORDER = {early:0, mid:1, hard:2, elite:3};
@@ -13520,7 +13689,7 @@ function renderPrestige(){
              : `Needs: ${escapeHtml(s.missing.slice(0,3).join(" · "))}${s.missing.length>3?` +${s.missing.length-3} more`:""}`}</div>`
         : "";
       return `<div class="pz ${s.done?"got":""}" style="--tier:${t.color}">
-        <div class="pz-ic"><img src="${WIKI + encodeURI(p.icon)}" alt=""
+        <div class="pz-ic"><img src="${p.img || WIKI + encodeURI(p.icon)}" alt=""
           onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🏆'}))"></div>
         <div class="pz-b">
           <div class="pz-h"><b>${escapeHtml(p.name)}</b><span class="pz-tier">${t.label}</span></div>
@@ -13551,9 +13720,12 @@ function renderPrestige(){
 }
 
 // ============ PATCH NOTES ============
-const APP_VERSION = "1.8";
+const APP_VERSION = "2.0";
 const PATCH_NOTES = [
-  {v:"1.8", date:"in progress", title:"Coffer", notes:[
+  {v:"2.0", date:"in progress", title:"Farewell Buddy, hello Mortimeter", notes:[
+    "The app is now Mortimeter. OSRS Buddy was one letter away from OSBuddy, a third-party client from years ago that this app has nothing to do with, and the name needed to be ours. Nothing about your save, your backups or your files changes.",
+    "Mortimeter is Mortimer, the Slayer master, plus meter, because the app measures your account.",
+    "The gold theme the app started with is now called Buddy. The About panel remembers the old name and dates. Anyone whose save is older than the rename finds a new trophy in the cabinet.",
     "New section: Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
     "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
     "The phone can take the app itself from your PC. Pair them, tap Update app from PC, and it keeps that copy and runs it from then on, so a change doesn't mean installing an APK again. If a copy ever fails to load, the built-in one comes back by itself.",
@@ -13790,7 +13962,7 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", board:"Board", start:"Roadmap", ask:"Ask Bud", quests:"Map", coffer:"Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", board:"Board", museum:"Museum", start:"Roadmap", ask:"Ask Bud", quests:"Map", coffer:"Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
 // ---- Scroll sections ----
 // The page got big enough that one long scroll stopped working. Same data, five
 // sections, heatmap first because that's what people open the page for.
@@ -13999,6 +14171,7 @@ function switchView(name){
   if(name==="quests") applyMapSec();
   if(name==="coffer") applyCofferSec();
   if(name==="board") boardOpen();
+  if(name==="museum") renderMuseum();
   if(name==="arcade") renderArcade();
   // the recap is something you open and close, not a place, so coming back to Scroll
   // always lands on the Overview
@@ -14025,6 +14198,8 @@ $("#sbBackdrop").onclick = closeSidebar;
 
 // ---- backup / import (merge: current data wins on id clashes) ----
 function mergeImportedState(inc){
+  // a backup from before the rename, or one that already says so, makes this save an old one
+  if(inc && (inc.born === "before" || (inc.born === undefined && (inc.username || inc.questsDone)))) state.born = "before";
   if(!inc || typeof inc !== "object" || Array.isArray(inc)) throw new Error("bad backup");
   snapshotNow("before importing a backup"); // an import merges into live data — keep an out
   vaultSave("before-import");
@@ -14082,7 +14257,7 @@ $("#exportBtn").onclick = ()=>{
   const blob = new Blob([JSON.stringify(Object.assign({}, state, {__profiles: profStore()}), null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "osrs-buddy-backup-"+todayISO()+".json";
+  a.download = "mortimeter-backup-"+todayISO()+".json";
   a.click(); URL.revokeObjectURL(a.href);
   toast("Backup downloaded");
 };
@@ -14560,7 +14735,7 @@ const SU_VIEW = {
   welcome: ()=>`
     <div class="su-hero">
       <div class="su-eyebrow">${su.rerun ? "Setup, again" : "Setup"}</div>
-      <h2 class="su-title">${su.rerun ? "Let's go through it again" : "Welcome to OSRS Buddy"}</h2>
+      <h2 class="su-title">${su.rerun ? "Let's go through it again" : "Welcome to Mortimeter"}</h2>
       <p class="su-lead">A few quick steps: your character, your RuneLite data, what you're working toward, and how the app looks. Every step is optional, and you can run this again any time from Settings.</p>
     </div>
     <div class="su-safe"><b>Your data is safe.</b> ${su.rerun ? "Running setup again doesn't erase anything." : "Setup doesn't erase anything."} Every step starts from what you already have, and only what you change is saved. If a step would remove something, you'll be asked to back up first and to confirm twice.</div>`,
@@ -15305,6 +15480,8 @@ try{ localStorage.removeItem("osrs_page_try"); }catch(e){}
 if(window.__pageFailed) setTimeout(()=>toast("The updated copy wouldn't load, so the built-in app is back.", true), 1200);
 pageWorkerStart();
 vaultBoot();
+// the farewell: once, for saves that were here before the name changed
+if(state.born === "before" && !state.farewell) setTimeout(()=>farewellPlay(false), 2800);
 // Setup opens by itself only on a genuinely fresh install: no character, no other profiles,
 // nothing logged. Anyone with data reaches it from Settings instead. A state that failed to load
 // isn't a fresh install, and setup would be the worst possible thing to show.

@@ -227,7 +227,7 @@ pub fn run() {
       {
         use tauri::Manager;
         if app.webview_windows().is_empty() {
-          let title = app.config().product_name.clone().unwrap_or_else(|| "OSRS Buddy".into());
+          let title = app.config().product_name.clone().unwrap_or_else(|| "Mortimeter".into());
           let marker = follow_marker(&app.handle().clone())?;
           tauri::WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::default())
             .title(title)

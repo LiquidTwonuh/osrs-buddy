@@ -5,7 +5,7 @@
 // mid-write, and the recovery that followed dropped the half-written key. The data was still in
 // orphaned database files and came back, but it should never have depended on that.
 //
-// So the desktop app also keeps plain JSON files in Documents\OSRS Buddy\backups. They outlive
+// So the desktop app also keeps plain JSON files in Documents\Mortimeter\backups. They outlive
 // the browser storage, the app, and reinstalls, and you can open them in Notepad. The page writes
 // one on launch, once an hour while anything changes, and before anything risky.
 
@@ -29,7 +29,7 @@ pub struct BackupFile {
 // Both editions of the app share this code, so every folder is named after the app that's
 // running. Otherwise one edition would read the other's save file on launch.
 fn product_name(app: &tauri::AppHandle) -> String {
-  app.config().product_name.clone().unwrap_or_else(|| "OSRS Buddy".into())
+  app.config().product_name.clone().unwrap_or_else(|| "Mortimeter".into())
 }
 fn backup_dir(app: &tauri::AppHandle) -> Result<PathBuf, String> {
   let home = std::env::var("USERPROFILE")
@@ -37,7 +37,15 @@ fn backup_dir(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     .map_err(|_| "Couldn't find your user folder")?;
   let docs = Path::new(&home).join("Documents");
   let base = if docs.is_dir() { docs } else { Path::new(&home).to_path_buf() };
-  let dir = base.join(product_name(app)).join("backups");
+  // The folder follows the product name. The first launch after the rename finds the old
+  // "OSRS Buddy" folder and moves it, so every backup made under the old name is still here.
+  let name = product_name(app);
+  let old = base.join(name.replace("Mortimeter", "OSRS Buddy"));
+  let newp = base.join(&name);
+  if name.contains("Mortimeter") && !newp.exists() && old.is_dir() {
+    let _ = fs::rename(&old, &newp);
+  }
+  let dir = newp.join("backups");
   fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
   Ok(dir)
 }

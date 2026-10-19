@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "OSRS Buddy",
-  "mainBinaryName": "OSRS Buddy",
-  "version": "1.7.0",
+  "productName": "Mortimeter",
+  "mainBinaryName": "Mortimeter",
+  "version": "2.0.0",
   "identifier": "com.joshf.osrsbuddy",
   "build": {
     "frontendDist": "../dist",
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "OSRS Buddy",
+        "title": "Mortimeter",
         "width": 1180,
         "height": 860,
         "minWidth": 420,
