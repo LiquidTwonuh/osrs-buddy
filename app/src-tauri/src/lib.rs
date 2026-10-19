@@ -163,11 +163,11 @@ fn follow_set(app: tauri::AppHandle, path: Option<String>) -> Result<Option<Stri
     }
   }
 }
-// A likely dev file, offered as the default: the checkout next to Downloads, if it's there.
+// A likely dev file, offered as the default: the checkout under Projects, if it's there.
 #[tauri::command]
 fn follow_default() -> Option<String> {
   let home = std::env::var("USERPROFILE").ok()?;
-  let p = Path::new(&home).join("Downloads").join("OSRS-Buddy").join("OSRS-Buddy-dev.html");
+  let p = Path::new(&home).join("Projects").join("mortimeter").join("OSRS-Buddy-dev.html");
   if p.is_file() { Some(p.to_string_lossy().to_string()) } else { None }
 }
 #[tauri::command]
