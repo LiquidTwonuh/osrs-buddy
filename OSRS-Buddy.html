@@ -12606,7 +12606,7 @@ function openSettings(){
   renderDevSection(); devWireSettings();
   const bb = $("#bugBtn");
   if(bb){
-    const body = encodeURIComponent("**What happened**\n\n\n**What I expected**\n\n\n---\nversion: "+APP_LABEL+" (build "+APP_VERSION+")"\nbrowser: "+navigator.userAgent);
+    const body = encodeURIComponent("**What happened**\n\n\n**What I expected**\n\n\n---\nversion: "+APP_LABEL+" (build "+APP_VERSION+")\nbrowser: "+navigator.userAgent);
     bb.href = "https://github.com/"+GH_REPO+"/issues/new?labels=bug&body="+body;
   }
   $("#settingsWrap").classList.remove("hidden");
