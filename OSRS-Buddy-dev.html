@@ -1546,6 +1546,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .topbar{display:none}
   .hamb{background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:5px 11px; color:var(--gold); font-size:17px; cursor:pointer; line-height:1}
   .tb-title{font-family:var(--font-display); color:var(--gold); font-size:19px}
+  .tb-prev{font-size:11px; padding:4px 8px; white-space:nowrap}
   @media(max-width:700px){
     .app{display:block; max-width:none}
     .sidebar{position:fixed; left:0; top:0; bottom:0; height:100dvh; z-index:40; width:240px;
@@ -10061,12 +10062,11 @@ function renderSyncSetting(){
   }
   // the phone's side
   if(phonePreview && window.__TAURI__){
-    el.insertAdjacentHTML("afterbegin", `<div class="small muted" style="margin-bottom:8px">Phone preview is on. <button class="ghost small" id="phonePrevOff">Back to the desktop app</button></div>`);
-    setTimeout(()=>{ const b = $("#phonePrevOff"); if(b) b.onclick = async ()=>{
-      try{ localStorage.setItem("osrs_phone_preview", "0"); }catch(err){}
-      try{ const w = window.__TAURI__.window.getCurrentWindow(); await w.setSize(new window.__TAURI__.window.LogicalSize(1180, 860)); }catch(err){}
-      location.reload();
-    }; }, 0);
+    // after the panel below has painted, or this line is overwritten (it was, and Josh got stuck)
+    setTimeout(()=>{
+      el.insertAdjacentHTML("afterbegin", `<div class="small muted" style="margin-bottom:8px">Phone preview is on. <button class="ghost small" id="phonePrevOff">Back to the desktop app</button></div>`);
+      const b = $("#phonePrevOff"); if(b) b.onclick = phonePreviewOff;
+    }, 0);
   }
   const peer = c.peer;
   el.innerHTML = peer && peer.token
@@ -14992,6 +14992,11 @@ function suGuard(text){
 // flow problems without a device in hand. Touch can't be faked; dragging still needs the phone.
 let phonePreview = false; try{ phonePreview = localStorage.getItem("osrs_phone_preview") === "1"; }catch(e){}
 const IS_ANDROID = /Android/i.test(navigator.userAgent || "") || phonePreview;
+async function phonePreviewOff(){
+  try{ localStorage.setItem("osrs_phone_preview", "0"); }catch(err){}
+  try{ const w = window.__TAURI__.window.getCurrentWindow(); await w.setSize(new window.__TAURI__.window.LogicalSize(1180, 860)); }catch(err){}
+  location.reload();
+}
 function ceDesktop(){ return !IS_ANDROID && !!(window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke); }
 function ceInvoke(cmd, args){ return window.__TAURI__.core.invoke(cmd, args || {}); }
 // Which build this is. The desktop app answers with its identifier; the Beta's ends in ".beta".
@@ -15905,6 +15910,10 @@ try{ localStorage.removeItem("osrs_page_try"); }catch(e){}
 if(window.__pageFailed) setTimeout(()=>toast("The updated copy wouldn't load, so the built-in app is back.", true), 1200);
 pageWorkerStart();
 vaultBoot();
+if(phonePreview && window.__TAURI__){
+  const tb = $(".topbar");
+  if(tb){ tb.insertAdjacentHTML("beforeend", `<button class="ghost small tb-prev" id="tbPrevOff" title="Back to the desktop app">Exit preview</button>`); $("#tbPrevOff").onclick = phonePreviewOff; }
+}
 // The farewell never plays on its own. Josh has seen it; for everyone else it stays an easter egg,
 // reached by typing "buddy" or clicking the old name under About.
 // Setup opens by itself only on a genuinely fresh install: no character, no other profiles,
