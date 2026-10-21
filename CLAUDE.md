@@ -29,3 +29,4 @@ A character companion for Old School RuneScape. One HTML file is the whole app; 
 - Make edits with small Python patch scripts that assert their anchors, then `node --check` every script block and check the stylesheet's brace balance. The file is big; blind sed is how it has broken before.
 - Prefer finishing a feature end to end over partial scaffolding. Verify in the browser with Josh's real backup imported when the change is visual.
 - When something is decided, write it on the Board the same turn.
+- Never hand over a stable installer that is behind dev without saying so in the caption. On 2026-10-21 a stable build with the new icon but a week-old page made Josh think the week's work was missing. If stable is being rebuilt for any reason, promote dev to stable first (a local checkpoint, not a ship) or state plainly what it lacks.
