@@ -806,6 +806,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-stripbar{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
   .cf-profile{flex:1 1 auto; display:flex; flex-wrap:wrap; align-items:center; gap:3px 7px; font-size:13px; min-width:0}
   .cf-profile .cf-dot{color:var(--gold3)}
+  .cf-word{display:inline-flex; align-items:center; padding:3px 10px; border-radius:999px; font-size:12.5px; color:var(--gold); border:1px solid color-mix(in oklab, var(--gold) 38%, var(--border)); background:linear-gradient(180deg, color-mix(in oklab, var(--gold) 14%, var(--inset)), color-mix(in oklab, var(--gold) 6%, var(--inset))); box-shadow:0 0 12px var(--glow), inset 0 1px 0 color-mix(in oklab, var(--gold) 20%, transparent)}
+  .cf-strip{position:relative; overflow:hidden}
+  .cf-strip::before{content:""; position:absolute; left:0; right:0; top:0; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); opacity:.7}
   .cf-count{white-space:nowrap}
   .cf-tune{display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1)}
   .cf-strip.open .cf-tune{grid-template-rows:1fr}
@@ -6090,8 +6093,8 @@ function addNote(){
   const first = $("#notesGrid textarea"); if(first) first.focus();
 }
 // ============ THE FAREWELL ============
-// Shown once, the first time the renamed app meets a save that was here before. Played again by
-// typing "buddy" anywhere outside a text box, or by clicking the old name under About. The numbers
+// Never shown on its own. Played by typing "buddy" anywhere outside a text box, or by clicking the
+// old name under About; the first play freezes the numbers. The numbers
 // are frozen the night it first plays, so running it back years later still shows that night.
 // It's deliberately in Buddy's own gold, whatever theme is on: this is the one screen that isn't
 // Mortimeter's.
@@ -11144,17 +11147,27 @@ function renderCoffer(){
     </div>`;
   };
   // ---- the strip: your answers in a line of words, with the controls folded underneath ----
-  const optLabel = id => { const q = COFFER_QUIZ[stepOf(id)]; const o = (q.opts || []).find(o=>o[0]===pf[id]); return o ? o[1].replace(/^(Yes|No),\s*/, "") : ""; };
+  const optLabel = id => { const q = COFFER_QUIZ[stepOf(id)]; const o = (q.opts || []).find(o=>o[0]===pf[id]); if(!o) return ""; const t = o[1].replace(/^(Yes|No),\s*/, "").replace(/^(a|an)\s+(?=(main|iron))/i, ""); return t.charAt(0).toUpperCase() + t.slice(1); };
   const st = cofferStage(pf);
   const loves = Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(nice);
   const words = [optLabel("iron"), optLabel("members"), st.label + (st.auto ? "" : ", your call"), optLabel("style"), optLabel("session"),
     pf.xp === "xp" ? "XP too" : "", +pf.floor ? cfGp(pf.floor) + "/hr or better" : "", loves.length ? "❤️ " + loves.join(", ") : ""].filter(w=>w && !/^(Doesn't matter|Don't mind|A bit of everything)$/.test(w));
   const tuneOpen = !!state.coffer.tune;
+  // one section per loved skill, for the methods that skill is the point of; thin ones are skipped
+  const shown = new Set(top.concat(more).map(m=>m.name));
+  const loveSections = Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love" && (!lens || lens===k)).map(k=>{
+    const mine = m => mmgCatSkill(m) === k || (m.skills || []).some(r=>r.skill === k && r.lvl >= 30);
+    let list = ready.filter(m=>mine(m) && !shown.has(m.name));
+    if(list.length < 2) list = list.concat(close.filter(m=>mine(m) && !shown.has(m.name)));
+    if(list.length < 2) return "";
+    list.slice(0, 4).forEach(m=>shown.add(m.name));
+    return ledger(`<img src="${skillIconUrl(k)}" alt="" class="cf-skico"> Because you love ${nice(k)}`, "the ones this skill is the point of", list, 4, "", true);
+  }).join("");
 
   el.innerHTML = `
     <div class="panel cf-strip ${tuneOpen ? "open" : ""}">
       <div class="cf-stripbar">
-        <span class="cf-profile">${words.map(escapeHtml).join('<span class="cf-dot">·</span>')}</span>
+        <span class="cf-profile">${words.map(w=>`<span class="cf-word">${escapeHtml(w)}</span>`).join("")}</span>
         <span class="small muted cf-count">${fmt(ready.length + dailies.length)} ready now of ${fmt(db.methods.length)}${live ? "" : " · load your stats to check them against your levels"}</span>
         <button class="ghost small" id="cfTune">${tuneOpen ? "Done" : "⚙ Tune"}</button>
       </div>
@@ -11186,6 +11199,7 @@ function renderCoffer(){
       : `<div class="empty">Nothing you can do yet fits those answers. Loosen one under Tune, or look under Worth training for.</div>`}
     </div>
     ${more.length ? ledger("More in your style", "measured against tonight's best", more, 9, "", true) : ""}
+    ${loveSections}
     ${pf.reach!=="ready" && train.length ? ledger("🎯 Worth training for", "big earners a session or two away", train, 3, "", true) : ""}
     ${rounds.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>🌱 Your rounds</h3><span class="small muted">tick it when it's done; it comes back when the game lets you</span></div>
       <div class="rd-list">${rounds.slice(0, 14).map(m=>roundRowHtml(m, pins)).join("")}</div></div>` : ""}
@@ -15862,8 +15876,8 @@ try{ localStorage.removeItem("osrs_page_try"); }catch(e){}
 if(window.__pageFailed) setTimeout(()=>toast("The updated copy wouldn't load, so the built-in app is back.", true), 1200);
 pageWorkerStart();
 vaultBoot();
-// the farewell: once, for saves that were here before the name changed
-if(state.born === "before" && !state.farewell) setTimeout(()=>farewellPlay(false), 2800);
+// The farewell never plays on its own. Josh has seen it; for everyone else it stays an easter egg,
+// reached by typing "buddy" or clicking the old name under About.
 // Setup opens by itself only on a genuinely fresh install: no character, no other profiles,
 // nothing logged. Anyone with data reaches it from Settings instead. A state that failed to load
 // isn't a fresh install, and setup would be the worst possible thing to show.
