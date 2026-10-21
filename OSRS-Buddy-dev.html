@@ -716,6 +716,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-skills button{display:inline-flex; align-items:center; gap:6px; padding:7px 11px}
   .cf-skills button.on{border-color:var(--gold); color:var(--gold)}
   .cf-skico{width:16px; height:16px}
+  .ico-fb{display:inline-block; width:16px; height:16px; border-radius:50%; background:var(--catbd); border:1px solid var(--border); vertical-align:middle; flex:none}
   .cf-chipval{color:var(--text); padding:0 4px}
   .cf-full > summary{cursor:pointer; list-style:none}
   .cf-full > summary::-webkit-details-marker{display:none}
@@ -807,6 +808,8 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-profile{flex:1 1 auto; display:flex; flex-wrap:wrap; align-items:center; gap:3px 7px; font-size:13px; min-width:0}
   .cf-profile .cf-dot{color:var(--gold3)}
   .cf-word{display:inline-flex; align-items:center; padding:3px 10px; border-radius:999px; font-size:12.5px; color:var(--gold); border:1px solid color-mix(in oklab, var(--gold) 38%, var(--border)); background:linear-gradient(180deg, color-mix(in oklab, var(--gold) 14%, var(--inset)), color-mix(in oklab, var(--gold) 6%, var(--inset))); box-shadow:0 0 12px var(--glow), inset 0 1px 0 color-mix(in oklab, var(--gold) 20%, transparent)}
+  .cf-sref{padding:2px 8px; font-size:13px; opacity:.7}
+  .cf-sref:hover{opacity:1}
   .cf-strip{position:relative; overflow:hidden}
   .cf-strip::before{content:""; position:absolute; left:0; right:0; top:0; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); opacity:.7}
   .cf-count{white-space:nowrap}
@@ -2807,6 +2810,18 @@ const SKILL_ORDER = [
 const ICONS = {skill:"📈", boss:"💀", activity:"🧭", manual:"📝"};
 // Actual in-game skill icons from the OSRS Wiki. WOM's "runecrafting" key maps to the wiki's "Runecraft".
 const WIKI = "https://oldschool.runescape.wiki/images/";
+// The skill and item pictures are the wiki's, loaded live. When its image server is down (it was
+// for a whole day on 2026-10-21) every one of them broke at once. A broken picture becomes a small
+// dot with the name on hover, and the layout holds. Capture phase, because error doesn't bubble.
+window.addEventListener("error", e=>{
+  const img = e.target;
+  if(!img || img.tagName !== "IMG" || !/runescape\.wiki\/images/.test(img.src || "") || img.dataset.fb) return;
+  img.dataset.fb = "1";
+  const fb = document.createElement("span");
+  fb.className = "ico-fb"; fb.title = img.alt || img.title || "picture unavailable";
+  const w = img.getAttribute("width") || img.style.width; if(w) fb.style.width = fb.style.height = (/^\d+$/.test(w) ? w + "px" : w);
+  img.replaceWith(fb);
+}, true);
 function skillIconUrl(key){
   const file = key==="runecrafting" ? "Runecraft" : key.charAt(0).toUpperCase()+key.slice(1);
   return WIKI + file + "_icon.png";
@@ -11068,7 +11083,14 @@ function renderCoffer(){
   const pins = cofferPins().filter(n=>byName[n]);
   const sel = state.coffer.sel && byName[state.coffer.sel] ? byName[state.coffer.sel] : null;
   const fit = ready.filter(m=>!m.beyond), rest = ready.filter(m=>m.beyond);
-  const top = fit.slice(0, 3), more = fit.slice(3, 7).concat(rest.slice(0, 2)), train = close.slice(0, 3);
+  // each section rotates through its candidates when its refresh is pressed
+  const off = state.coffer.off || (state.coffer.off = {});
+  const rot = (list, key)=>{ const k = list.length ? ((off[key] || 0) % list.length) : 0; return list.slice(k).concat(list.slice(0, k)); };
+  const top = rot(fit, "top").slice(0, 3);
+  const topSet = new Set(top.map(m=>m.name));
+  const more = rot(fit.filter(m=>!topSet.has(m.name)).concat(rest), "more").slice(0, 6);
+  const train = rot(close, "train").slice(0, 3);
+  const sref = (key, n, len)=> len > n ? `<button class="ghost small cf-sref" data-cfsref="${key}" data-n="${n}" data-len="${len}" title="Show me different ones">⟲</button>` : "";
   const inTop = new Set(top.map(m=>m.name).concat(more.map(m=>m.name)));
 
   const stepOf = id => COFFER_QUIZ.findIndex(q=>q.id===id);
@@ -11120,8 +11142,8 @@ function renderCoffer(){
         why.length ? `<span class="cf-why">${why.map(escapeHtml).join(" · ")}</span>` : ""}</div>
     </div>`;
   };
-  const ledger = (title, sub, list, max, emptyText, showWhy, scale)=> `<div class="panel">
-      <div class="section-title" style="margin-top:0"><h3>${title}</h3><span class="small muted">${sub}</span></div>
+  const ledger = (title, sub, list, max, emptyText, showWhy, scale, refresh)=> `<div class="panel">
+      <div class="section-title" style="margin-top:0"><h3>${title}</h3><span class="small muted">${sub}</span>${refresh ? `<span class="grow"></span>${refresh}` : ""}</div>
       <div class="cf-ledger">${list.slice(0, max).map(m=>ledgerRow(m, showWhy, scale)).join("") || `<div class="empty">${emptyText}</div>`}</div>
     </div>`;
   // ---- the podium: the best three, the first standing taller ----
@@ -11147,7 +11169,7 @@ function renderCoffer(){
     </div>`;
   };
   // ---- the strip: your answers in a line of words, with the controls folded underneath ----
-  const optLabel = id => { const q = COFFER_QUIZ[stepOf(id)]; const o = (q.opts || []).find(o=>o[0]===pf[id]); if(!o) return ""; const t = o[1].replace(/^(Yes|No),\s*/, "").replace(/^(a|an)\s+(?=(main|iron))/i, ""); return t.charAt(0).toUpperCase() + t.slice(1); };
+  const optLabel = id => { const q = COFFER_QUIZ[stepOf(id)]; const o = (q.opts || []).find(o=>o[0]===pf[id]); if(!o) return ""; const t = o[1].replace(/^(Yes|No),\s*/, "").replace(/^(a|an)\s+(?=main|iron)/i, ""); return t.charAt(0).toUpperCase() + t.slice(1); };
   const st = cofferStage(pf);
   const loves = Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(nice);
   const words = [optLabel("iron"), optLabel("members"), st.label + (st.auto ? "" : ", your call"), optLabel("style"), optLabel("session"),
@@ -11160,8 +11182,9 @@ function renderCoffer(){
     let list = ready.filter(m=>mine(m) && !shown.has(m.name));
     if(list.length < 2) list = list.concat(close.filter(m=>mine(m) && !shown.has(m.name)));
     if(list.length < 2) return "";
+    const all = list.length; list = rot(list, "love_" + k);
     list.slice(0, 4).forEach(m=>shown.add(m.name));
-    return ledger(`<img src="${skillIconUrl(k)}" alt="" class="cf-skico"> Because you love ${nice(k)}`, "the ones this skill is the point of", list, 4, "", true);
+    return ledger(`<img src="${skillIconUrl(k)}" alt="" class="cf-skico"> Because you love ${nice(k)}`, "the ones this skill is the point of", list, 4, "", true, undefined, sref("love_" + k, 4, all));
   }).join("");
 
   el.innerHTML = `
@@ -11194,14 +11217,14 @@ function renderCoffer(){
     </div>` : ""}
     ${sel ? cofferDetailHtml(sel) : ""}
     <div class="panel cf-hero">
-      <div class="section-title" style="margin-top:0"><h3>✦ Best for you tonight</h3><span class="small muted">${st.label}${st.auto ? "" : " (your call)"} · ${escapeHtml(st.why)}</span></div>
+      <div class="section-title" style="margin-top:0"><h3>✦ Best for you tonight</h3><span class="small muted">${st.label}${st.auto ? "" : " (your call)"} · ${escapeHtml(st.why)}</span><span class="grow"></span>${sref("top", 3, fit.length)}</div>
       ${top.length ? `<div class="cf-podium">${top.map(heroCard).join("")}</div>`
       : `<div class="empty">Nothing you can do yet fits those answers. Loosen one under Tune, or look under Worth training for.</div>`}
     </div>
-    ${more.length ? ledger("More in your style", "measured against tonight's best", more, 9, "", true) : ""}
+    ${more.length ? ledger("More in your style", "measured against tonight's best", more, 9, "", true, undefined, sref("more", 6, fit.length - top.length + rest.length)) : ""}
     ${loveSections}
-    ${pf.reach!=="ready" && train.length ? ledger("🎯 Worth training for", "big earners a session or two away", train, 3, "", true) : ""}
-    ${rounds.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>🌱 Your rounds</h3><span class="small muted">tick it when it's done; it comes back when the game lets you</span></div>
+    ${pf.reach!=="ready" && train.length ? ledger("🎯 Worth training for", "big earners a session or two away", train, 3, "", true, undefined, sref("train", 3, close.length)) : ""}
+    ${rounds.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>🌱 Your rounds</h3><span class="small muted">tick it when it's done; it comes back when the game lets you</span><span class="grow"></span><button class="ghost small cf-sref" data-cfsref="rounds" data-n="0" data-len="0" title="Check the clock again">⟲</button></div>
       <div class="rd-list">${rounds.slice(0, 14).map(m=>roundRowHtml(m, pins)).join("")}</div></div>` : ""}
     <details class="panel cf-full" ${state.coffer.full ? "open" : ""}><summary><h3 style="display:inline">The full list</h3> <span class="small muted">${fmt(ready.length)} you can do now${pf.reach!=="ready" ? ` · ${fmt(close.length)} within reach` : ""}${pf.reach==="all" ? ` · ${fmt(far.length)} further off` : ""}</span></summary>
       <div class="section-title"><h3>✅ Ready now</h3></div>
@@ -11235,6 +11258,12 @@ function renderCoffer(){
     fc.onchange = ()=>cofferSet("floor", String(CF_FLOOR[+fc.value]));
   }
   $("#cfRefresh").onclick = ()=>mmgDbEnsure(true);
+  $$("#cofferView [data-cfsref]").forEach(b=>b.onclick = ()=>{
+    const key = b.dataset.cfsref, n = +b.dataset.n, len = +b.dataset.len;
+    state.coffer.off = state.coffer.off || {};
+    if(len > n) state.coffer.off[key] = ((state.coffer.off[key] || 0) + n) % len;
+    save(); renderCoffer();
+  });
   $$("#cofferView [data-lens]").forEach(b=>b.onclick = ()=>{ state.coffer.lens = b.dataset.lens === lens ? "" : b.dataset.lens; save(); renderCoffer(); });
   const ls = $("#cfLensSel"); if(ls) ls.onchange = ()=>{ if(ls.value){ state.coffer.lens = ls.value; save(); renderCoffer(); } };
   $$("#cofferView [data-rdtick]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); roundTick(b.dataset.rdtick); });
