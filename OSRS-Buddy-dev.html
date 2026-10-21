@@ -12246,21 +12246,29 @@ function qpStepsHtml(n){
     <div class="qs-list">${body}</div>
     <div class="small muted" style="margin-top:8px">Steps from the OSRS Wiki's quick guide, CC BY-NC-SA. Ticks are yours and stay with your save.</div>`;
 }
+// the panel appears twice on the page (the charted quest at the top, the inspected one under the
+// tree), so a change in either repaints both
+function qpRefreshDetails(){
+  const db = questDB(); if(!db) return;
+  const top = $("#qpTopDetail"); if(top && state.qpTarget && state.qpTarget !== "__ALL__") top.innerHTML = qpDetailHtml(state.qpTarget, db);
+  qpShowDetail(db);
+}
 // one delegated listener covers every render of the panel
 document.addEventListener("click", async e=>{
   const load = e.target.closest("[data-qsteps-load], [data-qsteps-reload]");
   if(load){
     const n = load.dataset.qstepsLoad || load.dataset.qstepsReload;
     if(load.dataset.qstepsReload && state.questGuides) delete state.questGuides[n];
-    qpStepsBusy[n] = true; delete qpStepsBusy[n + ":err"]; qpShowDetail(questDB());
-    try{ await questGuideFetch(n); }catch(err){ qpStepsBusy[n + ":err"] = String(err.message || err); }
-    qpStepsBusy[n] = false; qpShowDetail(questDB());
+    qpStepsBusy[n] = true; delete qpStepsBusy[n + ":err"]; qpRefreshDetails();
+    try{ await questGuideFetch(n); }
+    catch(err){ const m = String(err.message || err); qpStepsBusy[n + ":err"] = /failed to fetch|networkerror|load failed/i.test(m) ? "Couldn't reach the wiki. It may be down for a moment." : m; }
+    qpStepsBusy[n] = false; qpRefreshDetails();
     return;
   }
   const clr = e.target.closest("[data-qsteps-clear]");
-  if(clr){ if(state.questSteps) delete state.questSteps[clr.dataset.qstepsClear]; save(); qpShowDetail(questDB()); return; }
+  if(clr){ if(state.questSteps) delete state.questSteps[clr.dataset.qstepsClear]; save(); qpRefreshDetails(); return; }
   const tab = e.target.closest("[data-qptab]");
-  if(tab){ state.qpTab = tab.dataset.qptab; save(); qpShowDetail(questDB()); return; }
+  if(tab){ state.qpTab = tab.dataset.qptab; save(); qpRefreshDetails(); return; }
 });
 document.addEventListener("change", e=>{
   const cb = e.target.closest("[data-qstep]"); if(!cb) return;
