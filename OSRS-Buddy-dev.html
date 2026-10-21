@@ -439,6 +439,21 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qpd-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px}
   .qpd-sec h5{margin:0 0 5px; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:bold}
   .qpd-list{display:flex; flex-direction:column; gap:3px}
+  .qpd-tabs{display:flex; gap:4px; margin:4px 0 10px; border-bottom:1px solid var(--border)}
+  .qpd-tabs button{background:none; border:0; border-bottom:2px solid transparent; border-radius:0; color:var(--muted); padding:6px 10px; font-size:12.5px; box-shadow:none}
+  .qpd-tabs button:hover{background:none; color:var(--text)}
+  .qpd-tabs button.on{color:var(--gold); border-bottom-color:var(--gold)}
+  .qpd-tabn{display:inline-block; min-width:16px; padding:0 5px; border-radius:999px; background:color-mix(in oklab, var(--gold) 20%, var(--inset)); color:var(--gold); font-size:10.5px; text-align:center}
+  .qs-top{display:flex; align-items:center; gap:8px; margin-bottom:6px}
+  .qs-list{display:flex; flex-direction:column; gap:2px; max-height:52vh; overflow:auto; padding-right:4px}
+  .qs-h{font-family:var(--font-display); color:var(--gold); font-size:15px; margin:10px 0 3px}
+  .qs-h:first-child{margin-top:0}
+  .qs-step{display:flex; align-items:flex-start; gap:8px; padding:4px 6px; border-radius:7px; font-size:13px; line-height:1.45; cursor:pointer}
+  .qs-step:hover{background:var(--inset)}
+  .qs-step input{margin-top:3px; flex:none}
+  .qs-step.on span{color:var(--muted); text-decoration:line-through}
+  .qs-step.d1{margin-left:22px} .qs-step.d2{margin-left:44px} .qs-step.d3{margin-left:66px}
+  .qs-note{font-size:12.5px; color:var(--gold); padding:4px 6px; opacity:.9}
   .qpd-row{display:flex; align-items:center; gap:7px; font-size:12.5px; padding:2px 0}
   .qpd-row img{width:15px; height:15px; object-fit:contain; flex:none}
   .qpd-row .want{font-weight:bold}
@@ -1525,7 +1540,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .topbar{display:none}
   .hamb{background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:5px 11px; color:var(--gold); font-size:17px; cursor:pointer; line-height:1}
   .tb-title{font-family:var(--font-display); color:var(--gold); font-size:19px}
-  @media(max-width:820px){
+  @media(max-width:700px){
     .app{display:block; max-width:none}
     .sidebar{position:fixed; left:0; top:0; bottom:0; height:100dvh; z-index:40; width:240px;
       transform:translateX(-100%); transition:transform .2s ease}
@@ -1535,6 +1550,15 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       background:var(--bg); padding:12px 2px 10px; border-bottom:1px solid var(--border); margin-bottom:6px}
     .pagehead{display:none}
     .sb-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:39}
+  }
+  /* A tablet, or a folding phone opened up (the Fold's inner screen is about 800 by 720): the
+     sidebar stays on screen, just slimmer, and the content takes the rest. */
+  @media(min-width:701px) and (max-width:1000px){
+    .sidebar{width:170px}
+    .navitem{padding:7px 9px; font-size:13px}
+    .nav-sec{font-size:10px}
+    .content{padding:18px 16px 80px}
+    .brand{font-size:16px}
   }
 
   .panel{background:var(--panel); border:1px solid var(--border); border-radius:10px;
@@ -1911,7 +1935,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
      under the camera cutout, everything was sized for a mouse and a wide window, and the skills
      took three screens to read. So: keep clear of the cutout, tighten the spacing, and let the
      skill tiles shrink enough that all 24 are one glance. */
-  @media(max-width:820px){
+  @media(max-width:700px){
     .topbar{padding-top:calc(12px + env(safe-area-inset-top, 0px))}
     .hamb{padding:9px 14px; font-size:19px; min-width:46px; min-height:42px}
     .tb-title{font-size:17px}
@@ -1942,10 +1966,29 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     .cf-hc.first .cf-hpay{font-size:30px}
     .cf-lrow{grid-template-columns:minmax(0, 1fr) auto; grid-template-areas:"name pin" "track pin" "sub pin"; column-gap:8px; padding:7px 8px}
     .cf-count{white-space:normal}
+    /* the strip, the lens, the rounds and the farewell on a phone */
+    .cf-stripbar{gap:8px}
+    .cf-profile{font-size:12.5px}
+    .cf-lens{flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; scrollbar-width:none}
+    .cf-lens::-webkit-scrollbar{display:none}
+    .cf-lens button, .cf-lens select, .cf-lens span{flex:none; white-space:nowrap}
+    .rd-row{flex-wrap:wrap; row-gap:2px}
+    .rd-pay{order:5; flex:1 0 100%; text-align:left; padding-left:40px; font-size:12.5px; max-width:none}
+    .rd-chip{padding:7px 12px; font-size:13px}
+    .fw{padding:18px 14px}
+    .fw-gem{width:104px; height:104px}
+    .fw-line.big{font-size:30px}
+    .fw-line{font-size:17px}
+    .fw-line.fwstat{font-size:15.5px}
+    .fw-line.letter{font-size:14.5px}
+    .fw-name{font-size:38px}
+    .board-ed textarea{min-height:50vh; font-size:13.5px}
+    .mu-room{max-width:none}
+    .cf-hc{padding-left:40px}
   }
   /* Folded, the screen is narrow but still fits three columns, which is what keeps all 24 skills
      on one screen. Two columns would push the last eight below the fold. */
-  @media(max-width:400px){
+  @media(max-width:430px){
     .skill{padding:4px 6px; gap:5px}
     .skill .sname{font-size:9.5px}
     .skill .slvl{font-size:15px}
@@ -3198,7 +3241,7 @@ function storageReport(){
 // are ~96% of the bytes and re-download themselves, so they're excluded.
 const BACKUP_KEY = "osrs_todo_backups_v1";   // legacy home; migrated out on first run
 const BACKUP_KEEP = 8;
-const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap"];
+const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","questGuides"];
 // Snapshots live in IndexedDB, not localStorage. Keeping eight copies of your data in
 // a 5MB bucket meant the backup system was the thing that would eventually fill it —
 // journal history alone costs ~86KB/year, so the data is fine for decades; nine copies
@@ -9429,11 +9472,15 @@ function renderQuestPlanner(){
   $("#qpSub").textContent = `${done}/${total} quests complete · data from ${fmtDay(isoDate(new Date(db.ts)))}`;
   setup.innerHTML = "";
   const target = state.qpTarget;
-  sug.innerHTML = `<div class="qp-sug">${QP_SUGGEST.filter(q=>db.quests[q]).map(q=>
+  // the popular goals are for picking a first goal; once one is charted they fold away
+  const sugOpen = !target || !!state.qpSugOpen;
+  sug.innerHTML = `${target ? `<div class="row" style="justify-content:center; margin-top:8px"><button class="ghost small" id="qpSugToggle">${sugOpen ? "▾ Popular goals" : "▸ Popular goals"}</button></div>` : ""}
+    <div class="qp-sug ${sugOpen ? "" : "hidden"}">${QP_SUGGEST.filter(q=>db.quests[q]).map(q=>
     `<button class="ghost small ${q===target?"on":""}" data-qptarget="${escapeHtml(q)}">${q}</button>`).join("")}
     <button class="ghost small" data-qptarget="__ALL__">🏆 Quest cape (everything)</button>
     <button class="qp-pin" data-qbadd="__ALL__" title="Pin the quest cape to the board">+</button></div>
     ${qpFilterHtml(db)}`;
+  const sgt = $("#qpSugToggle"); if(sgt) sgt.onclick = ()=>{ state.qpSugOpen = !state.qpSugOpen; save(); renderQuestPlanner(); };
   $$("#qpSuggest [data-qptarget]").forEach(b=>b.onclick=()=>{ state.qpTarget=b.dataset.qptarget; save(); renderQuestPlanner(); });
   $$("#qpSuggest [data-qpfilter]").forEach(b=>b.onclick=()=>{
     state.qpFilter = b.dataset.qpfilter || null; save(); renderQuestPlanner();
@@ -12101,6 +12148,130 @@ function qpRewardsHtml(q){
     ${items?`<div class="qpd-items">${items}</div>`:""}
     ${unlocks?`<div class="qpd-uns">${unlocks}</div>`:""}</div>`;
 }
+// ---- quest steps ----
+// The wiki keeps a quick guide for nearly every quest: a bulleted list of what to do, in order.
+// Read once, kept in state.questGuides (not backed up; it's the wiki's, re-read on demand), and
+// shown as a checklist whose ticks are yours (state.questSteps). The wiki's text is CC BY-NC-SA,
+// and the panel says so.
+const qpStepsBusy = {};
+function wikiInline(t){
+  return String(t)
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<ref[^>]*\/>/gi, "").replace(/<ref[^>]*>[\s\S]*?<\/ref>/gi, "")
+    .replace(/\[\[(?:File|Image):[^\]]*\]\]/gi, "")
+    .replace(/\[\[([^\]|]*)\|([^\]]*)\]\]/g, "$2").replace(/\[\[([^\]]*)\]\]/g, "$1")
+    .replace(/\[https?:[^\s\]]+\s+([^\]]*)\]/g, "$1").replace(/\[https?:[^\]]+\]/g, "")
+    .replace(/'{5}|'{3}|'{2}/g, "")
+    .replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ").trim();
+}
+// templates: the few that carry words are flattened, the rest are dropped; innermost first so
+// nesting unwinds
+function wikiTemplates(t){
+  let guard = 0;
+  const one = (m)=>{
+    const body = m.slice(2, -2);
+    const parts = body.split("|").map(x=>x.trim());
+    const name = parts[0].toLowerCase().replace(/_/g, " ");
+    const named = {}; const pos = [];
+    parts.slice(1).forEach(x=>{ const i = x.indexOf("="); if(i > 0 && /^[a-z0-9 _-]+$/i.test(x.slice(0, i))) named[x.slice(0, i).trim().toLowerCase()] = x.slice(i + 1).trim(); else pos.push(x); });
+    if(/^(items? ?(needed|required|recommended)|itemsneeded|itemsrecommended)$/.test(name)) return (/(recommended)/.test(name) ? "Recommended: " : "Items needed: ") + (pos.filter(Boolean).join(", ") || "nothing");
+    if(name === "scp" || name === "skill clickpic" || name === "skillclickpic") return (pos[1] ? pos[1] + " " : "") + (pos[0] || "");
+    if(name === "color" || name === "colour") return pos[1] || pos[0] || "";
+    if(/^(quest ?end|quest complete|quick guide\/quest complete)/.test(name)) return "Quest complete.";
+    if(name === "chat options" || name === "chat" || name === "dialogue" || name === "quick guide dialogue") return pos.length ? "(" + pos.join(" → ") + ")" : "";
+    if(name === "coins" || name === "gp") return (pos[0] || "") + " coins";
+    if(name === "mainarticle" || name === "main" || name === "seealso" || name === "quick guide" || name === "quickguide" || name === "navbox" || name === "stub") return "";
+    // anything else: keep its first plain-text value if it reads like words, else nothing
+    const v = pos.find(x=>x && !/[{}=]/.test(x) && /[a-z]/i.test(x) && x.length < 80);
+    return v || "";
+  };
+  while(/\{\{[^{}]*\}\}/.test(t) && guard++ < 40) t = t.replace(/\{\{[^{}]*\}\}/g, one);
+  return t;
+}
+function wikiStepsParse(wt){
+  const out = []; let cur = {h:"", steps:[]};
+  const text = wikiTemplates(String(wt || "").replace(/\r/g, ""));
+  text.split("\n").forEach(raw=>{
+    const line = raw.trim(); if(!line) return;
+    let m;
+    if((m = /^(={2,})\s*(.*?)\s*=+\s*$/.exec(line))){ if(cur.steps.length) out.push(cur); cur = {h: wikiInline(m[2]), steps:[]}; return; }
+    if((m = /^([*#:]+)\s*(.*)$/.exec(line))){ const t = wikiInline(m[2]); if(t) cur.steps.push({t, d: Math.min(3, m[1].length - 1)}); return; }
+    if(/^(Items needed|Recommended):/.test(line)){ cur.steps.push({t: wikiInline(line), d:0, note:true}); return; }
+  });
+  if(cur.steps.length) out.push(cur);
+  return out.filter(sec=>!/^(references|see also|trivia|gallery|credits)$/i.test(sec.h));
+}
+async function questGuideFetch(n){
+  state.questGuides = state.questGuides || {};
+  const have = state.questGuides[n];
+  if(have && have.sections && Date.now() - have.at < 30 * 864e5) return have;
+  const page = n + "/Quick guide";
+  const url = `${WIKI_API}?action=parse&page=${encodeURIComponent(page)}&prop=wikitext&format=json&formatversion=2&origin=*`;
+  const r = await fetch(url);
+  if(!r.ok) throw new Error("The wiki answered " + r.status);
+  const j = await r.json();
+  if(!j.parse || !j.parse.wikitext) throw new Error("No quick guide on the wiki for this one");
+  const sections = wikiStepsParse(j.parse.wikitext);
+  if(!sections.length) throw new Error("The guide came back empty");
+  const rec = {at: Date.now(), sections, page};
+  state.questGuides[n] = rec; save();
+  return rec;
+}
+function qpStepsHtml(n){
+  const g = (state.questGuides || {})[n];
+  const ticks = ((state.questSteps || {})[n]) || {};
+  if(qpStepsBusy[n]) return `<div class="empty">Reading the quick guide off the wiki…</div>`;
+  if(!g || !g.sections){
+    const err = qpStepsBusy[n + ":err"];
+    return `<div class="empty">${err ? escapeHtml(err) + " " : ""}<button class="ghost small" data-qsteps-load="${escapeHtml(n)}">${err ? "Try again" : "Load the steps"}</button>
+      <div class="small muted" style="margin-top:6px">From the quest's quick guide on the OSRS Wiki.</div></div>`;
+  }
+  let idx = 0, total = 0, done = 0;
+  const body = g.sections.map(sec=>{
+    const rows = sec.steps.map(st=>{
+      const i = idx++;
+      if(st.note) return `<div class="qs-note">${escapeHtml(st.t)}</div>`;
+      total++; const on = !!ticks[i]; if(on) done++;
+      return `<label class="qs-step d${st.d} ${on ? "on" : ""}"><input type="checkbox" data-qstep="${i}" data-qsq="${escapeHtml(n)}" ${on ? "checked" : ""}><span>${escapeHtml(st.t)}</span></label>`;
+    }).join("");
+    return `${sec.h ? `<div class="qs-h">${escapeHtml(sec.h)}</div>` : ""}${rows}`;
+  }).join("");
+  const wiki = "https://oldschool.runescape.wiki/w/" + encodeURIComponent(g.page.replace(/ /g, "_"));
+  return `<div class="qs-top"><span class="small muted">${done}/${total} steps</span><span class="grow"></span>
+      ${done ? `<button class="ghost small" data-qsteps-clear="${escapeHtml(n)}">Clear ticks</button>` : ""}
+      <button class="ghost small" data-qsteps-reload="${escapeHtml(n)}" title="Read it again">⟲</button>
+      <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Quick guide ↗</a></div>
+    <div class="qs-list">${body}</div>
+    <div class="small muted" style="margin-top:8px">Steps from the OSRS Wiki's quick guide, CC BY-NC-SA. Ticks are yours and stay with your save.</div>`;
+}
+// one delegated listener covers every render of the panel
+document.addEventListener("click", async e=>{
+  const load = e.target.closest("[data-qsteps-load], [data-qsteps-reload]");
+  if(load){
+    const n = load.dataset.qstepsLoad || load.dataset.qstepsReload;
+    if(load.dataset.qstepsReload && state.questGuides) delete state.questGuides[n];
+    qpStepsBusy[n] = true; delete qpStepsBusy[n + ":err"]; qpShowDetail(questDB());
+    try{ await questGuideFetch(n); }catch(err){ qpStepsBusy[n + ":err"] = String(err.message || err); }
+    qpStepsBusy[n] = false; qpShowDetail(questDB());
+    return;
+  }
+  const clr = e.target.closest("[data-qsteps-clear]");
+  if(clr){ if(state.questSteps) delete state.questSteps[clr.dataset.qstepsClear]; save(); qpShowDetail(questDB()); return; }
+  const tab = e.target.closest("[data-qptab]");
+  if(tab){ state.qpTab = tab.dataset.qptab; save(); qpShowDetail(questDB()); return; }
+});
+document.addEventListener("change", e=>{
+  const cb = e.target.closest("[data-qstep]"); if(!cb) return;
+  const n = cb.dataset.qsq, i = cb.dataset.qstep;
+  state.questSteps = state.questSteps || {}; state.questSteps[n] = state.questSteps[n] || {};
+  if(cb.checked) state.questSteps[n][i] = true; else delete state.questSteps[n][i];
+  save();
+  const lab = cb.closest(".qs-step"); if(lab) lab.classList.toggle("on", cb.checked);
+  const top = cb.closest(".qp-detail"); if(top){ const c = top.querySelector(".qs-top .muted"); if(c){ const t = top.querySelectorAll("[data-qstep]").length, d = top.querySelectorAll("[data-qstep]:checked").length; c.textContent = `${d}/${t} steps`; } }
+});
+
 function qpDetailHtml(n, db){
   if(!n || !db.quests[n])
     return `<div class="qp-detail-empty">Click any quest in the tree for its full requirements.</div>`;
@@ -12130,6 +12301,8 @@ function qpDetailHtml(n, db){
   const opensHead = subs.length ? `Subquests (${subs.length})`
                                 : `Opens up${kids.length?` (${kids.length})`:""}`;
   const wiki = "https://oldschool.runescape.wiki/w/"+encodeURIComponent(n.replace(/ /g,"_"));
+  const tab = ["over","steps","rewards"].includes(state.qpTab) ? state.qpTab : "over";
+  const stepsDone = Object.keys(((state.questSteps || {})[n]) || {}).length;
   return `<div class="qpd-head">
       <h4>${escapeHtml(qpLabel(n))}</h4>
       <span class="qp-tag ${(live&&st==="ready")?"free":""}">${st==="done"?"complete":!live?"stats not loaded":st==="ready"?"ready to start":"blocked"}</span>
@@ -12145,7 +12318,12 @@ function qpDetailHtml(n, db){
         <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a>
       </div>
     </div>
-    <div class="qpd-grid">
+    <div class="qpd-tabs">
+      <button class="${tab==="over"?"on":""}" data-qptab="over">Overview</button>
+      <button class="${tab==="steps"?"on":""}" data-qptab="steps">Steps${stepsDone ? ` <span class="qpd-tabn">${stepsDone}</span>` : ""}</button>
+      <button class="${tab==="rewards"?"on":""}" data-qptab="rewards">Rewards</button>
+    </div>
+    ${tab==="steps" ? `<div class="qpd-steps">${qpStepsHtml(n)}</div>` : tab==="rewards" ? `<div class="qpd-grid">${qpRewardsHtml(q) || `<div class="empty">Nothing listed.</div>`}</div>` : `<div class="qpd-grid">
       <div class="qpd-sec"><h5>Requirements</h5>
         <div class="qpd-list">${reqRows+qpRow || `<div class="qpd-row"><span class="have" style="margin:0">Nothing required.</span></div>`}</div></div>
       <div class="qpd-sec"><h5>Needs these quests${prereqs.length?` (${prereqs.filter(p=>!questDone(p)).length} left)`:""}</h5>
@@ -12154,8 +12332,7 @@ function qpDetailHtml(n, db){
       <div class="qpd-sec"><h5>${opensHead}</h5>
         <div class="qpd-list">${opens.length?opens.map(t=>qpQuestRow(t,db)).join("")
           :`<div class="qpd-row"><span class="have" style="margin:0">Nothing depends on this.</span></div>`}</div></div>
-      ${qpRewardsHtml(q)}
-    </div>`;
+    </div>`}`;
 }
 function qpEdgePath(e){
   const a=qpPos[e.from], b=qpPos[e.to];

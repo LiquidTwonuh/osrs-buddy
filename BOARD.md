@@ -17,12 +17,14 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 
 ## Next
 - [ ] Wise Old Claude: Bud takes an Anthropic API key in Settings (key stays on the machine, the person pays per question), gets the app's context in one tidy prompt, and the upgrade is told as lore, Bud ascending. Provider picker with only Anthropic for now, OpenAI and Gemini fit the same slot later. Bud's name may change with the rebrand, so this waits for the name
-- [ ] Map cleanup: too much on screen at once. Keep every bit of info, calm the layout
-- [ ] Quest steps from the wiki, shown when you click a quest on the Map. Clean, accurate, licence-safe. Likely a scheduled task (routine) that scrapes and checks, then Claude wires it in
+- [ ] Map cleanup, first pass 2026-10-21: the quest panel is tabbed (Overview, Steps, Rewards) so rewards stop sprawling; the popular-goals row folds away once a goal is charted. More to do once Josh points at what still feels heavy
+- [x] Quest steps from the wiki (2026-10-21): the Steps tab reads the quest's quick guide live, flattens the wiki markup to plain steps with headings, and shows a checklist whose ticks stay with the save. Cached 30 days, re-read on demand, attributed CC BY-NC-SA. Not verified against the live wiki yet: it was down (502) the morning it was built
 - [ ] Coffer: tune the stage thresholds once a few people have seen "Auto"
 - [ ] Android layout polish, touch dragging untested
 
 ## Small fixes spotted
+- [ ] Josh saw wrong tooltips somewhere on the Map. Which ones? A screenshot or the words would pin it down
+- [x] Phone layout (2026-10-21): three tiers now. Phone to 700px (drawer), tablet or an opened Fold 701 to 1000px (slim sidebar stays), desktop above. The folded Fold's 404px cover screen now gets the compact rules (was cut off at 400). Lens scrolls sideways, rounds wrap, farewell and board sized for a phone
 - [ ] Flip trusts the latest high/low trade as a price. Yellow beads showed a margin nobody could buy at (Josh tried 2k each). Re-assess: use the 5-minute and hour averages, require real volume (trades per hour), show it, and hide thin items by default. Also show the buy limit next to the margin
 - [ ] Rename Map and Coffer once Coffer is finished; Josh wants better names (Scroll stays)
 - [x] Coffer: the answer chips are a wall on the phone. On a phone each answer is now one row that opens that question
