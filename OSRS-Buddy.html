@@ -439,6 +439,21 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qpd-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px}
   .qpd-sec h5{margin:0 0 5px; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:bold}
   .qpd-list{display:flex; flex-direction:column; gap:3px}
+  .qpd-tabs{display:flex; gap:4px; margin:4px 0 10px; border-bottom:1px solid var(--border)}
+  .qpd-tabs button{background:none; border:0; border-bottom:2px solid transparent; border-radius:0; color:var(--muted); padding:6px 10px; font-size:12.5px; box-shadow:none}
+  .qpd-tabs button:hover{background:none; color:var(--text)}
+  .qpd-tabs button.on{color:var(--gold); border-bottom-color:var(--gold)}
+  .qpd-tabn{display:inline-block; min-width:16px; padding:0 5px; border-radius:999px; background:color-mix(in oklab, var(--gold) 20%, var(--inset)); color:var(--gold); font-size:10.5px; text-align:center}
+  .qs-top{display:flex; align-items:center; gap:8px; margin-bottom:6px}
+  .qs-list{display:flex; flex-direction:column; gap:2px; max-height:52vh; overflow:auto; padding-right:4px}
+  .qs-h{font-family:var(--font-display); color:var(--gold); font-size:15px; margin:10px 0 3px}
+  .qs-h:first-child{margin-top:0}
+  .qs-step{display:flex; align-items:flex-start; gap:8px; padding:4px 6px; border-radius:7px; font-size:13px; line-height:1.45; cursor:pointer}
+  .qs-step:hover{background:var(--inset)}
+  .qs-step input{margin-top:3px; flex:none}
+  .qs-step.on span{color:var(--muted); text-decoration:line-through}
+  .qs-step.d1{margin-left:22px} .qs-step.d2{margin-left:44px} .qs-step.d3{margin-left:66px}
+  .qs-note{font-size:12.5px; color:var(--gold); padding:4px 6px; opacity:.9}
   .qpd-row{display:flex; align-items:center; gap:7px; font-size:12.5px; padding:2px 0}
   .qpd-row img{width:15px; height:15px; object-fit:contain; flex:none}
   .qpd-row .want{font-weight:bold}
@@ -791,6 +806,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-stripbar{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
   .cf-profile{flex:1 1 auto; display:flex; flex-wrap:wrap; align-items:center; gap:3px 7px; font-size:13px; min-width:0}
   .cf-profile .cf-dot{color:var(--gold3)}
+  .cf-word{display:inline-flex; align-items:center; padding:3px 10px; border-radius:999px; font-size:12.5px; color:var(--gold); border:1px solid color-mix(in oklab, var(--gold) 38%, var(--border)); background:linear-gradient(180deg, color-mix(in oklab, var(--gold) 14%, var(--inset)), color-mix(in oklab, var(--gold) 6%, var(--inset))); box-shadow:0 0 12px var(--glow), inset 0 1px 0 color-mix(in oklab, var(--gold) 20%, transparent)}
+  .cf-strip{position:relative; overflow:hidden}
+  .cf-strip::before{content:""; position:absolute; left:0; right:0; top:0; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); opacity:.7}
   .cf-count{white-space:nowrap}
   .cf-tune{display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1)}
   .cf-strip.open .cf-tune{grid-template-rows:1fr}
@@ -839,6 +857,30 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-lsub{grid-area:sub; display:flex; flex-wrap:wrap; gap:3px 8px; align-items:center; font-size:12px; color:var(--muted); min-width:0}
   .cf-lsub .cf-why{margin:0}
   @keyframes cfgrow{from{width:0}}
+  /* rounds: a checklist that knows the clock */
+  .rd-list{display:flex; flex-direction:column; gap:4px}
+  .rd-row{display:flex; align-items:center; gap:10px; padding:7px 10px; border-radius:10px; border:1px solid transparent; cursor:pointer}
+  .rd-row:hover{background:var(--inset); border-color:var(--border)}
+  .rd-row.wait{opacity:.62}
+  .rd-row.short{opacity:.7}
+  .rd-tick{flex:none; width:30px; height:30px; border-radius:50%; border:1px solid var(--border); background:var(--inset); color:var(--muted); font-size:15px; cursor:pointer}
+  .rd-tick.on{border-color:var(--gold); color:var(--gold); background:color-mix(in oklab, var(--gold) 16%, var(--inset))}
+  .rd-tick:disabled{opacity:.35; cursor:default}
+  .rd-b{flex:1 1 auto; min-width:0}
+  .rd-h{display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:13.5px}
+  .rd-sub{font-size:12px; color:var(--muted); margin-top:2px}
+  .rd-when.up{color:var(--green); font-weight:600}
+  .rd-pay{flex:none; text-align:right; font-weight:700; color:var(--gold); font-size:13.5px; max-width:180px}
+  .rd-pay .muted{font-size:10px; font-weight:500}
+  .rd-chips{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+  .rd-chip{border:1px solid var(--border); background:var(--inset); color:var(--text); border-radius:999px; padding:5px 11px; font:inherit; font-size:12.5px; cursor:pointer}
+  .rd-chip:hover{border-color:var(--gold)}
+  .rd-next{margin-left:4px}
+  /* the lens */
+  .cf-lens{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:8px}
+  .cf-lens button{display:inline-flex; align-items:center; gap:5px; border:1px solid var(--border); background:var(--inset); color:var(--muted); border-radius:999px; padding:4px 10px; font:inherit; font-size:12.5px; cursor:pointer}
+  .cf-lens button.on{color:var(--gold); border-color:var(--gold); background:color-mix(in oklab, var(--gold) 14%, var(--inset))}
+  .cf-lens select{font-size:12px; padding:3px 6px; border-radius:999px; background:var(--inset); color:var(--muted); border:1px solid var(--border)}
   .sync-code{margin-top:8px; font-size:13px}
   .sync-code b{font-size:20px; letter-spacing:3px; color:var(--gold); font-family:ui-monospace, monospace}
   .cf-tag.wild{color:var(--red); border-color:color-mix(in oklab, var(--red) 40%, var(--border))}
@@ -1501,7 +1543,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .topbar{display:none}
   .hamb{background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:5px 11px; color:var(--gold); font-size:17px; cursor:pointer; line-height:1}
   .tb-title{font-family:var(--font-display); color:var(--gold); font-size:19px}
-  @media(max-width:820px){
+  @media(max-width:700px){
     .app{display:block; max-width:none}
     .sidebar{position:fixed; left:0; top:0; bottom:0; height:100dvh; z-index:40; width:240px;
       transform:translateX(-100%); transition:transform .2s ease}
@@ -1511,6 +1553,15 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       background:var(--bg); padding:12px 2px 10px; border-bottom:1px solid var(--border); margin-bottom:6px}
     .pagehead{display:none}
     .sb-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:39}
+  }
+  /* A tablet, or a folding phone opened up (the Fold's inner screen is about 800 by 720): the
+     sidebar stays on screen, just slimmer, and the content takes the rest. */
+  @media(min-width:701px) and (max-width:1000px){
+    .sidebar{width:170px}
+    .navitem{padding:7px 9px; font-size:13px}
+    .nav-sec{font-size:10px}
+    .content{padding:18px 16px 80px}
+    .brand{font-size:16px}
   }
 
   .panel{background:var(--panel); border:1px solid var(--border); border-radius:10px;
@@ -1887,7 +1938,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
      under the camera cutout, everything was sized for a mouse and a wide window, and the skills
      took three screens to read. So: keep clear of the cutout, tighten the spacing, and let the
      skill tiles shrink enough that all 24 are one glance. */
-  @media(max-width:820px){
+  @media(max-width:700px){
     .topbar{padding-top:calc(12px + env(safe-area-inset-top, 0px))}
     .hamb{padding:9px 14px; font-size:19px; min-width:46px; min-height:42px}
     .tb-title{font-size:17px}
@@ -1918,10 +1969,29 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     .cf-hc.first .cf-hpay{font-size:30px}
     .cf-lrow{grid-template-columns:minmax(0, 1fr) auto; grid-template-areas:"name pin" "track pin" "sub pin"; column-gap:8px; padding:7px 8px}
     .cf-count{white-space:normal}
+    /* the strip, the lens, the rounds and the farewell on a phone */
+    .cf-stripbar{gap:8px}
+    .cf-profile{font-size:12.5px}
+    .cf-lens{flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; scrollbar-width:none}
+    .cf-lens::-webkit-scrollbar{display:none}
+    .cf-lens button, .cf-lens select, .cf-lens span{flex:none; white-space:nowrap}
+    .rd-row{flex-wrap:wrap; row-gap:2px}
+    .rd-pay{order:5; flex:1 0 100%; text-align:left; padding-left:40px; font-size:12.5px; max-width:none}
+    .rd-chip{padding:7px 12px; font-size:13px}
+    .fw{padding:18px 14px}
+    .fw-gem{width:104px; height:104px}
+    .fw-line.big{font-size:30px}
+    .fw-line{font-size:17px}
+    .fw-line.fwstat{font-size:15.5px}
+    .fw-line.letter{font-size:14.5px}
+    .fw-name{font-size:38px}
+    .board-ed textarea{min-height:50vh; font-size:13.5px}
+    .mu-room{max-width:none}
+    .cf-hc{padding-left:40px}
   }
   /* Folded, the screen is narrow but still fits three columns, which is what keeps all 24 skills
      on one screen. Two columns would push the last eight below the fold. */
-  @media(max-width:400px){
+  @media(max-width:430px){
     .skill{padding:4px 6px; gap:5px}
     .skill .sname{font-size:9.5px}
     .skill .slvl{font-size:15px}
@@ -2202,6 +2272,15 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
         </div>
         <div id="homeTodoList"></div>
       </div>
+      </div>
+
+      <div class="panel hidden" id="homeRounds">
+        <div class="section-title" style="margin-top:0">
+          <h3>Rounds</h3>
+          <span class="small muted" id="homeRoundsSub"></span>
+          <button class="ghost small right" id="homeRoundsOpen">Open Coffer →</button>
+        </div>
+        <div class="rd-chips" id="homeRoundsList"></div>
       </div>
 
       <div class="panel">
@@ -3165,7 +3244,7 @@ function storageReport(){
 // are ~96% of the bytes and re-download themselves, so they're excluded.
 const BACKUP_KEY = "osrs_todo_backups_v1";   // legacy home; migrated out on first run
 const BACKUP_KEEP = 8;
-const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap"];
+const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","questGuides"];
 // Snapshots live in IndexedDB, not localStorage. Keeping eight copies of your data in
 // a 5MB bucket meant the backup system was the thing that would eventually fill it —
 // journal history alone costs ~86KB/year, so the data is fine for decades; nine copies
@@ -3480,6 +3559,7 @@ function renderProfiles(){
 }
 function renderAll(){
   renderProfiles();
+  renderRoundsHome();
   renderSummary();
   populateMetricDropdown();
   renderQuickAdd();
@@ -6013,8 +6093,8 @@ function addNote(){
   const first = $("#notesGrid textarea"); if(first) first.focus();
 }
 // ============ THE FAREWELL ============
-// Shown once, the first time the renamed app meets a save that was here before. Played again by
-// typing "buddy" anywhere outside a text box, or by clicking the old name under About. The numbers
+// Never shown on its own. Played by typing "buddy" anywhere outside a text box, or by clicking the
+// old name under About; the first play freezes the numbers. The numbers
 // are frozen the night it first plays, so running it back years later still shows that night.
 // It's deliberately in Buddy's own gold, whatever theme is on: this is the one screen that isn't
 // Mortimeter's.
@@ -9395,11 +9475,15 @@ function renderQuestPlanner(){
   $("#qpSub").textContent = `${done}/${total} quests complete · data from ${fmtDay(isoDate(new Date(db.ts)))}`;
   setup.innerHTML = "";
   const target = state.qpTarget;
-  sug.innerHTML = `<div class="qp-sug">${QP_SUGGEST.filter(q=>db.quests[q]).map(q=>
+  // the popular goals are for picking a first goal; once one is charted they fold away
+  const sugOpen = !target || !!state.qpSugOpen;
+  sug.innerHTML = `${target ? `<div class="row" style="justify-content:center; margin-top:8px"><button class="ghost small" id="qpSugToggle">${sugOpen ? "▾ Popular goals" : "▸ Popular goals"}</button></div>` : ""}
+    <div class="qp-sug ${sugOpen ? "" : "hidden"}">${QP_SUGGEST.filter(q=>db.quests[q]).map(q=>
     `<button class="ghost small ${q===target?"on":""}" data-qptarget="${escapeHtml(q)}">${q}</button>`).join("")}
     <button class="ghost small" data-qptarget="__ALL__">🏆 Quest cape (everything)</button>
     <button class="qp-pin" data-qbadd="__ALL__" title="Pin the quest cape to the board">+</button></div>
     ${qpFilterHtml(db)}`;
+  const sgt = $("#qpSugToggle"); if(sgt) sgt.onclick = ()=>{ state.qpSugOpen = !state.qpSugOpen; save(); renderQuestPlanner(); };
   $$("#qpSuggest [data-qptarget]").forEach(b=>b.onclick=()=>{ state.qpTarget=b.dataset.qptarget; save(); renderQuestPlanner(); });
   $$("#qpSuggest [data-qpfilter]").forEach(b=>b.onclick=()=>{
     state.qpFilter = b.dataset.qpfilter || null; save(); renderQuestPlanner();
@@ -10065,6 +10149,149 @@ async function renderFollowSetting(){
   if(rl) rl.onclick = ()=>location.reload();
 }
 
+// ============ ROUNDS ============
+// The recurring money makers from the wiki, plus the routines it doesn't call money makers, as a
+// checklist that knows the game's clock. Tick one and it greys out until the game lets you do it
+// again: daily things come back at 00:00 UTC, weekly things on Wednesday 00:00 UTC, timed things
+// (bird houses, herb runs) after their interval. Ticks live in state.rounds, keyed by name.
+const ROUND_WEEK_RESET_DOW = 3;   // Wednesday, the game's weekly reset
+// Routines the wiki's recurring table leaves out, or gates the table doesn't mention. `match`
+// attaches a diary gate to a wiki row of the same name; entries without a wiki twin stand alone.
+const ROUNDS_EXTRA = [
+  {id:"tears", name:"Tears of Guthix", every:"week", pays:"XP in your lowest skill", why:"A few minutes a week of free XP in whatever skill is lowest.", quests:["Tears of Guthix"], loc:"Lumbridge Swamp caves", wiki:"Tears_of_Guthix"},
+  {id:"bert", name:"Bert's buckets of sand", every:"day", pays:"84 buckets of sand", why:"Free sand every day for glassblowing, delivered to your bank with the Ardougne elite diary.", quests:["The Hand in the Sand"], loc:"Yanille", wiki:"The_Hand_in_the_Sand", match:/sand from bert|bert'?s sand|buckets of sand/i},
+  {id:"flax", name:"Geoffrey's flax", every:"day", pays:"30 flax", why:"Free flax from the Seers' Village field, for bowstrings.", diary:["Kandarin","easy"], loc:"Seers' Village", wiki:"Geoffrey", match:/flax from geoffrey|geoffrey/i},
+  {id:"cromperty", name:"Wizard Cromperty's essence", every:"day", pays:"150 pure essence", why:"Pure essence handed over daily, more with the elite diary.", diary:["Ardougne","medium"], loc:"East Ardougne", wiki:"Wizard_Cromperty", match:/cromperty|pure essence from/i},
+  {id:"zaff", name:"Zaff's battlestaves", every:"day", pays:"Battlestaves below market price", why:"Zaff sells battlestaves cheap once a day; the harder the Varrock diary, the more he sells.", diary:["Varrock","easy"], loc:"Varrock", wiki:"Zaff", match:/battlestaves? from zaff|zaff/i},
+  {id:"kingdom", name:"Managing Miscellania", every:"day", pays:"Resources from your kingdom", why:"Top up the coffers and approval and the kingdom gathers for you while you're away.", quests:["Throne of Miscellania"], loc:"Miscellania", wiki:"Managing_Miscellania", match:/miscellania|kingdom/i},
+  {id:"nmz-herbs", name:"Herb boxes from Nightmare Zone", every:"day", pays:"15 herb boxes", why:"Fifteen boxes of random herbs a day for points you already have.", quests:["Dream Mentor"], loc:"Yanille", wiki:"Nightmare_Zone#Rewards", match:/herb box/i},
+  {id:"bonemeal", name:"Robin's bonemeal and slime", every:"day", pays:"13 bonemeal and buckets of slime", why:"Free prayer XP from Robin in Port Phasmatys with the Morytania diary.", diary:["Morytania","hard"], loc:"Port Phasmatys", wiki:"Robin", match:/robin|bonemeal/i},
+  {id:"birdhouses", name:"Bird house run", every:"00:50:00", pays:"Bird nests and Hunter XP", why:"Four houses on Fossil Island, fifty minutes apart.", quests:["Bone Voyage"], loc:"Fossil Island", wiki:"Bird_house_trapping", match:/bird ?house/i},
+  {id:"herbs", name:"Herb run", every:"01:20:00", pays:"Herbs from every patch you've unlocked", why:"The classic round. Eighty minutes from planting to picking.", skills:[{skill:"farming", lvl:32}], loc:"Your patches", wiki:"Farming_training#Herb_runs", match:/herb run/i},
+  {id:"trees", name:"Tree run", every:"day", pays:"Farming XP", why:"Trees take most of a day, so once a day is the rhythm.", skills:[{skill:"farming", lvl:15}], loc:"Your patches", wiki:"Farming_training#Tree_runs", match:/tree run/i},
+];
+function roundRule(every){
+  const t = String(every || "").trim().toLowerCase();
+  if(!t) return {kind:"day"};
+  if(/week/.test(t)) return {kind:"week"};
+  const m = /^(\d+):(\d+):(\d+)$/.exec(t);
+  if(m){
+    const h = +m[1], mi = +m[2];
+    if(h === 24 && !mi) return {kind:"day"};
+    if(h >= 24 && h % 24 === 0) return {kind:"interval", ms:h * 36e5};
+    return {kind:"interval", ms:(h * 60 + mi) * 6e4};
+  }
+  if(/day/.test(t)) return {kind:"day"};
+  const mm = /(\d+)\s*(min|hour|h\b)/.exec(t);
+  if(mm) return {kind:"interval", ms:+mm[1] * (/min/.test(mm[2]) ? 6e4 : 36e5)};
+  return {kind:"day"};
+}
+function roundNextAt(rule, doneAt){
+  if(!doneAt) return 0;
+  if(rule.kind === "interval") return doneAt + rule.ms;
+  const d = new Date(doneAt);
+  if(rule.kind === "day") return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1);
+  let add = (ROUND_WEEK_RESET_DOW - d.getUTCDay() + 7) % 7; if(!add) add = 7;
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + add);
+}
+function roundWhen(ms){
+  const d = ms - Date.now();
+  if(d <= 0) return "up now";
+  const m = Math.ceil(d / 6e4);
+  if(m < 60) return `back in ${m} min`;
+  const h = Math.floor(m / 60);
+  if(h < 24) return `back in ${h}h${m % 60 ? " " + (m % 60) + "m" : ""}`;
+  return "back " + new Date(ms).toLocaleString([], {weekday:"short", hour:"2-digit", minute:"2-digit"});
+}
+function roundEveryText(every){
+  const r = roundRule(every);
+  return r.kind === "day" ? "daily" : r.kind === "week" ? "weekly" : "every " + mmgEvery(every);
+}
+// is a diary tier done? null when the diaries haven't been read yet
+function diaryTierDone(region, tier){
+  const dd = diaryData(); if(!dd) return null;
+  const r = dd.regions.find(x=>x.name === region); if(!r) return null;
+  const t = r.tiers.find(x=>x.tier === tier); if(!t) return null;
+  return !!t.complete;
+}
+// Every round, measured. Wiki rows come in already shaped like methods; the extras are built to
+// match, so the rest of the page can treat them alike.
+function roundsAll(db){
+  const wiki = db ? db.methods.filter(m=>m.recur) : [];
+  const out = wiki.map(m=>Object.assign({}, m, {gap: mmgGaps(m), key:m.name}));
+  ROUNDS_EXTRA.forEach(x=>{
+    const twin = x.match ? out.find(m=>x.match.test(m.name)) : null;
+    const other = [];
+    let diaryOk = true;
+    if(x.diary){
+      const d = diaryTierDone(x.diary[0], x.diary[1]);
+      if(d === false){ other.push(`${x.diary[0]} ${x.diary[1]} diary`); diaryOk = false; }
+      else if(d === null) other.push(`${x.diary[0]} ${x.diary[1]} diary (not checked yet)`);
+    }
+    if(twin){
+      // the wiki has it; add the gate it forgot
+      if(other.length){ twin.gap = reachOf({skills:twin.skills, quests:twin.quests, other:(twin.needs || []).concat(other)}); }
+      if(!twin.loc && x.loc) twin.loc = x.loc;
+      twin.every = twin.every || x.every;
+      return;
+    }
+    out.push({name:x.name, key:"x:" + x.id, recur:true, every:x.every, perRun:0, pays:x.pays, why:[x.why], loc:x.loc, wiki:x.wiki,
+      cat:"Routine", group:"Routine", skills:x.skills || [], quests:x.quests || [], needs:[], extra:true,
+      gap: reachOf({skills:x.skills || [], quests:x.quests || [], other})});
+  });
+  return out;
+}
+function roundStatus(m){
+  const doneAt = (state.rounds || {})[m.key] || 0;
+  const rule = roundRule(m.every);
+  const next = roundNextAt(rule, doneAt);
+  const up = !next || next <= Date.now();
+  return {doneAt, next, up, text: up ? (doneAt ? "up again" : "up now") : roundWhen(next)};
+}
+function roundTick(key){
+  state.rounds = state.rounds || {};
+  if(state.rounds[key]) delete state.rounds[key]; else state.rounds[key] = Date.now();
+  save(); renderCoffer(); renderRoundsHome();
+}
+// the rows: up first by pay, then the waiting ones by how soon, then the ones you can't do yet
+function roundsSorted(list){
+  return list.map(m=>Object.assign({st: roundStatus(m)}, m)).sort((a,b)=>{
+    const ra = a.gap.ok ? (a.st.up ? 0 : 1) : 2, rb = b.gap.ok ? (b.st.up ? 0 : 1) : 2;
+    if(ra !== rb) return ra - rb;
+    if(ra === 1) return a.st.next - b.st.next;
+    return (b.perRun || 0) - (a.perRun || 0);
+  });
+}
+function roundRowHtml(m, pins){
+  const st = m.st, on = pins.includes(m.name), sk = mmgCatSkill(m);
+  const pay = m.perRun ? `${fmt(m.perRun)}<span class="muted">/run</span>` : escapeHtml(m.pays || "");
+  const need = m.gap.ok ? "" : `Needs ${m.gap.text}`;
+  return `<div class="rd-row ${m.gap.ok ? (st.up ? "up" : "wait") : "short"}" data-cfopen="${escapeHtml(m.name)}">
+      <button class="rd-tick ${st.up ? "" : "on"}" data-rdtick="${escapeHtml(m.key)}" ${m.gap.ok ? "" : "disabled"} title="${st.up ? "Done it? Tick it" : "Untick"}">${st.up ? "○" : "✓"}</button>
+      <div class="rd-b">
+        <div class="rd-h">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : `<span class="cf-lgroup">🌱</span>`}<b>${escapeHtml(m.name)}</b><span class="cf-tag">${roundEveryText(m.every)}</span>${m.extra ? "" : cofferTagsHtml(m).replace(/<span class="cf-tag">every [^<]*<\/span>/, "")}</div>
+        <div class="rd-sub">${need ? `<span class="cf-eff">${need}</span>` : `<span class="rd-when ${st.up ? "up" : ""}">${st.text}</span>`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}${m.why && m.why.length && m.extra ? ` · ${escapeHtml(m.why[0])}` : ""}</div>
+      </div>
+      <div class="rd-pay">${pay}</div>
+      <button class="qp-pin ${on ? "on" : ""}" data-cfpin="${escapeHtml(m.name)}" title="${on ? "On your picks" : "Add to your picks"}">${on ? "📌" : "+"}</button>
+    </div>`;
+}
+// the line on Home: what's up right now, and the next thing coming back
+function renderRoundsHome(){
+  const el = $("#homeRoundsList"), panel = $("#homeRounds"); if(!el || !panel) return;
+  const db = mmgDB();
+  const rows = roundsSorted(roundsAll(db).filter(m=>m.gap.ok));
+  if(!rows.length){ panel.classList.add("hidden"); return; }
+  panel.classList.remove("hidden");
+  const up = rows.filter(m=>m.st.up), waiting = rows.filter(m=>!m.st.up);
+  $("#homeRoundsSub").textContent = up.length ? `${up.length} up now` : "all done for now";
+  el.innerHTML = up.slice(0, 8).map(m=>`<button class="rd-chip" data-rdtick="${escapeHtml(m.key)}" title="Tick when done">○ ${escapeHtml(m.name)}</button>`).join("")
+    + (waiting.length ? `<span class="small muted rd-next">${escapeHtml(waiting[0].name)} ${escapeHtml(roundWhen(waiting[0].st.next))}</span>` : "");
+  $$("#homeRoundsList [data-rdtick]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); roundTick(b.dataset.rdtick); });
+}
+// countdowns move: while the page is open, keep them honest
+setInterval(()=>{ if(document.hidden) return; const v = $("#view-home"); if(v && !v.classList.contains("hidden")) renderRoundsHome(); const c = $("#view-coffer"); if(c && !c.classList.contains("hidden") && $("#cofferView .rd-row")) renderCoffer(); }, 60000);
+
 // ============ COFFER SECTIONS ============
 // Earn is what you can do for GP. Vault is what you've got, valued live from your bank. Flip is
 // the Grand Exchange's margins, for the trading kind of GP.
@@ -10681,6 +10908,7 @@ function cofferGoalText(m, pf){
 function mmgEvery(t){
   const parts = String(t).split(":"), h = parseInt(parts[0], 10) || 0, mins = parseInt(parts[1], 10) || 0;
   if(!h && mins) return mins + " min";
+  if(h < 24 && mins) return h + "h " + mins + "m";
   if(h >= 48 && h % 24 === 0) return (h/24) + " days";
   if(h === 24) return "day";
   return h ? h + "h" : String(t);
@@ -10829,10 +11057,14 @@ function renderCoffer(){
   const picked = all.filter(m=>cofferMatches(m, pf));
   picked.forEach(m=>{ const w = cofferWhy(m, pf); m.score = w.score; m.why = w.why; m.beyond = w.why.some(x=>/beyond/.test(x)); });
   const byScore = (a,b)=> b.score - a.score;
-  const ready = picked.filter(m=>m.gap.ok && !m.recur).sort(byScore);
-  const dailies = picked.filter(m=>m.gap.ok && m.recur).sort((a,b)=>b.profit-a.profit);
-  const close = picked.filter(m=>m.gap.band==="close" && !m.recur).sort((a,b)=> b.score - a.score);
-  const far = picked.filter(m=>m.gap.band==="far" && !m.recur).sort((a,b)=> a.gap.effort-b.gap.effort || b.profit-a.profit);
+  const lens = state.coffer.lens || "";
+  const inLens = m => !lens || mmgCatSkill(m) === lens || (m.skills || []).some(r=>r.skill === lens);
+  const ready = picked.filter(m=>m.gap.ok && !m.recur && inLens(m)).sort(byScore);
+  const f2pOnly = /free/i.test((((COFFER_QUIZ.find(q=>q.id==="members") || {}).opts || []).find(o=>o[0]===pf.members) || [])[1] || "");
+  const rounds = roundsSorted(roundsAll(db).filter(m=>(!f2pOnly || m.f2p) && inLens(m)));
+  const dailies = rounds.filter(m=>m.gap.ok);
+  const close = picked.filter(m=>m.gap.band==="close" && !m.recur && inLens(m)).sort((a,b)=> b.score - a.score);
+  const far = picked.filter(m=>m.gap.band==="far" && !m.recur && inLens(m)).sort((a,b)=> a.gap.effort-b.gap.effort || b.profit-a.profit);
   const pins = cofferPins().filter(n=>byName[n]);
   const sel = state.coffer.sel && byName[state.coffer.sel] ? byName[state.coffer.sel] : null;
   const fit = ready.filter(m=>!m.beyond), rest = ready.filter(m=>m.beyond);
@@ -10915,20 +11147,35 @@ function renderCoffer(){
     </div>`;
   };
   // ---- the strip: your answers in a line of words, with the controls folded underneath ----
-  const optLabel = id => { const q = COFFER_QUIZ[stepOf(id)]; const o = (q.opts || []).find(o=>o[0]===pf[id]); return o ? o[1].replace(/^(Yes|No),\s*/, "") : ""; };
+  const optLabel = id => { const q = COFFER_QUIZ[stepOf(id)]; const o = (q.opts || []).find(o=>o[0]===pf[id]); if(!o) return ""; const t = o[1].replace(/^(Yes|No),\s*/, "").replace(/^(a|an)\s+(?=(main|iron))/i, ""); return t.charAt(0).toUpperCase() + t.slice(1); };
   const st = cofferStage(pf);
   const loves = Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(nice);
   const words = [optLabel("iron"), optLabel("members"), st.label + (st.auto ? "" : ", your call"), optLabel("style"), optLabel("session"),
     pf.xp === "xp" ? "XP too" : "", +pf.floor ? cfGp(pf.floor) + "/hr or better" : "", loves.length ? "❤️ " + loves.join(", ") : ""].filter(w=>w && !/^(Doesn't matter|Don't mind|A bit of everything)$/.test(w));
   const tuneOpen = !!state.coffer.tune;
-  const dailyTop = Math.max(1, ...dailies.map(m=>m.perRun || 0));
+  // one section per loved skill, for the methods that skill is the point of; thin ones are skipped
+  const shown = new Set(top.concat(more).map(m=>m.name));
+  const loveSections = Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love" && (!lens || lens===k)).map(k=>{
+    const mine = m => mmgCatSkill(m) === k || (m.skills || []).some(r=>r.skill === k && r.lvl >= 30);
+    let list = ready.filter(m=>mine(m) && !shown.has(m.name));
+    if(list.length < 2) list = list.concat(close.filter(m=>mine(m) && !shown.has(m.name)));
+    if(list.length < 2) return "";
+    list.slice(0, 4).forEach(m=>shown.add(m.name));
+    return ledger(`<img src="${skillIconUrl(k)}" alt="" class="cf-skico"> Because you love ${nice(k)}`, "the ones this skill is the point of", list, 4, "", true);
+  }).join("");
 
   el.innerHTML = `
     <div class="panel cf-strip ${tuneOpen ? "open" : ""}">
       <div class="cf-stripbar">
-        <span class="cf-profile">${words.map(escapeHtml).join('<span class="cf-dot">·</span>')}</span>
+        <span class="cf-profile">${words.map(w=>`<span class="cf-word">${escapeHtml(w)}</span>`).join("")}</span>
         <span class="small muted cf-count">${fmt(ready.length + dailies.length)} ready now of ${fmt(db.methods.length)}${live ? "" : " · load your stats to check them against your levels"}</span>
         <button class="ghost small" id="cfTune">${tuneOpen ? "Done" : "⚙ Tune"}</button>
+      </div>
+      <div class="cf-lens"><span class="small muted">Lens</span>
+        <button class="${lens ? "" : "on"}" data-lens="">Everything</button>
+        ${Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(k=>`<button class="${lens===k ? "on" : ""}" data-lens="${k}"><img src="${skillIconUrl(k)}" alt="" class="cf-skico">${nice(k)}</button>`).join("")}
+        ${lens && pf.skillTiers[lens] !== "love" ? `<button class="on" data-lens="${lens}"><img src="${skillIconUrl(lens)}" alt="" class="cf-skico">${nice(lens)}</button>` : ""}
+        <select id="cfLensSel" class="small"><option value="">another skill…</option>${SKILL_ORDER.filter(k=>k!==lens).map(k=>`<option value="${k}">${nice(k)}</option>`).join("")}</select>
       </div>
       <div class="cf-tune"><div><div class="cf-tunein">
         ${state.coffer.tuneIntro ? `<div class="cf-intro">Your answers live here. Change any one and the page follows. This tucks away on its own; Tune brings it back.</div>` : ""}
@@ -10952,8 +11199,10 @@ function renderCoffer(){
       : `<div class="empty">Nothing you can do yet fits those answers. Loosen one under Tune, or look under Worth training for.</div>`}
     </div>
     ${more.length ? ledger("More in your style", "measured against tonight's best", more, 9, "", true) : ""}
+    ${loveSections}
     ${pf.reach!=="ready" && train.length ? ledger("🎯 Worth training for", "big earners a session or two away", train, 3, "", true) : ""}
-    ${dailies.length ? ledger("🌱 Your dailies", "start it, walk away, come back", dailies, 8, "", false, dailyTop) : ""}
+    ${rounds.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>🌱 Your rounds</h3><span class="small muted">tick it when it's done; it comes back when the game lets you</span></div>
+      <div class="rd-list">${rounds.slice(0, 14).map(m=>roundRowHtml(m, pins)).join("")}</div></div>` : ""}
     <details class="panel cf-full" ${state.coffer.full ? "open" : ""}><summary><h3 style="display:inline">The full list</h3> <span class="small muted">${fmt(ready.length)} you can do now${pf.reach!=="ready" ? ` · ${fmt(close.length)} within reach` : ""}${pf.reach==="all" ? ` · ${fmt(far.length)} further off` : ""}</span></summary>
       <div class="section-title"><h3>✅ Ready now</h3></div>
       <div class="cf-ledger">${ready.filter(m=>!inTop.has(m.name)).slice(0, 80).map(m=>ledgerRow(m, false)).join("") || `<div class="empty">That's all of them above.</div>`}</div>
@@ -10986,6 +11235,9 @@ function renderCoffer(){
     fc.onchange = ()=>cofferSet("floor", String(CF_FLOOR[+fc.value]));
   }
   $("#cfRefresh").onclick = ()=>mmgDbEnsure(true);
+  $$("#cofferView [data-lens]").forEach(b=>b.onclick = ()=>{ state.coffer.lens = b.dataset.lens === lens ? "" : b.dataset.lens; save(); renderCoffer(); });
+  const ls = $("#cfLensSel"); if(ls) ls.onchange = ()=>{ if(ls.value){ state.coffer.lens = ls.value; save(); renderCoffer(); } };
+  $$("#cofferView [data-rdtick]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); roundTick(b.dataset.rdtick); });
   $("#cfQuiz").onclick = ()=>{ state.coffer.quizOpen = true; state.coffer.single = false; state.coffer.step = 0; save(); renderCoffer(); };
   const full = $("#cofferView .cf-full"); if(full) full.ontoggle = ()=>{ state.coffer.full = full.open; save(); };
   $$("#cofferView [data-cfpin]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferPinToggle(b.dataset.cfpin); });
@@ -11910,6 +12162,138 @@ function qpRewardsHtml(q){
     ${items?`<div class="qpd-items">${items}</div>`:""}
     ${unlocks?`<div class="qpd-uns">${unlocks}</div>`:""}</div>`;
 }
+// ---- quest steps ----
+// The wiki keeps a quick guide for nearly every quest: a bulleted list of what to do, in order.
+// Read once, kept in state.questGuides (not backed up; it's the wiki's, re-read on demand), and
+// shown as a checklist whose ticks are yours (state.questSteps). The wiki's text is CC BY-NC-SA,
+// and the panel says so.
+const qpStepsBusy = {};
+function wikiInline(t){
+  return String(t)
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<ref[^>]*\/>/gi, "").replace(/<ref[^>]*>[\s\S]*?<\/ref>/gi, "")
+    .replace(/\[\[(?:File|Image):[^\]]*\]\]/gi, "")
+    .replace(/\[\[([^\]|]*)\|([^\]]*)\]\]/g, "$2").replace(/\[\[([^\]]*)\]\]/g, "$1")
+    .replace(/\[https?:[^\s\]]+\s+([^\]]*)\]/g, "$1").replace(/\[https?:[^\]]+\]/g, "")
+    .replace(/'{5}|'{3}|'{2}/g, "")
+    .replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ").trim();
+}
+// templates: the few that carry words are flattened, the rest are dropped; innermost first so
+// nesting unwinds
+function wikiTemplates(t){
+  let guard = 0;
+  const one = (m)=>{
+    const body = m.slice(2, -2);
+    const parts = body.split("|").map(x=>x.trim());
+    const name = parts[0].toLowerCase().replace(/_/g, " ");
+    const named = {}; const pos = [];
+    parts.slice(1).forEach(x=>{ const i = x.indexOf("="); if(i > 0 && /^[a-z0-9 _-]+$/i.test(x.slice(0, i))) named[x.slice(0, i).trim().toLowerCase()] = x.slice(i + 1).trim(); else pos.push(x); });
+    if(/^(items? ?(needed|required|recommended)|itemsneeded|itemsrecommended)$/.test(name)) return (/(recommended)/.test(name) ? "Recommended: " : "Items needed: ") + (pos.filter(Boolean).join(", ") || "nothing");
+    if(name === "scp" || name === "skill clickpic" || name === "skillclickpic") return (pos[1] ? pos[1] + " " : "") + (pos[0] || "");
+    if(name === "color" || name === "colour") return pos[1] || pos[0] || "";
+    if(/^(quest ?end|quest complete|quick guide\/quest complete)/.test(name)) return "Quest complete.";
+    if(name === "chat options" || name === "chat" || name === "dialogue" || name === "quick guide dialogue") return pos.length ? "(" + pos.join(" → ") + ")" : "";
+    if(name === "coins" || name === "gp") return (pos[0] || "") + " coins";
+    if(name === "mainarticle" || name === "main" || name === "seealso" || name === "quick guide" || name === "quickguide" || name === "navbox" || name === "stub") return "";
+    // anything else: keep its first plain-text value if it reads like words, else nothing
+    const v = pos.find(x=>x && !/[{}=]/.test(x) && /[a-z]/i.test(x) && x.length < 80);
+    return v || "";
+  };
+  while(/\{\{[^{}]*\}\}/.test(t) && guard++ < 40) t = t.replace(/\{\{[^{}]*\}\}/g, one);
+  return t;
+}
+function wikiStepsParse(wt){
+  const out = []; let cur = {h:"", steps:[]};
+  const text = wikiTemplates(String(wt || "").replace(/\r/g, ""));
+  text.split("\n").forEach(raw=>{
+    const line = raw.trim(); if(!line) return;
+    let m;
+    if((m = /^(={2,})\s*(.*?)\s*=+\s*$/.exec(line))){ if(cur.steps.length) out.push(cur); cur = {h: wikiInline(m[2]), steps:[]}; return; }
+    if((m = /^([*#:]+)\s*(.*)$/.exec(line))){ const t = wikiInline(m[2]); if(t) cur.steps.push({t, d: Math.min(3, m[1].length - 1)}); return; }
+    if(/^(Items needed|Recommended):/.test(line)){ cur.steps.push({t: wikiInline(line), d:0, note:true}); return; }
+  });
+  if(cur.steps.length) out.push(cur);
+  return out.filter(sec=>!/^(references|see also|trivia|gallery|credits)$/i.test(sec.h));
+}
+async function questGuideFetch(n){
+  state.questGuides = state.questGuides || {};
+  const have = state.questGuides[n];
+  if(have && have.sections && Date.now() - have.at < 30 * 864e5) return have;
+  const page = n + "/Quick guide";
+  const url = `${WIKI_API}?action=parse&page=${encodeURIComponent(page)}&prop=wikitext&format=json&formatversion=2&origin=*`;
+  const r = await fetch(url);
+  if(!r.ok) throw new Error("The wiki answered " + r.status);
+  const j = await r.json();
+  if(!j.parse || !j.parse.wikitext) throw new Error("No quick guide on the wiki for this one");
+  const sections = wikiStepsParse(j.parse.wikitext);
+  if(!sections.length) throw new Error("The guide came back empty");
+  const rec = {at: Date.now(), sections, page};
+  state.questGuides[n] = rec; save();
+  return rec;
+}
+function qpStepsHtml(n){
+  const g = (state.questGuides || {})[n];
+  const ticks = ((state.questSteps || {})[n]) || {};
+  if(qpStepsBusy[n]) return `<div class="empty">Reading the quick guide off the wiki…</div>`;
+  if(!g || !g.sections){
+    const err = qpStepsBusy[n + ":err"];
+    return `<div class="empty">${err ? escapeHtml(err) + " " : ""}<button class="ghost small" data-qsteps-load="${escapeHtml(n)}">${err ? "Try again" : "Load the steps"}</button>
+      <div class="small muted" style="margin-top:6px">From the quest's quick guide on the OSRS Wiki.</div></div>`;
+  }
+  let idx = 0, total = 0, done = 0;
+  const body = g.sections.map(sec=>{
+    const rows = sec.steps.map(st=>{
+      const i = idx++;
+      if(st.note) return `<div class="qs-note">${escapeHtml(st.t)}</div>`;
+      total++; const on = !!ticks[i]; if(on) done++;
+      return `<label class="qs-step d${st.d} ${on ? "on" : ""}"><input type="checkbox" data-qstep="${i}" data-qsq="${escapeHtml(n)}" ${on ? "checked" : ""}><span>${escapeHtml(st.t)}</span></label>`;
+    }).join("");
+    return `${sec.h ? `<div class="qs-h">${escapeHtml(sec.h)}</div>` : ""}${rows}`;
+  }).join("");
+  const wiki = "https://oldschool.runescape.wiki/w/" + encodeURIComponent(g.page.replace(/ /g, "_"));
+  return `<div class="qs-top"><span class="small muted">${done}/${total} steps</span><span class="grow"></span>
+      ${done ? `<button class="ghost small" data-qsteps-clear="${escapeHtml(n)}">Clear ticks</button>` : ""}
+      <button class="ghost small" data-qsteps-reload="${escapeHtml(n)}" title="Read it again">⟲</button>
+      <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Quick guide ↗</a></div>
+    <div class="qs-list">${body}</div>
+    <div class="small muted" style="margin-top:8px">Steps from the OSRS Wiki's quick guide, CC BY-NC-SA. Ticks are yours and stay with your save.</div>`;
+}
+// the panel appears twice on the page (the charted quest at the top, the inspected one under the
+// tree), so a change in either repaints both
+function qpRefreshDetails(){
+  const db = questDB(); if(!db) return;
+  const top = $("#qpTopDetail"); if(top && state.qpTarget && state.qpTarget !== "__ALL__") top.innerHTML = qpDetailHtml(state.qpTarget, db);
+  qpShowDetail(db);
+}
+// one delegated listener covers every render of the panel
+document.addEventListener("click", async e=>{
+  const load = e.target.closest("[data-qsteps-load], [data-qsteps-reload]");
+  if(load){
+    const n = load.dataset.qstepsLoad || load.dataset.qstepsReload;
+    if(load.dataset.qstepsReload && state.questGuides) delete state.questGuides[n];
+    qpStepsBusy[n] = true; delete qpStepsBusy[n + ":err"]; qpRefreshDetails();
+    try{ await questGuideFetch(n); }
+    catch(err){ const m = String(err.message || err); qpStepsBusy[n + ":err"] = /failed to fetch|networkerror|load failed/i.test(m) ? "Couldn't reach the wiki. It may be down for a moment." : m; }
+    qpStepsBusy[n] = false; qpRefreshDetails();
+    return;
+  }
+  const clr = e.target.closest("[data-qsteps-clear]");
+  if(clr){ if(state.questSteps) delete state.questSteps[clr.dataset.qstepsClear]; save(); qpRefreshDetails(); return; }
+  const tab = e.target.closest("[data-qptab]");
+  if(tab){ state.qpTab = tab.dataset.qptab; save(); qpRefreshDetails(); return; }
+});
+document.addEventListener("change", e=>{
+  const cb = e.target.closest("[data-qstep]"); if(!cb) return;
+  const n = cb.dataset.qsq, i = cb.dataset.qstep;
+  state.questSteps = state.questSteps || {}; state.questSteps[n] = state.questSteps[n] || {};
+  if(cb.checked) state.questSteps[n][i] = true; else delete state.questSteps[n][i];
+  save();
+  const lab = cb.closest(".qs-step"); if(lab) lab.classList.toggle("on", cb.checked);
+  const top = cb.closest(".qp-detail"); if(top){ const c = top.querySelector(".qs-top .muted"); if(c){ const t = top.querySelectorAll("[data-qstep]").length, d = top.querySelectorAll("[data-qstep]:checked").length; c.textContent = `${d}/${t} steps`; } }
+});
+
 function qpDetailHtml(n, db){
   if(!n || !db.quests[n])
     return `<div class="qp-detail-empty">Click any quest in the tree for its full requirements.</div>`;
@@ -11939,6 +12323,8 @@ function qpDetailHtml(n, db){
   const opensHead = subs.length ? `Subquests (${subs.length})`
                                 : `Opens up${kids.length?` (${kids.length})`:""}`;
   const wiki = "https://oldschool.runescape.wiki/w/"+encodeURIComponent(n.replace(/ /g,"_"));
+  const tab = ["over","steps","rewards"].includes(state.qpTab) ? state.qpTab : "over";
+  const stepsDone = Object.keys(((state.questSteps || {})[n]) || {}).length;
   return `<div class="qpd-head">
       <h4>${escapeHtml(qpLabel(n))}</h4>
       <span class="qp-tag ${(live&&st==="ready")?"free":""}">${st==="done"?"complete":!live?"stats not loaded":st==="ready"?"ready to start":"blocked"}</span>
@@ -11954,7 +12340,12 @@ function qpDetailHtml(n, db){
         <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a>
       </div>
     </div>
-    <div class="qpd-grid">
+    <div class="qpd-tabs">
+      <button class="${tab==="over"?"on":""}" data-qptab="over">Overview</button>
+      <button class="${tab==="steps"?"on":""}" data-qptab="steps">Steps${stepsDone ? ` <span class="qpd-tabn">${stepsDone}</span>` : ""}</button>
+      <button class="${tab==="rewards"?"on":""}" data-qptab="rewards">Rewards</button>
+    </div>
+    ${tab==="steps" ? `<div class="qpd-steps">${qpStepsHtml(n)}</div>` : tab==="rewards" ? `<div class="qpd-grid">${qpRewardsHtml(q) || `<div class="empty">Nothing listed.</div>`}</div>` : `<div class="qpd-grid">
       <div class="qpd-sec"><h5>Requirements</h5>
         <div class="qpd-list">${reqRows+qpRow || `<div class="qpd-row"><span class="have" style="margin:0">Nothing required.</span></div>`}</div></div>
       <div class="qpd-sec"><h5>Needs these quests${prereqs.length?` (${prereqs.filter(p=>!questDone(p)).length} left)`:""}</h5>
@@ -11963,8 +12354,7 @@ function qpDetailHtml(n, db){
       <div class="qpd-sec"><h5>${opensHead}</h5>
         <div class="qpd-list">${opens.length?opens.map(t=>qpQuestRow(t,db)).join("")
           :`<div class="qpd-row"><span class="have" style="margin:0">Nothing depends on this.</span></div>`}</div></div>
-      ${qpRewardsHtml(q)}
-    </div>`;
+    </div>`}`;
 }
 function qpEdgePath(e){
   const a=qpPos[e.from], b=qpPos[e.to];
@@ -14195,6 +14585,7 @@ function switchView(name){
   else if(VS.on) vsQuit();          // and it stops the horde
 }
 $$(".navitem").forEach(n=>n.onclick=()=>switchView(n.dataset.view));
+  const hro = $("#homeRoundsOpen"); if(hro) hro.onclick = ()=>{ state.cofferSec = "earn"; switchView("coffer"); };
 
 function openSidebar(){ $("#sidebar").classList.add("open"); $("#sbBackdrop").classList.remove("hidden"); }
 function closeSidebar(){ $("#sidebar").classList.remove("open"); $("#sbBackdrop").classList.add("hidden"); }
@@ -15485,8 +15876,8 @@ try{ localStorage.removeItem("osrs_page_try"); }catch(e){}
 if(window.__pageFailed) setTimeout(()=>toast("The updated copy wouldn't load, so the built-in app is back.", true), 1200);
 pageWorkerStart();
 vaultBoot();
-// the farewell: once, for saves that were here before the name changed
-if(state.born === "before" && !state.farewell) setTimeout(()=>farewellPlay(false), 2800);
+// The farewell never plays on its own. Josh has seen it; for everyone else it stays an easter egg,
+// reached by typing "buddy" or clicking the old name under About.
 // Setup opens by itself only on a genuinely fresh install: no character, no other profiles,
 // nothing logged. Anyone with data reaches it from Settings instead. A state that failed to load
 // isn't a fresh install, and setup would be the worst possible thing to show.
