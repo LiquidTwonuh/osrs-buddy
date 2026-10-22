@@ -2280,7 +2280,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
 
       <div class="panel hidden" id="homeRounds">
         <div class="section-title" style="margin-top:0">
-          <h3>Rounds</h3>
+          <h3>Repeatables</h3>
           <span class="small muted" id="homeRoundsSub"></span>
           <button class="ghost small right" id="homeRoundsOpen">Open Coffer →</button>
         </div>
@@ -11224,7 +11224,7 @@ function renderCoffer(){
     ${more.length ? ledger("More in your style", "measured against tonight's best", more, 9, "", true, undefined, sref("more", 6, fit.length - top.length + rest.length)) : ""}
     ${loveSections}
     ${pf.reach!=="ready" && train.length ? ledger("🎯 Worth training for", "big earners a session or two away", train, 3, "", true, undefined, sref("train", 3, close.length)) : ""}
-    ${rounds.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>🌱 Your rounds</h3><span class="small muted">tick it when it's done; it comes back when the game lets you</span><span class="grow"></span><button class="ghost small cf-sref" data-cfsref="rounds" data-n="0" data-len="0" title="Check the clock again">⟲</button></div>
+    ${rounds.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>🌱 Repeatables</h3><span class="small muted">dailies and the ones that come back sooner; tick it when it's done</span><span class="grow"></span><button class="ghost small cf-sref" data-cfsref="rounds" data-n="0" data-len="0" title="Check the clock again">⟲</button></div>
       <div class="rd-list">${rounds.slice(0, 14).map(m=>roundRowHtml(m, pins)).join("")}</div></div>` : ""}
     <details class="panel cf-full" ${state.coffer.full ? "open" : ""}><summary><h3 style="display:inline">The full list</h3> <span class="small muted">${fmt(ready.length)} you can do now${pf.reach!=="ready" ? ` · ${fmt(close.length)} within reach` : ""}${pf.reach==="all" ? ` · ${fmt(far.length)} further off` : ""}</span></summary>
       <div class="section-title"><h3>✅ Ready now</h3></div>
