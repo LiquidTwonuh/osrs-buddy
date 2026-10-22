@@ -42,7 +42,7 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 - Roadmap redo and priorities redesign: after Map
 
 ## Routines (scheduled tasks)
-- Quest steps, hourly at :05 (2026-10-21): runs tools/quest-steps.js, which gathers up to 60 quests' quick guides a run into data/quest-steps.json with the app's own parser, and notes progress under "Quest steps" at the bottom of this file. Stops itself when the wiki is down. Next: the app reads this file (baked in at ship, or fetched from GitHub) so Steps work without a live wiki
+- Quest steps, hourly at :05 (2026-10-21, reshaped 2026-10-22): runs tools/quest-steps.js, which gathers each quest's quick guide and the Walkthrough section of its page, verbatim, into data/quest-steps.json with the app's own parser, and notes progress under "Quest steps" at the bottom of this file. The app reads that file first (builds carry dist/data, the Beta is served it beside the followed page, a plain browser falls back to GitHub), the live wiki last. Nothing is condensed by us; Quick is the wiki's own short list, Walkthrough is every paragraph. Once all 193 are gathered the routine only refreshes month-old entries
 - Wiki watch, daily at 9: checks the wiki's money making guides for new, gone or sharply changed methods and notes them under "Wiki watch" at the bottom of this file. First routine, mostly to see how they behave
 - Next candidate: quest steps from the wiki for the Map
 
