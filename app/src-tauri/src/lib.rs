@@ -137,8 +137,21 @@ fn follow_read(marker: &Path) -> Option<PathBuf> {
 // anything else still come from the build.
 fn follow_serve(marker: &Path, req: &tauri::http::Request<Vec<u8>>, resp: &mut tauri::http::Response<std::borrow::Cow<'static, [u8]>>) {
   let path = req.uri().path();
-  if path != "/" && path != "/index.html" { return; }
   let Some(file) = follow_read(marker) else { return; };
+  // files beside the followed page (data/quest-steps.json and the like), never anything above it
+  if path.starts_with("/data/") && !path.contains("..") {
+    let Some(dir) = file.parent() else { return; };
+    let p = dir.join(&path[1..]);
+    if let Ok(bytes) = fs::read(&p) {
+      let ct = if path.ends_with(".json") { "application/json" } else { "application/octet-stream" };
+      resp.headers_mut().remove("content-length");
+      resp.headers_mut().insert("content-type", ct.parse().unwrap());
+      *resp.status_mut() = tauri::http::StatusCode::OK;
+      *resp.body_mut() = std::borrow::Cow::Owned(bytes);
+    }
+    return;
+  }
+  if path != "/" && path != "/index.html" { return; }
   let Ok(html) = fs::read_to_string(&file) else { return; };
   let marked = html.replacen("<head>", "<head><meta name=\"buddy-page-from\" content=\"file\">", 1);
   resp.headers_mut().remove("content-length");

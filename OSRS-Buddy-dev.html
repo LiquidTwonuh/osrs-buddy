@@ -444,6 +444,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qpd-tabs button:hover{background:none; color:var(--text)}
   .qpd-tabs button.on{color:var(--gold); border-bottom-color:var(--gold)}
   .qpd-tabn{display:inline-block; min-width:16px; padding:0 5px; border-radius:999px; background:color-mix(in oklab, var(--gold) 20%, var(--inset)); color:var(--gold); font-size:10.5px; text-align:center}
+  .qs-mode{display:inline-flex; gap:2px; margin-bottom:8px; border:1px solid var(--border); border-radius:999px; padding:2px; background:var(--inset)}
+  .qs-mode button{background:none; border:0; box-shadow:none; color:var(--muted); border-radius:999px; padding:3px 11px; font-size:12px}
+  .qs-mode button.on{background:color-mix(in oklab, var(--gold) 18%, var(--inset)); color:var(--gold)}
   .qs-top{display:flex; align-items:center; gap:8px; margin-bottom:6px}
   .qs-list{display:flex; flex-direction:column; gap:2px; max-height:52vh; overflow:auto; padding-right:4px}
   .qs-h{font-family:var(--font-display); color:var(--gold); font-size:15px; margin:10px 0 3px}
@@ -12223,7 +12226,9 @@ function wikiTemplates(t){
     if(name === "scp" || name === "skill clickpic" || name === "skillclickpic") return (pos[1] ? pos[1] + " " : "") + (pos[0] || "");
     if(name === "color" || name === "colour") return pos[1] || pos[0] || "";
     if(/^(quest ?end|quest complete|quick guide\/quest complete)/.test(name)) return "Quest complete.";
-    if(name === "chat options" || name === "chat" || name === "dialogue" || name === "quick guide dialogue") return pos.length ? "(" + pos.join(" → ") + ")" : "";
+    if(/^(chat options?|chat|dialogue|quick guide dialogue)$/.test(name)) return pos.length ? "(" + pos.map(x=>x.replace(/^\d+\s*/, "")).join(" → ") + ")" : "";
+    if(name === "checklist" || name === "check list") return "\n" + pos.join("\n") + "\n";
+    if(pos.some(x=>/\n\s*[*#]/.test(x))) return "\n" + pos.filter(x=>/\n\s*[*#]/.test(x)).join("\n") + "\n";
     if(name === "coins" || name === "gp") return (pos[0] || "") + " coins";
     if(name === "mainarticle" || name === "main" || name === "seealso" || name === "quick guide" || name === "quickguide" || name === "navbox" || name === "stub") return "";
     // anything else: keep its first plain-text value if it reads like words, else nothing
@@ -12233,20 +12238,67 @@ function wikiTemplates(t){
   while(/\{\{[^{}]*\}\}/.test(t) && guard++ < 40) t = t.replace(/\{\{[^{}]*\}\}/g, one);
   return t;
 }
-function wikiStepsParse(wt){
+function wikiStepsParse(wt, opts){
+  opts = opts || {};
   const out = []; let cur = {h:"", steps:[]};
   const text = wikiTemplates(String(wt || "").replace(/\r/g, ""));
+  let inTable = false;
   text.split("\n").forEach(raw=>{
     const line = raw.trim(); if(!line) return;
     let m;
+    if(/^\{\|/.test(line)){ inTable = true; return; }
+    if(/^\|\}/.test(line)){ inTable = false; return; }
+    if(inTable) return;
     if((m = /^(={2,})\s*(.*?)\s*=+\s*$/.exec(line))){ if(cur.steps.length) out.push(cur); cur = {h: wikiInline(m[2]), steps:[]}; return; }
     if((m = /^([*#:]+)\s*(.*)$/.exec(line))){ const t = wikiInline(m[2]); if(t) cur.steps.push({t, d: Math.min(3, m[1].length - 1)}); return; }
     if(/^(Items needed|Recommended):/.test(line)){ cur.steps.push({t: wikiInline(line), d:0, note:true}); return; }
+    // walkthroughs are mostly paragraphs: in prose mode each one is a step
+    if(opts.prose && !/^[{}|!<]/.test(line) && !/^\[\[(File|Image):/i.test(line) && !/^__/.test(line) && !(/\]\]/.test(line) && !/\[\[/.test(line))){
+      const t = wikiInline(line); if(t && t.length > 2) cur.steps.push({t, d:0});
+    }
   });
   if(cur.steps.length) out.push(cur);
-  return out.filter(sec=>!/^(references|see also|trivia|gallery|credits)$/i.test(sec.h));
+  return out.filter(sec=>!/^(references|see also|trivia|gallery|credits|transcript)$/i.test(sec.h));
 }
-async function questGuideFetch(n){
+// the Walkthrough section of a quest page, up to the next top-level heading
+function wikiWalkthrough(wt){
+  const m = /^==\s*Walkthrough\s*==\s*$/mi.exec(String(wt || "")); if(!m) return null;
+  const rest = wt.slice(m.index + m[0].length);
+  const end = /^==[^=].*?==\s*$/m.exec(rest);
+  return end ? rest.slice(0, end.index) : rest;
+}
+// ---- our own copy ----
+// data/quest-steps.json is gathered on the PC by tools/quest-steps.js and shipped with every build
+// (dist/data). The Beta following a file is served it from beside that file; a plain browser falls
+// back to the copy on GitHub. Read once a session.
+let QSTEPS = null, qstepsLoading = null;
+function questStepsDbEnsure(){
+  if(QSTEPS) return Promise.resolve(QSTEPS);
+  if(qstepsLoading) return qstepsLoading;
+  qstepsLoading = (async ()=>{
+    const urls = ["data/quest-steps.json", "https://raw.githubusercontent.com/" + GH_REPO + "/main/data/quest-steps.json"];
+    for(const u of urls){
+      try{ const r = await fetch(u, {cache:"no-store"}); if(!r.ok) continue; const j = await r.json(); if(j && j.quests){ QSTEPS = j; return QSTEPS; } }catch(e){}
+    }
+    return null;
+  })();
+  return qstepsLoading;
+}
+// live, only when our file has nothing for this quest: the quick guide, or the walkthrough
+async function questGuideFetch(n, mode){
+  if(mode === "full"){
+    const url = `${WIKI_API}?action=parse&page=${encodeURIComponent(n)}&prop=wikitext&format=json&formatversion=2&origin=*`;
+    const r = await fetch(url); if(!r.ok) throw new Error("The wiki answered " + r.status);
+    const j = await r.json(); const slice = wikiWalkthrough(j.parse && j.parse.wikitext);
+    if(!slice) throw new Error("No walkthrough on the wiki page");
+    const sections = wikiStepsParse(slice, {prose:true});
+    if(!sections.length) throw new Error("The walkthrough came back empty");
+    state.questGuides = state.questGuides || {};
+    const rec = {at: Date.now(), sections, page: n, full:true}; state.questGuides[n + "|full"] = rec; save(); return rec;
+  }
+  return questGuideFetchQuick(n);
+}
+async function questGuideFetchQuick(n){
   state.questGuides = state.questGuides || {};
   const have = state.questGuides[n];
   if(have && have.sections && Date.now() - have.at < 30 * 864e5) return have;
@@ -12263,13 +12315,21 @@ async function questGuideFetch(n){
   return rec;
 }
 function qpStepsHtml(n){
-  const g = (state.questGuides || {})[n];
-  const ticks = ((state.questSteps || {})[n]) || {};
-  if(qpStepsBusy[n]) return `<div class="empty">Reading the quick guide off the wiki…</div>`;
+  const mode = state.qpStepsMode === "full" ? "full" : "quick";
+  const tkey = mode === "full" ? n + "|full" : n;
+  const ticks = ((state.questSteps || {})[tkey]) || {};
+  const sw = `<div class="qs-mode"><button class="${mode==="quick"?"on":""}" data-qsmode="quick">Quick guide</button><button class="${mode==="full"?"on":""}" data-qsmode="full">Walkthrough</button></div>`;
+  // our own file first
+  let g = null, from = "";
+  const ours = QSTEPS && QSTEPS.quests && QSTEPS.quests[n];
+  if(ours && ours[mode]){ g = {sections: ours[mode], page: mode === "full" ? n : n + "/Quick guide"}; from = "ours"; }
+  else if(!QSTEPS && !qstepsLoading){ questStepsDbEnsure().then(()=>qpRefreshDetails()); return sw + `<div class="empty">Looking for the steps…</div>`; }
+  else { g = (state.questGuides || {})[mode === "full" ? n + "|full" : n]; from = "live"; }
+  if(qpStepsBusy[n]) return sw + `<div class="empty">Reading it off the wiki…</div>`;
   if(!g || !g.sections){
     const err = qpStepsBusy[n + ":err"];
-    return `<div class="empty">${err ? escapeHtml(err) + " " : ""}<button class="ghost small" data-qsteps-load="${escapeHtml(n)}">${err ? "Try again" : "Load the steps"}</button>
-      <div class="small muted" style="margin-top:6px">From the quest's quick guide on the OSRS Wiki.</div></div>`;
+    return sw + `<div class="empty">${err ? escapeHtml(err) + " " : "Not in our file yet. "}<button class="ghost small" data-qsteps-load="${escapeHtml(n)}">${err ? "Try again" : "Read it from the wiki"}</button>
+      <div class="small muted" style="margin-top:6px">${mode === "full" ? "The Walkthrough section of the quest's wiki page." : "The quest's quick guide on the OSRS Wiki."}</div></div>`;
   }
   let idx = 0, total = 0, done = 0;
   const body = g.sections.map(sec=>{
@@ -12277,17 +12337,17 @@ function qpStepsHtml(n){
       const i = idx++;
       if(st.note) return `<div class="qs-note">${escapeHtml(st.t)}</div>`;
       total++; const on = !!ticks[i]; if(on) done++;
-      return `<label class="qs-step d${st.d} ${on ? "on" : ""}"><input type="checkbox" data-qstep="${i}" data-qsq="${escapeHtml(n)}" ${on ? "checked" : ""}><span>${escapeHtml(st.t)}</span></label>`;
+      return `<label class="qs-step d${st.d} ${on ? "on" : ""}"><input type="checkbox" data-qstep="${i}" data-qsq="${escapeHtml(tkey)}" ${on ? "checked" : ""}><span>${escapeHtml(st.t)}</span></label>`;
     }).join("");
     return `${sec.h ? `<div class="qs-h">${escapeHtml(sec.h)}</div>` : ""}${rows}`;
   }).join("");
   const wiki = "https://oldschool.runescape.wiki/w/" + encodeURIComponent(g.page.replace(/ /g, "_"));
-  return `<div class="qs-top"><span class="small muted">${done}/${total} steps</span><span class="grow"></span>
-      ${done ? `<button class="ghost small" data-qsteps-clear="${escapeHtml(n)}">Clear ticks</button>` : ""}
-      <button class="ghost small" data-qsteps-reload="${escapeHtml(n)}" title="Read it again">⟲</button>
-      <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Quick guide ↗</a></div>
+  return sw + `<div class="qs-top"><span class="small muted">${done}/${total} steps</span><span class="grow"></span>
+      ${done ? `<button class="ghost small" data-qsteps-clear="${escapeHtml(tkey)}">Clear ticks</button>` : ""}
+      ${from === "live" ? `<button class="ghost small" data-qsteps-reload="${escapeHtml(n)}" title="Read it again">⟲</button>` : ""}
+      <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a></div>
     <div class="qs-list">${body}</div>
-    <div class="small muted" style="margin-top:8px">Steps from the OSRS Wiki's quick guide, CC BY-NC-SA. Ticks are yours and stay with your save.</div>`;
+    <div class="small muted" style="margin-top:8px">From the OSRS Wiki, CC BY-NC-SA${from === "ours" ? ", gathered " + fmtDay(isoDate(new Date(QSTEPS.quests[n].at))) : ""}. Ticks are yours and stay with your save.</div>`;
 }
 // the panel appears twice on the page (the charted quest at the top, the inspected one under the
 // tree), so a change in either repaints both
@@ -12301,9 +12361,10 @@ document.addEventListener("click", async e=>{
   const load = e.target.closest("[data-qsteps-load], [data-qsteps-reload]");
   if(load){
     const n = load.dataset.qstepsLoad || load.dataset.qstepsReload;
-    if(load.dataset.qstepsReload && state.questGuides) delete state.questGuides[n];
+    const mode = state.qpStepsMode === "full" ? "full" : "quick";
+    if(load.dataset.qstepsReload && state.questGuides) delete state.questGuides[mode === "full" ? n + "|full" : n];
     qpStepsBusy[n] = true; delete qpStepsBusy[n + ":err"]; qpRefreshDetails();
-    try{ await questGuideFetch(n); }
+    try{ await questGuideFetch(n, mode); }
     catch(err){ const m = String(err.message || err); qpStepsBusy[n + ":err"] = /failed to fetch|networkerror|load failed/i.test(m) ? "Couldn't reach the wiki. It may be down for a moment." : m; }
     qpStepsBusy[n] = false; qpRefreshDetails();
     return;
@@ -12312,6 +12373,8 @@ document.addEventListener("click", async e=>{
   if(clr){ if(state.questSteps) delete state.questSteps[clr.dataset.qstepsClear]; save(); qpRefreshDetails(); return; }
   const tab = e.target.closest("[data-qptab]");
   if(tab){ state.qpTab = tab.dataset.qptab; save(); qpRefreshDetails(); return; }
+  const sm = e.target.closest("[data-qsmode]");
+  if(sm){ state.qpStepsMode = sm.dataset.qsmode; save(); qpRefreshDetails(); return; }
 });
 document.addEventListener("change", e=>{
   const cb = e.target.closest("[data-qstep]"); if(!cb) return;

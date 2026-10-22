@@ -3,10 +3,10 @@
   "private": true,
   "version": "2.0.0",
   "scripts": {
-    "sync": "node -e \"const fs=require('fs');fs.copyFileSync('../OSRS-Buddy.html','dist/index.html');fs.copyFileSync('../sw.js','dist/sw.js');console.log('dist/index.html + dist/sw.js <- OSRS-Buddy.html, sw.js')\"",
+    "sync": "node -e \"const d=require('fs');d.mkdirSync('dist/data',{recursive:true});if(d.existsSync('../data/quest-steps.json'))d.copyFileSync('../data/quest-steps.json','dist/data/quest-steps.json');const fs=require('fs');fs.copyFileSync('../OSRS-Buddy.html','dist/index.html');fs.copyFileSync('../sw.js','dist/sw.js');console.log('dist/index.html + dist/sw.js <- OSRS-Buddy.html, sw.js')\"",
     "build": "npm run sync && tauri build",
     "build:beta": "npm run sync:dev && tauri build --config src-tauri/tauri.beta.conf.json",
-    "sync:dev": "node -e \"const fs=require('fs');fs.copyFileSync('../OSRS-Buddy-dev.html','dist/index.html');fs.copyFileSync('../sw.js','dist/sw.js');console.log('dist/index.html + dist/sw.js <- OSRS-Buddy-dev.html, sw.js')\""
+    "sync:dev": "node -e \"const d=require('fs');d.mkdirSync('dist/data',{recursive:true});if(d.existsSync('../data/quest-steps.json'))d.copyFileSync('../data/quest-steps.json','dist/data/quest-steps.json');const fs=require('fs');fs.copyFileSync('../OSRS-Buddy-dev.html','dist/index.html');fs.copyFileSync('../sw.js','dist/sw.js');console.log('dist/index.html + dist/sw.js <- OSRS-Buddy-dev.html, sw.js')\""
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.11.4"
