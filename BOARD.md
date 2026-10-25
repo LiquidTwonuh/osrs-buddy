@@ -24,6 +24,7 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 - [ ] Android layout polish, touch dragging untested
 
 ## Small fixes spotted
+- [x] 2026-10-25: the Beta got hijacked. A service worker does register in WebView2 (Claude had concluded it didn't), so pressing the phone's Update from GitHub inside the Windows Beta stored the old GitHub page and served it over the built-in one; quest steps and everything since vanished. Fixed: sw.js removes itself off Android, the page never registers it on desktop, the phone preview's update buttons are inert. Needed one Beta installer to replace the worker
 - [ ] Josh saw wrong tooltips somewhere on the Map. Which ones? A screenshot or the words would pin it down
 - [x] Phone layout (2026-10-21): three tiers now. Phone to 700px (drawer), tablet or an opened Fold 701 to 1000px (slim sidebar stays), desktop above. The folded Fold's 404px cover screen now gets the compact rules (was cut off at 400). Lens scrolls sideways, rounds wrap, farewell and board sized for a phone
 - [ ] Flip trusts the latest high/low trade as a price. Yellow beads showed a margin nobody could buy at (Josh tried 2k each). Re-assess: use the 5-minute and hour averages, require real volume (trades per hour), show it, and hide thin items by default. Also show the buy limit next to the margin
