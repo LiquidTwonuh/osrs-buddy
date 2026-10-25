@@ -49,6 +49,7 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 - Next candidate: quest steps from the wiki for the Map
 
 ## How we work
+- 2026-10-25: the repo's address is C:/Projects/mortimeter (Josh moved the other projects there on the 24th). For now that path is a bridge to the old C:/Users/joshf/Projects/mortimeter folder, because something held the folder open during the move; routines, the Beta's Follow default and the memory all use the new address already. To finish: with the Beta and any preview server closed, move the folder and recreate the two bridges (Downloads/OSRS-Buddy and Users/joshf/Projects/mortimeter) pointing at it
 - Versions: Mortimeter shows 1.0 on the surface; the build number underneath keeps counting from where Buddy left off (2.0), so tags, installers and the update check never go backwards. Rule in the page: shown = internal major minus one (verLabel). Decided 2026-10-19
 - The repo lives at C:/Projects/mortimeter since 2026-10-19 (moved out of Downloads, renamed with the app). Krystal Klear is beside it in mortimeter-private. Open Claude sessions on the mortimeter folder; CLAUDE.md there holds the standing rules
 - Design keepers go in design/. ChatGPT is for iterating on art; finals land there
