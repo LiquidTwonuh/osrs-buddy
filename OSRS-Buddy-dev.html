@@ -9969,7 +9969,11 @@ async function pageForget(){ try{ const c = await caches.open(PAGE_CACHE); await
 // the worker that serves the stored page; registered once, harmless when nothing is stored
 function pageWorkerStart(){
   if(!("serviceWorker" in navigator)) return;
-  navigator.serviceWorker.register("sw.js").catch(()=>{});
+  const realPhone = /Android/i.test(navigator.userAgent || "");
+  if(realPhone){ navigator.serviceWorker.register("sw.js").catch(()=>{}); return; }
+  // a desktop: no worker, and if one got in (it did, once), out it goes along with its stored page
+  navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});
+  if(window.caches) caches.delete("osrs-page").catch(()=>{});
 }
 function pageCheck(html){
   const ver = (/const APP_VERSION = "(\d[^"]*)"/.exec(html) || [])[1];
@@ -10125,7 +10129,8 @@ function renderSyncSetting(){
     catch(e){ if(m) m.textContent = String(e.message || e); }
   };
   const ap = $("#syncApp");
-  if(ap) ap.onclick = async ()=>{
+  if(ap && phonePreview) ap.onclick = ()=>toast("Not in the preview. The desktop app follows its page file; use the phone for this.", true);
+  else if(ap) ap.onclick = async ()=>{
     const m = $("#syncMsg"); if(m) m.textContent = "Fetching the app from your PC…";
     try{
       const ver = await pageUpdateFromPC();
@@ -10136,7 +10141,8 @@ function renderSyncSetting(){
   const up = $("#syncUnpair");
   if(up) up.onclick = ()=>{ delete c.peer; save(); renderSyncSetting(); };
   const gh = $("#syncGit");
-  if(gh) gh.onclick = async ()=>{
+  if(gh && phonePreview) gh.onclick = ()=>toast("Not in the preview. The desktop app follows its page file; use the phone for this.", true);
+  else if(gh) gh.onclick = async ()=>{
     const m = $("#syncMsg"); if(m) m.textContent = "Fetching the latest build from GitHub…";
     gh.disabled = true;
     try{
