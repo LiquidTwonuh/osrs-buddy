@@ -883,9 +883,15 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .rd-chip:hover{border-color:var(--gold)}
   .rd-next{margin-left:4px}
   /* the lens */
-  .cf-lens{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:8px}
-  .cf-lens button{display:inline-flex; align-items:center; gap:5px; border:1px solid var(--border); background:var(--inset); color:var(--muted); border-radius:999px; padding:4px 10px; font:inherit; font-size:12.5px; cursor:pointer}
-  .cf-lens button.on{color:var(--gold); border-color:var(--gold); background:color-mix(in oklab, var(--gold) 14%, var(--inset))}
+  .cf-lenshead{text-align:center; padding:4px 0 12px; border-bottom:1px solid var(--border); margin-bottom:10px}
+  .cf-lenstitle{font-family:var(--font-display); font-size:20px; margin-bottom:10px}
+  .cf-lenstitle b{color:var(--gold)}
+  .cf-lenssub{margin-top:9px}
+  .cf-lens{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center}
+  .cf-lens button{display:inline-flex; align-items:center; gap:7px; border:1px solid var(--border); background:var(--inset); color:var(--text); border-radius:999px; padding:8px 15px; font:inherit; font-size:14px; cursor:pointer; transition:border-color .15s, box-shadow .15s}
+  .cf-lens button img{width:20px; height:20px; object-fit:contain}
+  .cf-lens button:hover{border-color:color-mix(in oklab, var(--gold) 55%, var(--border))}
+  .cf-lens button.on{color:var(--gold); border-color:var(--gold); background:color-mix(in oklab, var(--gold) 14%, var(--inset)); box-shadow:0 0 14px var(--glow)}
   .cf-lens select{font-size:12px; padding:3px 6px; border-radius:999px; background:var(--inset); color:var(--muted); border:1px solid var(--border)}
   .sync-code{margin-top:8px; font-size:13px}
   .sync-code b{font-size:20px; letter-spacing:3px; color:var(--gold); font-family:ui-monospace, monospace}
@@ -1979,7 +1985,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     /* the strip, the lens, the rounds and the farewell on a phone */
     .cf-stripbar{gap:8px}
     .cf-profile{font-size:12.5px}
-    .cf-lens{flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; scrollbar-width:none}
+    .cf-lens{flex-wrap:nowrap; justify-content:flex-start; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; scrollbar-width:none}
+    .cf-lens button{padding:7px 12px; font-size:13px}
+    .cf-lenstitle{font-size:17px}
     .cf-lens::-webkit-scrollbar{display:none}
     .cf-lens button, .cf-lens select, .cf-lens span{flex:none; white-space:nowrap}
     .rd-row{flex-wrap:wrap; row-gap:2px}
@@ -2353,6 +2361,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
         <div class="ql-row">
           <input type="text" id="qlText" placeholder="What did you do today? e.g. questing and a slayer task" autocomplete="off" maxlength="300">
           <button class="primary" id="qlGo" type="button">Log it</button>
+          <button class="ghost" id="qlChill" type="button" title="Played, but no XP: talking, sorting the bank, hanging about. Counts as a day played.">☕ Chill day</button>
         </div>
         <div class="ql-note" id="qlNote">Opens the full entry, with skills picked out from what you type.</div>
       </div>
@@ -8952,6 +8961,7 @@ function recapCollect(dayList){
   const out = {skills:{}, totalXp:0, activeDays:0, bestDay:null, dow:[0,0,0,0,0,0,0],
                bosses:0, bossKc:{}, clues:0, clueTiers:{}, entries:0, milestones:[], streak:0, days:dayList.length};
   const inRange = new Set(dayList);
+  const logged = typesByDate();
   let run = 0;
   dayList.forEach(iso=>{
     const d = auto[iso];
@@ -8973,7 +8983,7 @@ function recapCollect(dayList){
       for(const t in (d.clueTiers||{})) out.clueTiers[t] = (out.clueTiers[t]||0) + d.clueTiers[t];
     }
     out.totalXp += dayXp;
-    if(dayXp > 0){
+    if(dayXp > 0 || logged[iso]){
       out.activeDays++;
       run++;
       if(run > out.streak) out.streak = run;
@@ -11180,7 +11190,7 @@ function renderCoffer(){
   const tuneOpen = !!state.coffer.tune;
   // one section per loved skill, for the methods that skill is the point of; thin ones are skipped
   const shown = new Set(top.concat(more).map(m=>m.name));
-  const loveSections = Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love" && (!lens || lens===k)).map(k=>{
+  const loveSections = lens ? "" : Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(k=>{
     const mine = m => mmgCatSkill(m) === k || (m.skills || []).some(r=>r.skill === k && r.lvl >= 30);
     let list = ready.filter(m=>mine(m) && !shown.has(m.name));
     if(list.length < 2) list = list.concat(close.filter(m=>mine(m) && !shown.has(m.name)));
@@ -11188,20 +11198,26 @@ function renderCoffer(){
     const all = list.length; list = rot(list, "love_" + k);
     list.slice(0, 4).forEach(m=>shown.add(m.name));
     return ledger(`<img src="${skillIconUrl(k)}" alt="" class="cf-skico"> Because you love ${nice(k)}`, "the ones this skill is the point of", list, 4, "", true, undefined, sref("love_" + k, 4, all));
-  }).join("");
+  }).join("") || "";
 
   el.innerHTML = `
     <div class="panel cf-strip ${tuneOpen ? "open" : ""}">
+      <div class="cf-lenshead">
+        <div class="cf-lenstitle">${lens ? `Seeing it through <b>${nice(lens)}</b>` : "See it through a skill"}</div>
+        <div class="cf-lens">
+          <button class="${lens ? "" : "on"}" data-lens="">Everything</button>
+          ${Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(k=>`<button class="${lens===k ? "on" : ""}" data-lens="${k}"><img src="${skillIconUrl(k)}" alt="">${nice(k)}</button>`).join("")}
+          ${lens && pf.skillTiers[lens] !== "love" ? `<button class="on" data-lens="${lens}"><img src="${skillIconUrl(lens)}" alt="">${nice(lens)}</button>` : ""}
+          <select id="cfLensSel" class="small"><option value="">another skill…</option>${SKILL_ORDER.filter(k=>k!==lens).map(k=>`<option value="${k}">${nice(k)}</option>`).join("")}</select>
+        </div>
+        <div class="small muted cf-lenssub">${lens ? `Every section below is ${nice(lens)} only. Tap it again, or Everything, to go back.` : "Tap a skill and every section below measures only that skill's money makers."}</div>
+      </div>
       <div class="cf-stripbar">
-        <span class="cf-profile">${words.map(w=>`<span class="cf-word">${escapeHtml(w)}</span>`).join("")}</span>
+        <button class="ghost small" id="cfWords">${state.coffer.words ? "▾ Your answers" : "▸ Your answers"}</button>
+        <span class="cf-profile ${state.coffer.words ? "" : "hidden"}">${words.map(w=>`<span class="cf-word">${escapeHtml(w)}</span>`).join("")}</span>
+        <span class="grow"></span>
         <span class="small muted cf-count">${fmt(ready.length + dailies.length)} ready now of ${fmt(db.methods.length)}${live ? "" : " · load your stats to check them against your levels"}</span>
         <button class="ghost small" id="cfTune">${tuneOpen ? "Done" : "⚙ Tune"}</button>
-      </div>
-      <div class="cf-lens"><span class="small muted">Lens</span>
-        <button class="${lens ? "" : "on"}" data-lens="">Everything</button>
-        ${Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(k=>`<button class="${lens===k ? "on" : ""}" data-lens="${k}"><img src="${skillIconUrl(k)}" alt="" class="cf-skico">${nice(k)}</button>`).join("")}
-        ${lens && pf.skillTiers[lens] !== "love" ? `<button class="on" data-lens="${lens}"><img src="${skillIconUrl(lens)}" alt="" class="cf-skico">${nice(lens)}</button>` : ""}
-        <select id="cfLensSel" class="small"><option value="">another skill…</option>${SKILL_ORDER.filter(k=>k!==lens).map(k=>`<option value="${k}">${nice(k)}</option>`).join("")}</select>
       </div>
       <div class="cf-tune"><div><div class="cf-tunein">
         ${state.coffer.tuneIntro ? `<div class="cf-intro">Your answers live here. Change any one and the page follows. This tucks away on its own; Tune brings it back.</div>` : ""}
@@ -11218,13 +11234,13 @@ function renderCoffer(){
         <span class="small muted">${pins.length} method${pins.length===1?"":"s"} · ${pins.filter(n=>byName[n].gap.ok).length} ready now</span></div>
       <div class="qb-grid">${pins.map(n=>cofferCardHtml(byName[n], sel && sel.name===n)).join("")}</div>
     </div>` : ""}
-    ${sel ? cofferDetailHtml(sel) : ""}
     <div class="panel cf-hero">
-      <div class="section-title" style="margin-top:0"><h3>✦ Best for you tonight</h3><span class="small muted">${st.label}${st.auto ? "" : " (your call)"} · ${escapeHtml(st.why)}</span><span class="grow"></span>${sref("top", 3, fit.length)}</div>
+      <div class="section-title" style="margin-top:0"><h3>✦ ${lens ? `Best for ${nice(lens)}` : "Best for you tonight"}</h3><span class="small muted">${lens ? `${fit.length} you can do now with ${nice(lens)}, measured against your levels` : `${st.label}${st.auto ? "" : " (your call)"} · ${escapeHtml(st.why)}`}</span><span class="grow"></span>${sref("top", 3, fit.length)}</div>
       ${top.length ? `<div class="cf-podium">${top.map(heroCard).join("")}</div>`
       : `<div class="empty">Nothing you can do yet fits those answers. Loosen one under Tune, or look under Worth training for.</div>`}
     </div>
-    ${more.length ? ledger("More in your style", "measured against tonight's best", more, 9, "", true, undefined, sref("more", 6, fit.length - top.length + rest.length)) : ""}
+    ${sel ? cofferDetailHtml(sel) : ""}
+    ${more.length ? ledger(lens ? `More with ${nice(lens)}` : "More in your style", lens ? "the rest of what this skill pays" : "measured against tonight's best", more, 9, "", true, undefined, sref("more", 6, fit.length - top.length + rest.length)) : ""}
     ${loveSections}
     ${pf.reach!=="ready" && train.length ? ledger("🎯 Worth training for", "big earners a session or two away", train, 3, "", true, undefined, sref("train", 3, close.length)) : ""}
     ${rounds.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>🌱 Repeatables</h3><span class="small muted">dailies and the ones that come back sooner; tick it when it's done</span><span class="grow"></span><button class="ghost small cf-sref" data-cfsref="rounds" data-n="0" data-len="0" title="Check the clock again">⟲</button></div>
@@ -11261,6 +11277,7 @@ function renderCoffer(){
     fc.onchange = ()=>cofferSet("floor", String(CF_FLOOR[+fc.value]));
   }
   $("#cfRefresh").onclick = ()=>mmgDbEnsure(true);
+  const cw = $("#cfWords"); if(cw) cw.onclick = ()=>{ state.coffer.words = !state.coffer.words; save(); renderCoffer(); };
   $$("#cofferView [data-cfsref]").forEach(b=>b.onclick = ()=>{
     const key = b.dataset.cfsref, n = +b.dataset.n, len = +b.dataset.len;
     state.coffer.off = state.coffer.off || {};
@@ -14542,6 +14559,16 @@ function qlDetect(text){
 const QL_HINT = "Opens the full entry, with skills picked out from what you type.";
 let qlm = null;   // {skills:Set, off:Set, prios:Set, milestone:bool} while the window is open
 
+// one tap: today was a chill day. Tap again to take it back.
+function logChillDay(){
+  const date = todayISO();
+  state.scroll.log = state.scroll.log || [];
+  const i = state.scroll.log.findIndex(e=>e && e.date === date && e.chill);
+  if(i >= 0){ state.scroll.log.splice(i, 1); save(); renderScroll(); toast("Chill day taken back"); return; }
+  state.scroll.log.push({id:"l"+Date.now()+Math.random().toString(36).slice(2,5), date, text:"Chill day", skills:[], types:["social"], prios:[], chill:true, createdAt:Date.now()});
+  save(); renderScroll();
+  toast("☕ Chill day logged. Still counts as a day played.");
+}
 function openQuickLog(){
   const text = ($("#qlText").value || "").trim();
   qlm = {skills:new Set(qlDetect(text)), off:new Set(), prios:new Set(), milestone:false};
@@ -14584,7 +14611,8 @@ function saveQuickLog(){
   const skills = [...qlm.skills], prios = [...qlm.prios];
   if(!text && !skills.length){ toast("Add a note or pick a skill", true); $("#qlmText").focus(); return; }
   state.scroll.log = state.scroll.log || [];
-  state.scroll.log.push({id:"l"+Date.now()+Math.random().toString(36).slice(2,5), date, text, skills, prios,
+  const types = (!skills.length && /\b(chill|social|bank(ing)?|talk(ing|ed)?|hang(ing)?|afk|organi[sz](ing|ed)?)\b/i.test(text)) ? ["social"] : [];
+  state.scroll.log.push({id:"l"+Date.now()+Math.random().toString(36).slice(2,5), date, text, skills, prios, types,
                          milestone:qlm.milestone, createdAt:Date.now()});
   // tagging a priority on an entry counts as working on it, same as the Journal form
   prios.forEach(id=>{ const p = state.priorities.find(x=>x.id===id); if(p) touchPriority(p, date); });
@@ -14602,8 +14630,9 @@ function saveQuickLog(){
   renderScroll();
 }
 function wireQuickLog(){
-  const go = $("#qlGo"), inp = $("#qlText"), more = $("#qlMore");
+  const go = $("#qlGo"), inp = $("#qlText"), more = $("#qlMore"), chill = $("#qlChill");
   if(go) go.onclick = openQuickLog;
+  if(chill) chill.onclick = logChillDay;
   if(inp) inp.onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); openQuickLog(); } };
   if(more) more.onclick = ()=>{ setScrollSec("journal"); renderNavSub(); };
   if(wireQuickLog.done) return;          // the window's handlers only need attaching once
