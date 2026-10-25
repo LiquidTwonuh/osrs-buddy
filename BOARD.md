@@ -50,7 +50,7 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 
 ## How we work
 - Versions: Mortimeter shows 1.0 on the surface; the build number underneath keeps counting from where Buddy left off (2.0), so tags, installers and the update check never go backwards. Rule in the page: shown = internal major minus one (verLabel). Decided 2026-10-19
-- The repo lives at C:/Users/joshf/Projects/mortimeter since 2026-10-19 (moved out of Downloads, renamed with the app). Krystal Klear is beside it in mortimeter-private. Open Claude sessions on the mortimeter folder; CLAUDE.md there holds the standing rules
+- The repo lives at C:/Projects/mortimeter since 2026-10-19 (moved out of Downloads, renamed with the app). Krystal Klear is beside it in mortimeter-private. Open Claude sessions on the mortimeter folder; CLAUDE.md there holds the standing rules
 - Design keepers go in design/. ChatGPT is for iterating on art; finals land there
 - Dev page is `OSRS-Buddy-dev.html`. The Beta follows it: edit, press Reload in the Beta
 - Stable only changes when Josh says ship
