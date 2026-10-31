@@ -132,6 +132,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .app{display:flex; min-height:100vh; margin:0 auto}
   .sidebar{width:214px; flex:0 0 auto; background:var(--panel); border-right:1px solid var(--border);
     padding:16px 12px; display:flex; flex-direction:column; gap:14px; position:sticky; top:0; height:100vh; overflow-y:auto}
+  .vin{animation:viewIn .26s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes viewIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+  @media (prefers-reduced-motion: reduce){ .vin{animation:none} }
   .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); color:var(--gold);
     font-size:20px; text-shadow:1px 1px 0 #000; padding:2px 4px 6px}
   .nav{display:flex; flex-direction:column; gap:3px}
@@ -10344,7 +10347,7 @@ function cofferSec(){ const x = state.cofferSec; return COFFER_SECTIONS.some(c=>
 function setCofferSec(id){ state.cofferSec = id; save(); applyCofferSec(); renderNavSubCoffer(); window.scrollTo(0,0); }
 function applyCofferSec(){
   const cur = cofferSec();
-  $$("#view-coffer .cf-sec").forEach(el=>el.classList.toggle("hidden", el.dataset.csec !== cur));
+  $$("#view-coffer .cf-sec").forEach(el=>{ const show = el.dataset.csec === cur; if(show && el.classList.contains("hidden")) viewIn(el); el.classList.toggle("hidden", !show); });
   const eb = $("#cofferEyebrow"); if(eb) eb.textContent = (COFFER_SECTIONS.find(c=>c.id===cur)||{}).label || "";
   const bl = $("#cofferBlurb"); if(bl) bl.textContent = COFFER_BLURB[cur];
   if(cur==="vault"){ renderVault(); vaultData(true); }
@@ -11334,7 +11337,7 @@ function mapSec(){ const x = state.mapSec; return MAP_SECTIONS.some(m=>m.id===x)
 function setMapSec(id){ state.mapSec = id; save(); applyMapSec(); renderNavSubMap(); window.scrollTo(0,0); }
 function applyMapSec(){
   const cur = mapSec();
-  $$("#view-quests .map-sec").forEach(el=>el.classList.toggle("hidden", el.dataset.msec !== cur));
+  $$("#view-quests .map-sec").forEach(el=>{ const show = el.dataset.msec === cur; if(show && el.classList.contains("hidden")) viewIn(el); el.classList.toggle("hidden", !show); });
   const eb = $("#mapEyebrow"); if(eb) eb.textContent = (MAP_SECTIONS.find(m=>m.id===cur)||{}).label || "";
   const bl = $("#mapBlurb"); if(bl) bl.textContent = MAP_BLURB[cur];
   const sub = $("#qpSub"); if(sub && cur!=="planner") sub.textContent = "";
@@ -14676,11 +14679,16 @@ function renderHeatStats(){
   el.innerHTML = cells.map(([i,v,k])=>
     `<div class="hs"><div class="hs-i">${i}</div><div><div class="hs-v">${v}</div><div class="hs-k">${escapeHtml(k)}</div></div></div>`).join("");
 }
+// A page or a tab that has just appeared rises in over a quarter second. Re-adding the class
+// restarts the animation; the forced reflow between is what makes that work.
+function viewIn(el){ if(!el) return; el.classList.remove("vin"); void el.offsetWidth; el.classList.add("vin"); }
 function switchView(name){
   if(name==="stats") name="home"; // legacy saved view
   if(!VIEW_TITLES[name]) name="home";
+  const was = $(".view:not(.hidden)");
   $$(".navitem").forEach(n=>n.classList.toggle("active", n.dataset.view===name));
   $$(".view").forEach(v=>v.classList.toggle("hidden", v.id!=="view-"+name));
+  const now = $("#view-"+name); if(now && now !== was) viewIn(now);
   state.lastView=name; save();
   // the planner is a map — let it use the whole window instead of the reading column
   document.body.toggleAttribute("data-wide", name==="quests");
@@ -15602,7 +15610,7 @@ function achSec(){ const x = state.achSec; return ACH_SECTIONS.some(a=>a.id===x)
 function setAchSec(id){ state.achSec = id; save(); applyAchSec(); renderNavSubAch(); window.scrollTo(0,0); }
 function applyAchSec(){
   const cur = achSec();
-  $$("#view-clog .ach-sec").forEach(el=>el.classList.toggle("hidden", el.dataset.asec !== cur));
+  $$("#view-clog .ach-sec").forEach(el=>{ const show = el.dataset.asec === cur; if(show && el.classList.contains("hidden")) viewIn(el); el.classList.toggle("hidden", !show); });
   const eb = $("#clogEyebrow"); if(eb) eb.textContent = (ACH_SECTIONS.find(a=>a.id===cur)||{}).label || "";
   const bl = $("#clogBlurb"); if(bl) bl.textContent = ACH_BLURB[cur];
   renderAch();
