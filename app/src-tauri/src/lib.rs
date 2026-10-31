@@ -235,6 +235,18 @@ pub fn run() {
     .plugin(tauri_plugin_opener::init())
     .manage(sync::SyncState::default())
     .setup(|app| {
+      // A desktop never wants the page-update service worker (it's the phone's), yet WebView2
+      // keeps one if a page ever registered it, and it once served a stale page from GitHub over
+      // the built-in one. Before the webview exists, drop its worker folder: only the worker and
+      // its stored page live there, never the save.
+      #[cfg(windows)]
+      {
+        use tauri::Manager;
+        if let Ok(dir) = app.path().app_local_data_dir() {
+          let sw = dir.join("EBWebView").join("Default").join("Service Worker");
+          if sw.is_dir() { let _ = fs::remove_dir_all(&sw); }
+        }
+      }
       // A build whose config lists no windows (the Beta) gets its window here, so the page it
       // loads can come from a followed file. Other builds keep the window from their config.
       {
