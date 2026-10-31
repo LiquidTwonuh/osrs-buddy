@@ -26,6 +26,7 @@ A character companion for Old School RuneScape. One HTML file is the whole app; 
 - Josh checks changes in the Beta, not through screenshots from Claude, except when a browser render is quicker. The browser preview serves this folder on port 8124 via `.claude/launch.json`.
 
 ## How to work here
+- When the date has changed since the last message (the harness says so), open the reply with a short brief before anything else: what we were doing, what changed on disk or in the repo since, what the routines did, and what is open on the Board. Josh asked for this on 2026-10-31. Keep it to a few lines; a long gap earns a longer brief.
 - Make edits with small Python patch scripts that assert their anchors, then `node --check` every script block and check the stylesheet's brace balance. The file is big; blind sed is how it has broken before.
 - Prefer finishing a feature end to end over partial scaffolding. Verify in the browser with Josh's real backup imported when the change is visual.
 - When something is decided, write it on the Board the same turn.
