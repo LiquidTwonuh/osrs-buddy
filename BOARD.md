@@ -33,6 +33,7 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 - [x] Coffer: General Graardor showed "Needs Dad". "Must have defeated X" no longer reads as a quest
 
 ## Ideas
+- [ ] Rune themes (Josh, 2026-10-31): delegate ChatGPT to design themes styled on the game's runes, not flat colours. Keep the OG, minimal, dark and pitch black ones, then add actual artsy rune looks (textures, glows, per-rune palettes). Needs a theme format that can carry more than tokens: background art, panel textures, accent glows
 - Wise Old Bud gets smarter from a wiki scrape
 - Mortimer flavoured Slayer page
 - RuneLite plugin of our own that posts straight to the app's local server
