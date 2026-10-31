@@ -12338,6 +12338,8 @@ async function questGuideFetchQuick(n){
   state.questGuides[n] = rec; save();
   return rec;
 }
+// A few steps keep a wiki link's brackets when the parser met a link it didn't know; they're noise on screen.
+function qsClean(t){ return String(t || "").replace(/\[\[|\]\]/g, ""); }
 function qpStepsHtml(n){
   const mode = state.qpStepsMode === "full" ? "full" : "quick";
   const tkey = mode === "full" ? n + "|full" : n;
@@ -12359,9 +12361,10 @@ function qpStepsHtml(n){
   const body = g.sections.map(sec=>{
     const rows = sec.steps.map(st=>{
       const i = idx++;
-      if(st.note) return `<div class="qs-note">${escapeHtml(st.t)}</div>`;
+      const txt = qsClean(st.t);
+      if(st.note) return `<div class="qs-note">${escapeHtml(txt)}</div>`;
       total++; const on = !!ticks[i]; if(on) done++;
-      return `<label class="qs-step d${st.d} ${on ? "on" : ""}"><input type="checkbox" data-qstep="${i}" data-qsq="${escapeHtml(tkey)}" ${on ? "checked" : ""}><span>${escapeHtml(st.t)}</span></label>`;
+      return `<label class="qs-step d${st.d} ${on ? "on" : ""}"><input type="checkbox" data-qstep="${i}" data-qsq="${escapeHtml(tkey)}" ${on ? "checked" : ""}><span>${escapeHtml(txt)}</span></label>`;
     }).join("");
     return `${sec.h ? `<div class="qs-h">${escapeHtml(sec.h)}</div>` : ""}${rows}`;
   }).join("");
