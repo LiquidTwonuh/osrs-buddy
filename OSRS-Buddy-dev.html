@@ -3811,24 +3811,24 @@ const TRACKS = [
     {id:"tut", text:"Finish Tutorial Island", kind:"milestone", fn:()=>totalLvl()>=32, wiki:"Tutorial_Island"},
     {id:"f2pq", text:"Cook's Assistant, Sheep Shearer, Restless Ghost", kind:"task", wiki:"Quests/Free-to-play", note:"Short starter quests, all in the Lumbridge area"},
     {id:"waterfall", text:"Waterfall Quest", kind:"quest", wiki:"Waterfall_Quest", note:"No requirements, and it hands you 13k Attack and Strength XP"},
-    {id:"base40", text:"40 Attack, Strength and Defence", kind:"milestone", reqs:{attack:40, strength:40, defence:40}, note:"Rune gear becomes wearable"},
+    {id:"base40", text:"40 Attack, Strength and Defence", kind:"milestone", reqs:{attack:40, strength:40, defence:40}, note:"Rune armour and weapons become wearable, the best gear a free account can use"},
     {id:"cb50", text:"Combat level 50", kind:"milestone", fn:()=>(combatLevel()?.level||0)>=50},
     {id:"first50", text:"First skill to 50", kind:"milestone", fn:()=>live && SKILL_ORDER.some(s=>lvlOf(s)>=50)},
   ]},
   {id:"prayer", title:"⚔️ Combat & prayer milestones", items:[
-    {id:"pray43", text:"43 Prayer — Protect prayers", kind:"milestone", reqs:{prayer:43}, wiki:"Protect_from_Melee"},
-    {id:"pray70", text:"70 Prayer — Piety", kind:"milestone", reqs:{prayer:70}, wiki:"Piety", note:"Also needs King's Ransom + the Knight Waves"},
-    {id:"pray74", text:"74 Prayer — Rigour", kind:"milestone", reqs:{prayer:74}, wiki:"Rigour", note:"Plus a Dexterous prayer scroll from raids"},
-    {id:"base70", text:"70+ Attack, Strength & Defence", kind:"milestone", reqs:{attack:70, strength:70, defence:70}},
-    {id:"str90", text:"90 Strength", kind:"milestone", reqs:{strength:90}, note:"Heavy-hitter territory"},
+    {id:"pray43", text:"43 Prayer — Protect prayers", kind:"milestone", reqs:{prayer:43}, wiki:"Protect_from_Melee", note:"Unlocks Protect from Melee, Missiles and Magic. Turn one on and that kind of hit stops hurting you. It's the single biggest safety upgrade in the game, and most bosses and quest fights expect it"},
+    {id:"pray70", text:"70 Prayer — Piety", kind:"milestone", reqs:{prayer:70}, wiki:"Piety", note:"A big boost to Attack, Strength and Defence while it's on. Also needs King's Ransom and the Knight Waves"},
+    {id:"pray74", text:"74 Prayer — Rigour", kind:"milestone", reqs:{prayer:74}, wiki:"Rigour", note:"The same kind of boost for Ranged. Plus a Dexterous prayer scroll from raids"},
+    {id:"base70", text:"70+ Attack, Strength & Defence", kind:"milestone", reqs:{attack:70, strength:70, defence:70}, note:"Barrows armour and the Abyssal whip become wearable, and most bosses open up"},
+    {id:"str90", text:"90 Strength", kind:"milestone", reqs:{strength:90}, note:"You hit hard enough that fights get short"},
     {id:"cb99", text:"First 99 combat skill", kind:"milestone", fn:()=>["attack","strength","defence","hitpoints","ranged","magic"].some(s=>lvlOf(s)>=99)},
   ]},
   {id:"gear", title:"🛡️ PvM gear ladder", blurb:"Tick items off as you get them — the tag shows when your levels can wield it.", items:[
     {id:"ddef", text:"Dragon defender", kind:"gear", reqs:{attack:60, defence:60}, wiki:"Dragon_defender", note:"Warriors' Guild — bring your best defenders token rate"},
-    {id:"whip", text:"Abyssal whip", kind:"gear", reqs:{attack:70}, wiki:"Abyssal_whip", note:"The classic slayer milestone"},
-    {id:"barrows", text:"Barrows armour set", kind:"gear", reqs:{defence:70}, wiki:"Barrows_equipment", note:"From your first Barrows runs"},
+    {id:"whip", text:"Abyssal whip", kind:"gear", reqs:{attack:70}, wiki:"Abyssal_whip", note:"A fast, strong one-handed weapon you'll use for years. Buy one at 70 Attack"},
+    {id:"barrows", text:"Barrows armour set", kind:"gear", reqs:{defence:70}, wiki:"Barrows_equipment", note:"Strong armour that's cheap for what it does. Comes from Barrows runs or the Grand Exchange"},
     {id:"torso", text:"Fighter torso", kind:"gear", wiki:"Fighter_torso", note:"Barbarian Assault — free best-in-slot-tier body"},
-    {id:"rcb", text:"Rune crossbow", kind:"gear", reqs:{ranged:61}, wiki:"Rune_crossbow"},
+    {id:"rcb", text:"Rune crossbow", kind:"gear", reqs:{ranged:61}, wiki:"Rune_crossbow", note:"The best ranged weapon for a long stretch, and it's cheap. Lets you use a shield at the same time"},
     {id:"bp", text:"Toxic blowpipe", kind:"gear", reqs:{ranged:75}, wiki:"Toxic_blowpipe", note:"Zulrah's signature drop"},
     {id:"trident", text:"Trident of the seas", kind:"gear", reqs:{magic:75}, wiki:"Trident_of_the_seas", note:"Own drops need 87 Slayer — buying one is fine"},
     {id:"void", text:"Void knight set", kind:"gear", wiki:"Void_Knight_equipment", note:"Pest Control points — needs 42+ combat stats and 22 Prayer"},
@@ -3867,7 +3867,7 @@ const TRACKS = [
     {id:"d_kourend", text:"Kourend & Kebos diary", kind:"task", wiki:"Kourend_%26_Kebos_Diary"},
   ]},
   {id:"minigames", title:"🎯 Minigames", blurb:"Self-contained content that pays out in gear and unlocks.", items:[
-    {id:"m_wintertodt", text:"Wintertodt", kind:"task", reqs:{firemaking:50}, wiki:"Wintertodt", note:"The standard early Firemaking method, and it pays"},
+    {id:"m_wintertodt", text:"Wintertodt", kind:"task", reqs:{firemaking:50}, wiki:"Wintertodt", note:"Everyone's early Firemaking: a team event with no fighting, and the crates it hands out are worth real money"},
     {id:"m_ba", text:"Barbarian Assault — Fighter torso", kind:"gear", wiki:"Barbarian_Assault", note:"Best-in-slot-tier body slot for a long time"},
     {id:"m_pc", text:"Pest Control — Void knight set", kind:"gear", wiki:"Pest_Control", note:"Needs 42+ in the combat stats and 22 Prayer"},
     {id:"m_lms", text:"Last Man Standing", kind:"milestone", fn:()=>{const a=live&&live.activities&&live.activities.last_man_standing; return !!(a&&a.score>0);}, wiki:"Last_Man_Standing", note:"Free PvP practice — no risk to your gear"},
@@ -3878,8 +3878,8 @@ const TRACKS = [
   ]},
   {id:"money", title:"💰 Money making", blurb:"Roughly ordered by what your account can handle. Tick what you've tried.", items:[
     {id:"gp_early", text:"Early GP: Wintertodt, birdhouses, tanning", kind:"task", wiki:"Money_making_guide", note:"Low requirements, steady income"},
-    {id:"gp_farm", text:"Farm runs — herbs and trees", kind:"task", reqs:{farming:32}, wiki:"Farming", note:"A few minutes a day, compounds forever"},
-    {id:"gp_slayer", text:"Slayer as an income source", kind:"task", reqs:{slayer:50}, wiki:"Slayer", note:"Pays while it trains combat"},
+    {id:"gp_farm", text:"Farm runs — herbs and trees", kind:"task", reqs:{farming:32}, wiki:"Farming", note:"Plant herbs, come back later, sell them. A few minutes a day that adds up for the rest of the game"},
+    {id:"gp_slayer", text:"Slayer as an income source", kind:"task", reqs:{slayer:50}, wiki:"Slayer", note:"Once your tasks are mid-level monsters, the drops pay while you train combat anyway"},
     {id:"gp_bossing", text:"Consistent boss money (Zulrah, Vorkath)", kind:"task", wiki:"Zulrah", note:"Reliable millions per hour once learned"},
     {id:"gp_raids", text:"Raids for profit", kind:"task", wiki:"Chambers_of_Xeric", note:"The high end of PvM income"},
     {id:"gp_100m", text:"100M bank", kind:"task", wiki:"Coins", note:"Tick it when you get there — I can't see your bank"},
@@ -3899,7 +3899,7 @@ const TRACKS = [
     {id:"t1250", text:"1,250 total level", kind:"milestone", fn:()=>totalLvl()>=1250},
     {id:"t1500", text:"1,500 total level", kind:"milestone", fn:()=>totalLvl()>=1500},
     {id:"base50", text:"Base 50s — level 50 in every skill", kind:"milestone", fn:()=> live && SKILL_ORDER.every(s=>lvlOf(s)>=50)},
-    {id:"agi70", text:"70 Agility", kind:"milestone", reqs:{agility:70}, note:"Most shortcuts open up"},
+    {id:"agi70", text:"70 Agility", kind:"milestone", reqs:{agility:70}, note:"Most shortcuts across the map open up, and your run energy lasts longer"},
     {id:"first99", text:"First 99 — any skill", kind:"milestone", fn:()=> live && SKILL_ORDER.some(s=>lvlOf(s)>=99), wiki:"Skill_mastery"},
   ]},
   {id:"endgame", title:"👑 Endgame", blurb:"The far horizon. Nothing here is close for most accounts — that's the point.", items:[
@@ -3961,15 +3961,16 @@ function renderReach(){
   rows.sort((a,b)=>a.total-b.total);
   // prefer things genuinely close, but never show an empty panel — a brand-new account
   // has nothing within 12 levels, and "here's what's nearest" still helps them
-  let top = rows.filter(r=>r.total<=12).slice(0,6);
-  if(top.length < 3) top = rows.slice(0,6);
-  $("#reachSub").textContent = top.length ? `${top.length} closest` : "";
+  let top = rows.filter(r=>r.total<=12).slice(0,6), near = true;
+  if(top.length < 3){ top = rows.slice(0,3); near = false; }
+  $("#reachSub").textContent = top.length ? (near ? `${top.length} closest` : "nothing close yet, so the nearest") : "";
   if(!top.length){ el.innerHTML = `<div class="empty">Nothing with level requirements left — see the tracks below.</div>`; return; }
   el.innerHTML = top.map(({it,needs})=>`
     <div class="item">
       <span class="micon"><span class="ficon" style="display:inline-flex">🔥</span></span>
       <div class="grow" style="min-width:0">
         <div class="row" style="gap:8px"><span class="name">${it.text}</span>${wikiLink(it)}</div>
+        ${it.note ? `<div class="small" style="margin-top:3px">${it.note}</div>` : ""}
         <div class="small muted" style="margin-top:3px">${needs.map(x=>`${x.need} more ${nice(x.s)}`).join(" · ")}</div>
       </div>
     </div>`).join("");
