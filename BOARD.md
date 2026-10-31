@@ -3,6 +3,7 @@
 Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or from the chat. Same file, both see it. Tick a box in the app and it ticks here.
 
 ## Now
+- [ ] Debrief, next session (Josh asked 2026-10-31): five changes landed in dev (so the Beta) during Krystal Klear's launch day, each a local commit, and Josh wants to pick which stay. Stable was put back to the 25 October page and only moves when he says ship. The five: (1) Roadmap why-lines on every level milestone, and a fresh account sees the three nearest with "nothing close yet" instead of six far ones, ccd3f90; (2) quest steps drop leftover [[ ]] on screen, 585125c; (3) Achievements under Character instead of Tools, 3356d07; (4) default theme labelled Gilded, a0e9107; (5) pages and tabs rise in over a quarter second, 9d16912 and aa8c41e. Everything else from the day is hers only (mortimeter-private)
 - [ ] Rebrand to **Mortimeter** (decided 2026-10-18, pronounced mor-tih-mee-ter). "OSRS Buddy" was too close to RSBuddy/OSBuddy. Runners-up, logged in case a sister tool ever needs a name: Elder, Sage. Tagline: "for Old School RuneScape" (an app called "OSRS Companion" already exists, so not that)
   - [x] Page: title, header, copy, backup file names. Version is 2.0. Historical patch notes keep the old name on purpose
   - [x] Desktop: product names Mortimeter and Mortimeter Beta, window titles, backups folder Documents/Mortimeter (the old folder is moved across on first launch). Identifiers deliberately unchanged: they're internal, and changing them would move every save
