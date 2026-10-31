@@ -2030,6 +2030,8 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <button class="navitem active" data-view="home"><span class="ni-ic">🏠</span>Home</button>
       <button class="navitem" data-view="scroll"><span class="ni-ic">📜</span>Scroll</button>
       <div class="nav-sub hidden" id="navSubScroll"></div>
+      <button class="navitem" data-view="clog"><span class="ni-ic">🎖️</span>Achievements</button>
+      <div class="nav-sub hidden" id="navSubAch"></div>
       <div class="nav-sec">Planning</div>
       <button class="navitem" data-view="goals"><span class="ni-ic">✅</span>Goals</button>
       <button class="navitem" data-view="start"><span class="ni-ic">🗺️</span>Roadmap</button>
@@ -2041,8 +2043,6 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <button class="navitem hidden" data-view="board" id="navBoard"><span class="ni-ic">📋</span>Board</button>
       <div class="nav-sec">Tools</div>
       <button class="navitem" data-view="ask"><span class="ni-ic">💬</span>Ask Bud</button>
-      <button class="navitem" data-view="clog"><span class="ni-ic">🎖️</span>Achievements</button>
-      <div class="nav-sub hidden" id="navSubAch"></div>
       <div class="nav-sec">Games</div>
       <button class="navitem" data-view="arcade"><span class="ni-ic">🕹️</span>Game corner</button>
     </nav>
@@ -6369,7 +6369,7 @@ $("#addNoteBtn").onclick = addNote;
 
 // ============ THEMES (the elements) ============
 const THEMES = [
-  ["parchment","Buddy","Papyrus.png"],
+  ["parchment","Gilded","Papyrus.png"],
   ["crystal","Crystal","Crystal_shard_1.png"],
   ["nature","Nature","Nature_rune.png"],
   ["shadow","Shadow","Soul_rune.png"],
@@ -14235,7 +14235,7 @@ const PATCH_NOTES = [
   {v:"2.0", date:"in progress", title:"Farewell Buddy, hello Mortimeter", notes:[
     "The app is now Mortimeter. OSRS Buddy was one letter away from OSBuddy, a third-party client from years ago that this app has nothing to do with, and the name needed to be ours. Nothing about your save, your backups or your files changes.",
     "Mortimeter is Mortimer, the Slayer master, plus meter, because the app measures your account.",
-    "The gold theme the app started with is now called Buddy. The About panel remembers the old name and dates. Anyone whose save is older than the rename finds a new trophy in the cabinet.",
+    "The gold theme the app started with is now called Gilded. The About panel remembers the old name and dates. Anyone whose save is older than the rename finds a new trophy in the cabinet.",
     "New section: Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
     "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
     "The phone can take the app itself from your PC. Pair them, tap Update app from PC, and it keeps that copy and runs it from then on, so a change doesn't mean installing an APK again. If a copy ever fails to load, the built-in one comes back by itself.",
