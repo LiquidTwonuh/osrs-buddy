@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upgrades mockup</title>
+<style>
+  /* Layout: one Mortimeter page frame. Three ways to read the same 67 upgrades: ladders per skill, sets by purpose, stages. */
+  :root{
+    --bg:#1a1712; --bg2:#241f18; --panel:#26211a; --panel2:#2f2820; --border:#4a3f2e;
+    --gold:#e6c35c; --gold-dim:#b9974a; --gold2:#c9a642; --gold3:#8a6f2e;
+    --text:#e8e0cf; --muted:#a99b7d; --inset:#15120d; --active:#3a3122;
+    --btnlo:#2a2318; --btnhov1:#463a26; --glow:rgba(230,195,92,.18);
+    --green:#6fbf5b; --green-bg:#2c3d24; --red:#d46a5a; --blue:#5a9fd4;
+    --shadow:0 2px 0 #0e0b07, 0 6px 14px rgba(0,0,0,.4);
+    --font-display:"EB Garamond",Georgia,serif;
+    --font-body:"Segoe UI",system-ui,sans-serif;
+    --hair:rgba(255,255,255,.07);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:#0f0d0a; color:var(--text); font-family:var(--font-body); font-size:14px; -webkit-font-smoothing:antialiased}
+  .top{position:sticky; top:0; z-index:5; background:#0f0d0a; border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .top h1{font-family:var(--font-display); font-size:18px; color:var(--gold); margin:0 14px 0 0; font-weight:600}
+  .top p{margin:0; color:var(--muted); font-size:12.5px}
+  .frame{width:1180px; max-width:100%; margin:26px auto 60px; background:var(--bg); border:1px solid var(--border); border-radius:14px; display:grid; grid-template-columns:200px 1fr; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .side{background:var(--bg2); border-right:1px solid var(--border); padding:16px 12px; font-size:13px}
+  .side .brand{font-family:var(--font-display); font-size:19px; color:var(--gold); padding:0 8px 14px}
+  .side .eb{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:10px 8px 4px}
+  .side .n{padding:7px 10px; border-radius:8px; color:var(--text); cursor:pointer}
+  .side .n.on{background:var(--active); color:var(--gold)}
+  .main{padding:26px 30px 40px; min-height:900px; min-width:0}
+  @media (max-width:760px){ .frame{grid-template-columns:1fr; margin:0; border-radius:0} .side{display:none} .main{padding:18px 16px 40px} }
+
+  .lt{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:16px; flex-wrap:wrap}
+  .lt h2{margin:0; font-family:var(--font-display); font-size:36px; font-weight:600; color:var(--gold); line-height:1}
+  .lt .sub{color:var(--muted); font-size:13px; margin-top:6px}
+  .seg{display:inline-flex; background:var(--inset); border:1px solid var(--border); border-radius:10px; padding:3px; gap:2px}
+  .seg button{border:0; background:none; color:var(--muted); font:inherit; font-size:13px; padding:6px 13px; border-radius:8px; cursor:pointer}
+  .seg button.on{background:var(--panel2); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .view{display:none} .view.on{display:block}
+
+  /* status language, used everywhere */
+  .st{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted); white-space:nowrap}
+  .st i{width:8px; height:8px; border-radius:50%; background:var(--border); flex:none}
+  .st.ready{color:var(--green)} .st.ready i{background:var(--green)}
+  .st.close{color:var(--gold)} .st.close i{background:var(--gold)}
+  .st.have{color:var(--text)} .st.have i{background:var(--gold-dim); box-shadow:0 0 0 2px var(--glow)}
+
+  /* next up rail */
+  .rail{display:grid; grid-auto-flow:column; grid-auto-columns:minmax(190px,1fr); gap:10px; overflow-x:auto; padding:2px 2px 10px; margin-bottom:22px; scroll-snap-type:x mandatory}
+  .eb{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 8px}
+  .nx{scroll-snap-align:start; display:grid; grid-template-columns:40px 1fr; gap:10px; align-items:center; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px 12px; cursor:pointer; text-align:left; color:inherit; font:inherit; min-width:0}
+  .nx:hover{background:var(--panel2)}
+  .nx .ico{width:40px; height:40px; border-radius:10px; background:var(--inset); display:grid; place-items:center}
+  .nx .ico img{max-width:30px; max-height:30px}
+  .nx span:last-child{min-width:0}
+  .nx b{display:block; font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .nx small{display:flex; color:var(--muted); font-size:11.5px; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+  /* ladders */
+  .axis{display:grid; grid-template-columns:168px 1fr 150px; gap:14px; color:var(--muted); font-size:11px; padding:0 0 4px; border-bottom:1px solid var(--border)}
+  .axis .t{position:relative; height:14px}
+  .axis .t span{position:absolute; transform:translateX(-50%); font-variant-numeric:tabular-nums}
+  .lad{display:grid; grid-template-columns:168px 1fr 150px; gap:14px; align-items:center; padding:8px 0; border-bottom:1px solid var(--hair)}
+  @media (max-width:760px){ .axis,.lad{grid-template-columns:1fr} .axis div:first-child,.axis div:last-child{display:none} .lad .nxt{display:none} }
+  .lad .sk{display:flex; align-items:center; gap:9px; min-width:0}
+  .lad .sk img{width:20px; height:20px; object-fit:contain}
+  .lad .sk b{font-weight:600; font-size:13.5px}
+  .lad .sk .lv{margin-left:auto; font-variant-numeric:tabular-nums; color:var(--muted); font-size:12px; background:var(--inset); border:1px solid var(--border); border-radius:6px; padding:1px 6px}
+  .lad .nxt{font-size:12px; color:var(--muted); min-width:0}
+  .lad .nxt b{display:block; color:var(--text); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .lad .nxt.all{color:var(--green)}
+  .track{position:relative; height:46px; margin:0 15px}
+  .track.tall{height:78px}
+  .track .rail2{position:absolute; left:0; right:0; top:50%; height:3px; margin-top:-1.5px; background:var(--inset); border-radius:2px}
+  .track .fill{position:absolute; left:0; top:50%; height:3px; margin-top:-1.5px; background:var(--gold-dim); border-radius:2px; opacity:.8}
+  .track .grid{position:absolute; top:10px; bottom:10px; width:1px; background:var(--hair)}
+  .track .me{position:absolute; top:6px; bottom:6px; width:2px; background:var(--gold); border-radius:1px; transform:translateX(-50%); z-index:1; pointer-events:none}
+  .track .me::after{content:attr(data-lv); position:absolute; top:-2px; left:6px; font-size:10px; color:var(--gold); font-variant-numeric:tabular-nums}
+  .track .it{position:absolute; top:50%; width:30px; height:30px; border-radius:9px; background:var(--panel2); border:1px solid var(--border); display:grid; place-items:center; transform:translate(-50%,-50%); cursor:pointer; padding:0}
+  .track .it img{max-width:22px; max-height:22px}
+  .track .it.ready{border-color:var(--green); box-shadow:0 0 0 2px rgba(111,191,91,.18)}
+  .track .it.close{border-color:var(--gold); box-shadow:0 0 0 2px var(--glow)}
+  .track .it.later{opacity:.5}
+  .track .it.have{border-color:var(--gold-dim); background:var(--active); opacity:1}
+  .track .it:hover{opacity:1; z-index:2; transform:translate(-50%,-50%) scale(1.12)}
+  .track .it.on{outline:2px solid var(--gold); outline-offset:1px; z-index:2}
+  .tip{position:fixed; z-index:40; pointer-events:none; background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:7px 10px; font-size:12px; box-shadow:0 8px 24px rgba(0,0,0,.5); display:none; max-width:240px}
+  .tip b{display:block; font-weight:600} .tip span{color:var(--muted)}
+  .questlad{margin-top:22px}
+  .chips{display:flex; flex-wrap:wrap; gap:8px}
+  .chip{display:inline-flex; align-items:center; gap:7px; background:var(--panel); border:1px solid var(--border); border-radius:999px; padding:5px 11px 5px 6px; font-size:12.5px; cursor:pointer; color:inherit; font:inherit}
+  .chip img{width:18px; height:18px; object-fit:contain}
+  .chip:hover{background:var(--panel2)}
+  .chip.ready{border-color:var(--green)} .chip.close{border-color:var(--gold)} .chip.later{opacity:.6}
+
+  /* sets */
+  .sets{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px}
+  .set{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px 14px 8px; min-width:0}
+  .set h3{margin:0; font-size:15px; font-weight:600; display:flex; align-items:baseline; justify-content:space-between; gap:8px}
+  .set h3 small{color:var(--muted); font-weight:400; font-size:12px; font-variant-numeric:tabular-nums}
+  .set .bar{display:flex; gap:2px; height:4px; margin:10px 0 8px; border-radius:2px; overflow:hidden; background:var(--inset)}
+  .set .bar i{display:block; height:100%} .set .bar .g{background:var(--green)} .set .bar .y{background:var(--gold)} .set .bar .h{background:var(--gold-dim)}
+  .row{display:grid; grid-template-columns:30px 1fr auto; gap:10px; align-items:center; padding:7px 4px; border-top:1px solid var(--hair); cursor:pointer; border-radius:8px}
+  .row:hover{background:var(--panel2)}
+  .row .ico{width:30px; height:30px; border-radius:8px; background:var(--inset); display:grid; place-items:center}
+  .row .ico img{max-width:22px; max-height:22px}
+  .row .nm{min-width:0} .row .nm b{display:block; font-weight:500; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .row .nm small{color:var(--muted); font-size:11.5px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+  /* stages */
+  .stages{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  @media (max-width:760px){ .stages{grid-template-columns:1fr} }
+  .stage{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px; min-width:0}
+  .stage h3{margin:0 0 2px; font-family:var(--font-display); font-size:22px; color:var(--gold); font-weight:600}
+  .stage p{margin:0 0 10px; color:var(--muted); font-size:12.5px}
+
+  /* sheet */
+  .scrim{position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:20; display:none}
+  .scrim.on{display:block}
+  .sheet{position:fixed; top:0; right:0; bottom:0; width:440px; max-width:100%; background:var(--bg2); border-left:1px solid var(--border); z-index:21; transform:translateX(100%); transition:transform .22s ease; overflow:auto; padding:22px 22px 30px}
+  .sheet.on{transform:none}
+  @media (prefers-reduced-motion:reduce){ .sheet{transition:none} }
+  .sheet .x{position:absolute; top:12px; right:12px; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:8px; width:30px; height:30px; cursor:pointer; font:inherit}
+  .sheet .hero{display:grid; grid-template-columns:64px 1fr; gap:14px; align-items:center; margin-bottom:14px; padding-right:30px}
+  .sheet .hero .ico{width:64px; height:64px; border-radius:14px; background:var(--inset); display:grid; place-items:center}
+  .sheet .hero img{max-width:46px; max-height:46px}
+  .sheet h3{margin:0; font-family:var(--font-display); font-size:24px; color:var(--gold); font-weight:600; line-height:1.1}
+  .sheet .meta{color:var(--muted); font-size:12.5px; margin-top:4px}
+  .sheet h5{margin:16px 0 6px; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .sheet p{margin:0; line-height:1.5; font-size:13.5px}
+  .req{display:grid; grid-template-columns:22px 1fr auto; gap:4px 10px; align-items:center; padding:7px 0; border-top:1px solid var(--hair); cursor:pointer}
+  .req img{width:20px; height:20px; object-fit:contain}
+  .req .nm{font-size:13px} .req .nm small{display:block; color:var(--muted); font-size:11px}
+  .req .vals{font-variant-numeric:tabular-nums; font-size:12.5px; color:var(--muted)} .req .vals b{color:var(--text)}
+  .req.ok .vals b{color:var(--green)}
+  .req .pb{grid-column:2/4; height:3px; background:var(--inset); border-radius:2px; overflow:hidden}
+  .req .pb i{display:block; height:100%; background:var(--gold-dim)}
+  .req.ok .pb i{background:var(--green)}
+  .qchip{display:inline-flex; align-items:center; gap:7px; background:var(--panel); border:1px solid var(--border); border-radius:999px; padding:5px 12px; font-size:12.5px; cursor:pointer; color:inherit; font:inherit; margin:0 6px 6px 0; text-align:left}
+  .qchip:hover{background:var(--panel2); border-color:var(--gold-dim)}
+  .qchip .m{color:var(--gold); font-size:11px; white-space:nowrap}
+  .qchip.ok{border-color:var(--green)} .qchip.ok .m{color:var(--green)}
+  .acts{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px}
+  .btn{background:var(--btnlo); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 12px; font:inherit; font-size:13px; cursor:pointer; text-decoration:none}
+  .btn:hover{background:var(--btnhov1)}
+  .btn.pri{background:var(--gold); color:#1a1712; border-color:var(--gold); font-weight:600}
+  .toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:var(--panel2); border:1px solid var(--gold-dim); color:var(--text); padding:10px 16px; border-radius:10px; font-size:13px; z-index:50; box-shadow:0 10px 30px rgba(0,0,0,.5); display:none; max-width:92vw}
+  .toast.on{display:block}
+  .note{color:var(--muted); font-size:12px; margin-top:14px; line-height:1.5; max-width:70ch}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>Upgrades</h1>
+  <p>Mockup. Twonuh's real levels and quests. Nothing is wired to the app yet; the Map, Grind and Notes buttons only say what they would do.</p>
+</div>
+
+<div class="frame">
+  <div class="side">
+    <div class="brand">Mortimeter</div>
+    <div class="n">Home</div><div class="n">Grind</div><div class="n">Map</div><div class="n on">Upgrades</div><div class="n">Coffer</div><div class="n">Scroll</div>
+    <div class="eb">Upgrades</div>
+    <div class="n on" data-nav="ladders">By skill</div><div class="n" data-nav="sets">By what it does</div><div class="n" data-nav="stages">By stage</div>
+  </div>
+  <div class="main">
+    <div class="lt">
+      <div><h2>Upgrades</h2><div class="sub" id="sub"></div></div>
+      <div class="seg" id="seg"><button class="on" data-v="ladders">By skill</button><button data-v="sets">By what it does</button><button data-v="stages">By stage</button></div>
+    </div>
+
+    <div class="eb">Next up for you</div>
+    <div class="rail" id="rail"></div>
+
+    <div class="view on" id="v-ladders">
+      <div class="axis"><div>Skill · your level</div><div class="t" style="margin:0 15px"><span style="left:0%">1</span><span style="left:25%">25</span><span style="left:50%">50</span><span style="left:75%">75</span><span style="left:100%">99</span></div><div>Next unlock</div></div>
+      <div id="ladders"></div>
+      <div class="questlad">
+        <div class="eb">Only a quest away</div>
+        <div class="sub" style="margin:-4px 0 10px; color:var(--muted); font-size:12.5px">No level attached. Each one is a quest or a diary; tap for the route.</div>
+        <div class="chips" id="qonly"></div>
+      </div>
+      <div class="note">How to read it: each line is one skill, 1 on the left and 99 on the right. The bright tick is where you are. An upgrade sits at the level it asks for, so anything left of your tick only needs its quest, and the first one to the right is your next unlock. Green means you qualify now, gold means you are within three levels. Skills are sorted by how close the next unlock is.</div>
+    </div>
+
+    <div class="view" id="v-sets"><div class="sets" id="sets"></div></div>
+    <div class="view" id="v-stages"><div class="stages" id="stages"></div></div>
+  </div>
+</div>
+
+<div class="tip" id="tip"></div>
+<div class="scrim" id="scrim"></div>
+<aside class="sheet" id="sheet"></aside>
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {"about": "Big account upgrades, tiered from community consensus (Theoatrix's untradeables and goals guides, the wiki's Ironman guide, a dozen progression guides, the wiki reward-shop pages) on 2 Nov 2026. Reddit was unreachable, so the tiers are a synthesis, not vote counts. Costs are wiki numbers; GE prices are rough and dated. Images are the wiki's, loaded live.", "tiers": {"S": "Every account, as early as it can", "A": "Big step up once you qualify", "B": "Worth it when it fits what you're doing", "C": "Late or situational"}, "cats": {"travel": "Getting around", "combat": "Combat untradeables", "utility": "Bags, pouches, tools", "house": "Your house", "prayer": "Prayers and spellbooks", "diary": "Diary rewards", "skilling": "Skilling outfits", "gear": "Gear milestones", "access": "Places and content"}, "items": [{"id": "fairy_rings", "name": "Fairy rings", "img": "Fairy_ring.png", "tier": "S", "cat": "travel", "stage": "early", "how": "Play Fairytale II until the Fairy Godfather lets you use the rings. You don't finish the quest. Needs a dramen or lunar staff in hand.", "cost": "Free", "skills": {}, "quests": ["Fairytale I - Growing Pains", "Fairytale II - Cure a Queen (started)"], "why": "Teleports to almost everywhere. The single most-named unlock in every guide. Lumbridge elite diary drops the staff requirement."}, {"id": "spirit_trees", "name": "Spirit trees", "img": "Spirit_tree.png", "tier": "A", "cat": "travel", "stage": "early", "how": "Finish Tree Gnome Village. More trees unlock with The Grand Tree and later quests.", "cost": "Free", "skills": {}, "quests": ["Tree Gnome Village"], "why": "Second teleport network that fills the gaps fairy rings leave. Gnome Stronghold, Khazard, Varrock GE, Prifddinas later."}, {"id": "ardy_cloak", "name": "Ardougne cloak 1 to 4", "img": "Ardougne_cloak_4.png", "tier": "A", "cat": "diary", "stage": "early", "how": "Easy Ardougne diary for cloak 1. Each tier adds teleports and stats.", "cost": "Free", "skills": {}, "quests": [], "why": "Cloak 1 is unlimited teleports to the monastery altar next to a fairy ring and bank. Cloak 4 is the best prayer bonus in the cape slot."}, {"id": "ectophial", "name": "Ectophial", "img": "Ectophial.png", "tier": "B", "cat": "travel", "stage": "early", "how": "Finish Ghosts Ahoy.", "cost": "Free, refills itself", "skills": {"cooking": 20, "agility": 25}, "quests": ["Ghosts Ahoy"], "why": "One-click teleport to the Ectofuntus, next to a herb patch, for every farm run."}, {"id": "royal_seed_pod", "name": "Royal seed pod", "img": "Royal_seed_pod.png", "tier": "A", "cat": "travel", "stage": "mid", "how": "Finish Monkey Madness II.", "cost": "Free, unlimited", "skills": {"slayer": 69, "crafting": 70, "hunter": 60, "agility": 55, "thieving": 55, "firemaking": 60}, "quests": ["Monkey Madness II"], "why": "Unlimited one-click teleport to the Grand Tree that works up to level 30 Wilderness."}, {"id": "book_of_dead", "name": "Book of the dead", "img": "Book_of_the_Dead.png", "tier": "B", "cat": "travel", "stage": "mid", "how": "Finish A Kingdom Divided.", "cost": "Free", "skills": {"agility": 54, "thieving": 52, "woodcutting": 52, "herblore": 50, "mining": 42, "crafting": 38, "magic": 35}, "quests": ["A Kingdom Divided"], "why": "Every Kourend teleport in one book plus a prayer bonus, and it unlocks the Arceuus resurrection spells."}, {"id": "graceful", "name": "Graceful outfit", "img": "Graceful_hood.png", "tier": "S", "cat": "combat", "stage": "early", "how": "260 marks of grace from rooftop courses, bought from Grace in the Rogues' Den.", "cost": "260 marks of grace", "skills": {"agility": 30}, "quests": [], "why": "Run energy comes back 30% faster and you weigh 25 kg less. Partial sets give almost nothing, go for the full six."}, {"id": "barrows_gloves", "name": "Barrows gloves", "img": "Barrows_gloves.png", "tier": "S", "cat": "combat", "stage": "mid", "how": "Finish all of Recipe for Disaster, then buy them from the Culinaromancer's chest.", "cost": "130,000 gp", "skills": {"cooking": 70, "agility": 48, "mining": 50, "fishing": 53, "thieving": 53, "herblore": 25, "magic": 59, "firemaking": 50, "smithing": 40, "woodcutting": 36, "crafting": 40, "slayer": 10}, "quests": ["Recipe for Disaster (175 quest points)"], "why": "+12 to every melee style and ranged, +12 strength. The best gloves until Ferocious, and every guide's number one mid-game goal."}, {"id": "dragon_defender", "name": "Dragon defender", "img": "Dragon_defender.png", "tier": "S", "cat": "combat", "stage": "mid", "how": "Warriors' Guild. Earn tokens, work up through the defenders, then cyclopes in the basement drop it at 1 in 100.", "cost": "Tokens and time, about 4 hours", "skills": {"attack": 60, "defence": 60}, "quests": [], "why": "+25 attack and +6 strength in the shield slot for nothing. Later it becomes the Avernic defender."}, {"id": "fire_cape", "name": "Fire cape", "img": "Fire_cape.png", "tier": "S", "cat": "combat", "stage": "mid", "how": "Beat the Fight Caves, 63 waves ending with TzTok-Jad. Pray against his attacks by watching his animation.", "cost": "Free, about an hour per attempt", "skills": {}, "quests": [], "why": "Best melee cape until the Inferno, +4 strength and +2 prayer. Also the moment most players learn prayer switching."}, {"id": "avas", "name": "Ava's accumulator and assembler", "img": "Ava's_assembler.png", "tier": "S", "cat": "combat", "stage": "early", "how": "Animal Magnetism gives the attractor (30 Ranged) and accumulator (50 Ranged). After Dragon Slayer II, take Vorkath's head and the accumulator to Ava for the assembler.", "cost": "Free, assembler needs Vorkath's head", "skills": {"ranged": 30, "slayer": 18, "crafting": 19, "woodcutting": 35}, "quests": ["Animal Magnetism", "Dragon Slayer II (assembler)"], "why": "Picks your ammo back up (72%, 80% for the assembler) and the only ranged cape worth wearing before the quiver."}, {"id": "slayer_helm", "name": "Slayer helmet (i)", "img": "Slayer_helmet_(i).png", "tier": "S", "cat": "combat", "stage": "mid", "how": "Unlock Malevolent Masquerade for 400 slayer points, craft it from a black mask plus the slayer headgear at 55 Crafting, then imbue it.", "cost": "400 slayer points, black mask, 1,250,000 NMZ points or 500 Soul Wars zeal (half after hard combat achievements)", "skills": {"crafting": 55, "defence": 10}, "quests": [], "why": "+16.67% melee and +15% ranged and magic on task. Slayer is how most accounts train, so this is a permanent damage boost."}, {"id": "rune_pouch", "name": "Rune pouch", "img": "Rune_pouch.png", "tier": "S", "cat": "utility", "stage": "early", "how": "750 slayer points, or 75 Last Man Standing points, or buy the note on the GE.", "cost": "750 slayer points or 75 LMS points", "skills": {}, "quests": [], "why": "Three rune types in one slot, 16,000 of each. Frees two inventory spaces on every trip that uses magic."}, {"id": "void", "name": "Void Knight armour", "img": "Elite_void_top.png", "tier": "A", "cat": "combat", "stage": "mid", "how": "Pest Control. Helm 200, top 250, robe 250, gloves 150 commendations. Elite upgrade is 400 more for top and robe.", "cost": "About 850 points per style, 1,250 for elite", "skills": {"attack": 42, "strength": 42, "defence": 42, "hitpoints": 42, "ranged": 42, "magic": 42, "prayer": 22}, "quests": [], "why": "Ranged void is +10% accuracy and damage (12.5% elite), stacks with the salve. The ranged set is the one guides call almost vital."}, {"id": "salve", "name": "Salve amulet (ei)", "img": "Salve_amulet(ei).png", "tier": "A", "cat": "combat", "stage": "mid", "how": "Haunted Mine for the amulet. Lair of Tarn Razorlor to enchant it. Imbue at NMZ, Soul Wars or with a scroll of imbuing.", "cost": "800,000 NMZ points or 320 zeal", "skills": {"crafting": 35, "agility": 15}, "quests": ["Haunted Mine", "Lair of Tarn Razorlor"], "why": "+20% accuracy and damage in every style against undead. Doesn't stack with the slayer helm but does with void."}, {"id": "god_cape", "name": "Imbued god cape", "img": "Imbued_Saradomin_cape.png", "tier": "A", "cat": "combat", "stage": "mid", "how": "Mage Arena (kill Kolodion's four forms) for the god cape, then Mage Arena II in the deep Wilderness to imbue it.", "cost": "Free, risky", "skills": {"magic": 75}, "quests": [], "why": "Best magic cape by a mile: +15 magic attack and +2% magic damage. Needed to get the most out of any staff."}, {"id": "fighter_torso", "name": "Fighter torso", "img": "Fighter_torso.png", "tier": "A", "cat": "combat", "stage": "mid", "how": "Barbarian Assault: 375 honour points in each of the four roles plus one Penance Queen kill.", "cost": "Free, about 3 to 4 hours", "skills": {"defence": 40}, "quests": [], "why": "Same +4 strength as a Bandos chestplate for nothing. Also ticks a hard Kandarin diary task."}, {"id": "arclight", "name": "Arclight", "img": "Arclight.png", "tier": "B", "cat": "combat", "stage": "mid", "how": "Shadow of the Storm for Darklight, then 3 ancient shards from the Catacombs of Kourend on the altar.", "cost": "Free", "skills": {"attack": 75}, "quests": ["Shadow of the Storm"], "why": "+70% accuracy and damage against demons. Beats a tentacle whip on every demon task."}, {"id": "cannon", "name": "Dwarf multicannon", "img": "Dwarf_multicannon.png", "tier": "A", "cat": "combat", "stage": "early", "how": "Finish Dwarf Cannon, then buy the four parts from Nulodion.", "cost": "750,000 gp plus cannonballs", "skills": {}, "quests": ["Dwarf Cannon"], "why": "Doubles the speed of most slayer tasks and trains ranged on the side. Every slayer guide treats it as essential."}, {"id": "herb_sack", "name": "Herb sack", "img": "Herb_sack.png", "tier": "A", "cat": "utility", "stage": "mid", "how": "750 slayer points or 250 Tithe Farm points.", "cost": "750 slayer points", "skills": {"herblore": 58}, "quests": [], "why": "30 of every grimy herb in one slot. Turns herb-dropping tasks and farm runs into bank-free trips."}, {"id": "seed_box", "name": "Seed box", "img": "Seed_box.png", "tier": "B", "cat": "utility", "stage": "mid", "how": "250 Tithe Farm points.", "cost": "250 Tithe Farm points", "skills": {"farming": 34}, "quests": [], "why": "Six seed types in one slot. Saves five spaces on seed-heavy tasks and every farm run."}, {"id": "coal_bag", "name": "Coal bag", "img": "Coal_bag.png", "tier": "B", "cat": "utility", "stage": "early", "how": "100 golden nuggets at Motherlode Mine.", "cost": "100 golden nuggets", "skills": {"mining": 30}, "quests": [], "why": "27 coal in one slot. The thing that makes Blast Furnace steel, mithril, adamant and rune worth doing."}, {"id": "gem_bag", "name": "Gem bag", "img": "Gem_bag.png", "tier": "B", "cat": "utility", "stage": "early", "how": "100 golden nuggets at Motherlode Mine.", "cost": "100 golden nuggets", "skills": {"mining": 30}, "quests": [], "why": "60 of each uncut gem, filled automatically while mining. Useful on gem rocks and most slayer tasks."}, {"id": "plank_sack", "name": "Plank sack", "img": "Plank_sack.png", "tier": "B", "cat": "utility", "stage": "mid", "how": "350 carpenter points from Mahogany Homes.", "cost": "350 carpenter points", "skills": {"construction": 20}, "quests": [], "why": "28 extra planks per trip. Halves the bank trips of every Construction method, and it's the main reason to do Mahogany Homes."}, {"id": "looting_bag", "name": "Looting bag", "img": "Looting_bag.png", "tier": "C", "cat": "utility", "stage": "early", "how": "10 slayer points, or a drop from Wilderness monsters.", "cost": "10 slayer points", "skills": {}, "quests": [], "why": "28 extra slots, Wilderness only. Essential for Wilderness slayer and bosses, useless elsewhere."}, {"id": "colossal_pouch", "name": "Colossal pouch", "img": "Colossal_pouch.png", "tier": "B", "cat": "utility", "stage": "mid", "how": "Buy the abyssal needle for 750 abyssal pearls at Guardians of the Rift and use it on your essence pouches.", "cost": "750 abyssal pearls", "skills": {"crafting": 56}, "quests": ["Temple of the Eye"], "why": "All four essence pouches become one. Runecrafting trips carry 40 more essence."}, {"id": "divine_pouch", "name": "Divine rune pouch", "img": "Divine_rune_pouch.png", "tier": "C", "cat": "utility", "stage": "late", "how": "Thread of Elidinis from Tombs of Amascut on a rune pouch.", "cost": "Thread of Elidinis, roughly 6m", "skills": {"crafting": 75}, "quests": [], "why": "A fourth rune slot. Lovely for raids, nothing before them."}, {"id": "bonecrusher", "name": "Bonecrusher", "img": "Bonecrusher.png", "tier": "A", "cat": "diary", "stage": "mid", "how": "Hard Morytania diary, then claim it from the ghost disciple at the Ectofuntus.", "cost": "Ecto-tokens for charges", "skills": {"prayer": 70, "slayer": 58, "magic": 66, "agility": 71, "woodcutting": 55, "firemaking": 50}, "quests": [], "why": "Buries every bone your kills drop for half XP, full with the elite. Thousands of free prayer levels over an account."}, {"id": "ash_sanctifier", "name": "Ash sanctifier", "img": "Ash_sanctifier.png", "tier": "B", "cat": "diary", "stage": "mid", "how": "Hard Kourend and Kebos diary, from Tyss.", "cost": "Death runes for charges", "skills": {}, "quests": [], "why": "Same idea for demon ashes. Free prayer XP on every demon task."}, {"id": "kandarin_hard", "name": "Kandarin headgear 3", "img": "Kandarin_headgear_4.png", "tier": "A", "cat": "diary", "stage": "mid", "how": "Hard Kandarin diary.", "cost": "Free", "skills": {"agility": 60, "fishing": 70, "firemaking": 65, "thieving": 53, "magic": 56, "fletching": 70, "crafting": 60, "construction": 50, "farming": 55, "woodcutting": 60, "hunter": 60, "smithing": 75}, "quests": [], "why": "Seers' Village rooftop teleport goes to the course start, Camelot teleport to Seers' bank. The fastest Agility from 60 to 90 lives here."}, {"id": "karamja_gloves", "name": "Karamja gloves 3", "img": "Karamja_gloves_3.png", "tier": "B", "cat": "diary", "stage": "mid", "how": "Hard Karamja diary.", "cost": "Free", "skills": {"agility": 53, "cooking": 30, "magic": 59, "mining": 52, "runecrafting": 44, "slayer": 50, "smithing": 40, "strength": 50, "thieving": 50, "woodcutting": 34}, "quests": [], "why": "Free Duradel teleports and the underground gem mine. Makes him a slayer master you can actually use."}, {"id": "explorers_ring", "name": "Explorer's ring 4", "img": "Explorer's_ring_4.png", "tier": "B", "cat": "diary", "stage": "late", "how": "Elite Lumbridge and Draynor diary.", "cost": "Free", "skills": {}, "quests": [], "why": "Fairy rings with no staff, 30 alchs a day, and a sixth slayer block slot. The elite tier is the one that matters."}, {"id": "varrock_med", "name": "Varrock armour 2", "img": "Varrock_armour_2.png", "tier": "B", "cat": "diary", "stage": "early", "how": "Medium Varrock diary.", "cost": "Free", "skills": {}, "quests": [], "why": "Varrock teleport can land at the Grand Exchange, and 30 battlestaves a day from Zaff. The cheapest big daily."}, {"id": "piety", "name": "Piety", "img": "Piety.png", "tier": "S", "cat": "prayer", "stage": "mid", "how": "70 Prayer and 70 Defence, finish King's Ransom and the Knight Waves training ground.", "cost": "Prayer XP, roughly 70 to 150m to 70 at a gilded altar", "skills": {"prayer": 70, "defence": 70}, "quests": ["King's Ransom"], "why": "+23% strength, +20% attack, +25% defence. The biggest single melee multiplier you can own."}, {"id": "protect", "name": "Protection prayers", "img": "Protect_from_Melee.png", "tier": "S", "cat": "prayer", "stage": "early", "how": "43 Prayer. Bury big bones, or bones at a gilded altar.", "cost": "Prayer XP", "skills": {"prayer": 43}, "quests": [], "why": "Blocks melee, ranged or magic damage outright. Nothing else in the game saves as many deaths."}, {"id": "rigour", "name": "Rigour and Augury", "img": "Rigour.png", "tier": "A", "cat": "prayer", "stage": "late", "how": "74 Prayer with a dexterous prayer scroll, 77 with an arcane one. Both drop from Chambers of Xeric or sell on the GE.", "cost": "Scrolls, a few million each", "skills": {"prayer": 77, "defence": 70}, "quests": [], "why": "Piety for ranged and magic. Rigour is +23% ranged damage. Cheap now compared to the gear it multiplies."}, {"id": "ancients", "name": "Ancient Magicks", "img": "Ice_Barrage.png", "tier": "S", "cat": "prayer", "stage": "mid", "how": "Finish Desert Treasure I.", "cost": "Quest items, a few hundred thousand gp", "skills": {"thieving": 53, "firemaking": 50, "magic": 50, "slayer": 10}, "quests": ["Desert Treasure I"], "why": "Bursts, barrages, freezes and blood spells. Unlocks the fastest magic training, bursting slayer tasks, and most PvM later."}, {"id": "lunars", "name": "Lunar spellbook", "img": "Vengeance.png", "tier": "A", "cat": "prayer", "stage": "mid", "how": "Finish Lunar Diplomacy, then Dream Mentor for the rest of the book.", "cost": "Quest items", "skills": {"magic": 65, "crafting": 61, "defence": 40, "firemaking": 49, "herblore": 5, "mining": 60, "woodcutting": 55}, "quests": ["Lunar Diplomacy", "Dream Mentor"], "why": "Vengeance, NPC Contact, Spellbook Swap, Fertile Soil, Humidify. The support book every skiller and bosser ends up on."}, {"id": "pool", "name": "Ornate rejuvenation pool", "img": "Ornate_rejuvenation_pool_icon.png", "tier": "S", "cat": "house", "stage": "mid", "how": "90 Construction (82 with crystal saw and spicy stew). Build up from the restoration pool at 65.", "cost": "About 2.1m for the full upgrade", "skills": {"construction": 90}, "quests": [], "why": "Full heal, prayer, run, special attack and cures, every time you go home. The house becomes your base after this."}, {"id": "jewellery_box", "name": "Ornate jewellery box", "img": "Ornate_jewellery_box_icon.png", "tier": "S", "cat": "house", "stage": "mid", "how": "81 Construction for the basic box, 83 for ornate.", "cost": "About 740k across the three tiers", "skills": {"construction": 83}, "quests": [], "why": "Unlimited glory, ring of dueling, games necklace, skills necklace, combat bracelet and ring of wealth teleports from one object."}, {"id": "nexus", "name": "Portal nexus", "img": "Portal_nexus_icon.png", "tier": "A", "cat": "house", "stage": "mid", "how": "72 Construction for the nexus, 92 for the crystalline one that holds everything.", "cost": "Thousands of runes per destination, tens of millions for all 31", "skills": {"construction": 72}, "quests": [], "why": "Every teleport spell in the game, no runes, from your house. Pair it with the pool and you never need a bank between trips."}, {"id": "occult_altar", "name": "Occult altar", "img": "Occult_altar_icon.png", "tier": "A", "cat": "house", "stage": "late", "how": "90 Construction. Needs the ancient, lunar and Arceuus signets plus a pile of runes.", "cost": "About 4.5m upgrading an ancient altar, 13m from scratch", "skills": {"construction": 90}, "quests": ["Desert Treasure I", "Lunar Diplomacy", "A Kingdom Divided"], "why": "Swap between all four spellbooks at home. Without it you're walking to altars or wearing the magic cape."}, {"id": "crystal_saw", "name": "Crystal saw", "img": "Crystal_saw.png", "tier": "B", "cat": "house", "stage": "early", "how": "Finish The Eyes of Glouphrie.", "cost": "Free", "skills": {"construction": 5, "magic": 46}, "quests": ["The Eyes of Glouphrie"], "why": "Invisible +3 Construction that stacks with stew. Every big house build gets cheaper by three levels."}, {"id": "magic_secateurs", "name": "Magic secateurs", "img": "Magic_secateurs.png", "tier": "A", "cat": "skilling", "stage": "early", "how": "Finish Fairytale I.", "cost": "Free", "skills": {}, "quests": ["Fairytale I - Growing Pains"], "why": "10% more herbs from every patch, forever. The best free item for anyone doing herb runs, which is everyone."}, {"id": "prospector", "name": "Prospector kit", "img": "Prospector_jacket.png", "tier": "B", "cat": "skilling", "stage": "early", "how": "180 golden nuggets at Motherlode Mine.", "cost": "180 golden nuggets", "skills": {"mining": 30}, "quests": [], "why": "2.5% Mining XP and the helmet is a hard Falador task. You get it while you're already there."}, {"id": "lumberjack", "name": "Lumberjack outfit", "img": "Lumberjack_top.png", "tier": "C", "cat": "skilling", "stage": "early", "how": "Temple Trekking, from undead lumberjacks.", "cost": "Free, under an hour", "skills": {"woodcutting": 44}, "quests": ["In Aid of the Myreque"], "why": "2.5% Woodcutting XP, and the full set is a master clue step."}, {"id": "pyromancer", "name": "Pyromancer outfit", "img": "Pyromancer_garb.png", "tier": "C", "cat": "skilling", "stage": "early", "how": "Wintertodt supply crates.", "cost": "Free", "skills": {"firemaking": 50}, "quests": [], "why": "2.5% Firemaking XP. You'll have it by 99 without trying."}, {"id": "farmers", "name": "Farmer's outfit", "img": "Farmer's_jacket.png", "tier": "C", "cat": "skilling", "stage": "mid", "how": "400 Tithe Farm points for the set.", "cost": "400 Tithe Farm points", "skills": {"farming": 34}, "quests": [], "why": "2.5% Farming XP, a tiny lift on tree and herb runs. Get the seed box and herb sack from the same shop first."}, {"id": "rogue", "name": "Rogue outfit", "img": "Rogue_top.png", "tier": "B", "cat": "skilling", "stage": "mid", "how": "Rogues' Den safe-cracking minigame.", "cost": "Free, a few hours", "skills": {"thieving": 50, "agility": 50}, "quests": [], "why": "Double loot from every pickpocket with the full set. Doubles Thieving gp for the rest of the account."}, {"id": "raiments", "name": "Raiments of the eye", "img": "Colossal_pouch.png", "tier": "B", "cat": "skilling", "stage": "mid", "how": "1,350 abyssal pearls across the four pieces at Guardians of the Rift.", "cost": "1,350 abyssal pearls", "skills": {"runecrafting": 27}, "quests": ["Temple of the Eye"], "why": "60% more runes with the full set. Runecrafting profit and GOTR points both climb."}, {"id": "dragon_scim", "name": "Dragon scimitar", "img": "Dragon_scimitar.png", "tier": "A", "cat": "gear", "stage": "early", "how": "Finish Monkey Madness I, buy it in Zanaris or Ape Atoll.", "cost": "100,000 gp", "skills": {"attack": 60}, "quests": ["Monkey Madness I"], "why": "The main melee weapon from 60 to 70 Attack and the first one that feels fast."}, {"id": "whip", "name": "Abyssal whip", "img": "Abyssal_whip.png", "tier": "A", "cat": "gear", "stage": "mid", "how": "GE, or a 1 in 512 drop from abyssal demons at 85 Slayer.", "cost": "Roughly 1m", "skills": {"attack": 70}, "quests": [], "why": "Fast, accurate and cheap. Carries slayer from 70 Attack to the raids weapons."}, {"id": "blowpipe", "name": "Toxic blowpipe", "img": "Toxic_blowpipe.png", "tier": "A", "cat": "gear", "stage": "mid", "how": "GE, or a tanzanite fang from Zulrah after Regicide.", "cost": "Roughly 10m plus scales and darts", "skills": {"ranged": 75}, "quests": [], "why": "The fastest weapon in the game. Zulrah, Vorkath, most slayer tasks, the gauntlet. Still the mid-game ranged weapon."}, {"id": "fury", "name": "Amulet of fury", "img": "Amulet_of_fury.png", "tier": "B", "cat": "gear", "stage": "mid", "how": "GE, from onyx.", "cost": "Roughly 3m", "skills": {}, "quests": [], "why": "+10 to everything. One amulet for all three styles until Torture, Anguish and Occult."}, {"id": "occult", "name": "Occult necklace", "img": "Occult_necklace.png", "tier": "A", "cat": "gear", "stage": "mid", "how": "GE, or a drop from smoke devils at 93 Slayer.", "cost": "Roughly 400k", "skills": {"magic": 70}, "quests": [], "why": "+5% magic damage for a few hundred thousand. The best damage per gp in the game."}, {"id": "dboots", "name": "Dragon boots", "img": "Dragon_boots.png", "tier": "B", "cat": "gear", "stage": "mid", "how": "GE, or spiritual mages at 83 Slayer.", "cost": "Roughly 200k", "skills": {"defence": 60}, "quests": [], "why": "+4 strength in the boot slot for pocket change. Becomes primordials later."}, {"id": "neit", "name": "Helm of Neitiznot", "img": "Helm_of_Neitiznot.png", "tier": "B", "cat": "gear", "stage": "early", "how": "Finish The Fremennik Isles, buy it from Mawnis Burowgar.", "cost": "50,000 gp", "skills": {"defence": 55, "construction": 20, "crafting": 46, "woodcutting": 56}, "quests": ["The Fremennik Isles"], "why": "+3 strength and +3 prayer with real defence. The melee helmet from 55 Defence until the faceguard."}, {"id": "berserker_i", "name": "Berserker ring (i)", "img": "Berserker_ring_(i).png", "tier": "B", "cat": "gear", "stage": "mid", "how": "Dagannoth Rex drop or GE, then 650,000 NMZ points or 260 zeal to imbue.", "cost": "Roughly 5m plus the imbue", "skills": {}, "quests": [], "why": "+8 strength in the ring slot. The imbue doubles it, which is why NMZ points matter."}, {"id": "fossil", "name": "Fossil Island", "img": "Oak_bird_house.png", "tier": "A", "cat": "access", "stage": "early", "how": "The Dig Site, 100 kudos at the Varrock Museum, then Bone Voyage.", "cost": "Free", "skills": {}, "quests": ["The Dig Site", "Bone Voyage"], "why": "Birdhouse runs (the best passive Hunter XP), ammonite crabs, the herbiboar, hardwood patches and Volcanic Mine."}, {"id": "priff", "name": "Prifddinas", "img": "Crystal_saw.png", "tier": "A", "cat": "access", "stage": "late", "how": "Finish Song of the Elves.", "cost": "Quest items", "skills": {"agility": 70, "construction": 70, "farming": 70, "herblore": 70, "hunter": 70, "mining": 70, "smithing": 70, "woodcutting": 70}, "quests": ["Song of the Elves"], "why": "The Gauntlet and the bow of faerdhinen, Zalcano, the best crafting and thieving spots, a teleport crystal. The biggest late unlock."}, {"id": "morytania", "name": "Morytania", "img": "Drakan's_medallion.png", "tier": "S", "cat": "access", "stage": "early", "how": "Finish Priest in Peril. A Taste of Hope later gives Drakan's medallion for teleports.", "cost": "Free", "skills": {}, "quests": ["Priest in Peril"], "why": "Barrows, the Slayer Tower, Canifis rooftops and the Ectofuntus. Half the early game sits behind one short quest."}, {"id": "quest_cape", "name": "Quest point cape", "img": "Quest_point_cape.png", "tier": "B", "cat": "access", "stage": "late", "how": "Every quest.", "cost": "99,000 gp", "skills": {}, "quests": ["All of them"], "why": "Unlimited teleport to the Legends' Guild, which has a fairy ring, and the proof you've unlocked everything above."}, {"id": "kharedst", "name": "Kharedst's memoirs", "img": "Kharedst's_memoirs.png", "tier": "C", "cat": "travel", "stage": "early", "how": "Finish Client of Kourend. Each Kourend quest adds a page.", "cost": "Free", "skills": {}, "quests": ["Client of Kourend"], "why": "Teleports around Kourend early. Replaced by the book of the dead later."}, {"id": "slayer_ring", "name": "Slayer ring (eternal)", "img": "Slayer_ring_(eternal).png", "tier": "B", "cat": "travel", "stage": "mid", "how": "Unlock Ring Bling for 150 slayer points, then craft the eternal ring from an eternal gem.", "cost": "150 slayer points, eternal gem from superiors", "skills": {"crafting": 75}, "quests": [], "why": "Unlimited teleports to the slayer caves and straight to Nieve. Cuts the dead time between tasks."}, {"id": "holy_wrench", "name": "Holy wrench", "img": "Holy_wrench.png", "tier": "C", "cat": "combat", "stage": "mid", "how": "Finish Rum Deal.", "cost": "Free", "skills": {"crafting": 42, "fishing": 50, "farming": 40, "prayer": 47, "slayer": 42}, "quests": ["Rum Deal"], "why": "Every prayer potion restores a little more. Small, but it never stops paying once your Prayer is 70+."}, {"id": "chugging", "name": "Chugging barrel", "img": "Chugging_barrel.png", "tier": "C", "cat": "utility", "stage": "late", "how": "Mastering Mixology reward shop.", "cost": "Mixology resin", "skills": {"herblore": 60}, "quests": [], "why": "Drinks five potions in one click. A raids item, nothing before them."}, {"id": "expeditious", "name": "Expeditious and slaughter bracelets", "img": "Expeditious_bracelet.png", "tier": "B", "cat": "combat", "stage": "mid", "how": "Enchant an opal bracelet (expeditious) or a jade one (slaughter). Cheap on the GE.", "cost": "A few thousand gp each", "skills": {"magic": 7}, "quests": [], "why": "Expeditious skips kills on tasks you hate, slaughter adds kills to the ones you love. Free slayer XP either way."}]};
+const ME = {"levels": {"attack": 85, "defence": 80, "strength": 90, "hitpoints": 87, "ranged": 74, "prayer": 70, "magic": 71, "cooking": 67, "woodcutting": 46, "fletching": 33, "fishing": 52, "firemaking": 50, "crafting": 61, "smithing": 65, "mining": 59, "herblore": 38, "agility": 57, "thieving": 55, "slayer": 55, "farming": 68, "runecrafting": 47, "hunter": 51, "construction": 72, "sailing": 80}, "questsDone": ["A Porcine of Interest", "A Ruff Situation", "Alfred Grimhand's Barcrawl", "Animal Magnetism", "Big Chompy Bird Hunting", "Biohazard", "Black Knights' Fortress", "Bone Voyage", "Children of the Sun", "Client of Kourend", "Cook's Assistant", "Current Affairs", "Daddy's Home", "Death Plateau", "Death on the Isle", "Death to the Dorgeshuun", "Demon Slayer", "Desert Treasure I", "Doric's Quest", "Dragon Slayer I", "Druidic Ritual", "Dwarf Cannon", "Elemental Workshop I", "Elemental Workshop II", "Enter the Abyss", "Ernest the Chicken", "Ethically Acquired Antiquities", "Fairytale I - Growing Pains", "Fallen From Grace", "Family Crest", "Fight Arena", "Fishing Contest", "Forgettable Tale...", "Gertrude's Cat", "Ghosts Ahoy", "Goblin Diplomacy", "Hazeel Cult", "Heroes' Quest", "His Faithful Servants", "Holy Grail", "Horror from the Deep", "Icthlarin's Little Helper", "Imp Catcher", "Jungle Potion", "Learning the Ropes", "Lost City", "Making History", "Merlin's Crystal", "Misthalin Mystery", "Monk's Friend", "Monkey Madness I", "Mountain Daughter", "Murder Mystery", "Nature Spirit", "Pandemonium", "Perilous Moons", "Plague City", "Priest in Peril", "Prince Ali Rescue", "Prying Times", "Rag and Bone Man I", "Ratcatchers", "Recipe for Disaster", "Recipe for Disaster/Another Cook's Quest", "Recipe for Disaster/Defeating the Culinaromancer", "Recipe for Disaster/Freeing Evil Dave", "Recipe for Disaster/Freeing King Awowogei", "Recipe for Disaster/Freeing Pirate Pete", "Recipe for Disaster/Freeing Sir Amik Varze", "Recipe for Disaster/Freeing Skrach Uglogwee", "Recipe for Disaster/Freeing the Goblin generals", "Recipe for Disaster/Freeing the Lumbridge Guide", "Recipe for Disaster/Freeing the Mountain Dwarf", "Recruitment Drive", "Romeo & Juliet", "Rune Mysteries", "Shadow of the Storm", "Sheep Shearer", "Shield of Arrav", "Shilo Village", "Sleeping Giants", "Temple of Ikov", "Temple of the Eye", "The Dig Site", "The Feud", "The Fremennik Isles", "The Fremennik Trials", "The Giant Dwarf", "The Golem", "The Grand Tree", "The Ides of Milk", "The Knight's Sword", "The Lost Tribe", "The Queen of Thieves", "The Restless Ghost", "The Ribbiting Tale of a Lily Pad Labour Dispute", "The Tourist Trap", "Tower of Life", "Tree Gnome Village", "Tribal Totem", "Troll Stronghold", "Twilight's Promise", "Underground Pass", "Vampyre Slayer", "Wanted!", "Waterfall Quest", "Witch's House", "Witch's Potion", "X Marks the Spot"], "inProgress": ["Fairytale II - Cure a Queen", "Legends' Quest", "Rag and Bone Man II", "Regicide"], "qp": null};
+const WIKI = "https://oldschool.runescape.wiki/images/";
+const SKILLS = ["attack","strength","defence","ranged","prayer","magic","runecrafting","construction","hitpoints","agility","herblore","thieving","crafting","fletching","slayer","hunter","mining","smithing","fishing","cooking","firemaking","woodcutting","farming"];
+const nice = s => s==="runecrafting" ? "Runecraft" : s.charAt(0).toUpperCase()+s.slice(1);
+const skillIcon = s => WIKI + nice(s) + "_icon.png";
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const doneQ = new Set(ME.questsDone), progQ = new Set(ME.inProgress);
+let owned = new Set(); try{ owned = new Set(JSON.parse(localStorage.getItem("upg_owned")||"[]")); }catch(e){}
+function saveOwned(){ try{ localStorage.setItem("upg_owned", JSON.stringify([...owned])); }catch(e){} }
+
+// quest strings in the data carry a note in brackets: "(started)" means in progress counts.
+function questParts(q){ const m=/^(.*?)\s*\((.*)\)\s*$/.exec(q); return m?{n:m[1],note:m[2]}:{n:q,note:""}; }
+function questOk(q){ const p=questParts(q); if(doneQ.has(p.n)) return true; if(/started/.test(p.note) && progQ.has(p.n)) return true; return false; }
+function status(it){
+  if(owned.has(it.id)) return {k:"have", dist:0, gaps:[], qmiss:[], text:"Got it"};
+  const gaps = Object.entries(it.skills||{}).map(([s,need])=>({s,need,have:ME.levels[s]||1})).filter(g=>g.need>g.have);
+  const qmiss = (it.quests||[]).filter(q=>!questOk(q)).map(q=>questParts(q).n);
+  const dist = gaps.reduce((a,g)=>a+g.need-g.have,0);
+  if(!gaps.length && !qmiss.length) return {k:"ready", dist:0, gaps, qmiss, text:"Ready now"};
+  if(dist<=3 && !qmiss.length) return {k:"close", dist, gaps, qmiss, text: dist===1?"1 level away":dist+" levels away"};
+  const bits=[]; if(gaps.length) bits.push(dist+" level"+(dist>1?"s":"")); if(qmiss.length) bits.push(qmiss.length===1?qmiss[0]:qmiss.length+" quests");
+  return {k:"later", dist: dist + qmiss.length*8, gaps, qmiss, text: bits.join(" · ")};
+}
+const items = DATA.items.map(it=>({...it, st:status(it)}));
+const byId = Object.fromEntries(items.map(i=>[i.id,i]));
+const img = it => `<img src="${WIKI}${it.img}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`;
+
+function renderSub(){
+  const n = items.length, r = items.filter(i=>i.st.k==="ready").length, c = items.filter(i=>i.st.k==="close").length, h = owned.size;
+  document.getElementById("sub").textContent = `${n} upgrades · ${r} you qualify for right now · ${c} within three levels${h?` · ${h} ticked off`:""}`;
+}
+function renderRail(){
+  const rank = {close:0, ready:1, later:2};
+  const pick = items.filter(i=>i.st.k!=="have").sort((a,b)=>rank[a.st.k]-rank[b.st.k] || a.st.dist-b.st.dist || (a.tier<b.tier?-1:1)).slice(0,6);
+  document.getElementById("rail").innerHTML = pick.map(i=>`<button class="nx" data-open="${i.id}"><span class="ico">${img(i)}</span><span><b>${esc(i.name)}</b><small class="st ${i.st.k}"><i></i>${esc(i.st.text)}</small></span></button>`).join("");
+}
+function renderLadders(){
+  const rows = SKILLS.map(s=>{
+    const have = ME.levels[s]||1;
+    const its = items.filter(i=>i.skills && i.skills[s]).map(i=>({it:i, need:i.skills[s]})).sort((a,b)=>a.need-b.need);
+    if(!its.length) return null;
+    const next = its.filter(x=>x.need>have)[0];
+    return {s, have, its, next, sortKey: next ? next.need-have : 999};
+  }).filter(Boolean).sort((a,b)=>a.sortKey-b.sortKey);
+  const pct = lv => ((lv-1)/98*100).toFixed(2)+"%";
+  document.getElementById("ladders").innerHTML = rows.map(r=>{
+    // beeswarm: same level stacks vertically so the scale stays honest
+    const groups = {}; r.its.forEach(x=>{ (groups[x.need] ||= []).push(x); });
+    const tall = Object.values(groups).some(g=>g.length>1);
+    const marks = r.its.map(x=>{
+      const g = groups[x.need], k = g.indexOf(x), off = (k-(g.length-1)/2)*32;
+      const st = x.it.st.k;
+      return `<button class="it ${st}" style="left:${pct(x.need)}; margin-top:${off}px" data-open="${x.it.id}" data-tip="${esc(x.it.name)}|${nice(r.s)} ${r.have} → ${x.need}${x.need>r.have?` · ${x.need-r.have} to go`:" · level met"}${x.it.st.qmiss.length?` · needs ${esc(x.it.st.qmiss.join(", "))}`:""}">${img(x.it)}</button>`;
+    }).join("");
+    const nxt = r.next ? `<div class="nxt"><b>${esc(r.next.it.name)}</b>${r.next.need-r.have} level${r.next.need-r.have>1?"s":""} to go</div>` : `<div class="nxt all">All ${r.its.length} unlocked</div>`;
+    return `<div class="lad"><div class="sk"><img src="${skillIcon(r.s)}" alt=""><b>${nice(r.s)}</b><span class="lv">${r.have}</span></div>
+      <div class="track${tall?" tall":""}"><div class="rail2"></div><div class="fill" style="width:${pct(r.have)}"></div>
+        <div class="grid" style="left:25%"></div><div class="grid" style="left:50%"></div><div class="grid" style="left:75%"></div>
+        ${marks}<div class="me" style="left:${pct(r.have)}" data-lv="${r.have}"></div></div>${nxt}</div>`;
+  }).join("");
+  const qonly = items.filter(i=>!Object.keys(i.skills||{}).length).sort((a,b)=>a.st.dist-b.st.dist);
+  document.getElementById("qonly").innerHTML = qonly.map(i=>`<button class="chip ${i.st.k}" data-open="${i.id}">${img(i)}${esc(i.name)}<span class="st ${i.st.k}"><i></i></span></button>`).join("");
+}
+function renderSets(){
+  const order = {have:0, ready:1, close:2, later:3};
+  document.getElementById("sets").innerHTML = Object.entries(DATA.cats).map(([c,label])=>{
+    const its = items.filter(i=>i.cat===c).sort((a,b)=>order[a.st.k]-order[b.st.k] || a.st.dist-b.st.dist);
+    const n=its.length, h=its.filter(i=>i.st.k==="have").length, r=its.filter(i=>i.st.k==="ready").length, cl=its.filter(i=>i.st.k==="close").length;
+    return `<div class="set"><h3>${esc(label)}<small>${h+r} of ${n} in reach</small></h3>
+      <div class="bar"><i class="h" style="width:${h/n*100}%"></i><i class="g" style="width:${r/n*100}%"></i><i class="y" style="width:${cl/n*100}%"></i></div>
+      ${its.map(i=>`<div class="row" data-open="${i.id}"><span class="ico">${img(i)}</span><span class="nm"><b>${esc(i.name)}</b><small>${esc(i.why.split(". ")[0])}.</small></span><span class="st ${i.st.k}"><i></i>${esc(i.st.text)}</span></div>`).join("")}</div>`;
+  }).join("");
+}
+function renderStages(){
+  const S = {early:["Early","Before the 60s. The cheap wins every guide names first."], mid:["Mid","60s to 80s. Where most of the big step-ups live."], late:["Late","High levels, long quests, or a grind of its own."]};
+  const order = {have:0, ready:1, close:2, later:3};
+  document.getElementById("stages").innerHTML = Object.entries(S).map(([k,[t,p]])=>{
+    const its = items.filter(i=>i.stage===k).sort((a,b)=>order[a.st.k]-order[b.st.k] || a.st.dist-b.st.dist);
+    return `<div class="stage"><h3>${t}</h3><p>${p}</p>${its.map(i=>`<div class="row" data-open="${i.id}"><span class="ico">${img(i)}</span><span class="nm"><b>${esc(i.name)}</b><small>${esc(DATA.cats[i.cat])}</small></span><span class="st ${i.st.k}"><i></i>${esc(i.st.text)}</span></div>`).join("")}</div>`;
+  }).join("");
+}
+function openSheet(id){
+  const it = byId[id]; if(!it) return;
+  const skills = Object.entries(it.skills||{}).sort((a,b)=>b[1]-a[1]).map(([s,need])=>{
+    const have = ME.levels[s]||1, ok = have>=need;
+    return `<div class="req ${ok?"ok":""}" data-skill="${s}" title="Opens Grind on ${nice(s)}"><img src="${skillIcon(s)}" alt=""><span class="nm">${nice(s)}<small>${ok?"level met":(need-have)+" to go"}</small></span><span class="vals"><b>${have}</b> / ${need}</span><span class="pb"><i style="width:${Math.min(100,have/need*100)}%"></i></span></div>`;
+  }).join("");
+  const quests = (it.quests||[]).map(q=>{ const p=questParts(q), ok=questOk(q); return `<button class="qchip ${ok?"ok":""}" data-quest="${esc(p.n)}"><span>${esc(p.n)}${p.note?` <span style="color:var(--muted)">(${esc(p.note)})</span>`:""}</span><span class="m">${ok?"✓ done":"⌖ Map"}</span></button>`; }).join("");
+  const have = owned.has(it.id);
+  document.getElementById("sheet").innerHTML = `<button class="x" data-close>✕</button>
+    <div class="hero"><span class="ico">${img(it)}</span><div><h3>${esc(it.name)}</h3><div class="meta">${esc(DATA.cats[it.cat])} · ${it.stage} game · <span class="st ${it.st.k}"><i></i>${esc(it.st.text)}</span></div></div></div>
+    <p>${esc(it.why)}</p>
+    <h5>How you get it</h5><p>${esc(it.how)}</p>
+    <h5>Cost</h5><p>${esc(it.cost)}</p>
+    ${skills?`<h5>Levels</h5>${skills}`:""}
+    ${quests?`<h5>Quests</h5><div>${quests}</div>`:""}
+    <div class="acts">
+      <button class="btn pri" data-own="${it.id}">${have?"✓ Got it":"Got it"}</button>
+      <button class="btn" data-toast="Pinned ${esc(it.name)} to the Map board">📌 Pin</button>
+      <button class="btn" data-toast="Sent ${esc(it.name)} to Notes with its requirements">📝 Send to notes</button>
+      <a class="btn" href="https://oldschool.runescape.wiki/w/${encodeURIComponent(it.name.replace(/ /g,"_"))}" target="_blank" rel="noopener">Wiki ↗</a>
+    </div>
+    <div class="note">Tap a level row to jump to that skill on Grind, or a quest to open it on Map with its path lit.</div>`;
+  document.getElementById("sheet").classList.add("on"); document.getElementById("scrim").classList.add("on");
+  document.querySelectorAll(".it.on").forEach(e=>e.classList.remove("on"));
+  document.querySelectorAll(`.it[data-open="${id}"]`).forEach(e=>e.classList.add("on"));
+}
+function closeSheet(){ document.getElementById("sheet").classList.remove("on"); document.getElementById("scrim").classList.remove("on"); document.querySelectorAll(".it.on").forEach(e=>e.classList.remove("on")); }
+let toastT; function toast(t){ const el=document.getElementById("toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove("on"),2200); }
+function renderAll(){ items.forEach(i=>i.st=status(i)); renderSub(); renderRail(); renderLadders(); renderSets(); renderStages(); }
+renderAll();
+
+document.addEventListener("click", e=>{
+  const o = e.target.closest("[data-open]"); if(o){ openSheet(o.dataset.open); return; }
+  if(e.target.closest("[data-close]") || e.target.id==="scrim"){ closeSheet(); return; }
+  const v = e.target.closest("[data-v],[data-nav]"); if(v){ const id=v.dataset.v||v.dataset.nav;
+    document.querySelectorAll("#seg button").forEach(b=>b.classList.toggle("on", b.dataset.v===id));
+    document.querySelectorAll(".side [data-nav]").forEach(b=>b.classList.toggle("on", b.dataset.nav===id));
+    document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on", x.id==="v-"+id)); return; }
+  const q = e.target.closest("[data-quest]"); if(q){ toast(`Map → ${q.dataset.quest}: tree lit along the path, details open`); return; }
+  const s = e.target.closest("[data-skill]"); if(s){ toast(`Grind → ${nice(s.dataset.skill)}`); return; }
+  const t = e.target.closest("[data-toast]"); if(t){ toast(t.dataset.toast); return; }
+  const w = e.target.closest("[data-own]"); if(w){ const id=w.dataset.own; owned.has(id)?owned.delete(id):owned.add(id); saveOwned(); renderAll(); openSheet(id); toast(owned.has(id)?"Ticked off. It now counts toward the set.":"Unticked."); return; }
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeSheet(); });
+const tip = document.getElementById("tip");
+document.addEventListener("mouseover", e=>{ const m=e.target.closest("[data-tip]"); if(!m){ tip.style.display="none"; return; } const [a,b]=m.dataset.tip.split("|"); tip.innerHTML=`<b>${esc(a)}</b><span>${esc(b)}</span>`; tip.style.display="block"; });
+document.addEventListener("mousemove", e=>{ if(tip.style.display!=="block") return; const x=Math.min(e.clientX+14, innerWidth-250), y=Math.max(8, e.clientY-54); tip.style.left=x+"px"; tip.style.top=y+"px"; });
+</script>
+</body>
+</html>
