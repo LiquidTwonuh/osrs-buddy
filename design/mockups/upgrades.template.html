@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Big upgrades</title>
+<style>
+  :root{
+    --bg:#1a1712; --bg2:#241f18; --panel:#26211a; --panel2:#2f2820; --border:#4a3f2e;
+    --gold:#e6c35c; --gold-dim:#b9974a; --gold2:#c9a642; --gold3:#8a6f2e;
+    --text:#e8e0cf; --muted:#a99b7d; --inset:#15120d; --active:#3a3122;
+    --btnlo:#2a2318; --btnhov1:#463a26; --glow:rgba(230,195,92,.18);
+    --green:#6fbf5b; --green-bg:#2c3d24; --red:#d46a5a; --blue:#5a9fd4;
+    --shadow:0 2px 0 #0e0b07, 0 6px 14px rgba(0,0,0,.4);
+    --font-display:"EB Garamond",Georgia,serif;
+    --font-body:"Segoe UI",system-ui,sans-serif;
+    --hair:rgba(255,255,255,.07);
+    --S:#e6c35c; --A:#9fdcec; --B:#a4d98a; --C:#a99b7d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:14px}
+  .wrap{max-width:1040px; margin:0 auto; padding:28px 20px 80px}
+  .lt{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:6px}
+  .lt h1{margin:0; font-family:var(--font-display); font-size:36px; font-weight:600; color:var(--gold); line-height:1}
+  .lt .sub{color:var(--muted); font-size:13px; margin-top:6px; max-width:620px; line-height:1.45}
+  .note{font-size:12px; color:var(--muted); margin:10px 0 18px; line-height:1.5}
+  .bar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:14px 0 22px}
+  .seg{display:inline-flex; background:var(--inset); padding:3px; border-radius:10px; gap:2px}
+  .seg button{font:inherit; font-size:13px; border:0; background:none; color:var(--muted); padding:6px 12px; border-radius:8px; cursor:pointer}
+  .seg button.on{background:var(--panel2); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .chips{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{font:inherit; font-size:12px; padding:4px 10px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:var(--muted); cursor:pointer}
+  .chip.on{border-color:var(--gold3); color:var(--gold); background:var(--active)}
+  .tier{display:grid; grid-template-columns:72px 1fr; gap:0; background:var(--panel); border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:14px; box-shadow:var(--shadow)}
+  .tier .lab{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; background:var(--panel2); border-right:1px solid var(--border); padding:14px 6px}
+  .tier .lab b{font-family:var(--font-display); font-size:34px; line-height:1}
+  .tier .lab small{font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-align:center; line-height:1.3}
+  .tier[data-t="S"] .lab b{color:var(--S)} .tier[data-t="A"] .lab b{color:var(--A)} .tier[data-t="B"] .lab b{color:var(--B)} .tier[data-t="C"] .lab b{color:var(--C)}
+  .cells{display:flex; flex-wrap:wrap; gap:8px; padding:10px}
+  .cell{display:flex; align-items:center; gap:9px; background:var(--inset); border:1px solid var(--border); border-radius:10px; padding:7px 11px 7px 7px; cursor:pointer; min-width:0}
+  .cell:hover{border-color:var(--gold3); background:var(--active)}
+  .cell.on{border-color:var(--gold); box-shadow:0 0 0 3px var(--glow)}
+  .cell .ic{width:32px; height:32px; display:grid; place-items:center; flex:none}
+  .cell .ic img{max-width:32px; max-height:32px; image-rendering:pixelated}
+  .cell b{font-weight:600; font-size:13px; white-space:nowrap}
+  .cell small{display:block; color:var(--muted); font-size:11px}
+  .cell.dim{opacity:.28}
+  /* detail sheet */
+  .sheet{position:fixed; right:0; top:0; bottom:0; width:440px; max-width:100%; background:var(--bg2); border-left:1px solid var(--border); box-shadow:-20px 0 60px rgba(0,0,0,.5); transform:translateX(100%); transition:transform .28s cubic-bezier(.2,.7,.2,1); overflow:auto; padding:22px 22px 40px; z-index:10}
+  .sheet.on{transform:none}
+  .sheet .x{position:absolute; top:12px; right:14px; background:none; border:0; color:var(--muted); font-size:22px; cursor:pointer}
+  .sheet .hd{display:flex; gap:14px; align-items:center; margin-bottom:6px}
+  .sheet .hd .big{width:64px; height:64px; display:grid; place-items:center; background:var(--inset); border:1px solid var(--border); border-radius:14px; flex:none}
+  .sheet .hd .big img{max-width:52px; max-height:52px; image-rendering:pixelated}
+  .sheet h2{margin:0; font-family:var(--font-display); font-size:24px; color:var(--gold); font-weight:600; line-height:1.1}
+  .sheet .meta{color:var(--muted); font-size:12.5px; margin-top:4px}
+  .tpill{display:inline-block; font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--border); margin-right:6px}
+  .why{font-size:15px; line-height:1.5; margin:14px 0 18px; color:var(--text)}
+  .grp{margin-bottom:16px}
+  .grp .h{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:0 2px 6px}
+  .list{background:var(--panel); border:1px solid var(--border); border-radius:12px; overflow:hidden}
+  .row{display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid var(--hair); font-size:13.5px}
+  .row:last-child{border-bottom:0}
+  .row .ic{width:20px; height:20px; display:grid; place-items:center; flex:none} .row .ic img{width:18px; height:18px}
+  .row .r{margin-left:auto; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+  .row .r.ok{color:var(--green)} .row .r.no{color:var(--red)}
+  .row.plain{color:var(--text); line-height:1.45}
+  .empty{color:var(--muted); font-size:13px; padding:10px 12px}
+  .you{display:flex; gap:8px; align-items:center; margin:0 0 14px; font-size:12.5px; color:var(--muted)}
+  .you input{width:70px; background:var(--inset); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:5px 8px; font:inherit}
+  .foot{margin-top:30px; color:var(--muted); font-size:12px; line-height:1.5; border-top:1px solid var(--border); padding-top:14px}
+  @media (max-width:720px){ .tier{grid-template-columns:52px 1fr} .tier .lab b{font-size:26px} .tier .lab small{display:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="lt">
+    <div><h1>Big upgrades</h1><div class="sub">The unlocks that change how an account plays, tiered. Tap one for what it does, what it costs and what you need. Mockup: the real page would mark what you already have and what you're one level from.</div></div>
+  </div>
+  <div class="bar">
+    <div class="seg" id="view"><button class="on" data-v="tier">Tier list</button><button data-v="stage">By stage</button></div>
+    <div class="chips" id="cats"></div>
+  </div>
+  <div class="you">Pretend you're level <input id="lvl" type="number" value="60" min="1" max="99"> in everything, so the sheet can colour requirements. (The app uses your real levels.)</div>
+  <div id="board"></div>
+  <div class="foot" id="about"></div>
+</div>
+<div class="sheet" id="sheet"><button class="x" id="sx">×</button><div id="sbody"></div></div>
+<script>
+/*DATA*/
+const WIKI = "https://oldschool.runescape.wiki/images/";
+const STAGES = {early:"Early game", mid:"Mid game", late:"Late game"};
+let view = "tier", cat = null, sel = null;
+const nice = s => s.charAt(0).toUpperCase()+s.slice(1);
+const skillIcon = s => WIKI + (s==="runecrafting"?"Runecraft":nice(s)) + "_icon.png";
+const lvl = () => Math.max(1, Math.min(99, parseInt(document.getElementById("lvl").value)||1));
+function cellHtml(it){
+  const dim = cat && it.cat !== cat;
+  return `<div class="cell ${sel===it.id?"on":""} ${dim?"dim":""}" data-id="${it.id}">
+    <span class="ic"><img src="${WIKI+it.img}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'•'}))"></span>
+    <span><b>${it.name}</b><small>${DATA.cats[it.cat]}</small></span></div>`;
+}
+function render(){
+  const b = document.getElementById("board");
+  if(view==="tier"){
+    b.innerHTML = Object.entries(DATA.tiers).map(([t,lab])=>`<div class="tier" data-t="${t}"><div class="lab"><b>${t}</b><small>${lab}</small></div><div class="cells">${DATA.items.filter(i=>i.tier===t).map(cellHtml).join("")}</div></div>`).join("");
+  } else {
+    b.innerHTML = Object.entries(STAGES).map(([s,lab])=>`<div class="tier" data-t="${s==="early"?"S":s==="mid"?"A":"B"}"><div class="lab"><small>${lab}</small></div><div class="cells">${DATA.items.filter(i=>i.stage===s).sort((a,b)=>a.tier.localeCompare(b.tier)).map(cellHtml).join("")}</div></div>`).join("");
+  }
+  document.querySelectorAll(".cell").forEach(c=> c.onclick = ()=> open(c.dataset.id));
+  document.getElementById("cats").innerHTML = `<button class="chip ${cat?"":"on"}" data-cat="">Everything</button>` + Object.entries(DATA.cats).map(([k,v])=>`<button class="chip ${cat===k?"on":""}" data-cat="${k}">${v}</button>`).join("");
+  document.querySelectorAll("[data-cat]").forEach(c=> c.onclick = ()=>{ cat = c.dataset.cat || null; render(); });
+  document.getElementById("about").textContent = DATA.about;
+}
+function open(id){
+  sel = id; const it = DATA.items.find(i=>i.id===id); if(!it) return;
+  const L = lvl();
+  const skills = Object.entries(it.skills||{}).sort((a,b)=>b[1]-a[1]);
+  document.getElementById("sbody").innerHTML = `
+    <div class="hd"><div class="big"><img src="${WIKI+it.img}" alt="" onerror="this.style.display='none'"></div>
+      <div><h2>${it.name}</h2><div class="meta"><span class="tpill" style="color:var(--${it.tier})">Tier ${it.tier}</span>${DATA.cats[it.cat]} · ${STAGES[it.stage]}</div></div></div>
+    <p class="why">${it.why}</p>
+    <div class="grp"><div class="h">How you get it</div><div class="list"><div class="row plain">${it.how}</div></div></div>
+    <div class="grp"><div class="h">Cost</div><div class="list"><div class="row plain">${it.cost}</div></div></div>
+    <div class="grp"><div class="h">Levels</div><div class="list">${skills.length ? skills.map(([s,l])=>`<div class="row"><span class="ic"><img src="${skillIcon(s)}" alt=""></span>${nice(s)}<span class="r ${L>=l?"ok":"no"}">${l}${L>=l?" ✓":" · you're "+L}</span></div>`).join("") : `<div class="empty">No level requirements.</div>`}</div></div>
+    <div class="grp"><div class="h">Quests</div><div class="list">${(it.quests||[]).length ? it.quests.map(q=>`<div class="row">📜 ${q}</div>`).join("") : `<div class="empty">No quests.</div>`}</div></div>`;
+  document.getElementById("sheet").classList.add("on");
+  document.querySelectorAll(".cell").forEach(c=>c.classList.toggle("on", c.dataset.id===id));
+}
+document.getElementById("sx").onclick = ()=>{ document.getElementById("sheet").classList.remove("on"); sel=null; document.querySelectorAll(".cell.on").forEach(c=>c.classList.remove("on")); };
+document.querySelectorAll("#view button").forEach(b=> b.onclick = ()=>{ view = b.dataset.v; document.querySelectorAll("#view button").forEach(x=>x.classList.toggle("on", x===b)); render(); });
+document.getElementById("lvl").oninput = ()=>{ if(sel) open(sel); };
+render();
+</script>
+</body>
+</html>

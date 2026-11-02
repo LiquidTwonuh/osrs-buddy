@@ -434,6 +434,37 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qp-sep{color:var(--border)}
   /* click a node for the full picture: every requirement, what gates it, what it opens up */
   .qp-node.sel{outline:2px solid var(--gold); outline-offset:2px; z-index:4}
+  /* Focus: Map's one-goal page (design/mockups/map-calm.html, direction A). Lives beside the Planner. */
+  .fc-lt{display:flex; align-items:center; justify-content:space-between; gap:16px; margin:2px 0 14px}
+  .fc-sub{color:var(--muted); font-size:13px}
+  .fc-goals{display:flex; gap:12px; overflow-x:auto; padding:4px 2px 12px; margin-bottom:8px}
+  .fc-goal{flex:none; width:224px; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; gap:12px; align-items:center; cursor:pointer; box-shadow:var(--shadow)}
+  .fc-goal.on{border-color:var(--gold); box-shadow:0 0 0 3px var(--glow), var(--shadow)}
+  .fc-goal .t{min-width:0} .fc-goal .t b{display:block; font-size:14px; font-weight:600; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis} .fc-goal .t small{display:block; color:var(--muted); font-size:12px; margin-top:4px}
+  .fc-goal.add{justify-content:center; color:var(--gold-dim); border-style:dashed; box-shadow:none; background:transparent}
+  .fc-ring{position:relative; flex:none} .fc-ring svg{transform:rotate(-90deg); display:block} .fc-ring circle{fill:none; stroke-width:6} .fc-ring .bg{stroke:var(--inset)} .fc-ring .fg{stroke:var(--gold2); stroke-linecap:round; transition:stroke-dashoffset .6s cubic-bezier(.2,.7,.2,1)}
+  .fc-ring .lab{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-variant-numeric:tabular-nums} .fc-ring .lab b{font-size:18px; font-weight:700} .fc-ring .lab small{font-size:10.5px; color:var(--muted)}
+  .fc-goal .fc-ring .lab b{font-size:13px}
+  .fc-hero{display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center; background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:18px 22px; margin-bottom:20px; box-shadow:var(--shadow)}
+  .fc-hero h3{margin:0; font-family:var(--font-display); font-size:27px; font-weight:600; color:var(--gold)}
+  .fc-hero .meta{color:var(--muted); font-size:13px; margin:6px 0 12px} .fc-hero .meta i{font-style:normal; margin:0 6px; opacity:.5} .fc-hero .meta a{color:var(--gold-dim); text-decoration:none}
+  .fc-hero .acts{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .fc-two{display:grid; grid-template-columns:1.25fr 1fr; gap:20px}
+  .fc-grp{margin-bottom:20px}
+  .fc-grp .h{display:flex; align-items:baseline; justify-content:space-between; padding:0 14px 7px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+  .fc-link{background:none; border:0; box-shadow:none; padding:0; color:var(--gold-dim); font-family:inherit; font-size:13px; text-transform:none; letter-spacing:0; cursor:pointer}
+  .fc-list{background:var(--panel); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:var(--shadow)}
+  .fc-row{display:flex; align-items:center; gap:12px; padding:11px 14px; border-bottom:1px solid var(--border); min-height:50px; cursor:pointer}
+  .fc-row:last-child{border-bottom:0} .fc-row:hover{background:var(--panel2)}
+  .fc-row .st{width:10px; height:10px; border-radius:50%; background:var(--gold3); flex:none} .fc-row .st.ready{background:var(--green); box-shadow:0 0 0 3px var(--green-bg)} .fc-row .st.blocked{background:var(--red)} .fc-row .st.done{background:var(--green); opacity:.55}
+  .fc-row .t{flex:1; min-width:0} .fc-row .t b{display:block; font-weight:600; font-size:14.5px} .fc-row .t small{display:block; color:var(--muted); font-size:12.5px; margin-top:2px}
+  .fc-row .r{color:var(--muted); font-size:13px; white-space:nowrap; font-variant-numeric:tabular-nums; max-width:45%; overflow:hidden; text-overflow:ellipsis} .fc-row .r.ok{color:var(--green)}
+  .fc-row .chev{color:var(--gold3); font-size:18px}
+  .fc-row.foot{color:var(--muted); font-size:12.5px; min-height:0; padding:10px 14px; cursor:default; line-height:1.45} .fc-row.foot:hover{background:transparent}
+  .fc-row .ico{width:22px; height:22px; flex:none; display:flex; align-items:center; justify-content:center} .fc-row .ico img{width:20px; height:20px}
+  .fc-row .mini{height:4px; background:var(--inset); border-radius:2px; overflow:hidden; margin-top:7px} .fc-row .mini i{display:block; height:100%; background:var(--gold2)}
+  .fc-steps{margin-bottom:20px}
+  @media (max-width:820px){ .fc-two{grid-template-columns:1fr} .fc-hero{grid-template-columns:1fr} }
   .qp-detail{border-top:1px solid var(--border); margin-top:10px; padding-top:10px}
   .qp-detail-empty{color:var(--muted); font-size:12.5px; text-align:center; padding:8px 0}
   .qpd-head{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:8px}
@@ -2539,6 +2570,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     </div>
     <div class="map-sec hidden" data-msec="folders"><div id="qpFoldersView"></div></div>
     <div class="map-sec hidden" data-msec="guide"><div id="qpGuideView"></div></div>
+    <div class="map-sec hidden" data-msec="focus"><div id="qpFocusView"></div></div>
   </div>
 
   <!-- VIEW: THE COFFER (making GP) -->
@@ -11325,6 +11357,7 @@ function cfParseGp(t){
 // where the "some day" quests wait without crowding it.
 const MAP_SECTIONS = [
   {id:"planner", label:"Planner", icon:"🧭"},
+  {id:"focus",   label:"Focus", icon:"🎯"},
   {id:"folders", label:"Folders", icon:"📁"},
   {id:"guide",   label:"Optimal guide", icon:"🧾"},
 ];
@@ -11332,6 +11365,7 @@ const MAP_BLURB = {
   planner: "Pick what you're working toward and see the whole dependency chain: what's done, what's next, and what you still need. Requirements come straight from the wiki.",
   folders: "Your board and your own lists side by side. Drag a quest between them, or drop it on a row to put it in that spot.",
   guide: "The wiki's optimal quest order, step by step, ticked off against your own quests, levels and diaries.",
+  focus: "One goal at a time: what to do next and the levels you still need. Everything else is a tap away.",
 };
 function mapSec(){ const x = state.mapSec; return MAP_SECTIONS.some(m=>m.id===x) ? x : "planner"; }
 function setMapSec(id){ state.mapSec = id; save(); applyMapSec(); renderNavSubMap(); window.scrollTo(0,0); }
@@ -11341,7 +11375,8 @@ function applyMapSec(){
   const eb = $("#mapEyebrow"); if(eb) eb.textContent = (MAP_SECTIONS.find(m=>m.id===cur)||{}).label || "";
   const bl = $("#mapBlurb"); if(bl) bl.textContent = MAP_BLURB[cur];
   const sub = $("#qpSub"); if(sub && cur!=="planner") sub.textContent = "";
-  if(cur==="folders") renderFolders();
+  if(cur==="focus") renderFocus();
+  else if(cur==="folders") renderFolders();
   else if(cur==="guide"){ renderGuide(); guideDbEnsure(); }
   else { renderQuestPlanner(); qpFitTree(); }
 }
@@ -11852,6 +11887,7 @@ function qpFolderMenu(btn, quest, moveOffBoard){
     toast("📁 " + qpCrumbName(quest) + " filed under " + f.name);
     menu.remove();
     if(state.lastView === "quests" && mapSec() === "planner") renderQuestPlanner();
+    if(state.lastView === "quests" && mapSec() === "focus") renderFocus();
   };
   [...menu.querySelectorAll("[data-fput]")].forEach(b=>b.onclick=e=>{ e.stopPropagation(); file(qpFolder(b.dataset.fput)); });
   menu.querySelector("[data-fnew]").onclick = e=>{
@@ -12381,10 +12417,112 @@ function qpStepsHtml(n){
 }
 // the panel appears twice on the page (the charted quest at the top, the inspected one under the
 // tree), so a change in either repaints both
+// ============ FOCUS (Map, one goal at a time) ============
+// Direction A from design/mockups/map-calm.html on real data. It reads the same plan the Planner
+// does and changes nothing in it; the two sit side by side so they can be compared.
+function fcGoals(db){
+  const out = [];
+  const add = n => { if(n && n !== "__ALL__" && db.quests[n] && !out.includes(n)) out.push(n); };
+  add(state.qpTarget); qpBoard().forEach(add);
+  return out;
+}
+function fcSel(db){
+  const goals = fcGoals(db);
+  return goals.includes(state.qpFocus) ? state.qpFocus : (goals[0] || null);
+}
+function fcRing(done, all, size, label){
+  const r = size/2 - 5, c = 2*Math.PI*r, pct = all ? done/all : 0;
+  return `<div class="fc-ring" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}"><circle class="bg" cx="${size/2}" cy="${size/2}" r="${r}"/><circle class="fg" cx="${size/2}" cy="${size/2}" r="${r}" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${(c*(1-pct)).toFixed(1)}"/></svg><div class="lab">${label}</div></div>`;
+}
+function renderFocus(){
+  const host = $("#qpFocusView"); if(!host) return;
+  const db = questDB();
+  if(!db){ host.innerHTML = `<div class="panel"><div class="empty">${qdbBuilding ? "Reading every quest off the wiki, nearly there." : "Quest data didn't load. Open the Planner and try again from there."}</div></div>`; return; }
+  const goals = fcGoals(db), sel = fcSel(db);
+  const total = db.order.length, done = db.order.filter(questDone).length;
+  const readyAll = live ? db.order.filter(n=>questStatus(n, db)==="ready").length : 0;
+  const head = `<div class="fc-lt"><div class="fc-sub">${done} of ${total} quests done${live ? ` · ${readyAll} you could start today` : ""}</div>
+    <button class="ghost small" data-fc-planner title="Search, the board, the tree, requirements for everything">🧭 Open the Planner</button></div>`;
+  const strip = goals.length ? `<div class="fc-goals">${goals.map(g=>{
+      const p = questPlan(g, db), ready = p.remaining.filter(n=>questStatus(n, db)==="ready");
+      const pct = p.all.length ? Math.round(100*p.done.length/p.all.length) : 0;
+      const blocker = p.remaining.find(n=>questStatus(n, db)!=="ready");
+      const sub = !p.remaining.length ? "done" : ready.length ? `${ready.length} ready now · ${p.remaining.length} to go` : blocker ? `waiting on ${qpLabel(blocker)}` : `${p.remaining.length} to go`;
+      return `<div class="fc-goal ${g===sel?"on":""}" data-fc-goal="${escapeHtml(g)}">${fcRing(p.done.length, p.all.length, 52, `<b>${pct}%</b>`)}<div class="t"><b title="${escapeHtml(qpLabel(g))}">${escapeHtml(qpLabel(g))}</b><small>${escapeHtml(sub)}</small></div></div>`;
+    }).join("")}<div class="fc-goal add" data-fc-planner>＋ Chart a goal</div></div>` : "";
+  if(!sel){
+    host.innerHTML = head + `<div class="panel"><div class="empty">Nothing charted yet. Pick a goal in the Planner, or pin a quest to the board, and it shows up here.</div>
+      <div class="row" style="justify-content:center;margin-top:10px"><button class="primary" data-fc-planner>Open the Planner</button></div></div>`;
+    fcWire(db); return;
+  }
+  const q = db.quests[sel], plan = questPlan(sel, db);
+  const ready = plan.remaining.filter(n=>questStatus(n, db)==="ready");
+  const next3 = (ready.length ? ready : plan.remaining).slice(0, 3);
+  const later = plan.remaining.filter(n=>!next3.includes(n));
+  const myQp = qpMyQp(db);
+  const meta = [q.difficulty, q.length, q.qp ? `${q.qp} quest points, you have ${myQp}` : ""].filter(Boolean);
+  const wiki = "https://oldschool.runescape.wiki/w/" + encodeURIComponent(sel.replace(/ /g, "_"));
+  const first = ready[0] || null;
+  const open = state.qpFocusSteps;
+  const hero = `<div class="fc-hero"><div>
+      <h3>${escapeHtml(qpLabel(sel))}</h3>
+      <div class="meta">${meta.map(escapeHtml).join(" <i>·</i> ")}${meta.length ? " <i>·</i> " : ""}<a href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a></div>
+      <div class="acts">
+        ${first ? `<button class="primary" data-fc-steps="${escapeHtml(first)}">${open===first ? "▾ Steps for" : "▶ Start"} ${escapeHtml(qpLabel(first))}</button>`
+                : plan.remaining.length ? `<span class="qp-tag">${live ? "nothing ready yet" : "stats not loaded"}</span>` : `<span class="qp-tag free">complete</span>`}
+        ${qpBoardHas(sel) ? `<button class="ghost small" data-fc-unpin="${escapeHtml(sel)}" title="Take it off the board">📌 Pinned</button>` : `<button class="ghost small" data-fc-pin="${escapeHtml(sel)}">📌 Pin</button>`}
+      </div></div>
+      ${fcRing(plan.done.length, plan.all.length, 96, `<b>${plan.done.length}<span class="muted">/${plan.all.length}</span></b><small>in the chain</small>`)}</div>`;
+  const steps = (open && plan.remaining.includes(open))
+    ? `<div class="panel qp-detail fc-steps"><div class="section-title"><h3>${escapeHtml(qpLabel(open))}</h3><button class="ghost small" data-fc-steps="${escapeHtml(open)}">Hide</button></div>${qpStepsHtml(open)}</div>` : "";
+  const rowOf = n => {
+    const qq = db.quests[n], st = questStatus(n, db);
+    const bits = [qq.difficulty, qq.qpGain ? `${qq.qpGain} quest point${qq.qpGain===1 ? "" : "s"}` : "", qq.length].filter(Boolean);
+    const why = st==="ready" ? "ready" : st==="done" ? "done" : (live ? questMissingText(n, db) : "");
+    return `<div class="fc-row" data-fc-steps="${escapeHtml(n)}"><span class="st ${st}"></span><div class="t"><b>${escapeHtml(qpLabel(n))}${questInProgress(n) ? ` <span class="qp-tag prog">in progress</span>` : ""}</b><small>${escapeHtml(bits.join(" · "))}</small></div><span class="r ${st==="ready" ? "ok" : ""}" title="${escapeHtml(why)}">${escapeHtml(why)}</span><span class="chev">›</span></div>`;
+  };
+  const doNext = `<div class="fc-grp"><div class="h"><span>Do next</span>${later.length ? `<button class="fc-link" data-fc-all>${state.qpFocusAll ? "Fewer" : `All ${plan.remaining.length} in order`} ›</button>` : ""}</div>
+    <div class="fc-list">${next3.map(rowOf).join("")}${state.qpFocusAll ? later.map(rowOf).join("") : later.length ? `<div class="fc-row foot">Then ${later.slice(0, 4).map(n=>escapeHtml(qpLabel(n))).join(", ")}${later.length > 4 ? ` and ${later.length-4} more` : ""}.</div>` : ""}${plan.remaining.length ? "" : `<div class="fc-row foot">Every quest in this chain is done.</div>`}</div></div>`;
+  // only the gaps that are still gaps once the chain's own XP rewards are counted
+  const gaps = Object.entries(plan.gaps).map(([s, g])=>{ const after = levelFromXp(liveSkillXp(s) + (plan.chainXp[s] || 0)); return {s, need:g.need, have:g.have, after, covered: after >= g.need, boost:g.boostable}; });
+  const real = gaps.filter(g=>!g.covered).sort((a, b)=>(b.need-b.have)-(a.need-a.have));
+  const covered = gaps.filter(g=>g.covered);
+  const levels = `<div class="fc-grp"><div class="h"><span>Levels to get</span><span>${live ? (real.length ? `${real.length} skill${real.length===1 ? "" : "s"}` : "none") : "stats not loaded"}</span></div>
+    <div class="fc-list">${real.map(g=>`<div class="fc-row" style="cursor:default"><span class="ico"><img src="${skillIconUrl(g.s)}" alt="" onerror="this.style.display='none'"></span><div class="t"><b>${nice(g.s)}${(g.boost && live) ? ` <span class="qp-tag boost" data-boost="${g.s}" data-need="${g.need}" data-have="${g.have}">boostable</span>` : ""}</b><div class="mini"><i style="width:${Math.max(4, Math.min(100, Math.round(100*g.have/g.need)))}%"></i></div></div><span class="r">${live ? `${g.have} → ${g.need}` : `needs ${g.need}`}</span></div>`).join("")}
+    ${real.length ? "" : `<div class="fc-row foot">${live ? "Nothing in your way. Every level this chain needs, you have." : "Load your stats to see which levels you still need."}</div>`}
+    ${covered.length ? `<div class="fc-row foot">${covered.map(g=>`${nice(g.s)} ${g.need}`).join(", ")} ${covered.length===1 ? "comes" : "come"} from quest rewards along the way, so ${covered.length===1 ? "it isn't" : "they aren't"} listed.</div>` : ""}
+    ${plan.blockers.length ? `<div class="fc-row foot">Quest points: ${plan.blockers.slice(0, 3).map(b=>`${escapeHtml(b.quest)} needs ${b.qp}`).join(" · ")}.</div>` : ""}</div></div>`;
+  const more = `<div class="fc-grp"><div class="h"><span>More</span></div><div class="fc-list">
+      <div class="fc-row" data-fc-tree><span class="ico">🌳</span><div class="t"><b>The whole tree</b><small>All ${plan.all.length} quests as a map, full screen.</small></div><span class="chev">›</span></div>
+      <div class="fc-row" data-fc-planner><span class="ico">🧭</span><div class="t"><b>Planner</b><small>Search, the board, requirements for everything.</small></div><span class="chev">›</span></div>
+    </div></div>`;
+  host.innerHTML = head + strip + hero + steps + `<div class="fc-two"><div>${doNext}${more}</div><div>${levels}</div></div>`;
+  fcWire(db);
+}
+function fcWire(db){
+  $$("#qpFocusView [data-fc-goal]").forEach(el=>el.onclick=()=>{ state.qpFocus = el.dataset.fcGoal; state.qpFocusSteps = null; state.qpFocusAll = false; save(); renderFocus(); });
+  $$("#qpFocusView [data-fc-planner]").forEach(el=>el.onclick=()=>setMapSec("planner"));
+  $$("#qpFocusView [data-fc-steps]").forEach(el=>el.onclick=e=>{
+    if(e.target.closest("[data-boost], a")) return;
+    const n = el.dataset.fcSteps;
+    state.qpFocusSteps = state.qpFocusSteps === n ? null : n; save(); renderFocus();
+    if(state.qpFocusSteps){ const sp = $("#qpFocusView .fc-steps"); if(sp) sp.scrollIntoView({behavior:"smooth", block:"start"}); }
+  });
+  $$("#qpFocusView [data-fc-all]").forEach(el=>el.onclick=()=>{ state.qpFocusAll = !state.qpFocusAll; save(); renderFocus(); });
+  $$("#qpFocusView [data-fc-pin]").forEach(el=>el.onclick=()=>{ if(qpBoardAdd(el.dataset.fcPin)) toast("📌 " + qpCrumbName(el.dataset.fcPin) + " pinned to the board"); renderFocus(); });
+  $$("#qpFocusView [data-fc-unpin]").forEach(el=>el.onclick=()=>{ qpBoardRemove(el.dataset.fcUnpin); renderFocus(); });
+  $$("#qpFocusView [data-fc-tree]").forEach(el=>el.onclick=()=>{
+    const sel = fcSel(db); if(sel){ state.qpTarget = sel; state.qpMode = "tree"; save(); }
+    setMapSec("planner");
+    setTimeout(()=>{ const p = $("#qpPop"); if(p && !qpPopped) p.click(); }, 120);
+  });
+}
+
 function qpRefreshDetails(){
   const db = questDB(); if(!db) return;
   const top = $("#qpTopDetail"); if(top && state.qpTarget && state.qpTarget !== "__ALL__") top.innerHTML = qpDetailHtml(state.qpTarget, db);
   qpShowDetail(db);
+  if(state.lastView === "quests" && mapSec() === "focus") renderFocus();
 }
 // one delegated listener covers every render of the panel
 document.addEventListener("click", async e=>{

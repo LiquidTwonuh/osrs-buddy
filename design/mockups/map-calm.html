@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map mockups</title>
+<style>
+  :root{
+    --bg:#1a1712; --bg2:#241f18; --panel:#26211a; --panel2:#2f2820; --border:#4a3f2e;
+    --gold:#e6c35c; --gold-dim:#b9974a; --gold2:#c9a642; --gold3:#8a6f2e;
+    --text:#e8e0cf; --muted:#a99b7d; --inset:#15120d; --active:#3a3122;
+    --btnlo:#2a2318; --btnhov1:#463a26; --glow:rgba(230,195,92,.18);
+    --green:#6fbf5b; --green-bg:#2c3d24; --red:#d46a5a; --blue:#5a9fd4;
+    --shadow:0 2px 0 #0e0b07, 0 6px 14px rgba(0,0,0,.4);
+    --font-display:"EB Garamond",Georgia,serif;
+    --font-body:"Segoe UI",system-ui,sans-serif;
+    --hair:rgba(255,255,255,.07);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:#0f0d0a; color:var(--text); font-family:var(--font-body); font-size:14px; -webkit-font-smoothing:antialiased}
+  .top{position:sticky; top:0; z-index:5; background:#0f0d0a; border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; gap:14px}
+  .top h1{font-family:var(--font-display); font-size:18px; color:var(--gold); margin:0 14px 0 0; font-weight:600}
+  .top p{margin:0; color:var(--muted); font-size:12.5px}
+  .tabs{display:flex; gap:4px; background:var(--inset); padding:3px; border-radius:10px; margin-left:auto}
+  .tabs button{border:0; background:none; color:var(--muted); font:inherit; font-size:13px; padding:6px 14px; border-radius:8px; cursor:pointer}
+  .tabs button.on{background:var(--panel2); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .dir{display:none} .dir.on{display:block}
+  .frame{width:1180px; max-width:100%; margin:26px auto 60px; background:var(--bg); border:1px solid var(--border); border-radius:14px; display:grid; grid-template-columns:200px 1fr; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .side{background:var(--bg2); border-right:1px solid var(--border); padding:16px 12px; font-size:13px}
+  .side .brand{font-family:var(--font-display); font-size:19px; color:var(--gold); padding:0 8px 14px}
+  .side .eb{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:10px 8px 4px}
+  .side .n{padding:7px 10px; border-radius:8px; color:var(--text)}
+  .side .n.on{background:var(--active); color:var(--gold)}
+  .main{padding:26px 30px 40px; min-height:900px}
+
+  /* ---------- shared iOS-ish parts ---------- */
+  .lt{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px}
+  .lt h2{margin:0; font-family:var(--font-display); font-size:36px; font-weight:600; color:var(--gold); line-height:1}
+  .lt h2.sans{font-family:var(--font-body); font-weight:700; letter-spacing:-.02em; font-size:32px; color:var(--text)}
+  .lt .sub{color:var(--muted); font-size:13px; margin-top:6px}
+  .search{display:flex; align-items:center; gap:8px; background:var(--inset); border:1px solid var(--border); border-radius:999px; padding:8px 14px; color:var(--muted); width:260px; font-size:13px}
+  .search span{opacity:.6}
+  .seg{display:inline-flex; background:var(--inset); padding:3px; border-radius:10px; gap:2px; margin-bottom:18px}
+  .seg b{font-weight:500; padding:6px 14px; border-radius:8px; color:var(--muted); font-size:13px}
+  .seg b.on{background:var(--panel2); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .seg b i{font-style:normal; color:var(--gold); margin-left:6px; font-variant-numeric:tabular-nums}
+  .grp{margin-bottom:22px}
+  .grp .h{display:flex; align-items:baseline; justify-content:space-between; padding:0 14px 7px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+  .grp .h a{color:var(--gold-dim); text-transform:none; letter-spacing:0; font-size:13px; text-decoration:none}
+  .list{background:var(--panel); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:var(--shadow)}
+  .row{display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid var(--hair); min-height:50px}
+  .row:last-child{border-bottom:0}
+  .row:hover{background:var(--panel2)}
+  .row .st{width:10px; height:10px; border-radius:50%; background:var(--gold3); flex:none}
+  .row .st.ok{background:var(--green); box-shadow:0 0 0 3px rgba(111,191,91,.18)}
+  .row .st.no{background:var(--red)}
+  .row .st.done{background:var(--green); opacity:.55}
+  .row .t{flex:1; min-width:0}
+  .row .t b{display:block; font-weight:600; font-size:14.5px}
+  .row .t small{display:block; color:var(--muted); font-size:12.5px; margin-top:2px}
+  .row .r{color:var(--muted); font-size:13px; white-space:nowrap; font-variant-numeric:tabular-nums}
+  .row .r.ok{color:var(--green)}
+  .row .chev{color:var(--gold3); font-size:18px; margin-left:2px}
+  .row.foot{background:transparent; color:var(--muted); font-size:12.5px; min-height:0; padding:10px 14px}
+  .row.foot:hover{background:transparent}
+  .ico{width:22px; height:22px; flex:none; display:flex; align-items:center; justify-content:center}
+  .ico img{width:20px; height:20px; image-rendering:auto}
+  .mini{height:4px; background:var(--inset); border-radius:2px; overflow:hidden; margin-top:7px; width:100%}
+  .mini i{display:block; height:100%; background:var(--gold2)}
+  .mini.c i{background:var(--green)}
+  .ring{position:relative; flex:none}
+  .ring svg{transform:rotate(-90deg)}
+  .ring circle{fill:none; stroke-width:6}
+  .ring .bg{stroke:var(--inset)} .ring .fg{stroke:var(--gold2); stroke-linecap:round}
+  .ring .lab{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-variant-numeric:tabular-nums}
+  .ring .lab b{font-size:18px; font-weight:700} .ring .lab small{font-size:10.5px; color:var(--muted)}
+  .pill{font-size:11.5px; padding:3px 9px; border-radius:999px; background:var(--panel2); border:1px solid var(--border); color:var(--muted); white-space:nowrap}
+  .pill.ok{color:var(--green); border-color:rgba(111,191,91,.35)}
+  .pill.no{color:var(--red); border-color:rgba(212,106,90,.35)}
+  .pill.gold{color:var(--gold); border-color:var(--gold3)}
+  .chips{display:flex; gap:5px; flex-wrap:wrap}
+  .chip{display:inline-flex; align-items:center; gap:4px; font-size:11.5px; padding:2px 7px 2px 4px; border-radius:6px; background:var(--inset); color:var(--muted); font-variant-numeric:tabular-nums}
+  .chip img{width:13px; height:13px} .chip.ok{color:var(--green)} .chip.no{color:var(--red)}
+  .btn{display:inline-flex; align-items:center; gap:6px; font:inherit; font-size:13px; padding:8px 14px; border-radius:10px; border:1px solid var(--border); background:var(--btnlo); color:var(--text); cursor:pointer}
+  .btn.primary{background:var(--gold); border-color:var(--gold); color:#1a1712; font-weight:600}
+  .btn.quiet{background:transparent; color:var(--gold-dim)}
+  .acts{display:flex; gap:8px; flex-wrap:wrap}
+
+  /* ---------- direction A ---------- */
+  .goals{display:flex; gap:12px; overflow-x:auto; padding:4px 2px 14px; margin-bottom:10px}
+  .goal{flex:none; width:224px; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; gap:12px; align-items:center; cursor:pointer; box-shadow:var(--shadow)}
+  .goal.on{border-color:var(--gold); box-shadow:0 0 0 3px var(--glow), var(--shadow)}
+  .goal .t b{display:block; font-size:14px; font-weight:600; line-height:1.2}
+  .goal .t small{display:block; color:var(--muted); font-size:12px; margin-top:4px}
+  .goal.add{justify-content:center; color:var(--gold-dim); border-style:dashed; box-shadow:none; background:transparent}
+  .hero{display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center; background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:20px 22px; margin-bottom:22px; box-shadow:var(--shadow)}
+  .hero h3{margin:0; font-family:var(--font-display); font-size:28px; font-weight:600; color:var(--gold)}
+  .hero .meta{color:var(--muted); font-size:13px; margin:6px 0 12px}
+  .hero .meta i{font-style:normal; margin:0 6px; opacity:.5}
+  .two{display:grid; grid-template-columns:1.25fr 1fr; gap:20px}
+
+  /* ---------- direction B ---------- */
+  .pins{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px}
+  .pin{display:inline-flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--border); border-radius:999px; padding:5px 12px 5px 6px; font-size:13px}
+  .pin .dot{width:22px; height:22px; border-radius:50%; background:conic-gradient(var(--gold2) var(--p), var(--inset) 0); display:grid; place-items:center}
+  .pin .dot::after{content:""; width:14px; height:14px; border-radius:50%; background:var(--panel)}
+  .pin small{color:var(--muted)}
+
+  /* ---------- notes ---------- */
+  .why{width:1180px; max-width:100%; margin:0 auto 60px; display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  .why .card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:18px 20px}
+  .why h3{margin:0 0 10px; font-family:var(--font-display); color:var(--gold); font-size:18px}
+  .why ul{margin:0; padding-left:18px; color:var(--text); line-height:1.5} .why li{margin-bottom:6px}
+  .why p{color:var(--muted); margin:0 0 8px; line-height:1.5}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>Map, calmer</h1>
+  <p>Two directions, same data (Twonuh, 21 Oct save, Dragon Slayer II charted). Nothing here is wired up, it's a picture.</p>
+  <div class="tabs">
+    <button class="on" data-dir="a">A · One goal at a time</button>
+    <button data-dir="b">B · Your list</button>
+    <button data-dir="why">What changed and why</button>
+  </div>
+</div>
+
+<!-- ============================== A ============================== -->
+<div class="dir on" id="dir-a">
+<div class="frame">
+  <div class="side">
+    <div class="brand">⚔ Mortimeter</div>
+    <div class="eb">Character</div><div class="n">🏠 Home</div><div class="n">📜 Scroll</div><div class="n">🏅 Achievements</div>
+    <div class="eb">Planning</div><div class="n">✅ Goals</div><div class="n">📖 Roadmap</div><div class="n on">🧭 Map</div><div class="n">🪙 Coffer</div><div class="n">📝 Notes</div>
+  </div>
+  <div class="main">
+    <div class="lt">
+      <div><h2>Map</h2><div class="sub">99 of 210 quests done · 56 you could start today</div></div>
+      <div class="search"><span>⌕</span> Search any quest</div>
+    </div>
+
+    <div class="goals">
+      <div class="goal on">
+        <div class="ring"><svg width="52" height="52"><circle class="bg" cx="26" cy="26" r="22"/><circle class="fg" cx="26" cy="26" r="22" stroke-dasharray="138" stroke-dashoffset="28"/></svg><div class="lab"><b style="font-size:13px">79%</b></div></div>
+        <div class="t"><b>Dragon Slayer II</b><small>3 ready now · 7 to go</small></div>
+      </div>
+      <div class="goal">
+        <div class="ring"><svg width="52" height="52"><circle class="bg" cx="26" cy="26" r="22"/><circle class="fg" cx="26" cy="26" r="22" stroke-dasharray="138" stroke-dashoffset="30"/></svg><div class="lab"><b style="font-size:13px">78%</b></div></div>
+        <div class="t"><b>RFD: Culinaromancer</b><small>waiting on Desert Treasure I</small></div>
+      </div>
+      <div class="goal">
+        <div class="ring"><svg width="52" height="52"><circle class="bg" cx="26" cy="26" r="22"/><circle class="fg" cx="26" cy="26" r="22" stroke-dasharray="138" stroke-dashoffset="92"/></svg><div class="lab"><b style="font-size:13px">33%</b></div></div>
+        <div class="t"><b>The Red Reef</b><small>waiting on Troubled Tortugans</small></div>
+      </div>
+      <div class="goal add">＋ Chart a goal</div>
+    </div>
+
+    <div class="hero">
+      <div>
+        <h3>Dragon Slayer II</h3>
+        <div class="meta">Grandmaster <i>·</i> Very long <i>·</i> 200 quest points, you have 162 <i>·</i> <a href="#" style="color:var(--gold-dim); text-decoration:none">Wiki ↗</a></div>
+        <div class="acts"><span class="btn primary">▶ Start Underground Pass</span><span class="btn">📌 Pinned</span><span class="btn quiet">Unchart</span></div>
+      </div>
+      <div class="ring"><svg width="96" height="96"><circle class="bg" cx="48" cy="48" r="42"/><circle class="fg" cx="48" cy="48" r="42" stroke-dasharray="264" stroke-dashoffset="55"/></svg><div class="lab"><b>27<span style="color:var(--muted); font-weight:400">/34</span></b><small>in the chain</small></div></div>
+    </div>
+
+    <div class="two">
+      <div>
+        <div class="grp">
+          <div class="h"><span>Do next</span><a href="#">All 7 in order ›</a></div>
+          <div class="list">
+            <div class="row"><span class="st ok"></span><div class="t"><b>Underground Pass</b><small>Experienced · 5 quest points · about 1 hour</small></div><span class="r ok">ready</span><span class="chev">›</span></div>
+            <div class="row"><span class="st ok"></span><div class="t"><b>A Tail of Two Cats</b><small>Intermediate · 2 quest points · short</small></div><span class="r ok">ready</span><span class="chev">›</span></div>
+            <div class="row"><span class="st ok"></span><div class="t"><b>Eadgar's Ruse</b><small>Intermediate · 1 quest point · short</small></div><span class="r ok">ready</span><span class="chev">›</span></div>
+            <div class="row foot">Then Legends' Quest, Lunar Diplomacy, Dream Mentor, and the dragon itself.</div>
+          </div>
+        </div>
+        <div class="grp">
+          <div class="h"><span>More</span></div>
+          <div class="list">
+            <div class="row"><span class="ico">🪢</span><div class="t"><b>Steps for Underground Pass</b><small>Quick guide, 14 steps</small></div><span class="chev">›</span></div>
+            <div class="row"><span class="ico">🎁</span><div class="t"><b>What you get</b><small>Rewards and unlocks</small></div><span class="chev">›</span></div>
+            <div class="row"><span class="ico">🌳</span><div class="t"><b>The whole tree</b><small>All 34 quests as a map. Full screen.</small></div><span class="chev">›</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="grp">
+          <div class="h"><span>Levels to get</span><span>6 skills</span></div>
+          <div class="list">
+            <div class="row"><span class="ico"><img src="https://oldschool.runescape.wiki/images/Mining_icon.png" alt=""></span><div class="t"><b>Mining</b><div class="mini"><i style="width:87%"></i></div></div><span class="r">59 → 68</span></div>
+            <div class="row"><span class="ico"><img src="https://oldschool.runescape.wiki/images/Woodcutting_icon.png" alt=""></span><div class="t"><b>Woodcutting</b><div class="mini"><i style="width:84%"></i></div></div><span class="r">46 → 55</span></div>
+            <div class="row"><span class="ico"><img src="https://oldschool.runescape.wiki/images/Smithing_icon.png" alt=""></span><div class="t"><b>Smithing</b><div class="mini"><i style="width:93%"></i></div></div><span class="r">65 → 70</span></div>
+            <div class="row"><span class="ico"><img src="https://oldschool.runescape.wiki/images/Thieving_icon.png" alt=""></span><div class="t"><b>Thieving</b><div class="mini"><i style="width:92%"></i></div></div><span class="r">55 → 60</span></div>
+            <div class="row"><span class="ico"><img src="https://oldschool.runescape.wiki/images/Magic_icon.png" alt=""></span><div class="t"><b>Magic</b><div class="mini"><i style="width:95%"></i></div></div><span class="r">71 → 75</span></div>
+            <div class="row"><span class="ico"><img src="https://oldschool.runescape.wiki/images/Agility_icon.png" alt=""></span><div class="t"><b>Agility</b><div class="mini"><i style="width:95%"></i></div></div><span class="r">57 → 60</span></div>
+            <div class="row foot">Crafting 62 and Herblore 45 come from quest rewards along the way, so they're not listed.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================== B ============================== -->
+<div class="dir" id="dir-b">
+<div class="frame">
+  <div class="side">
+    <div class="brand">⚔ Mortimeter</div>
+    <div class="eb">Character</div><div class="n">🏠 Home</div><div class="n">📜 Scroll</div><div class="n">🏅 Achievements</div>
+    <div class="eb">Planning</div><div class="n">✅ Goals</div><div class="n">📖 Roadmap</div><div class="n on">🧭 Map</div><div class="n">🪙 Coffer</div><div class="n">📝 Notes</div>
+  </div>
+  <div class="main">
+    <div class="lt">
+      <div><h2 class="sans">Map</h2><div class="sub">Everything on your board, as one list.</div></div>
+      <div class="search"><span>⌕</span> Search any quest</div>
+    </div>
+
+    <div class="pins">
+      <span class="pin"><span class="dot" style="--p:79%"></span>Dragon Slayer II <small>7 to go</small></span>
+      <span class="pin"><span class="dot" style="--p:78%"></span>RFD: Culinaromancer <small>9 to go</small></span>
+      <span class="pin"><span class="dot" style="--p:33%"></span>The Red Reef <small>2 to go</small></span>
+      <span class="pin" style="border-style:dashed; color:var(--gold-dim)">＋ Pin</span>
+    </div>
+
+    <div class="seg"><b class="on">Ready now<i>5</i></b><b>Waiting<i>13</i></b><b>Done<i>61</i></b></div>
+
+    <div class="grp">
+      <div class="h"><span>Ready now</span><span>in a good order</span></div>
+      <div class="list">
+        <div class="row"><span class="st ok"></span><div class="t"><b>Underground Pass</b><small>for Dragon Slayer II · Experienced · about 1 hour</small></div>
+          <div class="chips"><span class="chip ok"><img src="https://oldschool.runescape.wiki/images/Ranged_icon.png" alt="">25</span></div><span class="chev">›</span></div>
+        <div class="row"><span class="st ok"></span><div class="t"><b>Troubled Tortugans</b><small>for The Red Reef · Intermediate</small></div>
+          <div class="chips"><span class="chip ok"><img src="https://oldschool.runescape.wiki/images/Sailing_icon.png" alt="">35</span></div><span class="chev">›</span></div>
+        <div class="row"><span class="st ok"></span><div class="t"><b>A Tail of Two Cats</b><small>for Dragon Slayer II · Intermediate · short</small></div>
+          <div class="chips"></div><span class="chev">›</span></div>
+        <div class="row"><span class="st ok"></span><div class="t"><b>Eadgar's Ruse</b><small>for Dragon Slayer II · Intermediate · short</small></div>
+          <div class="chips"><span class="chip ok"><img src="https://oldschool.runescape.wiki/images/Herblore_icon.png" alt="">31</span></div><span class="chev">›</span></div>
+        <div class="row"><span class="st ok"></span><div class="t"><b>RFD: Evil Dave</b><small>for RFD: Culinaromancer · Intermediate</small></div>
+          <div class="chips"><span class="chip ok"><img src="https://oldschool.runescape.wiki/images/Cooking_icon.png" alt="">25</span></div><span class="chev">›</span></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <div class="h"><span>Waiting on something</span><a href="#">All 13 ›</a></div>
+      <div class="list">
+        <div class="row"><span class="st no"></span><div class="t"><b>Desert Treasure I</b><small>for RFD: Culinaromancer</small></div><span class="r">needs 53 Thieving, you're 55 ✓ · 50 Magic ✓ · 10 Slayer ✓ · <b style="color:var(--red); font-weight:500">The Dig Site first</b></span><span class="chev">›</span></div>
+        <div class="row"><span class="st no"></span><div class="t"><b>Legends' Quest</b><small>for Dragon Slayer II</small></div><span class="r"><b style="color:var(--red); font-weight:500">Underground Pass first</b> · 56 Agility ✓ · 52 Crafting ✓ · 50 Smithing ✓</span><span class="chev">›</span></div>
+        <div class="row"><span class="st no"></span><div class="t"><b>Dream Mentor</b><small>for Dragon Slayer II</small></div><span class="r"><b style="color:var(--red); font-weight:500">Lunar Diplomacy first</b> · 85 combat ✓</span><span class="chev">›</span></div>
+        <div class="row"><span class="st no"></span><div class="t"><b>Dragon Slayer II</b><small>the goal itself</small></div><span class="r">6 quests first · <b style="color:var(--red); font-weight:500">Mining 59 → 68, Smithing 65 → 70, Magic 71 → 75</b></span><span class="chev">›</span></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <div class="h"><span>Elsewhere</span></div>
+      <div class="list">
+        <div class="row"><span class="ico">🌳</span><div class="t"><b>Dependency tree</b><small>Pick a goal, see it as a map. Full screen.</small></div><span class="chev">›</span></div>
+        <div class="row"><span class="ico">📁</span><div class="t"><b>Folders</b><small>Your own lists</small></div><span class="chev">›</span></div>
+        <div class="row"><span class="ico">🧾</span><div class="t"><b>Optimal quest order</b><small>The wiki's full route, 164 of 351 steps done</small></div><span class="chev">›</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================== WHY ============================== -->
+<div class="dir" id="dir-why">
+<div class="why" style="margin-top:26px">
+  <div class="card">
+    <h3>What the current page asks of someone</h3>
+    <p>With one quest charted, the Planner is about 2,600 px tall and shows, top to bottom: an eyebrow, a title, a two-line blurb, a count line, search, a Refresh button, a Popular goals fold, three filter chips, the board (two cards with their own buttons), a switcher, Tree/Route, the quest card with its own four buttons and three tabs, a requirements grid, a quests grid, an Opens up column, four stat tiles, an eight-row accordion of skills, a quest-point gates line, then the full tree with a legend and three controls, then the route.</p>
+    <p>That is every answer at once. You read it fine because you know which bits to skip. A newer player reads all of it and feels tested.</p>
+  </div>
+  <div class="card">
+    <h3>The rules both directions follow</h3>
+    <ul>
+      <li><b>One question per screen.</b> A: "what should I do for this goal?" B: "what can I do right now?" Everything else is a tap away, not a scroll away.</li>
+      <li><b>Say the reason, not the data.</b> "Underground Pass first" instead of a grid of eight requirements with you-values.</li>
+      <li><b>Only the gaps.</b> Levels you already have aren't listed. Levels the chain's rewards hand you aren't listed either, one footer line says so.</li>
+      <li><b>Counts are counts, not buttons.</b> "56 you could start today" is a sentence under the title. The filter chips go.</li>
+      <li><b>One header.</b> Title plus one line. No eyebrow, no italic blurb, no "data from" line (that moves to Settings).</li>
+      <li><b>The tree is a place you go,</b> full screen, not a wall at the bottom of every page. It's the part people like once they're in it, so keep it, but behind a row.</li>
+      <li><b>Colour from the game.</b> Skill icons carry the colour. The app's own palette stays to three jobs: accent, done, blocked.</li>
+      <li><b>Grouped lists, hairline rules, chevrons.</b> The iOS Settings shape. It reads as "a few things" even when it's twenty.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>A, one goal at a time</h3>
+    <p>Goals as a strip of cards with rings. Pick one and the page becomes that goal: three things to do next, the levels you still need, and a short More list. The serif title keeps it Mortimeter. Best for someone with one or two goals, which is most people.</p>
+  </div>
+  <div class="card">
+    <h3>B, your list</h3>
+    <p>Route first, goal second. Everything pinned melts into one ready-now list, each row saying which goal it serves. Waiting rows say the one thing standing in the way. Bold sans title, closer to a plain iOS app. Best for someone with a big board who just wants to be told what to click.</p>
+    <p>They aren't exclusive: A is the goal screen, B is the home of Map, and tapping a goal pill in B opens A.</p>
+  </div>
+</div>
+</div>
+
+<script>
+document.querySelectorAll(".tabs button").forEach(b=> b.onclick = ()=>{
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on", x===b));
+  document.querySelectorAll(".dir").forEach(d=>d.classList.toggle("on", d.id==="dir-"+b.dataset.dir));
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
