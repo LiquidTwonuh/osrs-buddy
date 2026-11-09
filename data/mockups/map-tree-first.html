@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map tree-first mockup</title>
+<style>
+  /* Layout: the tree is the page. Search and the guide sit above it, everything about one quest lives in a popup. */
+  :root{
+    --bg:#1a1712; --bg2:#241f18; --panel:#26211a; --panel2:#2f2820; --border:#4a3f2e;
+    --gold:#e6c35c; --gold-dim:#b9974a; --gold2:#c9a642; --gold3:#8a6f2e;
+    --text:#e8e0cf; --muted:#a99b7d; --inset:#15120d; --active:#3a3122;
+    --btnlo:#2a2318; --btnhov1:#463a26; --glow:rgba(230,195,92,.18);
+    --green:#6fbf5b; --green-bg:#2c3d24; --red:#d46a5a; --blue:#5a9fd4;
+    --shadow:0 2px 0 #0e0b07, 0 6px 14px rgba(0,0,0,.4);
+    --font-display:"EB Garamond",Georgia,serif;
+    --font-body:"Segoe UI",system-ui,sans-serif;
+    --hair:rgba(255,255,255,.07);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:#0f0d0a; color:var(--text); font-family:var(--font-body); font-size:14px; -webkit-font-smoothing:antialiased}
+  .top{position:sticky; top:0; z-index:5; background:#0f0d0a; border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .top h1{font-family:var(--font-display); font-size:18px; color:var(--gold); margin:0 14px 0 0; font-weight:600}
+  .top p{margin:0; color:var(--muted); font-size:12.5px; flex:1; min-width:200px}
+  .seg{display:inline-flex; background:var(--inset); border:1px solid var(--border); border-radius:10px; padding:3px; gap:2px}
+  .seg button{border:0; background:none; color:var(--muted); font:inherit; font-size:12.5px; padding:5px 12px; border-radius:8px; cursor:pointer}
+  .seg button.on{background:var(--panel2); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .frame{width:1180px; max-width:100%; margin:26px auto 60px; background:var(--bg); border:1px solid var(--border); border-radius:14px; display:grid; grid-template-columns:200px 1fr; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .side{background:var(--bg2); border-right:1px solid var(--border); padding:16px 12px; font-size:13px}
+  .side .brand{font-family:var(--font-display); font-size:19px; color:var(--gold); padding:0 8px 14px}
+  .side .n{padding:7px 10px; border-radius:8px; color:var(--text)}
+  .side .n.on{background:var(--active); color:var(--gold)}
+  .main{padding:22px 30px 40px; min-height:860px; min-width:0}
+  @media (max-width:760px){ .frame{grid-template-columns:1fr; margin:0; border-radius:0} .side{display:none} .main{padding:16px 16px 40px} }
+
+  /* ---- head: search, guide, goal ---- */
+  .bar{display:flex; gap:10px; align-items:stretch; margin-bottom:14px}
+  .search{flex:1; position:relative; min-width:0}
+  .search input{width:100%; background:var(--inset); border:1px solid var(--border); color:var(--text); border-radius:12px; padding:12px 14px 12px 40px; font:inherit; font-size:15px}
+  .search input::placeholder{color:var(--muted)}
+  .search input:focus{outline:none; border-color:var(--gold-dim); box-shadow:0 0 0 3px var(--glow)}
+  .search .g{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:16px; pointer-events:none}
+  .sug{position:absolute; left:0; right:0; top:calc(100% + 6px); background:var(--panel2); border:1px solid var(--border); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,.5); z-index:8; overflow:hidden; display:none}
+  .sug.on{display:block}
+  .sug button{display:flex; width:100%; align-items:center; gap:10px; background:none; border:0; border-top:1px solid var(--hair); color:var(--text); font:inherit; font-size:13.5px; padding:10px 14px; cursor:pointer; text-align:left}
+  .sug button:first-child{border-top:0} .sug button:hover{background:var(--active)}
+  .sug .tag{margin-left:auto; font-size:11px; color:var(--muted)}
+  .big{display:inline-flex; align-items:center; gap:10px; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:12px; padding:0 16px; font:inherit; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap}
+  .big:hover{background:var(--btnhov1); border-color:var(--gold-dim)}
+  .big .ic{font-size:18px}
+  .big small{display:block; font-weight:400; color:var(--muted); font-size:11.5px}
+  .icon{background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:12px; width:46px; display:grid; place-items:center; font-size:17px; cursor:pointer}
+  .icon:hover{background:var(--btnhov1)}
+  @media (max-width:760px){ .big span.lbl{display:none} .big{padding:0 12px} }
+
+  .goal{display:flex; align-items:center; gap:14px; margin-bottom:12px; flex-wrap:wrap}
+  .goal .ring{width:44px; height:44px; flex:none}
+  .goal h2{margin:0; font-family:var(--font-display); font-size:26px; color:var(--gold); font-weight:600; line-height:1.05}
+  .goal .sub{color:var(--muted); font-size:12.5px; margin-top:3px}
+  .goal .sub b{color:var(--green); font-weight:600}
+  .goal .sp{flex:1}
+  .ghost{background:none; border:1px solid var(--border); color:var(--muted); border-radius:9px; padding:6px 11px; font:inherit; font-size:12.5px; cursor:pointer}
+  .ghost:hover{color:var(--text); background:var(--panel2)}
+  .legend{display:flex; gap:14px; font-size:11.5px; color:var(--muted); margin-left:auto}
+  .legend i{display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:5px; vertical-align:-1px; border:1px solid var(--border)}
+  .legend .d i{background:var(--green-bg); border-color:var(--green)}
+  .legend .r i{background:var(--panel2); border-color:var(--gold); box-shadow:0 0 0 2px var(--glow)}
+  .legend .b i{background:var(--inset)}
+
+  /* ---- tree ---- */
+  .treep{background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); position:relative}
+  .treep.full{position:fixed; inset:14px; z-index:30; border-radius:14px; display:flex; flex-direction:column}
+  .treep.full .wrap{flex:1}
+  .wrap{overflow:auto; padding:18px}
+  .tree{position:relative}
+  .tree svg{position:absolute; inset:0; pointer-events:none; overflow:visible}
+  .tree svg path{fill:none; stroke:var(--border); stroke-width:1.5; transition:opacity .2s, stroke .2s}
+  .node{position:absolute; width:150px; height:36px; border-radius:9px; background:var(--panel2); border:1px solid var(--border); color:var(--text); font:inherit; font-size:12.5px; text-align:left; padding:0 10px 0 9px; cursor:pointer; display:flex; align-items:center; gap:7px; transition:opacity .2s, transform .12s; white-space:nowrap; overflow:hidden}
+  .node span{overflow:hidden; text-overflow:ellipsis}
+  .node i{width:9px; height:9px; border-radius:3px; flex:none; background:var(--inset); border:1px solid var(--border)}
+  .node.done{background:var(--green-bg); border-color:#3f5a35; color:var(--muted)} .node.done i{background:var(--green); border-color:var(--green)}
+  .node.ready{border-color:var(--gold); box-shadow:0 0 0 2px var(--glow)} .node.ready i{background:var(--gold); border-color:var(--gold)}
+  .node.prog i{background:var(--blue); border-color:var(--blue)}
+  .node.target{border-color:var(--gold); background:var(--active); font-weight:600}
+  .node:hover{transform:translateY(-1px); border-color:var(--gold-dim)}
+  .node.sel{outline:2px solid var(--gold); outline-offset:1px}
+  .tree.hl .node{opacity:.22} .tree.hl .node.lit{opacity:1}
+  .tree.hl svg path{opacity:.12} .tree.hl svg path.lit{opacity:1; stroke:var(--gold); stroke-width:2.5}
+  .treefoot{display:flex; gap:10px; align-items:center; padding:10px 16px; border-top:1px solid var(--hair); font-size:12px; color:var(--muted); flex-wrap:wrap}
+  .treefoot .sp{flex:1}
+  .treefoot button{background:none; border:0; color:var(--gold); font:inherit; font-size:12px; cursor:pointer; padding:0}
+
+  /* ---- under the tree ---- */
+  .strip{display:flex; align-items:center; gap:8px; margin-top:14px; flex-wrap:wrap}
+  .strip .eb{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-right:4px}
+  .chip{display:inline-flex; align-items:center; gap:7px; background:var(--panel); border:1px solid var(--border); border-radius:999px; padding:5px 12px; font-size:12.5px; cursor:pointer; color:inherit; font:inherit}
+  .chip:hover{background:var(--panel2)}
+  .chip i{width:8px; height:8px; border-radius:50%; background:var(--gold)}
+  .chip.fold i{background:var(--muted)}
+  .chip .n{color:var(--muted); font-size:11px}
+
+  /* ---- popup ---- */
+  .scrim{position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:40; display:none}
+  .scrim.on{display:block}
+  .pop{position:fixed; z-index:41; background:var(--bg2); border:1px solid var(--border); display:none; flex-direction:column; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .pop.on{display:flex}
+  body[data-pop="card"] .pop{left:50%; top:50%; transform:translate(-50%,-50%); width:600px; max-width:calc(100% - 24px); max-height:min(82vh,760px); border-radius:16px}
+  body[data-pop="side"] .pop{top:0; right:0; bottom:0; width:460px; max-width:100%; border-left:1px solid var(--border)}
+  @media (max-width:640px){ body[data-pop="card"] .pop{left:0; right:0; bottom:0; top:auto; transform:none; width:auto; max-width:none; max-height:88vh; border-radius:16px 16px 0 0} }
+  .ph{padding:18px 20px 0; position:relative}
+  .ph .x{position:absolute; top:12px; right:12px; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:8px; width:30px; height:30px; cursor:pointer; font:inherit}
+  .ph h3{margin:0; font-family:var(--font-display); font-size:26px; color:var(--gold); font-weight:600; line-height:1.05; padding-right:36px}
+  .ph .meta{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:7px; font-size:12px; color:var(--muted)}
+  .tag{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:999px; padding:2px 9px; font-size:11px; color:var(--muted)}
+  .tag i{width:7px; height:7px; border-radius:50%; background:var(--muted)}
+  .tag.ready{color:var(--gold); border-color:var(--gold-dim)} .tag.ready i{background:var(--gold)}
+  .tag.done{color:var(--green); border-color:#3f5a35} .tag.done i{background:var(--green)}
+  .tag.prog{color:var(--blue); border-color:#3b5f80} .tag.prog i{background:var(--blue)}
+  .acts{display:flex; gap:6px; flex-wrap:wrap; margin-top:12px}
+  .acts button,.acts a{background:var(--btnlo); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:7px 11px; font:inherit; font-size:12.5px; cursor:pointer; text-decoration:none}
+  .acts button:hover,.acts a:hover{background:var(--btnhov1)}
+  .acts .pri{background:var(--gold); color:#1a1712; border-color:var(--gold); font-weight:600}
+  .tabs{display:flex; gap:2px; margin:14px 0 0; border-bottom:1px solid var(--border)}
+  .tabs button{background:none; border:0; border-bottom:2px solid transparent; color:var(--muted); font:inherit; font-size:13px; padding:8px 12px; cursor:pointer; margin-bottom:-1px}
+  .tabs button.on{color:var(--gold); border-bottom-color:var(--gold)}
+  .tabs .cnt{font-size:11px; background:var(--active); color:var(--text); border-radius:999px; padding:0 6px; margin-left:4px}
+  .pb{overflow:auto; padding:6px 20px 22px; min-height:0}
+  .pb h5{margin:16px 0 6px; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .pb h5:first-child{margin-top:12px}
+  .req{display:grid; grid-template-columns:22px 1fr auto; gap:10px; align-items:center; padding:6px 0; border-top:1px solid var(--hair); font-size:13px}
+  .req img{width:20px; height:20px; object-fit:contain}
+  .req .v{font-variant-numeric:tabular-nums; color:var(--muted)} .req .v b{color:var(--text)}
+  .req.ok .v b{color:var(--green)} .req.no .v b{color:var(--red)}
+  .qrow{display:grid; grid-template-columns:12px 1fr auto; gap:10px; align-items:center; padding:7px 4px; border-top:1px solid var(--hair); background:none; border-left:0; border-right:0; border-bottom:0; width:100%; color:var(--text); font:inherit; font-size:13px; cursor:pointer; text-align:left; border-radius:6px}
+  .qrow:hover{background:var(--panel2)}
+  .qrow i{width:9px; height:9px; border-radius:3px; background:var(--inset); border:1px solid var(--border)}
+  .qrow.done i{background:var(--green); border-color:var(--green)} .qrow.ready i{background:var(--gold); border-color:var(--gold)} .qrow.prog i{background:var(--blue); border-color:var(--blue)}
+  .qrow small{color:var(--muted); font-size:11.5px}
+  .xp{display:flex; gap:6px; flex-wrap:wrap}
+  .xp span{display:inline-flex; align-items:center; gap:5px; background:var(--panel); border:1px solid var(--border); border-radius:999px; padding:3px 9px 3px 5px; font-size:12px; font-variant-numeric:tabular-nums}
+  .xp span img{width:16px; height:16px}
+  .xp .qp{background:var(--active); color:var(--gold); border-color:var(--gold-dim); padding-left:9px; font-weight:600}
+  .un{padding:5px 0; border-top:1px solid var(--hair); font-size:13px}
+  .un::before{content:"🔓 "; opacity:.8}
+  .step{display:grid; grid-template-columns:20px 1fr; gap:10px; padding:7px 0; border-top:1px solid var(--hair); font-size:13px; line-height:1.4; cursor:pointer}
+  .step input{margin:2px 0 0; accent-color:var(--gold)}
+  .step.done{color:var(--muted); text-decoration:line-through}
+  .note{color:var(--muted); font-size:11.5px; margin-top:12px; line-height:1.5}
+  .folder{position:absolute; background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:6px; z-index:3; box-shadow:0 10px 30px rgba(0,0,0,.5); min-width:180px}
+  .folder button{display:block; width:100%; text-align:left; background:none; border:0; color:var(--text); font:inherit; font-size:13px; padding:7px 10px; border-radius:7px; cursor:pointer}
+  .folder button:hover{background:var(--active)}
+
+  /* ---- guide drawer ---- */
+  .drawer{position:fixed; top:0; left:0; bottom:0; width:420px; max-width:100%; background:var(--bg2); border-right:1px solid var(--border); z-index:41; transform:translateX(-100%); transition:transform .22s ease; display:flex; flex-direction:column}
+  .drawer.on{transform:none}
+  @media (prefers-reduced-motion:reduce){ .drawer{transition:none} }
+  .drawer .dh{padding:18px 20px 10px; border-bottom:1px solid var(--border)}
+  .drawer h3{margin:0; font-family:var(--font-display); font-size:24px; color:var(--gold); font-weight:600}
+  .drawer .dh p{margin:4px 0 0; color:var(--muted); font-size:12.5px}
+  .drawer .dl{overflow:auto; padding:8px 12px 20px}
+  .gq{display:grid; grid-template-columns:28px 1fr auto; gap:10px; align-items:center; padding:8px 8px; border-radius:8px; font-size:13.5px; cursor:pointer}
+  .gq:hover{background:var(--panel2)}
+  .gq .k{color:var(--muted); font-variant-numeric:tabular-nums; font-size:12px}
+  .gq.done{color:var(--muted)} .gq.done .k::after{content:" ✓"; color:var(--green)}
+  .gq .tag{font-size:10.5px}
+  .toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:var(--panel2); border:1px solid var(--gold-dim); color:var(--text); padding:10px 16px; border-radius:10px; font-size:13px; z-index:60; box-shadow:0 10px 30px rgba(0,0,0,.5); display:none; max-width:92vw}
+  .toast.on{display:block}
+</style>
+</head>
+<body data-pop="card">
+<div class="top">
+  <h1>Map, tree first</h1>
+  <p>Mockup on Twonuh's save. Click a quest: the path lights and a popup holds everything about it. Rewards moved into Overview.</p>
+  <span style="color:var(--muted); font-size:12px">Popup style</span>
+  <div class="seg" id="popSeg"><button class="on" data-pop="card">Card</button><button data-pop="side">Side panel</button></div>
+</div>
+
+<div class="frame">
+  <div class="side">
+    <div class="brand">Mortimeter</div>
+    <div class="n">Home</div><div class="n">Grind</div><div class="n on">Map</div><div class="n">Upgrades</div><div class="n">Coffer</div><div class="n">Scroll</div>
+  </div>
+  <div class="main">
+    <div class="bar">
+      <div class="search"><span class="g">⌕</span><input id="q" type="text" placeholder="Search any quest, or pick a goal" autocomplete="off"><div class="sug" id="sug"></div></div>
+      <button class="big" id="guideBtn"><span class="ic">📜</span><span class="lbl">Optimal quest guide<small>Every quest in the best order</small></span></button>
+      <button class="icon" id="fullBtn" title="Full screen tree">⤢</button>
+    </div>
+
+    <div class="goal" id="goal"></div>
+
+    <div class="treep" id="treep">
+      <div class="wrap" id="wrap"></div>
+      <div class="treefoot"><span id="footTxt"></span><span class="sp"></span>
+        <div class="legend"><span class="d"><i></i>done</span><span class="r"><i></i>ready now</span><span class="b"><i></i>blocked</span></div>
+        <button id="clearHl" hidden>clear highlight</button></div>
+    </div>
+
+    <div class="strip" id="pins"></div>
+    <div class="strip" id="folders"></div>
+    <div class="note" style="max-width:72ch">Everything else that used to sit on this page (requirements, rewards, steps, pins, folders) now lives in the popup, so the page is the tree and two rows of chips. The Planner's optimal guide and Focus views are one tap away instead of tabs.</div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="pop" id="pop"></div>
+<aside class="drawer" id="drawer"></aside>
+<div class="toast" id="toast"></div>
+
+<script>
+const WIKI = "https://oldschool.runescape.wiki/images/";
+const ME = {
+  levels:{attack:85,defence:80,strength:90,hitpoints:87,ranged:74,prayer:70,magic:71,cooking:67,woodcutting:46,fletching:33,fishing:52,firemaking:50,crafting:61,smithing:65,mining:59,herblore:38,agility:57,thieving:55,slayer:55,farming:68,runecrafting:47,hunter:51,construction:72},
+  qp:214,
+  done:new Set(["Animal Magnetism","Ghosts Ahoy","Bone Voyage","Client of Kourend","Family Crest","Heroes' Quest","Shilo Village","Underground Pass","Waterfall Quest","Icthlarin's Little Helper","Ernest the Chicken","Priest in Peril","The Restless Ghost","The Dig Site","X Marks the Spot","Shield of Arrav","Lost City","Merlin's Crystal","Dragon Slayer I","Jungle Potion","Biohazard","The Fremennik Trials","Rune Mysteries","Druidic Ritual","Troll Stronghold","Gertrude's Cat","Plague City","Death Plateau"]),
+  prog:new Set(["Legends' Quest","Fairytale II - Cure a Queen","Regicide"]),
+  board:["Recipe for Disaster/Defeating the Culinaromancer","Dragon Slayer II"],
+  folders:[{name:"Diary prep",quests:["Eadgar's Ruse","Lunar Diplomacy"]},{name:"Prif",quests:["Regicide","Mourning's End Part I"]}]
+};
+// prereq graph for Dragon Slayer II. Facts from the wiki, trimmed for a mockup.
+const Q = {
+ "Dragon Slayer II":{diff:"Grandmaster",len:"Very long",pre:["Legends' Quest","Dream Mentor","A Tail of Two Cats","Animal Magnetism","Ghosts Ahoy","Bone Voyage","Client of Kourend"],skills:{magic:75,smithing:70,mining:68,crafting:62,agility:60,thieving:60,construction:50,hitpoints:50},qp:200,
+   rw:{qp:5,xp:{smithing:25000,mining:18000,agility:15000,thieving:15000},items:["Four 25k XP lamps","Dragon platebody ability","Ava's assembler"],un:["Vorkath","Myths' Guild","Dragon kiteshield and platebody smithing","Lithkren teleport via Galvek"]},
+   steps:["Talk to Alec Kincade outside the Myths' Guild.","Search the bookcase in the Myths' Guild cellar, then talk to Dallas Jones.","Go to Lithkren and search the ruins with Dallas.","Head to Fossil Island and dig around the Mushroom Forest.","Find the Dragonkin fortress door and open it with the key."]},
+ "Legends' Quest":{diff:"Master",len:"Very long",pre:["Family Crest","Heroes' Quest","Shilo Village","Underground Pass","Waterfall Quest"],skills:{magic:56,agility:50,crafting:50,smithing:50,strength:50,thieving:50,woodcutting:50,mining:52,herblore:45,prayer:42},qp:107,
+   rw:{qp:4,xp:{},items:["Four 7,650 XP rewards in chosen skills","Dragon square shield"],un:["Legends' Guild","Legends cape","Fairy rings staff shortcut"]},
+   steps:["Talk to Radimus Erkle at the Legends' Guild.","Map the Kharazi Jungle for Radimus.","Pick up a gold bowl from Gujuo and bless it.","Fight Ungadulu and the demon Nezikchened in the caves.","Return to Radimus with the totem pole."]},
+ "Dream Mentor":{diff:"Master",len:"Short",pre:["Lunar Diplomacy","Eadgar's Ruse"],skills:{},combat:85,qp:0,
+   rw:{qp:2,xp:{hitpoints:15000,magic:10000,ranged:5000},items:["Dream potion recipe"],un:["Nightmare Zone","Spellbook Swap, Plank Make and the last lunar spells"]},
+   steps:["Talk to the Oneiromancer on Lunar Isle.","Enter the Lunar Isle mine and find Cyrisus. Feed him until he can stand.","Take him to the Dream World and fight the Inadequacy and its three forms.","Report back to the Oneiromancer."]},
+ "A Tail of Two Cats":{diff:"Intermediate",len:"Medium",pre:["Icthlarin's Little Helper"],skills:{},qp:0,
+   rw:{qp:2,xp:{},items:["Two 2,500 XP lamps","Doctor's or nurse hat","Cat training medal"],un:["Bob the cat chats","A Kitten in a Bob hat"]},
+   steps:["Talk to Unferth in Burthorpe.","Talk to Hild next door and find Bob.","Follow Bob's adventures with the catspeak amulet.","Help Unferth with his illness.","Watch the final cutscene and claim the lamps."]},
+ "Animal Magnetism":{diff:"Intermediate",len:"Short",pre:["Ernest the Chicken","Priest in Peril","The Restless Ghost"],skills:{crafting:19,ranged:30,slayer:18,woodcutting:35},rw:{qp:1,xp:{crafting:1000,fletching:1000,slayer:1000,woodcutting:2500},items:["Ava's attractor"],un:["Ava's devices"]}},
+ "Ghosts Ahoy":{diff:"Intermediate",len:"Medium",pre:["Priest in Peril","The Restless Ghost"],skills:{agility:25,cooking:20},rw:{qp:2,xp:{prayer:2400},items:["Ectophial"],un:["Ectofuntus bone grinding at full rate"]}},
+ "Bone Voyage":{diff:"Intermediate",len:"Short",pre:["The Dig Site"],skills:{},rw:{qp:1,xp:{},items:[],un:["Fossil Island"]}},
+ "Client of Kourend":{diff:"Novice",len:"Short",pre:["X Marks the Spot"],skills:{},rw:{qp:1,xp:{},items:["Two 500 XP lamps","Kourend favour certificate"],un:["Arceuus spellbook"]}},
+ "Family Crest":{diff:"Experienced",len:"Medium",pre:[],skills:{mining:40,smithing:40,magic:59,crafting:40},rw:{qp:1,xp:{},items:["Family gauntlets"],un:["Chaos, cooking and goldsmith gauntlets"]}},
+ "Heroes' Quest":{diff:"Experienced",len:"Medium",pre:["Shield of Arrav","Lost City","Merlin's Crystal","Dragon Slayer I"],skills:{cooking:53,fishing:53,herblore:25,mining:50},qp:55,rw:{qp:1,xp:{attack:3075,defence:3075,strength:3075,hitpoints:3075,ranged:2075,fishing:2725,cooking:2825,woodcutting:1575,firemaking:1575,smithing:2257,mining:2575,herblore:1325},items:[],un:["Heroes' Guild","Dragon battleaxe and mace"]}},
+ "Shilo Village":{diff:"Experienced",len:"Medium",pre:["Jungle Potion"],skills:{crafting:20,agility:32},rw:{qp:2,xp:{crafting:3875},items:[],un:["Shilo Village and its gem rocks","Undead chickens"]}},
+ "Underground Pass":{diff:"Experienced",len:"Long",pre:["Biohazard"],skills:{ranged:25},rw:{qp:5,xp:{agility:3000,attack:3000},items:["Iban's staff"],un:["Tirannwn","Iban Blast"]}},
+ "Waterfall Quest":{diff:"Intermediate",len:"Medium",pre:[],skills:{},rw:{qp:1,xp:{attack:13750,strength:13750},items:["Mithril seeds","Two diamonds","Gold bars"],un:["Baxtorian Falls dungeon"]}},
+ "Lunar Diplomacy":{diff:"Experienced",len:"Long",pre:["The Fremennik Trials","Lost City","Rune Mysteries","Shilo Village"],skills:{crafting:61,defence:40,firemaking:49,herblore:5,magic:65,mining:60,woodcutting:55},
+   rw:{qp:2,xp:{magic:5000,runecrafting:5000},items:["Seal of passage","Lunar equipment"],un:["Lunar spellbook","Lunar Isle"]},
+   steps:["Talk to Lokar Searunner on the Rellekka pier.","Buy a seal of passage from Brundt and sail to Lunar Isle.","Make the lunar outfit: helm, amulet, ring, cape, torso, legs, gloves, boots, staff.","Enter the dream and finish the five challenges.","Fight your dark self and return to the Oneiromancer."]},
+ "Eadgar's Ruse":{diff:"Intermediate",len:"Medium",pre:["Druidic Ritual","Troll Stronghold"],skills:{herblore:31},
+   rw:{qp:1,xp:{herblore:11000},items:[],un:["Trollheim teleport (61 Magic)","Goutweed"]},
+   steps:["Talk to Sanfew in Taverley.","Find Eadgar at the top of Trollheim.","Collect the troll disguise parts and make the fake man.","Learn where the goutweed is kept and steal some.","Return to Sanfew."]},
+ "Icthlarin's Little Helper":{diff:"Intermediate",len:"Medium",pre:["Gertrude's Cat"],skills:{},rw:{qp:2,xp:{thieving:4500,agility:4000,woodcutting:4000},items:["Catspeak amulet"],un:["Sophanem"]}},
+ "Ernest the Chicken":{diff:"Novice",len:"Short",pre:[],skills:{},rw:{qp:4,xp:{},items:["300 coins"],un:[]}},
+ "Priest in Peril":{diff:"Novice",len:"Medium",pre:[],skills:{},rw:{qp:1,xp:{prayer:1406},items:["Wolfbane dagger"],un:["Morytania"]}},
+ "The Restless Ghost":{diff:"Novice",len:"Short",pre:[],skills:{},rw:{qp:1,xp:{prayer:1125},items:["Ghostspeak amulet"],un:[]}},
+ "The Dig Site":{diff:"Intermediate",len:"Medium",pre:[],skills:{agility:10,herblore:10,thieving:25},rw:{qp:2,xp:{mining:15300,herblore:2000},items:["Gold bars"],un:["Dig Site digging"]}},
+ "X Marks the Spot":{diff:"Novice",len:"Very short",pre:[],skills:{},rw:{qp:1,xp:{},items:["200 coins","Beginner clue"],un:[]}},
+ "Shield of Arrav":{diff:"Novice",len:"Medium",pre:[],skills:{},rw:{qp:1,xp:{},items:["600 coins"],un:[]}},
+ "Lost City":{diff:"Experienced",len:"Short",pre:[],skills:{crafting:31,woodcutting:36},rw:{qp:3,xp:{},items:["Dramen staff"],un:["Zanaris","Dragon longsword and dagger"]}},
+ "Merlin's Crystal":{diff:"Intermediate",len:"Medium",pre:[],skills:{},rw:{qp:6,xp:{},items:["Excalibur"],un:["Camelot training room"]}},
+ "Dragon Slayer I":{diff:"Experienced",len:"Long",pre:[],skills:{},qp:32,rw:{qp:2,xp:{strength:18650,defence:18650},items:[],un:["Rune platebody","Green dragonhide body"]}},
+ "Jungle Potion":{diff:"Novice",len:"Short",pre:["Druidic Ritual"],skills:{herblore:3},rw:{qp:1,xp:{herblore:775},items:[],un:[]}},
+ "Biohazard":{diff:"Novice",len:"Short",pre:["Plague City"],skills:{},rw:{qp:3,xp:{thieving:1250},items:[],un:["Combat Training Camp"]}},
+ "The Fremennik Trials":{diff:"Intermediate",len:"Long",pre:[],skills:{fletching:25,woodcutting:40,crafting:40},rw:{qp:3,xp:{agility:2812,attack:2812,crafting:2812,defence:2812,fishing:2812,fletching:2812,strength:2812,thieving:2812,woodcutting:2812,hitpoints:2812},items:[],un:["Rellekka shops","Fremennik gear"]}},
+ "Rune Mysteries":{diff:"Novice",len:"Very short",pre:[],skills:{},rw:{qp:1,xp:{},items:["Air talisman"],un:["Runecrafting"]}},
+ "Druidic Ritual":{diff:"Novice",len:"Very short",pre:[],skills:{},rw:{qp:4,xp:{herblore:250},items:[],un:["Herblore"]}},
+ "Troll Stronghold":{diff:"Experienced",len:"Short",pre:["Death Plateau"],skills:{agility:15},rw:{qp:1,xp:{},items:["Two 10,000 XP lamps"],un:["Trollheim"]}},
+ "Gertrude's Cat":{diff:"Novice",len:"Short",pre:[],skills:{},rw:{qp:1,xp:{cooking:1525},items:["A kitten"],un:["Kittens for sale"]}},
+ "Plague City":{diff:"Novice",len:"Short",pre:[],skills:{},rw:{qp:1,xp:{mining:2425},items:["Gas mask"],un:["Ardougne teleport"]}},
+ "Death Plateau":{diff:"Novice",len:"Short",pre:[],skills:{},rw:{qp:1,xp:{attack:3000},items:["Climbing boots"],un:["Trollheim path"]}}
+};
+const GUIDE = ["Eadgar's Ruse","Lunar Diplomacy","Dream Mentor","A Tail of Two Cats","King's Ransom","One Small Favour","Haunted Mine","Lair of Tarn Razorlor","Garden of Tranquillity","Enlightened Journey","Eagles' Peak","Rum Deal","Cabin Fever","The Great Brain Robbery","Monkey Madness II","Sins of the Father","Song of the Elves"];
+const EXTRA = ["King's Ransom","One Small Favour","Haunted Mine","Monkey Madness II","Song of the Elves","Sins of the Father","Recipe for Disaster/Defeating the Culinaromancer","Desert Treasure II","Mourning's End Part I","Regicide","Fairytale II - Cure a Queen"];
+
+const nice = s => s==="runecrafting" ? "Runecraft" : s.charAt(0).toUpperCase()+s.slice(1);
+const skillIcon = s => WIKI + nice(s) + "_icon.png";
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const label = n => n.includes("/") ? n.split("/").pop() : n;
+const TARGET = "Dragon Slayer II";
+const names = Object.keys(Q);
+let done = new Set(ME.done), prog = new Set(ME.prog), board = [...ME.board], folders = ME.folders.map(f=>({...f, quests:[...f.quests]}));
+let ticks = {}; try{ ticks = JSON.parse(localStorage.getItem("map_ticks")||"{}"); }catch(e){}
+
+function skillGaps(n){ const q=Q[n]; return Object.entries(q.skills||{}).map(([s,need])=>({s,need,have:ME.levels[s]||1})); }
+function status(n){
+  if(done.has(n)) return "done";
+  if(prog.has(n)) return "prog";
+  const q=Q[n]; if(!q) return "blocked";
+  const preOk = q.pre.every(p=>done.has(p));
+  const skOk = skillGaps(n).every(g=>g.have>=g.need) && (!q.qp || ME.qp>=q.qp) && (!q.combat || q.combat<=107);
+  return preOk && skOk ? "ready" : "blocked";
+}
+function ancestors(n, acc=new Set()){ (Q[n]?.pre||[]).forEach(p=>{ if(!acc.has(p)){ acc.add(p); ancestors(p,acc); } }); return acc; }
+function dependents(n){ return names.filter(m=>(Q[m].pre||[]).includes(n)); }
+function descendants(n, acc=new Set()){ dependents(n).forEach(d=>{ if(!acc.has(d)){ acc.add(d); descendants(d,acc); } }); return acc; }
+
+// ---- layout: columns by depth, rows by the average row of prerequisites ----
+const W=150, H=36, CG=56, RG=10;
+const depth = {}; function dep(n){ if(depth[n]!=null) return depth[n]; const p=Q[n].pre; depth[n] = p.length ? 1+Math.max(...p.map(dep)) : 0; return depth[n]; }
+names.forEach(dep);
+const cols = []; names.forEach(n=>{ (cols[depth[n]] ||= []).push(n); });
+const pos = {};
+cols.forEach((col,ci)=>{
+  if(ci===0) col.sort((a,b)=>{ const da=dependents(a)[0]||"", db=dependents(b)[0]||""; return da.localeCompare(db) || a.localeCompare(b); });
+  else col.sort((a,b)=>{ const avg=n=>{ const ps=Q[n].pre.filter(p=>pos[p]); return ps.length? ps.reduce((s,p)=>s+pos[p].y,0)/ps.length : 1e9; }; return avg(a)-avg(b); });
+  const total = col.length*(H+RG)-RG, maxRows = Math.max(...cols.map(c=>c.length)), fullH = maxRows*(H+RG)-RG;
+  const y0 = (fullH-total)/2;
+  col.forEach((n,i)=>{ pos[n] = {x: ci*(W+CG), y: y0 + i*(H+RG)}; });
+});
+const TW = cols.length*(W+CG)-CG, TH = Math.max(...cols.map(c=>c.length))*(H+RG)-RG;
+function edge(a,b){ const A=pos[a], B=pos[b], x1=A.x+W, y1=A.y+H/2, x2=B.x, y2=B.y+H/2, mx=(x1+x2)/2; return `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`; }
+
+let sel = null;
+function renderTree(){
+  const paths = names.flatMap(n=>Q[n].pre.map(p=>`<path d="${edge(p,n)}" data-ef="${esc(p)}" data-et="${esc(n)}"></path>`)).join("");
+  const nodes = names.map(n=>`<button class="node ${status(n)}${n===TARGET?" target":""}${n===sel?" sel":""}" style="left:${pos[n].x}px; top:${pos[n].y}px" data-node="${esc(n)}" title="${esc(n)}"><i></i><span>${esc(label(n))}</span></button>`).join("");
+  document.getElementById("wrap").innerHTML = `<div class="tree${sel?" hl":""}" id="tree" style="width:${TW}px; height:${TH}px"><svg width="${TW}" height="${TH}">${paths}</svg>${nodes}</div>`;
+  if(sel) light(sel);
+  const all = ancestors(TARGET); all.add(TARGET);
+  const left = [...all].filter(n=>!done.has(n)), ready = left.filter(n=>status(n)==="ready");
+  document.getElementById("footTxt").textContent = `${all.size} quests in the chain · ${all.size-left.length} done · ${ready.length} ready now`;
+  document.getElementById("clearHl").hidden = !sel;
+}
+function light(n){
+  const keep = new Set([n, ...ancestors(n), ...descendants(n)]);
+  document.querySelectorAll("#tree .node").forEach(x=>x.classList.toggle("lit", keep.has(x.dataset.node)));
+  document.querySelectorAll("#tree path").forEach(p=>p.classList.toggle("lit", keep.has(p.dataset.ef) && keep.has(p.dataset.et)));
+  document.getElementById("tree").classList.add("hl");
+}
+function renderGoal(){
+  const all = ancestors(TARGET); all.add(TARGET);
+  const d = [...all].filter(n=>done.has(n)).length, ready = [...all].filter(n=>status(n)==="ready").length;
+  const r=18, c=2*Math.PI*r, p=d/all.size;
+  document.getElementById("goal").innerHTML = `<svg class="ring" viewBox="0 0 44 44"><circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--inset)" stroke-width="5"/><circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(c*p).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 22 22)"/><text x="22" y="26" text-anchor="middle" font-size="11" fill="var(--text)" font-family="Segoe UI,system-ui,sans-serif">${Math.round(p*100)}</text></svg>
+    <div><h2>${esc(TARGET)}</h2><div class="sub">${d} of ${all.size} done · <b>${ready} ready now</b> · tap any quest for the path and the details</div></div>
+    <span class="sp"></span><button class="ghost" data-toast="Search above to chart a different quest">Change goal</button>`;
+}
+function renderStrips(){
+  document.getElementById("pins").innerHTML = `<span class="eb">Pinned</span>` + board.map(n=>`<button class="chip" data-node="${esc(n)}"><i></i>${esc(label(n))}</button>`).join("") + `<button class="chip" style="color:var(--muted)" data-toast="Pin from any quest's popup">+ pin</button>`;
+  document.getElementById("folders").innerHTML = `<span class="eb">Folders</span>` + folders.map(f=>`<button class="chip fold" data-toast="Opens the ${esc(f.name)} folder: ${esc(f.quests.map(label).join(", "))}"><i></i>${esc(f.name)}<span class="n">${f.quests.length}</span></button>`).join("") + `<button class="chip" style="color:var(--muted)" data-toast="New folder">+ new</button>`;
+}
+
+// ---- popup ----
+let tab = "over";
+function openPop(n){
+  sel = n; renderTree();
+  const q = Q[n] || {diff:"",len:"",pre:[],skills:{},rw:{qp:0,xp:{},items:[],un:[]}};
+  const st = status(n), inTree = !!Q[n];
+  const stTxt = {done:"complete", prog:"in progress", ready:"ready to start", blocked:"blocked"}[st];
+  const reqs = skillGaps(n).sort((a,b)=>b.need-a.need).map(g=>`<div class="req ${g.have>=g.need?"ok":"no"}"><img src="${skillIcon(g.s)}" alt=""><span>${nice(g.s)}</span><span class="v"><b>${g.have}</b> / ${g.need}</span></div>`).join("")
+    + (q.qp?`<div class="req ${ME.qp>=q.qp?"ok":"no"}"><span style="color:var(--gold);font-weight:600;font-size:11px">QP</span><span>Quest points</span><span class="v"><b>${ME.qp}</b> / ${q.qp}</span></div>`:"")
+    + (q.combat?`<div class="req ok"><span>⚔</span><span>Combat level</span><span class="v"><b>107</b> / ${q.combat}</span></div>`:"");
+  const qrow = m => { const s=status(m); return `<button class="qrow ${s}" data-node="${esc(m)}"><i></i><span>${esc(label(m))}</span><small>${{done:"done",prog:"in progress",ready:"ready",blocked:"blocked"}[s]}</small></button>`; };
+  const pre = q.pre.map(qrow).join(""), opens = dependents(n).map(qrow).join("");
+  const rw = q.rw||{};
+  const xp = (rw.qp?`<span class="qp">${rw.qp} QP</span>`:"") + Object.entries(rw.xp||{}).sort((a,b)=>b[1]-a[1]).map(([s,a])=>`<span><img src="${skillIcon(s)}" alt="">+${a>=1000?(a/1000).toFixed(a%1000?1:0)+"k":a}</span>`).join("");
+  const items = (rw.items||[]).map(i=>`<div class="un" style="padding-left:0">${esc(i)}</div>`).join("").replace(/🔓 /g,"");
+  const un = (rw.un||[]).map(u=>`<div class="un">${esc(u)}</div>`).join("");
+  const steps = q.steps||[]; const tk = ticks[n]||{}; const nTicked = Object.keys(tk).filter(k=>tk[k]).length;
+  const stepsHtml = steps.length ? steps.map((s,i)=>`<label class="step ${tk[i]?"done":""}"><input type="checkbox" data-step="${i}" ${tk[i]?"checked":""}><span>${esc(s)}</span></label>`).join("") + `<div class="note">Quick guide text is the wiki's, CC BY-NC-SA. Ticks are yours and stay on this device.</div>`
+    : `<div class="note" style="margin-top:8px">${st==="done"?"You've finished this one. Steps stay available for a re-read.":"Steps load from the wiki quick guide the first time you open this tab."}</div>`;
+  const overview = `
+    <h5>Requirements</h5>${reqs || `<div class="note" style="margin:0">Nothing required.</div>`}
+    <h5>Needs these quests${q.pre.length?` (${q.pre.filter(p=>!done.has(p)).length} left)`:""}</h5>${pre || `<div class="note" style="margin:0">None. No quests gate this.</div>`}
+    <h5>Rewards</h5>${xp?`<div class="xp">${xp}</div>`:""}${items}${un}${(!xp&&!items&&!un)?`<div class="note" style="margin:0">Nothing listed.</div>`:""}
+    ${opens?`<h5>Opens up (${dependents(n).length})</h5>${opens}`:""}`;
+  const wiki = "https://oldschool.runescape.wiki/w/"+encodeURIComponent(n.replace(/ /g,"_"));
+  document.getElementById("pop").innerHTML = `
+    <div class="ph"><button class="x" data-close>✕</button>
+      <h3>${esc(label(n))}</h3>
+      <div class="meta"><span class="tag ${st}"><i></i>${stTxt}</span>${q.diff?`<span>${esc(q.diff)}</span><span>·</span><span>${esc(q.len)}</span>`:""}</div>
+      <div class="acts">
+        <button class="${st==="done"?"":"pri"}" data-done="${esc(n)}">${st==="done"?"✓ Done":"Mark done"}</button>
+        ${n!==TARGET?`<button data-toast="Charted the route to ${esc(label(n))}">🧭 Plan this</button>`:""}
+        <button data-pin="${esc(n)}">${board.includes(n)?"📌 Pinned":"📌 Pin"}</button>
+        <button data-fold="${esc(n)}">📁 Folder</button>
+        <button data-toast="Sent ${esc(label(n))} to Notes with its requirements and rewards">📝 Notes</button>
+        <a href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a>
+      </div>
+      <div class="tabs"><button class="${tab==="over"?"on":""}" data-tab="over">Overview</button><button class="${tab==="steps"?"on":""}" data-tab="steps">Steps${nTicked?`<span class="cnt">${nTicked}</span>`:""}</button></div>
+    </div>
+    <div class="pb">${tab==="over"?overview:stepsHtml}</div>`;
+  document.getElementById("pop").classList.add("on"); document.getElementById("scrim").classList.add("on");
+}
+function closePop(){ document.getElementById("pop").classList.remove("on"); document.getElementById("scrim").classList.remove("on"); document.getElementById("drawer").classList.remove("on"); document.querySelector(".folder")?.remove(); }
+function clearHl(){ sel=null; renderTree(); }
+
+// ---- guide drawer ----
+function openGuide(){
+  const order = ["Cook's Assistant","Sheep Shearer","X Marks the Spot","The Restless Ghost","Rune Mysteries","Druidic Ritual","Gertrude's Cat","Priest in Peril","Plague City","Biohazard","Death Plateau","Troll Stronghold"].concat(GUIDE);
+  document.getElementById("drawer").innerHTML = `<div class="dh"><h3>Optimal quest guide</h3><p>The wiki's order, with what you've done ticked. It picks up at the first one you haven't.</p></div>
+    <div class="dl">${order.map((n,i)=>{ const d=done.has(n)||(!Q[n]&&i<12), s=Q[n]?status(n):(d?"done":"ready"); return `<div class="gq ${d?"done":""}" data-node="${esc(n)}"><span class="k">${i+1}</span><span>${esc(n)}</span>${d?"":`<span class="tag ${s}"><i></i>${s==="ready"?"ready":"blocked"}</span>`}</div>`; }).join("")}
+    <div class="note" style="padding:8px">Full list continues to Song of the Elves. Tap one to open it on the tree.</div></div>`;
+  document.getElementById("drawer").classList.add("on"); document.getElementById("scrim").classList.add("on");
+}
+
+// ---- search ----
+const q = document.getElementById("q"), sug = document.getElementById("sug");
+q.addEventListener("input", ()=>{
+  const t = q.value.trim().toLowerCase(); if(!t){ sug.classList.remove("on"); return; }
+  const hits = [...new Set([...names, ...EXTRA])].filter(n=>n.toLowerCase().includes(t)).slice(0,7);
+  sug.innerHTML = hits.map(n=>`<button data-pick="${esc(n)}"><i class="${Q[n]?"":""}"></i>${esc(label(n))}<span class="tag">${Q[n]?{done:"done",prog:"in progress",ready:"ready",blocked:"blocked"}[status(n)]:"chart it"}</span></button>`).join("") || `<button disabled>No quest called that</button>`;
+  sug.classList.add("on");
+});
+document.addEventListener("click", e=>{
+  if(!e.target.closest(".search")) sug.classList.remove("on");
+  const pk = e.target.closest("[data-pick]"); if(pk){ const n=pk.dataset.pick; q.value=""; sug.classList.remove("on"); if(Q[n]) openPop(n); else toast(`Charted ${label(n)}: the tree redraws around it`); return; }
+  const nd = e.target.closest("[data-node]"); if(nd){ const n=nd.dataset.node; if(Q[n]){ tab="over"; openPop(n); } else toast(`${label(n)} isn't in this chain; charting it redraws the tree`); return; }
+  if(e.target.closest("[data-close]") || e.target.id==="scrim"){ closePop(); return; }
+  const tb = e.target.closest("[data-tab]"); if(tb){ tab=tb.dataset.tab; openPop(sel); return; }
+  const dn = e.target.closest("[data-done]"); if(dn){ const n=dn.dataset.done; done.has(n)?done.delete(n):done.add(n); prog.delete(n); renderGoal(); openPop(n); toast(done.has(n)?`${label(n)} marked done. The tree and the goal ring updated.`:`${label(n)} unmarked.`); return; }
+  const pn = e.target.closest("[data-pin]"); if(pn){ const n=pn.dataset.pin; board.includes(n)?board.splice(board.indexOf(n),1):board.push(n); renderStrips(); openPop(n); toast(board.includes(n)?"Pinned. It shows under the tree and on Home.":"Unpinned."); return; }
+  const fd = e.target.closest("[data-fold]"); if(fd){ document.querySelector(".folder")?.remove(); const m=document.createElement("div"); m.className="folder"; m.style.left=fd.offsetLeft+"px"; m.style.top=(fd.offsetTop+fd.offsetHeight+4)+"px"; m.innerHTML = folders.map((f,i)=>`<button data-fsel="${i}">${f.quests.includes(fd.dataset.fold)?"✓ ":""}${esc(f.name)}</button>`).join("")+`<button data-fsel="new">+ New folder</button>`; fd.parentElement.appendChild(m); m.dataset.q=fd.dataset.fold; return; }
+  const fs = e.target.closest("[data-fsel]"); if(fs){ const n=fs.closest(".folder").dataset.q; if(fs.dataset.fsel==="new"){ folders.push({name:"New folder",quests:[n]}); } else { const f=folders[+fs.dataset.fsel]; f.quests.includes(n)?f.quests.splice(f.quests.indexOf(n),1):f.quests.push(n); } document.querySelector(".folder")?.remove(); renderStrips(); toast("Folder updated."); return; }
+  const t = e.target.closest("[data-toast]"); if(t){ toast(t.dataset.toast); return; }
+  if(e.target.closest("#guideBtn")){ openGuide(); return; }
+  if(e.target.closest("#fullBtn")){ const p=document.getElementById("treep"); p.classList.toggle("full"); document.body.style.overflow = p.classList.contains("full")?"hidden":""; document.getElementById("fullBtn").textContent = p.classList.contains("full")?"⤡":"⤢"; return; }
+  if(e.target.closest("#clearHl")){ clearHl(); return; }
+  const ps = e.target.closest("#popSeg button"); if(ps){ document.body.dataset.pop = ps.dataset.pop; document.querySelectorAll("#popSeg button").forEach(b=>b.classList.toggle("on", b===ps)); return; }
+});
+document.addEventListener("change", e=>{
+  const s = e.target.closest("[data-step]"); if(s && sel){ (ticks[sel] ||= {})[s.dataset.step] = s.checked; try{ localStorage.setItem("map_ticks", JSON.stringify(ticks)); }catch(err){} s.closest(".step").classList.toggle("done", s.checked); const c=document.querySelector('[data-tab="steps"]'); const n=Object.values(ticks[sel]).filter(Boolean).length; c.innerHTML = `Steps${n?`<span class="cnt">${n}</span>`:""}`; }
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ if(document.getElementById("treep").classList.contains("full")) document.getElementById("fullBtn").click(); else closePop(); } });
+let toastT; function toast(t){ const el=document.getElementById("toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove("on"),2400); }
+
+renderGoal(); renderTree(); renderStrips();
+</script>
+</body>
+</html>

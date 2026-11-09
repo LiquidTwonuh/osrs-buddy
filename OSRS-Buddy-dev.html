@@ -381,6 +381,56 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qp-tag{font-size:10.5px; padding:1px 7px; border-radius:9px; background:var(--btnlo); border:1px solid var(--border); color:var(--muted)}
   .qp-tag.boost{color:#8fd; border-color:#2a5f52}
   .qp-tag.free{color:var(--green); border-color:#2f5a28}
+  /* Map, tree first: search and the guide above, the tree as the page, chips under it, one quest in a side panel */
+  .qp-bar{display:flex; gap:10px; align-items:stretch; margin-top:10px}
+  .qp-search{flex:1; position:relative; min-width:0}
+  .qp-search input{width:100%; box-sizing:border-box; min-width:0; background:var(--inset); border:1px solid var(--border); color:var(--text); border-radius:12px; padding:11px 14px 11px 38px; font:inherit; font-size:15px}
+  .qp-search input:focus{outline:none; border-color:var(--gold-dim); box-shadow:0 0 0 3px var(--glow)}
+  .qp-search .g{position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:16px; pointer-events:none}
+  .qp-big{display:inline-flex; align-items:center; gap:10px; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:12px; padding:0 16px; font:inherit; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap; text-align:left; box-shadow:none}
+  .qp-big:hover{background:var(--btnhov1); border-color:var(--gold-dim)}
+  .qp-big .ic{font-size:18px}
+  .qp-big small{display:block; font-weight:400; color:var(--muted); font-size:11.5px}
+  .qp-iconbtn{background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:12px; width:46px; flex:none; display:grid; place-items:center; font-size:17px; cursor:pointer; box-shadow:none; padding:0}
+  .qp-iconbtn:hover{background:var(--btnhov1)}
+  @media (max-width:700px){ .qp-big .lbl{display:none} .qp-big{padding:0 12px} .qp-search input{font-size:14px} }
+  .qp-goal{display:flex; align-items:center; gap:14px; margin:4px 0 12px; flex-wrap:wrap}
+  .qp-goal .qg-ring{width:46px; height:46px; flex:none}
+  .qp-goal .qg-t{min-width:0}
+  .qp-goal h3{margin:0; font-family:var(--font-display); font-size:25px; color:var(--gold); font-weight:600; line-height:1.05}
+  .qp-goal .qg-sub{color:var(--muted); font-size:12.5px; margin-top:3px}
+  .qp-goal .qg-sub b{color:var(--green); font-weight:600}
+  .qp-goal .qg-acts{display:flex; gap:6px; flex-wrap:wrap; margin-left:auto}
+  .qp-treefoot{display:flex; gap:12px; align-items:center; padding:8px 4px 0; border-top:1px solid var(--border); font-size:12px; color:var(--muted); flex-wrap:wrap}
+  .qp-treefoot .qp-legend{margin:0; justify-content:flex-start}
+  .qp-treefoot .sp{flex:1}
+  .qp-strip{display:flex; align-items:center; gap:8px; margin-top:12px; flex-wrap:wrap}
+  .qp-strip .eb{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-right:4px}
+  .qp-chip{display:inline-flex; align-items:center; gap:7px; background:var(--panel); border:1px solid var(--border); border-radius:999px; padding:5px 12px; font-size:12.5px; cursor:pointer; color:var(--text); font-family:inherit; box-shadow:none; max-width:260px}
+  .qp-chip > span:first-of-type{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .qp-chip:hover{background:var(--panel2); border-color:var(--gold-dim)}
+  .qp-chip i{width:8px; height:8px; border-radius:50%; background:var(--gold3); flex:none}
+  .qp-chip.ready i{background:var(--gold)} .qp-chip.done i{background:var(--green)} .qp-chip.prog i{background:var(--blue)}
+  .qp-chip.on{border-color:var(--gold); color:var(--gold)}
+  .qp-chip.fold i{background:var(--muted)}
+  .qp-chip.dim{color:var(--muted); border-style:dashed}
+  .qp-chip .n{color:var(--muted); font-size:11px}
+  .qpq-scrim{position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:80; display:none}
+  .qpq{position:fixed; top:0; right:0; bottom:0; width:460px; max-width:100%; background:var(--bg2); border-left:1px solid var(--border); z-index:81; display:flex; flex-direction:column; box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .qpq-in{position:relative; overflow:auto; padding:18px 20px 24px; flex:1; min-height:0}
+  .qpq-x{position:absolute; top:12px; right:14px; width:30px; height:30px; border-radius:8px; background:var(--panel2); border:1px solid var(--border); color:var(--text); cursor:pointer; font:inherit; box-shadow:none; padding:0; z-index:2}
+  .qpq h3{margin:0; font-family:var(--font-display); font-size:26px; color:var(--gold); font-weight:600; line-height:1.05; padding-right:40px}
+  .qpq-meta{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:7px; font-size:12px; color:var(--muted)}
+  .qpq-acts{display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; position:relative}
+  .qpq .qpd-tabs{margin-top:14px}
+  .qpq .qpd-grid{grid-template-columns:1fr}
+  .qpq .panel{box-shadow:none; margin:0; padding:0; border:0; background:transparent}
+  .qpq .qp-sum{justify-content:flex-start}
+  @media (max-width:700px){
+    .qpq{top:auto; left:0; right:0; width:auto; max-height:88vh; border-left:0; border-top:1px solid var(--border); border-radius:16px 16px 0 0}
+    .qpq h3{font-size:22px}
+    .qpq-scrim:not(.hidden){display:block}
+  }
   /* tech tree */
   .qp-tree-wrap{overflow:auto; padding:6px 2px 12px}
   /* popped out: the tree panel takes the whole viewport, everything else waits */
@@ -434,37 +484,6 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qp-sep{color:var(--border)}
   /* click a node for the full picture: every requirement, what gates it, what it opens up */
   .qp-node.sel{outline:2px solid var(--gold); outline-offset:2px; z-index:4}
-  /* Focus: Map's one-goal page (design/mockups/map-calm.html, direction A). Lives beside the Planner. */
-  .fc-lt{display:flex; align-items:center; justify-content:space-between; gap:16px; margin:2px 0 14px}
-  .fc-sub{color:var(--muted); font-size:13px}
-  .fc-goals{display:flex; gap:12px; overflow-x:auto; padding:4px 2px 12px; margin-bottom:8px}
-  .fc-goal{flex:none; width:224px; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px 14px; display:flex; gap:12px; align-items:center; cursor:pointer; box-shadow:var(--shadow)}
-  .fc-goal.on{border-color:var(--gold); box-shadow:0 0 0 3px var(--glow), var(--shadow)}
-  .fc-goal .t{min-width:0} .fc-goal .t b{display:block; font-size:14px; font-weight:600; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis} .fc-goal .t small{display:block; color:var(--muted); font-size:12px; margin-top:4px}
-  .fc-goal.add{justify-content:center; color:var(--gold-dim); border-style:dashed; box-shadow:none; background:transparent}
-  .fc-ring{position:relative; flex:none} .fc-ring svg{transform:rotate(-90deg); display:block} .fc-ring circle{fill:none; stroke-width:6} .fc-ring .bg{stroke:var(--inset)} .fc-ring .fg{stroke:var(--gold2); stroke-linecap:round; transition:stroke-dashoffset .6s cubic-bezier(.2,.7,.2,1)}
-  .fc-ring .lab{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-variant-numeric:tabular-nums} .fc-ring .lab b{font-size:18px; font-weight:700} .fc-ring .lab small{font-size:10.5px; color:var(--muted)}
-  .fc-goal .fc-ring .lab b{font-size:13px}
-  .fc-hero{display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center; background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:18px 22px; margin-bottom:20px; box-shadow:var(--shadow)}
-  .fc-hero h3{margin:0; font-family:var(--font-display); font-size:27px; font-weight:600; color:var(--gold)}
-  .fc-hero .meta{color:var(--muted); font-size:13px; margin:6px 0 12px} .fc-hero .meta i{font-style:normal; margin:0 6px; opacity:.5} .fc-hero .meta a{color:var(--gold-dim); text-decoration:none}
-  .fc-hero .acts{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
-  .fc-two{display:grid; grid-template-columns:1.25fr 1fr; gap:20px}
-  .fc-grp{margin-bottom:20px}
-  .fc-grp .h{display:flex; align-items:baseline; justify-content:space-between; padding:0 14px 7px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
-  .fc-link{background:none; border:0; box-shadow:none; padding:0; color:var(--gold-dim); font-family:inherit; font-size:13px; text-transform:none; letter-spacing:0; cursor:pointer}
-  .fc-list{background:var(--panel); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:var(--shadow)}
-  .fc-row{display:flex; align-items:center; gap:12px; padding:11px 14px; border-bottom:1px solid var(--border); min-height:50px; cursor:pointer}
-  .fc-row:last-child{border-bottom:0} .fc-row:hover{background:var(--panel2)}
-  .fc-row .st{width:10px; height:10px; border-radius:50%; background:var(--gold3); flex:none} .fc-row .st.ready{background:var(--green); box-shadow:0 0 0 3px var(--green-bg)} .fc-row .st.blocked{background:var(--red)} .fc-row .st.done{background:var(--green); opacity:.55}
-  .fc-row .t{flex:1; min-width:0} .fc-row .t b{display:block; font-weight:600; font-size:14.5px} .fc-row .t small{display:block; color:var(--muted); font-size:12.5px; margin-top:2px}
-  .fc-row .r{color:var(--muted); font-size:13px; white-space:nowrap; font-variant-numeric:tabular-nums; max-width:45%; overflow:hidden; text-overflow:ellipsis} .fc-row .r.ok{color:var(--green)}
-  .fc-row .chev{color:var(--gold3); font-size:18px}
-  .fc-row.foot{color:var(--muted); font-size:12.5px; min-height:0; padding:10px 14px; cursor:default; line-height:1.45} .fc-row.foot:hover{background:transparent}
-  .fc-row .ico{width:22px; height:22px; flex:none; display:flex; align-items:center; justify-content:center} .fc-row .ico img{width:20px; height:20px}
-  .fc-row .mini{height:4px; background:var(--inset); border-radius:2px; overflow:hidden; margin-top:7px} .fc-row .mini i{display:block; height:100%; background:var(--gold2)}
-  .fc-steps{margin-bottom:20px}
-  @media (max-width:820px){ .fc-two{grid-template-columns:1fr} .fc-hero{grid-template-columns:1fr} }
   .qp-detail{border-top:1px solid var(--border); margin-top:10px; padding-top:10px}
   .qp-detail-empty{color:var(--muted); font-size:12.5px; text-align:center; padding:8px 0}
   .qpd-head{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:8px}
@@ -2038,6 +2057,14 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     .mu-room{max-width:none}
     .cf-hc{padding-left:40px}
   }
+  /* Mockups (Beta and the local preview only) */
+  .mk-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px}
+  .mk-card{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; text-align:left; cursor:pointer; color:var(--text); font:inherit}
+  .mk-card:hover{border-color:var(--gold-dim); background:var(--btnhov2)}
+  .mk-card h4{margin:0 0 4px; font-family:var(--font-display); font-size:17px; color:var(--gold)}
+  .mk-card p{margin:0; color:var(--muted); font-size:12.5px; line-height:1.4}
+  .mk-frame{height:calc(100vh - 150px); min-height:420px; border:1px solid var(--border); border-radius:10px; background:var(--inset); overflow:hidden}
+  .mk-frame iframe{display:block; width:100%; height:100%; border:0; background:var(--inset)}
   /* Folded, the screen is narrow but still fits three columns, which is what keeps all 24 skills
      on one screen. Two columns would push the last eight below the fold. */
   @media(max-width:430px){
@@ -2075,6 +2102,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <div class="nav-sub hidden" id="navSubCoffer"></div>
       <button class="navitem" data-view="notes"><span class="ni-ic">📝</span>Notes</button>
       <button class="navitem hidden" data-view="board" id="navBoard"><span class="ni-ic">📋</span>Board</button>
+      <button class="navitem hidden" data-view="mockups" id="navMockups"><span class="ni-ic">🖼️</span>Mockups</button>
       <div class="nav-sec">Tools</div>
       <button class="navitem" data-view="ask"><span class="ni-ic">💬</span>Ask Bud</button>
       <div class="nav-sec">Games</div>
@@ -2372,6 +2400,19 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <div class="act-legend" id="actLegend"></div>
 
     </div>
+      <!-- Quick entry: type a line, then the log window opens with the skills picked out of it. -->
+      <div class="panel quick-log">
+        <div class="ql-head">
+          <h3>Quick entry</h3>
+          <button class="ql-more" id="qlMore" type="button">Open journal ›</button>
+        </div>
+        <div class="ql-row">
+          <input type="text" id="qlText" placeholder="What did you do today? e.g. questing and a slayer task" autocomplete="off" maxlength="300">
+          <button class="primary" id="qlGo" type="button">Log it</button>
+          <button class="ghost" id="qlChill" type="button" title="Played, but no XP: talking, sorting the bank, hanging about. Counts as a day played.">☕ Chill day</button>
+        </div>
+        <div class="ql-note" id="qlNote">Opens the full entry, with skills picked out from what you type.</div>
+      </div>
       <!-- Recap isn't a tab. It's a look back over everything, so it gets its own panel under the map. -->
       <div class="panel recap-cta" id="recapCta" role="button" tabindex="0" title="Open your recap">
         <div class="rcta-t">Click for your personalized recap <span class="ar">›</span></div>
@@ -2386,19 +2427,6 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       </div>
 
 
-      <!-- Quick entry: type a line, then the log window opens with the skills picked out of it. -->
-      <div class="panel quick-log">
-        <div class="ql-head">
-          <h3>Quick entry</h3>
-          <button class="ql-more" id="qlMore" type="button">Open journal ›</button>
-        </div>
-        <div class="ql-row">
-          <input type="text" id="qlText" placeholder="What did you do today? e.g. questing and a slayer task" autocomplete="off" maxlength="300">
-          <button class="primary" id="qlGo" type="button">Log it</button>
-          <button class="ghost" id="qlChill" type="button" title="Played, but no XP: talking, sorting the bank, hanging about. Counts as a day played.">☕ Chill day</button>
-        </div>
-        <div class="ql-note" id="qlNote">Opens the full entry, with skills picked out from what you type.</div>
-      </div>
     </div>
 
     <div class="scroll-sec hidden" data-ssec="trophies">
@@ -2423,6 +2451,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
         <div class="act-picker" id="actPicker"></div>
         <div style="text-align:center">
           <span class="act-chip mile-chip" id="logMile" title="Mark this day as a big milestone. It gets a rainbow ring on the heatmap.">🏆 Milestone day</span>
+          <span class="act-chip" id="logChill" title="Played, but no XP: talking, sorting the bank, hanging about. Logs the chosen date as a day played. Tap again to take it back.">☕ Chill day</span>
         </div>
         <div id="logPrioWrap" class="hidden" style="text-align:center">
           <span class="small muted">Priorities touched</span>
@@ -2556,22 +2585,24 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       </div>
       <div class="map-sec" data-msec="planner">
         <div id="qpSetup"></div>
-        <div class="row" style="justify-content:center; margin-top:8px; gap:6px; flex-wrap:wrap">
-          <input type="text" id="qpSearch" placeholder="Search any quest…" style="min-width:230px" autocomplete="off">
-          <button class="ghost small" id="qpRefresh" title="Re-read the wiki">⟲ Refresh data</button>
+        <div class="qp-bar">
+          <div class="qp-search"><span class="g" aria-hidden="true">⌕</span><input type="text" id="qpSearch" placeholder="Search any quest, or pick a goal below" autocomplete="off"></div>
+          <button class="qp-big" id="qpGuideBtn" title="The wiki's optimal quest order, ticked against your own quests"><span class="ic">📜</span><span class="lbl">Optimal quest guide<small>Every quest in the best order</small></span></button>
+          <button class="qp-iconbtn" id="qpFull" title="Fill the window with the tree">⤢</button>
         </div>
         <div id="qpSuggest"></div>
       </div>
     </div>
 
     <div class="map-sec" data-msec="planner">
-      <div id="qpBoardWrap"></div>
       <div id="qpResult"></div>
     </div>
     <div class="map-sec hidden" data-msec="folders"><div id="qpFoldersView"></div></div>
     <div class="map-sec hidden" data-msec="guide"><div id="qpGuideView"></div></div>
-    <div class="map-sec hidden" data-msec="focus"><div id="qpFocusView"></div></div>
   </div>
+  <!-- Map: everything about one quest, in a panel beside the tree (a sheet on a phone) -->
+  <div class="qpq-scrim hidden" id="qpqScrim"></div>
+  <aside class="qpq hidden" id="qpq" role="dialog" aria-modal="true" aria-label="Quest details"><div class="qpq-in" id="qpqBody"></div></aside>
 
   <!-- VIEW: THE COFFER (making GP) -->
   <div class="view hidden" id="view-coffer">
@@ -2699,6 +2730,20 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <p class="muted small" style="margin:0 2px 8px">One file, two editors. You change it here, Claude changes it from the chat, and both of you read the same page. Tick a box to tick it in the file.</p>
       <div class="board-md" id="boardMd"></div>
       <div class="board-ed hidden" id="boardEd"><textarea id="boardText" spellcheck="false"></textarea><div class="small muted" id="boardStatus" style="margin-top:6px"></div></div>
+    </div>
+  </div>
+  <div class="view hidden" id="view-mockups">
+    <div class="panel">
+      <div class="section-title" style="margin-top:0">
+        <h3>Mockups</h3>
+        <span class="small muted" id="mkSub"></span>
+        <span class="grow"></span>
+        <button class="ghost small hidden" id="mkBack">← All mockups</button>
+        <button class="ghost small hidden" id="mkFull" title="Fill the screen">⤢ Full screen</button>
+      </div>
+      <p class="muted small" id="mkIntro" style="margin:0 2px 8px">Design pages from design/mockups, shown as they are. They run on a copy of your levels and quests, and nothing you do in them touches your save.</p>
+      <div class="mk-grid" id="mkGrid"></div>
+      <div class="mk-frame hidden" id="mkHost"><iframe id="mkFrame" title="Mockup"></iframe></div>
     </div>
   </div>
   <div class="view hidden" id="view-notes">
@@ -6092,6 +6137,8 @@ $("#customText").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#addCust
 $("#logAddBtn").onclick = saveLogEntry;
 $("#logCancelBtn").onclick = resetLogForm;
 $("#logMile").onclick = ()=>{ logMilestone=!logMilestone; $("#logMile").classList.toggle("on", logMilestone); };
+// the composer's chill day logs the date in the date box, today when it's empty
+$("#logChill").onclick = ()=>{ const d = $("#logDate"); logChillDay((d && d.value) || todayISO()); };
 $("#logText").addEventListener("keydown",e=>{ if(e.key==="Enter") saveLogEntry(); });
 $("#hideDone").onchange = renderTodo;
 $("#sortGoals").onchange = renderTodo;
@@ -9542,52 +9589,24 @@ function renderQuestPlanner(){
   const target = state.qpTarget;
   // the popular goals are for picking a first goal; once one is charted they fold away
   const sugOpen = !target || !!state.qpSugOpen;
-  sug.innerHTML = `${target ? `<div class="row" style="justify-content:center; margin-top:8px"><button class="ghost small" id="qpSugToggle">${sugOpen ? "▾ Popular goals" : "▸ Popular goals"}</button></div>` : ""}
+  sug.innerHTML = `${target ? `<div class="row" style="justify-content:center; margin-top:8px"><button class="ghost small" id="qpSugToggle">${sugOpen ? "▾ Popular goals and filters" : "▸ Popular goals and filters"}</button></div>` : ""}
     <div class="qp-sug ${sugOpen ? "" : "hidden"}">${QP_SUGGEST.filter(q=>db.quests[q]).map(q=>
     `<button class="ghost small ${q===target?"on":""}" data-qptarget="${escapeHtml(q)}">${q}</button>`).join("")}
     <button class="ghost small" data-qptarget="__ALL__">🏆 Quest cape (everything)</button>
     <button class="qp-pin" data-qbadd="__ALL__" title="Pin the quest cape to the board">+</button></div>
-    ${qpFilterHtml(db)}`;
+    <div class="${sugOpen ? "" : "hidden"}">${qpFilterHtml(db)}</div>`;
   const sgt = $("#qpSugToggle"); if(sgt) sgt.onclick = ()=>{ state.qpSugOpen = !state.qpSugOpen; save(); renderQuestPlanner(); };
   $$("#qpSuggest [data-qptarget]").forEach(b=>b.onclick=()=>{ state.qpTarget=b.dataset.qptarget; save(); renderQuestPlanner(); });
   $$("#qpSuggest [data-qpfilter]").forEach(b=>b.onclick=()=>{
-    state.qpFilter = b.dataset.qpfilter || null; save(); renderQuestPlanner();
+    state.qpFilter = b.dataset.qpfilter || null; if(state.qpFilter) state.qpSugOpen = true; save(); renderQuestPlanner();
   });
-  $("#qpBoardWrap").innerHTML = qpBoardHtml(db, target);
-  qpWireBoard(db);
-  // Scope: whatever you've charted, or your whole board if you haven't charted anything.
-  const scope = target || (qpBoard().length ? "__BOARD__" : null);
-  const mode = state.qpMode === "route" ? "route" : "tree";
-  const modeBar = scope ? `<div class="seg seg-sub qp-mode">
-      <button class="${mode==="tree"?"on":""}" data-qpmode="tree" ${target?"":"disabled title='Chart a quest to see its tree'"}>🌳 Tree</button>
-      <button class="${mode==="route"?"on":""}" data-qpmode="route">🧾 Route</button>
-      ${!target && qpBoard().length ? `<span class="qp-scope">everything on your board</span>` : ""}
-    </div>` : "";
-  const bodyHtml = mode==="route"
-    ? (scope ? qpRouteHtml(scope, db) : "")
-    : (target ? qpPlanHtml(target, db) : `<div class="panel"><div class="empty">Pick a goal above, or search for any quest.</div></div>`);
-  res.innerHTML = qpSwitchHtml(db, target) + modeBar + (bodyHtml || `<div class="panel"><div class="empty">Pin a quest to the board, or search for one.</div></div>`);
-  $$("#qpResult [data-qpswitch]").forEach(b=>b.onclick=()=>{
-    state.qpTarget = b.dataset.qpswitch; state.qpHist = []; state.qpSel = null; save(); renderQuestPlanner();
-  });
-  $$("#qpResult [data-qpmode]").forEach(b=>b.onclick=()=>{
-    if(b.disabled) return;
-    state.qpMode = b.dataset.qpmode; save(); renderQuestPlanner();
-  });
-  if(mode==="route"){
-    // ticking from the route re-plans everything below it, which is the point
-    $$("#qpResult .rt-tick").forEach(b=>b.onclick=e=>{
-      e.stopPropagation();
-      qpTick(b.dataset.qpdone2, true);
-    });
-    $$("#qpResult [data-rtq]").forEach(row=>row.onclick=e=>{
-      if(e.target.closest("button")) return;
-      state.qpTarget = row.dataset.rtq; state.qpMode = "tree"; state.qpHist = []; save(); renderQuestPlanner();
-    });
-  }
-  if(mode==="tree" && target){ qpWire(db); qpFitTree(); }
-  else if(qpPopped){ qpPopped=false; document.body.style.overflow=""; } // no tree to fill the screen with
+  res.innerHTML = target ? qpPlanHtml(target, db) : qpIdleHtml(db);
+  if(target){ qpWire(db); qpFitTree(); }
+  else if(qpPopped) qpTogglePop(false);   // no tree to fill the screen with
+  qpWireStrips(db);
   qpWirePinButtons();
+  // the panel follows the tree: a repaint keeps it open on the same quest
+  if(state.qpSel && qpPopOpen()) qpOpen(state.qpSel, {keep:true});
 }
 function qpLoad(){
   const setup=$("#qpSetup");
@@ -11357,15 +11376,13 @@ function cfParseGp(t){
 // where the "some day" quests wait without crowding it.
 const MAP_SECTIONS = [
   {id:"planner", label:"Planner", icon:"🧭"},
-  {id:"focus",   label:"Focus", icon:"🎯"},
   {id:"folders", label:"Folders", icon:"📁"},
   {id:"guide",   label:"Optimal guide", icon:"🧾"},
 ];
 const MAP_BLURB = {
-  planner: "Pick what you're working toward and see the whole dependency chain: what's done, what's next, and what you still need. Requirements come straight from the wiki.",
+  planner: "Pick a goal and the whole chain draws itself. Tap any quest for its path and everything about it.",
   folders: "Your board and your own lists side by side. Drag a quest between them, or drop it on a row to put it in that spot.",
   guide: "The wiki's optimal quest order, step by step, ticked off against your own quests, levels and diaries.",
-  focus: "One goal at a time: what to do next and the levels you still need. Everything else is a tap away.",
 };
 function mapSec(){ const x = state.mapSec; return MAP_SECTIONS.some(m=>m.id===x) ? x : "planner"; }
 function setMapSec(id){ state.mapSec = id; save(); applyMapSec(); renderNavSubMap(); window.scrollTo(0,0); }
@@ -11375,8 +11392,7 @@ function applyMapSec(){
   const eb = $("#mapEyebrow"); if(eb) eb.textContent = (MAP_SECTIONS.find(m=>m.id===cur)||{}).label || "";
   const bl = $("#mapBlurb"); if(bl) bl.textContent = MAP_BLURB[cur];
   const sub = $("#qpSub"); if(sub && cur!=="planner") sub.textContent = "";
-  if(cur==="focus") renderFocus();
-  else if(cur==="folders") renderFolders();
+  if(cur==="folders") renderFolders();
   else if(cur==="guide"){ renderGuide(); guideDbEnsure(); }
   else { renderQuestPlanner(); qpFitTree(); }
 }
@@ -11803,65 +11819,6 @@ function qpBoardCard(n, db){
   return {n, name:qpLabel(n), all:plan.all.length, done:plan.done.length, status:st, prog:questInProgress(n),
           missing: st==="done" ? "" : questMissingText(n, db)};
 }
-// Your pinned quests as a row of tabs above the chart, so swapping between them
-// doesn't mean scrolling back up to the board.
-function qpSwitchHtml(db, target){
-  const b = qpBoard().filter(n => n==="__ALL__" || db.quests[n]);
-  if(b.length < 2) return "";
-  const i = b.indexOf(target);
-  const prev = b[i<=0 ? b.length-1 : i-1], next = b[i<0 || i>=b.length-1 ? 0 : i+1];
-  return `<div class="qp-switch">
-    <button class="qp-sw nav" data-qpswitch="${escapeHtml(prev)}" title="Previous pinned quest">‹</button>
-    ${b.map(n=>`<button class="qp-sw ${n===target?"on":""}" data-qpswitch="${escapeHtml(n)}">${escapeHtml(n==="__ALL__"?"Quest cape":qpLabel(n))}</button>`).join("")}
-    <button class="qp-sw nav" data-qpswitch="${escapeHtml(next)}" title="Next pinned quest">›</button>
-  </div>`;
-}
-function qpBoardHtml(db, target){
-  const b = qpBoard().filter(n => n==="__ALL__" || db.quests[n]);
-  const sortReady = !!state.qpBoardSort;
-  let cards = b.map((n,i)=>({...qpBoardCard(n, db), i}));
-  if(sortReady){
-    const rank = {ready:0, blocked:1, done:2};
-    cards = cards.slice().sort((x,y)=> (rank[x.status]-rank[y.status]) || (x.i-y.i));
-  }
-  const readyN = cards.filter(c=>c.status==="ready").length;
-  const doneN  = cards.filter(c=>c.status==="done").length;
-  const head = `<div class="section-title" style="margin-top:0">
-      <h3>📌 Quest board</h3>
-      <span class="small muted">${b.length ? `${b.length} pinned · ${readyN} ready now${doneN?` · ${doneN} done`:""}` : "nothing pinned yet"}</span>
-      ${b.length>1?`<button class="ghost small right" id="qpBoardSort">${sortReady?"↕ Manual order":"⚡ Ready first"}</button>`:""}
-    </div>`;
-  if(!b.length){
-    return `<div class="panel">${head}
-      <div class="empty">Search above and hit + to pin a quest here. The board keeps your shortlist between visits.</div></div>`;
-  }
-  const body = cards.map(c=>{
-    const pct = c.all ? Math.round(c.done/c.all*100) : 0;
-    const pill = (c.prog && c.status!=="done") ? `<span class="qb-pill prog">In progress</span>` : c.status==="done" ? `<span class="qb-pill done">✓ Done</span>`
-               : c.status==="ready" ? `<span class="qb-pill ready">Ready now</span>`
-               : `<span class="qb-pill blocked">Blocked</span>`;
-    return `<div class="qb ${c.status} ${c.n===target?"on":""}" data-qbcard="${escapeHtml(c.n)}" draggable="true">
-      <div class="qb-grip" title="Drag to reorder">⋮⋮</div>
-      <div class="qb-b">
-        <div class="qb-h">${c.everything?"🏆 ":""}<b>${escapeHtml(c.name)}</b>${pill}</div>
-        ${c.all > 1 ? `<div class="qb-bar"><i style="width:${pct}%"></i></div>` : ""}
-        <div class="qb-sub">${
-          c.status==="done" ? "Complete"
-          : c.all > 1 ? `${c.done}/${c.all} in the chain done${c.missing?` · needs ${escapeHtml(c.missing)}`:""}`
-          : c.missing ? `Needs ${escapeHtml(c.missing)}`
-          : "No requirements left. Go and do it."
-        }</div>
-      </div>
-      <div class="qb-acts">
-        ${c.n!=="__ALL__" ? `<button class="qb-x" data-qfold="${escapeHtml(c.n)}" data-qmove="board" title="Move to a folder">📁</button>` : ""}
-        <button class="qb-x" data-qbup="${escapeHtml(c.n)}" title="Move up">▲</button>
-        <button class="qb-x" data-qbdown="${escapeHtml(c.n)}" title="Move down">▼</button>
-        <button class="qb-x" data-qbdel="${escapeHtml(c.n)}" title="Take off the board">✕</button>
-      </div>
-    </div>`;
-  }).join("");
-  return `<div class="panel">${head}<div class="qb-grid" id="qbGrid">${body}</div></div>`;
-}
 // 📁 sits next to every + in the planner: the same menu of your folders wherever a quest turns
 // up, with "New folder" in it so the first one takes one click too. On a board card it moves the
 // quest off the board; everywhere else it just files a copy.
@@ -11887,7 +11844,6 @@ function qpFolderMenu(btn, quest, moveOffBoard){
     toast("📁 " + qpCrumbName(quest) + " filed under " + f.name);
     menu.remove();
     if(state.lastView === "quests" && mapSec() === "planner") renderQuestPlanner();
-    if(state.lastView === "quests" && mapSec() === "focus") renderFocus();
   };
   [...menu.querySelectorAll("[data-fput]")].forEach(b=>b.onclick=e=>{ e.stopPropagation(); file(qpFolder(b.dataset.fput)); });
   menu.querySelector("[data-fnew]").onclick = e=>{
@@ -11915,41 +11871,6 @@ function qpWirePinButtons(){
     }
   });
   qpWireFolderButtons();
-}
-function qpWireBoard(db){
-  const grid = $("#qbGrid");
-  $$("#qpBoardWrap [data-qbdel]").forEach(x=>x.onclick=e=>{
-    e.stopPropagation(); qpBoardRemove(x.dataset.qbdel); renderQuestPlanner();
-  });
-  const bump = (n, dir)=>{
-    const b = qpBoard(), i = b.indexOf(n);
-    if(qpBoardMove(i, i+dir)){ state.qpBoardSort = false; renderQuestPlanner(); }
-  };
-  $$("#qpBoardWrap [data-qbup]").forEach(x=>x.onclick=e=>{ e.stopPropagation(); bump(x.dataset.qbup, -1); });
-  $$("#qpBoardWrap [data-qbdown]").forEach(x=>x.onclick=e=>{ e.stopPropagation(); bump(x.dataset.qbdown, +1); });
-  // clicking the card body charts that quest below the board
-  $$("#qpBoardWrap [data-qbcard]").forEach(c=>c.onclick=e=>{
-    if(e.target.closest("button")) return;
-    state.qpTarget = c.dataset.qbcard; state.qpHist = []; save(); renderQuestPlanner();
-  });
-  const sortBtn = $("#qpBoardSort");
-  if(sortBtn) sortBtn.onclick = ()=>{ state.qpBoardSort = !state.qpBoardSort; save(); renderQuestPlanner(); };
-  // drag to reorder. The arrows above and this both go through qpBoardMove.
-  if(grid){
-    let dragging = null;
-    $$("#qbGrid [data-qbcard]").forEach(card=>{
-      card.ondragstart = e=>{ dragging = card.dataset.qbcard; card.classList.add("drag");
-        try{ e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", dragging); }catch(err){} };
-      card.ondragend   = ()=>{ card.classList.remove("drag"); $$("#qbGrid .over").forEach(el=>el.classList.remove("over")); dragging=null; };
-      card.ondragover  = e=>{ e.preventDefault(); if(dragging && dragging!==card.dataset.qbcard) card.classList.add("over"); };
-      card.ondragleave = ()=> card.classList.remove("over");
-      card.ondrop      = e=>{
-        e.preventDefault(); card.classList.remove("over");
-        const from = qpBoard().indexOf(dragging), to = qpBoard().indexOf(card.dataset.qbcard);
-        if(from>=0 && to>=0 && qpBoardMove(from, to)){ state.qpBoardSort = false; renderQuestPlanner(); }
-      };
-    });
-  }
 }
 // Search results now offer both things you'd want: pin it, or chart it straight away.
 // "Show me everything I could start tonight" is a different question to search, and
@@ -12008,17 +11929,58 @@ function qpPlanHtml(target, db){
   // "everything" target = all quests; otherwise the chain for one
   const isAll = target==="__ALL__";
   const plan = isAll ? qpAllPlan(db) : questPlan(target, db);
-  const title = isAll ? "🏆 Quest cape" : qpLabel(target);
-  const q = db.quests[target];
+  const title = isAll ? "Quest cape" : qpLabel(target);
+  const all = plan.all.length, done = plan.done.length, remaining = plan.remaining;
+  const ready = live ? remaining.filter(n=>questStatus(n, db)==="ready").length : 0;
+  const realGaps = Object.entries(plan.gaps).filter(([s,g])=>levelFromXp(liveSkillXp(s)+(plan.chainXp[s]||0)) < g.need).length;
+  const r = 19, c = 2*Math.PI*r, pct = all ? done/all : 0;
+  const ring = `<svg class="qg-ring" viewBox="0 0 46 46" aria-hidden="true"><circle cx="23" cy="23" r="${r}" fill="none" stroke="var(--inset)" stroke-width="5"/><circle cx="23" cy="23" r="${r}" fill="none" stroke="var(--gold2)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(c*pct).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 23 23)"/><text x="23" y="27" text-anchor="middle" font-size="11" fill="var(--text)" font-family="Segoe UI,system-ui,sans-serif">${Math.round(pct*100)}</text></svg>`;
+  const sub = remaining.length
+    ? `${done} of ${all} done${live ? ` · <b>${ready} ready now</b>` : ""}${realGaps ? ` · ${realGaps} skill${realGaps===1?"":"s"} to train` : ""} · tap a quest for its path and details`
+    : `All ${all} done. Nothing left in this chain.`;
+  return `<div class="qp-goal" id="qpGoal">
+      ${ring}<div class="qg-t"><h3>${escapeHtml(title)}</h3><div class="qg-sub">${sub}</div></div>
+      <div class="qg-acts">
+        <button class="ghost small" data-qpopen="${escapeHtml(target)}" title="${isAll?"Every quest in one route":"Requirements, rewards, steps and the route"}">${isAll?"🧾 Route":"🧾 Route and details"}</button>
+        <button class="ghost small" id="qpPin">${qpBoardHas(target)?"📌 On your board":"📌 Pin"}</button>
+      </div>
+    </div>
+  <div class="panel qp-panel${qpPopped?" popped":""}" id="qpTreePanel">
+    ${qpCrumbs(target)}
+    <div class="qp-tree-wrap">${qpTreeHtml(isAll?remaining.slice(0,60):plan.all, target, db)}</div>
+    <div class="qp-treefoot">
+      <span>${isAll ? `${remaining.length} quests left, the first 60 drawn` : `${all} quest${all===1?"":"s"} in the chain · ${done} done${live?` · ${ready} ready now`:""}`}</span>
+      <span class="sp"></span>
+      <div class="qp-legend"><span><i style="background:var(--green-bg);border:1px solid #2f5a28"></i>done</span>
+        <span><i style="background:var(--panel2);border:1px solid var(--gold)"></i>ready now</span>
+        <span><i style="background:var(--panel2);border:1px solid var(--border);opacity:.6"></i>blocked</span></div>
+      <button class="ghost small" id="qpRefresh" title="Re-read the quest data from the wiki">⟲</button>
+      <button class="ghost small" id="qpPop" title="${qpPopped?"Back to the page (Esc)":"Fill the window"}">${qpPopped?"⤡ Exit full screen":"⤢ Full screen"}</button>
+    </div>
+  </div>
+  <div id="qpStrips">${qpStripsHtml(db, target)}</div>`;
+}
+// Nothing charted yet: the chips still show, and a line says what to do.
+function qpIdleHtml(db){
+  return `<div class="panel"><div class="empty">Pick a goal above, or search for any quest. Pinned quests and folders sit below.</div></div>
+    <div id="qpStrips">${qpStripsHtml(db, null)}</div>`;
+}
+// The Route tab of the panel: the counts, the levels still in the way (each opens the quests
+// that pay that XP), and the quests in order. For the cape and for "everything pinned" it is
+// the ordered route alone.
+function qpRouteTabHtml(target, db){
+  if(target==="__BOARD__") return qpRouteHtml("__BOARD__", db);
+  const isAll = target==="__ALL__";
+  const plan = isAll ? qpAllPlan(db) : questPlan(target, db);
   const remaining = plan.remaining;
   const gapRows = Object.entries(plan.gaps).sort((a,b)=>(b[1].need-b[1].have)-(a[1].need-a[1].have)).map(([s,g])=>{
     const trained = plan.chainXp[s]||0;
     const after = levelFromXp(liveSkillXp(s)+trained);
     const covered = after>=g.need;
     // Without stats every "you're X" would be fiction (the simulation starts all
-    // skills at zero) — show the requirement alone and say why.
+    // skills at zero): show the requirement alone and say why.
     const verdict = !live ? `<span class="grow small muted">requires ${g.need}</span>`
-      : `<span class="grow small ${covered?"":"muted"}">you're ${g.have}${covered?` — the chain trains you to ${after}, so this sorts itself out`:` · ${g.need-g.have} levels short`}</span>`;
+      : `<span class="grow small ${covered?"":"muted"}">you're ${g.have}${covered?`, the chain trains you to ${after}, so this sorts itself out`:` · ${g.need-g.have} levels short`}</span>`;
     return `<div class="qp-gapwrap">
       <div class="qp-gap" data-qpgap="${s}" title="Click to see which quests reward ${nice(s)} XP">
         <span class="g-lvl">${g.need} ${nice(s)}</span>
@@ -12030,19 +11992,16 @@ function qpPlanHtml(target, db){
       <div class="qp-boost hidden">${qpBoostList(s, db, plan)}</div>
     </div>`;
   }).join("");
-  const realGaps = Object.entries(plan.gaps).filter(([s,g])=>{
-    const after = levelFromXp(liveSkillXp(s)+(plan.chainXp[s]||0));
-    return after < g.need;
-  }).length;
+  const realGaps = Object.entries(plan.gaps).filter(([s,g])=>levelFromXp(liveSkillXp(s)+(plan.chainXp[s]||0)) < g.need).length;
   const steps = remaining.map((n,i)=>{
     const st = questStatus(n, db), q = db.quests[n];
     const reqs = Object.entries(q.reqs||{}).filter(([s])=>SKILL_ORDER.includes(s)).sort((a,b)=>b[1]-a[1]);
     const chips = reqs.map(([s,l])=>{
       const ok = lvlOf(s)>=l, boost = q.boostable && q.boostable[s];
-      return `<span class="qreq ${ok?"ok":"no"}" ${(!ok&&boost)?`data-boost="${s}" data-need="${l}" data-have="${lvlOf(s)}"`:`title="${nice(s)} ${l} — you're ${lvlOf(s)}"`}><img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">${l}${(!ok&&boost)?`<i class="bst">+</i>`:""}</span>`;
+      return `<span class="qreq ${ok?"ok":"no"}" ${(!ok&&boost)?`data-boost="${s}" data-need="${l}" data-have="${lvlOf(s)}"`:`title="${nice(s)} ${l}, you're ${lvlOf(s)}"`}><img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">${l}${(!ok&&boost)?`<i class="bst">+</i>`:""}</span>`;
     }).join("");
     const lockedQ = (q.prereqs||[]).filter(p=>!questDone(p));
-    return `<div class="qp-step ${st}">
+    return `<div class="qp-step ${st}" data-rtq="${escapeHtml(n)}">
       <span class="n">${i+1}</span>
       <label class="chk"><input type="checkbox" data-qpdone="${escapeHtml(n)}"></label>
       <span class="nm">${escapeHtml(qpLabel(n))}${questInProgress(n)?` <span class="qp-tag prog">in progress</span>`:""}</span>
@@ -12050,36 +12009,46 @@ function qpPlanHtml(target, db){
       ${(live&&st==="ready")?`<span class="qp-tag free">do now</span>`:`<span class="small muted">${q.difficulty||""}</span>`}
     </div>`;
   }).join("");
-  return `<div class="panel">
-    <div class="section-title center"><h3>${escapeHtml(title)}</h3>
-      <button class="ghost small" id="qpPin">${qpBoardHas(target)?"📌 On your board":"📌 Pin to board"}</button></div>
-    ${isAll?"":`<div class="qp-detail qp-top-detail" id="qpTopDetail">${qpDetailHtml(target, db)}</div>`}
-    <div class="qp-sum">
+  return `<div class="qp-sum">
       <div class="qp-stat"><div class="k">Quests left</div><div class="v">${remaining.length}</div></div>
       <div class="qp-stat"><div class="k">Already done</div><div class="v">${plan.done.length}</div></div>
       <div class="qp-stat"><div class="k">Skills to train</div><div class="v">${realGaps}</div></div>
       ${plan.qpNeeded?`<div class="qp-stat"><div class="k">QP needed</div><div class="v">${plan.qpNeeded}</div></div>`:""}
     </div>
-    ${gapRows?`<div class="section-title center" style="margin-top:6px"><h3>What you still need</h3></div>
-      ${live?`<p class="muted small" style="text-align:center;margin:0 0 4px">Levels checked at the moment you'd reach each quest — XP the chain hands you along the way is already counted.</p>`
-            :`<p class="small" style="text-align:center;margin:0 0 4px;color:var(--gold)">⚠ No character stats loaded — showing requirements only. Hit ↻ to load your stats, then come back.</p>`}
-      ${gapRows}`:`<div class="empty">No skill requirements standing in your way.</div>`}
-    ${plan.blockers.length?`<div class="small muted" style="margin-top:8px">⚑ Quest-point gates: ${plan.blockers.slice(0,3).map(b=>`${b.quest} needs ${b.qp} QP`).join(" · ")}</div>`:""}
-  </div>
-  <div class="panel qp-panel${qpPopped?" popped":""}" id="qpTreePanel">
-    <div class="section-title center"><h3>Dependency tree</h3><span class="small muted">hover to trace · drag to rearrange · click to inspect</span>
-      <button class="ghost small" id="qpPop" title="${qpPopped?"Back to the page (Esc)":"Fill the window — easier on big chains"}">${qpPopped?"⤡ Exit full screen":"⤢ Full screen"}</button></div>
-    ${qpCrumbs(target)}
-    <div class="qp-legend"><span><i style="background:var(--green-bg);border:1px solid #2f5a28"></i>done</span>
-      <span><i style="background:var(--panel2);border:1px solid var(--gold)"></i>ready now</span>
-      <span><i style="background:var(--panel2);border:1px solid var(--border);opacity:.6"></i>blocked</span></div>
-    <div class="qp-tree-wrap">${qpTreeHtml(isAll?remaining.slice(0,60):plan.all, target, db)}</div>
-    <div class="qp-detail" id="qpDetail">${qpDetailHtml(state.qpSel, db)}</div>
-  </div>
-  <div class="panel">
-    <div class="section-title center"><h3>Your route</h3><span class="small muted">${remaining.length} to go, in order</span></div>
-    ${steps||`<div class="empty">Nothing left — this one's finished. 🏆</div>`}
-  </div>`;
+    <div class="qpd-sec"><h5>What you still need</h5>
+    ${gapRows ? `${live?`<p class="muted small" style="margin:0 0 4px">Levels checked at the moment you'd reach each quest. XP the chain hands you along the way is already counted.</p>`
+            :`<p class="small" style="margin:0 0 4px;color:var(--gold)">No character stats loaded, so these are the requirements alone. Load your stats and come back.</p>`}${gapRows}`
+      : `<div class="small muted">No skill requirements standing in your way.</div>`}
+    ${plan.blockers.length?`<div class="small muted" style="margin-top:8px">Quest-point gates: ${plan.blockers.slice(0,3).map(b=>`${b.quest} needs ${b.qp} QP`).join(" · ")}</div>`:""}</div>
+    <div class="qpd-sec"><h5>In order${remaining.length?` (${remaining.length} to go)`:""}</h5>
+    ${steps||`<div class="small muted">Nothing left. This one's finished.</div>`}</div>`;
+}
+// Pinned quests and folders as two rows of chips under the tree. A pinned chip charts that quest;
+// the full board with reordering lives on the Folders page.
+function qpStripsHtml(db, target){
+  const b = qpBoard().filter(n => n==="__ALL__" || db.quests[n]);
+  const chip = n => { const st = n==="__ALL__" ? "" : questStatus(n, db); return `<button class="qp-chip ${st}${questInProgress(n)&&st!=="done"?" prog":""} ${n===target?"on":""}" data-qpchart="${escapeHtml(n)}" title="Chart ${escapeHtml(qpCrumbName(n))}"><i></i><span>${escapeHtml(qpCrumbName(n))}</span></button>`; };
+  const pins = b.length ? b.map(chip).join("") : `<span class="small muted">Nothing pinned yet. Pin from a quest's panel, or the + beside a search hit.</span>`;
+  const route = b.length > 1 ? `<button class="qp-chip dim" data-qpopen="__BOARD__" title="One route through everything pinned"><span>Route for all</span></button>` : "";
+  const arrange = b.length ? `<button class="qp-chip dim" data-msec-go="folders" title="Reorder, or move quests between the board and folders"><span>Arrange</span></button>` : "";
+  const fl = qpFolders().map(f=>`<button class="qp-chip fold" data-qpfolderopen="${f.id}" title="Open on the Folders page"><i></i><span>${escapeHtml(f.name)}</span><span class="n">${f.quests.length}</span></button>`).join("");
+  return `<div class="qp-strip"><span class="eb">Pinned</span>${pins}${route}${arrange}</div>
+    <div class="qp-strip"><span class="eb">Folders</span>${fl}<button class="qp-chip dim" data-qpnewfold><span>+ New folder</span></button></div>`;
+}
+function qpStripsRefresh(){
+  const db = questDB(), host = $("#qpStrips"); if(!db || !host) return;
+  host.innerHTML = qpStripsHtml(db, state.qpTarget); qpWireStrips(db);
+}
+function qpWireStrips(db){
+  $$("#qpResult [data-qpchart]").forEach(b=>b.onclick=()=>{ state.qpTarget = b.dataset.qpchart; state.qpHist = []; save(); renderQuestPlanner(); });
+  // the goal's own button opens on the route; the overview is a tab away
+  $$("#qpResult [data-qpopen]").forEach(b=>b.onclick=()=>{ state.qpTab = "route"; qpOpen(b.dataset.qpopen); });
+  $$("#qpResult [data-msec-go]").forEach(b=>b.onclick=()=>setMapSec(b.dataset.msecGo));
+  $$("#qpResult [data-qpfolderopen]").forEach(b=>b.onclick=()=>setMapSec("folders"));
+  $$("#qpResult [data-qpnewfold]").forEach(b=>b.onclick=()=>{
+    const f = qpFolderCreate(prompt("Name the folder", "Later"));
+    if(f){ toast("📁 " + f.name + " made. File quests into it from any quest's panel."); qpStripsRefresh(); }
+  });
 }
 function qpAllPlan(db){
   // miniquests award no quest points and aren't required for the cape
@@ -12415,114 +12384,10 @@ function qpStepsHtml(n){
     <div class="qs-list">${body}</div>
     <div class="small muted" style="margin-top:8px">From the OSRS Wiki, CC BY-NC-SA${from === "ours" ? ", gathered " + fmtDay(isoDate(new Date(QSTEPS.quests[n].at))) : ""}. Ticks are yours and stay with your save.</div>`;
 }
-// the panel appears twice on the page (the charted quest at the top, the inspected one under the
-// tree), so a change in either repaints both
-// ============ FOCUS (Map, one goal at a time) ============
-// Direction A from design/mockups/map-calm.html on real data. It reads the same plan the Planner
-// does and changes nothing in it; the two sit side by side so they can be compared.
-function fcGoals(db){
-  const out = [];
-  const add = n => { if(n && n !== "__ALL__" && db.quests[n] && !out.includes(n)) out.push(n); };
-  add(state.qpTarget); qpBoard().forEach(add);
-  return out;
-}
-function fcSel(db){
-  const goals = fcGoals(db);
-  return goals.includes(state.qpFocus) ? state.qpFocus : (goals[0] || null);
-}
-function fcRing(done, all, size, label){
-  const r = size/2 - 5, c = 2*Math.PI*r, pct = all ? done/all : 0;
-  return `<div class="fc-ring" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}"><circle class="bg" cx="${size/2}" cy="${size/2}" r="${r}"/><circle class="fg" cx="${size/2}" cy="${size/2}" r="${r}" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${(c*(1-pct)).toFixed(1)}"/></svg><div class="lab">${label}</div></div>`;
-}
-function renderFocus(){
-  const host = $("#qpFocusView"); if(!host) return;
-  const db = questDB();
-  if(!db){ host.innerHTML = `<div class="panel"><div class="empty">${qdbBuilding ? "Reading every quest off the wiki, nearly there." : "Quest data didn't load. Open the Planner and try again from there."}</div></div>`; return; }
-  const goals = fcGoals(db), sel = fcSel(db);
-  const total = db.order.length, done = db.order.filter(questDone).length;
-  const readyAll = live ? db.order.filter(n=>questStatus(n, db)==="ready").length : 0;
-  const head = `<div class="fc-lt"><div class="fc-sub">${done} of ${total} quests done${live ? ` · ${readyAll} you could start today` : ""}</div>
-    <button class="ghost small" data-fc-planner title="Search, the board, the tree, requirements for everything">🧭 Open the Planner</button></div>`;
-  const strip = goals.length ? `<div class="fc-goals">${goals.map(g=>{
-      const p = questPlan(g, db), ready = p.remaining.filter(n=>questStatus(n, db)==="ready");
-      const pct = p.all.length ? Math.round(100*p.done.length/p.all.length) : 0;
-      const blocker = p.remaining.find(n=>questStatus(n, db)!=="ready");
-      const sub = !p.remaining.length ? "done" : ready.length ? `${ready.length} ready now · ${p.remaining.length} to go` : blocker ? `waiting on ${qpLabel(blocker)}` : `${p.remaining.length} to go`;
-      return `<div class="fc-goal ${g===sel?"on":""}" data-fc-goal="${escapeHtml(g)}">${fcRing(p.done.length, p.all.length, 52, `<b>${pct}%</b>`)}<div class="t"><b title="${escapeHtml(qpLabel(g))}">${escapeHtml(qpLabel(g))}</b><small>${escapeHtml(sub)}</small></div></div>`;
-    }).join("")}<div class="fc-goal add" data-fc-planner>＋ Chart a goal</div></div>` : "";
-  if(!sel){
-    host.innerHTML = head + `<div class="panel"><div class="empty">Nothing charted yet. Pick a goal in the Planner, or pin a quest to the board, and it shows up here.</div>
-      <div class="row" style="justify-content:center;margin-top:10px"><button class="primary" data-fc-planner>Open the Planner</button></div></div>`;
-    fcWire(db); return;
-  }
-  const q = db.quests[sel], plan = questPlan(sel, db);
-  const ready = plan.remaining.filter(n=>questStatus(n, db)==="ready");
-  const next3 = (ready.length ? ready : plan.remaining).slice(0, 3);
-  const later = plan.remaining.filter(n=>!next3.includes(n));
-  const myQp = qpMyQp(db);
-  const meta = [q.difficulty, q.length, q.qp ? `${q.qp} quest points, you have ${myQp}` : ""].filter(Boolean);
-  const wiki = "https://oldschool.runescape.wiki/w/" + encodeURIComponent(sel.replace(/ /g, "_"));
-  const first = ready[0] || null;
-  const open = state.qpFocusSteps;
-  const hero = `<div class="fc-hero"><div>
-      <h3>${escapeHtml(qpLabel(sel))}</h3>
-      <div class="meta">${meta.map(escapeHtml).join(" <i>·</i> ")}${meta.length ? " <i>·</i> " : ""}<a href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a></div>
-      <div class="acts">
-        ${first ? `<button class="primary" data-fc-steps="${escapeHtml(first)}">${open===first ? "▾ Steps for" : "▶ Start"} ${escapeHtml(qpLabel(first))}</button>`
-                : plan.remaining.length ? `<span class="qp-tag">${live ? "nothing ready yet" : "stats not loaded"}</span>` : `<span class="qp-tag free">complete</span>`}
-        ${qpBoardHas(sel) ? `<button class="ghost small" data-fc-unpin="${escapeHtml(sel)}" title="Take it off the board">📌 Pinned</button>` : `<button class="ghost small" data-fc-pin="${escapeHtml(sel)}">📌 Pin</button>`}
-      </div></div>
-      ${fcRing(plan.done.length, plan.all.length, 96, `<b>${plan.done.length}<span class="muted">/${plan.all.length}</span></b><small>in the chain</small>`)}</div>`;
-  const steps = (open && plan.remaining.includes(open))
-    ? `<div class="panel qp-detail fc-steps"><div class="section-title"><h3>${escapeHtml(qpLabel(open))}</h3><button class="ghost small" data-fc-steps="${escapeHtml(open)}">Hide</button></div>${qpStepsHtml(open)}</div>` : "";
-  const rowOf = n => {
-    const qq = db.quests[n], st = questStatus(n, db);
-    const bits = [qq.difficulty, qq.qpGain ? `${qq.qpGain} quest point${qq.qpGain===1 ? "" : "s"}` : "", qq.length].filter(Boolean);
-    const why = st==="ready" ? "ready" : st==="done" ? "done" : (live ? questMissingText(n, db) : "");
-    return `<div class="fc-row" data-fc-steps="${escapeHtml(n)}"><span class="st ${st}"></span><div class="t"><b>${escapeHtml(qpLabel(n))}${questInProgress(n) ? ` <span class="qp-tag prog">in progress</span>` : ""}</b><small>${escapeHtml(bits.join(" · "))}</small></div><span class="r ${st==="ready" ? "ok" : ""}" title="${escapeHtml(why)}">${escapeHtml(why)}</span><span class="chev">›</span></div>`;
-  };
-  const doNext = `<div class="fc-grp"><div class="h"><span>Do next</span>${later.length ? `<button class="fc-link" data-fc-all>${state.qpFocusAll ? "Fewer" : `All ${plan.remaining.length} in order`} ›</button>` : ""}</div>
-    <div class="fc-list">${next3.map(rowOf).join("")}${state.qpFocusAll ? later.map(rowOf).join("") : later.length ? `<div class="fc-row foot">Then ${later.slice(0, 4).map(n=>escapeHtml(qpLabel(n))).join(", ")}${later.length > 4 ? ` and ${later.length-4} more` : ""}.</div>` : ""}${plan.remaining.length ? "" : `<div class="fc-row foot">Every quest in this chain is done.</div>`}</div></div>`;
-  // only the gaps that are still gaps once the chain's own XP rewards are counted
-  const gaps = Object.entries(plan.gaps).map(([s, g])=>{ const after = levelFromXp(liveSkillXp(s) + (plan.chainXp[s] || 0)); return {s, need:g.need, have:g.have, after, covered: after >= g.need, boost:g.boostable}; });
-  const real = gaps.filter(g=>!g.covered).sort((a, b)=>(b.need-b.have)-(a.need-a.have));
-  const covered = gaps.filter(g=>g.covered);
-  const levels = `<div class="fc-grp"><div class="h"><span>Levels to get</span><span>${live ? (real.length ? `${real.length} skill${real.length===1 ? "" : "s"}` : "none") : "stats not loaded"}</span></div>
-    <div class="fc-list">${real.map(g=>`<div class="fc-row" style="cursor:default"><span class="ico"><img src="${skillIconUrl(g.s)}" alt="" onerror="this.style.display='none'"></span><div class="t"><b>${nice(g.s)}${(g.boost && live) ? ` <span class="qp-tag boost" data-boost="${g.s}" data-need="${g.need}" data-have="${g.have}">boostable</span>` : ""}</b><div class="mini"><i style="width:${Math.max(4, Math.min(100, Math.round(100*g.have/g.need)))}%"></i></div></div><span class="r">${live ? `${g.have} → ${g.need}` : `needs ${g.need}`}</span></div>`).join("")}
-    ${real.length ? "" : `<div class="fc-row foot">${live ? "Nothing in your way. Every level this chain needs, you have." : "Load your stats to see which levels you still need."}</div>`}
-    ${covered.length ? `<div class="fc-row foot">${covered.map(g=>`${nice(g.s)} ${g.need}`).join(", ")} ${covered.length===1 ? "comes" : "come"} from quest rewards along the way, so ${covered.length===1 ? "it isn't" : "they aren't"} listed.</div>` : ""}
-    ${plan.blockers.length ? `<div class="fc-row foot">Quest points: ${plan.blockers.slice(0, 3).map(b=>`${escapeHtml(b.quest)} needs ${b.qp}`).join(" · ")}.</div>` : ""}</div></div>`;
-  const more = `<div class="fc-grp"><div class="h"><span>More</span></div><div class="fc-list">
-      <div class="fc-row" data-fc-tree><span class="ico">🌳</span><div class="t"><b>The whole tree</b><small>All ${plan.all.length} quests as a map, full screen.</small></div><span class="chev">›</span></div>
-      <div class="fc-row" data-fc-planner><span class="ico">🧭</span><div class="t"><b>Planner</b><small>Search, the board, requirements for everything.</small></div><span class="chev">›</span></div>
-    </div></div>`;
-  host.innerHTML = head + strip + hero + steps + `<div class="fc-two"><div>${doNext}${more}</div><div>${levels}</div></div>`;
-  fcWire(db);
-}
-function fcWire(db){
-  $$("#qpFocusView [data-fc-goal]").forEach(el=>el.onclick=()=>{ state.qpFocus = el.dataset.fcGoal; state.qpFocusSteps = null; state.qpFocusAll = false; save(); renderFocus(); });
-  $$("#qpFocusView [data-fc-planner]").forEach(el=>el.onclick=()=>setMapSec("planner"));
-  $$("#qpFocusView [data-fc-steps]").forEach(el=>el.onclick=e=>{
-    if(e.target.closest("[data-boost], a")) return;
-    const n = el.dataset.fcSteps;
-    state.qpFocusSteps = state.qpFocusSteps === n ? null : n; save(); renderFocus();
-    if(state.qpFocusSteps){ const sp = $("#qpFocusView .fc-steps"); if(sp) sp.scrollIntoView({behavior:"smooth", block:"start"}); }
-  });
-  $$("#qpFocusView [data-fc-all]").forEach(el=>el.onclick=()=>{ state.qpFocusAll = !state.qpFocusAll; save(); renderFocus(); });
-  $$("#qpFocusView [data-fc-pin]").forEach(el=>el.onclick=()=>{ if(qpBoardAdd(el.dataset.fcPin)) toast("📌 " + qpCrumbName(el.dataset.fcPin) + " pinned to the board"); renderFocus(); });
-  $$("#qpFocusView [data-fc-unpin]").forEach(el=>el.onclick=()=>{ qpBoardRemove(el.dataset.fcUnpin); renderFocus(); });
-  $$("#qpFocusView [data-fc-tree]").forEach(el=>el.onclick=()=>{
-    const sel = fcSel(db); if(sel){ state.qpTarget = sel; state.qpMode = "tree"; save(); }
-    setMapSec("planner");
-    setTimeout(()=>{ const p = $("#qpPop"); if(p && !qpPopped) p.click(); }, 120);
-  });
-}
-
+// a change to steps or a tab repaints the quest panel in place
 function qpRefreshDetails(){
   const db = questDB(); if(!db) return;
-  const top = $("#qpTopDetail"); if(top && state.qpTarget && state.qpTarget !== "__ALL__") top.innerHTML = qpDetailHtml(state.qpTarget, db);
-  qpShowDetail(db);
-  if(state.lastView === "quests" && mapSec() === "focus") renderFocus();
+  if(state.qpSel && qpPopOpen()) qpOpen(state.qpSel, {keep:true});
 }
 // one delegated listener covers every render of the panel
 document.addEventListener("click", async e=>{
@@ -12551,14 +12416,23 @@ document.addEventListener("change", e=>{
   if(cb.checked) state.questSteps[n][i] = true; else delete state.questSteps[n][i];
   save();
   const lab = cb.closest(".qs-step"); if(lab) lab.classList.toggle("on", cb.checked);
-  const top = cb.closest(".qp-detail"); if(top){ const c = top.querySelector(".qs-top .muted"); if(c){ const t = top.querySelectorAll("[data-qstep]").length, d = top.querySelectorAll("[data-qstep]:checked").length; c.textContent = `${d}/${t} steps`; } }
+  const top = cb.closest(".qpq-in"); if(top){ const c = top.querySelector(".qs-top .muted"); if(c){ const t = top.querySelectorAll("[data-qstep]").length, d = top.querySelectorAll("[data-qstep]:checked").length; c.textContent = `${d}/${t} steps`; } }
 });
 
-function qpDetailHtml(n, db){
-  if(!n || !db.quests[n])
-    return `<div class="qp-detail-empty">Click any quest in the tree for its full requirements.</div>`;
-  const q = db.quests[n], st = questStatus(n, db);
-  const lvlOf = s => (live && live.skills && live.skills[s]) ? live.skills[s].level : 1;
+// Everything about one quest, in the side panel: status and actions, then Overview (requirements,
+// the quests it needs, rewards, what it opens), Steps, and for the charted goal the Route.
+function qpPopupHtml(n, db){
+  const e = escapeHtml;
+  const x = `<button class="qpq-x" data-qpclose title="Close (Esc)">✕</button>`;
+  if(n==="__ALL__" || n==="__BOARD__"){
+    const cape = n==="__ALL__";
+    return `${x}<h3>${cape?"Quest cape":"Everything pinned"}</h3>
+      <div class="qpq-meta"><span>${cape?"every quest, in one route":"one route through your pinned quests"}</span></div>
+      <div class="qpd-tabs"><button class="on" data-qptab="route">Route</button></div>${qpRouteTabHtml(n, db)}`;
+  }
+  const q = db.quests[n];
+  if(!q) return `${x}<h3>${e(qpLabel(n))}</h3><div class="empty">Not in the quest data.</div>`;
+  const st = questStatus(n, db);
   const reqs = Object.entries(q.reqs||{}).sort((a,b)=>b[1]-a[1]);
   const reqRows = reqs.map(([s,l])=>{
     const have = live ? lvlOf(s) : null, ok = have!=null && have>=l, boost = q.boostable && q.boostable[s];
@@ -12580,41 +12454,59 @@ function qpDetailHtml(n, db){
   const pm = /^(.+)\/[^/]+$/.exec(n);
   const parent = (pm && db.quests[pm[1]]) ? pm[1] : null;
   const opens = subs.length ? subs : kids;
-  const opensHead = subs.length ? `Subquests (${subs.length})`
-                                : `Opens up${kids.length?` (${kids.length})`:""}`;
+  const opensHead = subs.length ? `Subquests (${subs.length})` : `Opens up${kids.length?` (${kids.length})`:""}`;
   const wiki = "https://oldschool.runescape.wiki/w/"+encodeURIComponent(n.replace(/ /g,"_"));
-  const tab = ["over","steps","rewards"].includes(state.qpTab) ? state.qpTab : "over";
+  const tabs = n===state.qpTarget ? ["over","steps","route"] : ["over","steps"];
+  const tab = tabs.includes(state.qpTab) ? state.qpTab : "over";
   const stepsDone = Object.keys(((state.questSteps || {})[n]) || {}).length;
-  return `<div class="qpd-head">
-      <h4>${escapeHtml(qpLabel(n))}</h4>
-      <span class="qp-tag ${(live&&st==="ready")?"free":""}">${st==="done"?"complete":!live?"stats not loaded":st==="ready"?"ready to start":"blocked"}</span>
-      ${questInProgress(n)?`<span class="qp-tag prog">in progress</span>`:""}
-      ${parent?`<button class="qpd-q" style="width:auto" data-qpgo="${escapeHtml(parent)}">part of ${escapeHtml(parent)}</button>`:""}
-      ${q.difficulty?`<span class="small muted">${escapeHtml(q.difficulty)}</span>`:""}
-      ${q.length?`<span class="small muted">· ${escapeHtml(q.length)}</span>`:""}
-      <div class="qpd-acts">
-        <button class="ghost small" data-qpdone2="${escapeHtml(n)}">${st==="done"?"✅ Done":"⬜ Mark done"}</button>
-        ${n!==state.qpTarget?`<button class="ghost small" data-qpfocus="${escapeHtml(n)}" title="Chart the route to this quest">🧭 Plan this</button>`:""}
-        ${qpBoardHas(n)?"":`<button class="ghost small" data-qbadd="${escapeHtml(n)}" title="Pin to the board">📌 Pin</button>`}
-        <button class="ghost small" data-qfold="${escapeHtml(n)}" title="Put in a folder">📁 Folders</button>
-        <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a>
-      </div>
-    </div>
-    <div class="qpd-tabs">
-      <button class="${tab==="over"?"on":""}" data-qptab="over">Overview</button>
-      <button class="${tab==="steps"?"on":""}" data-qptab="steps">Steps${stepsDone ? ` <span class="qpd-tabn">${stepsDone}</span>` : ""}</button>
-      <button class="${tab==="rewards"?"on":""}" data-qptab="rewards">Rewards</button>
-    </div>
-    ${tab==="steps" ? `<div class="qpd-steps">${qpStepsHtml(n)}</div>` : tab==="rewards" ? `<div class="qpd-grid">${qpRewardsHtml(q) || `<div class="empty">Nothing listed.</div>`}</div>` : `<div class="qpd-grid">
+  const stTag = st==="done" ? `<span class="qp-tag free">complete</span>`
+    : questInProgress(n) ? `<span class="qp-tag prog">in progress</span>`
+    : !live ? `<span class="qp-tag">stats not loaded</span>`
+    : st==="ready" ? `<span class="qp-tag free">ready to start</span>` : `<span class="qp-tag">blocked</span>`;
+  const none = t => `<div class="qpd-row"><span class="have" style="margin:0">${t}</span></div>`;
+  const overview = `<div class="qpd-grid">
       <div class="qpd-sec"><h5>Requirements</h5>
-        <div class="qpd-list">${reqRows+qpRow || `<div class="qpd-row"><span class="have" style="margin:0">Nothing required.</span></div>`}</div></div>
+        <div class="qpd-list">${reqRows+qpRow || none("Nothing required.")}</div></div>
       <div class="qpd-sec"><h5>Needs these quests${prereqs.length?` (${prereqs.filter(p=>!questDone(p)).length} left)`:""}</h5>
-        <div class="qpd-list">${prereqs.length?prereqs.map(t=>qpQuestRow(t,db)).join("")
-          :`<div class="qpd-row"><span class="have" style="margin:0">None — no quests gate this.</span></div>`}</div></div>
+        <div class="qpd-list">${prereqs.length?prereqs.map(t=>qpQuestRow(t,db)).join(""):none("None. No quests gate this.")}</div></div>
+      ${qpRewardsHtml(q) || `<div class="qpd-sec"><h5>Rewards</h5>${none("Nothing listed.")}</div>`}
       <div class="qpd-sec"><h5>${opensHead}</h5>
-        <div class="qpd-list">${opens.length?opens.map(t=>qpQuestRow(t,db)).join("")
-          :`<div class="qpd-row"><span class="have" style="margin:0">Nothing depends on this.</span></div>`}</div></div>
-    </div>`}`;
+        <div class="qpd-list">${opens.length?opens.map(t=>qpQuestRow(t,db)).join(""):none("Nothing depends on this.")}</div></div>
+    </div>`;
+  const body = tab==="steps" ? `<div class="qpd-steps">${qpStepsHtml(n)}</div>` : tab==="route" ? qpRouteTabHtml(n, db) : overview;
+  return `${x}<h3>${e(qpLabel(n))}</h3>
+    <div class="qpq-meta">${stTag}
+      ${parent?`<button class="qpd-q" style="width:auto" data-qpgo="${e(parent)}">part of ${e(qpLabel(parent))}</button>`:""}
+      ${q.difficulty?`<span>${e(q.difficulty)}</span>`:""}${q.length?`<span>· ${e(q.length)}</span>`:""}</div>
+    <div class="qpq-acts">
+      <button class="ghost small" data-qpdone2="${e(n)}">${st==="done"?"✅ Done":"⬜ Mark done"}</button>
+      ${n!==state.qpTarget?`<button class="ghost small" data-qpfocus="${e(n)}" title="Chart the route to this quest">🧭 Plan this</button>`:""}
+      <button class="ghost small" data-qppin="${e(n)}" title="${qpBoardHas(n)?"Take it off the board":"Pin to the board"}">${qpBoardHas(n)?"📌 Pinned":"📌 Pin"}</button>
+      <button class="ghost small" data-qfold="${e(n)}" title="Put in a folder">📁 Folder</button>
+      <button class="ghost small" data-qpnotes="${e(n)}" title="A note with the requirements and rewards">📝 Notes</button>
+      <a class="ghost small" href="${wiki}" target="_blank" rel="noopener">Wiki ↗</a>
+    </div>
+    <div class="qpd-tabs">${tabs.map(t=>`<button class="${t===tab?"on":""}" data-qptab="${t}">${t==="over"?"Overview":t==="steps"?`Steps${stepsDone?` <span class="qpd-tabn">${stepsDone}</span>`:""}`:"Route"}</button>`).join("")}</div>
+    ${body}`;
+}
+// A note with the essentials, so a plan can be worked on in Notes.
+function qpSendToNotes(n, db){
+  const q = db.quests[n]; if(!q) return;
+  const lines = [qpLabel(n) + (q.difficulty ? " · " + q.difficulty : "") + (q.length ? " · " + q.length : "")];
+  const reqs = Object.entries(q.reqs||{}).sort((a,b)=>b[1]-a[1]).map(([s,l])=>`${l} ${nice(s)}`);
+  if(q.qp) reqs.push(`${q.qp} quest points`);
+  if(reqs.length) lines.push("Needs: " + reqs.join(", "));
+  const pre = (q.prereqs||[]).filter(p=>!questDone(p)).map(qpLabel);
+  if(pre.length) lines.push("Quests first: " + pre.join(", "));
+  const rw = [];
+  if(q.qpGain) rw.push(`${q.qpGain} QP`);
+  Object.entries(q.rewards||{}).sort((a,b)=>b[1]-a[1]).forEach(([s,a])=>rw.push(`${a.toLocaleString("en-US")} ${nice(s)} XP`));
+  (q.items||[]).forEach(it=>rw.push(it.n)); (q.unlocks||[]).forEach(u=>rw.push(u));
+  if(rw.length) lines.push("Rewards: " + rw.join(", "));
+  lines.push("https://oldschool.runescape.wiki/w/" + n.replace(/ /g,"_"));
+  state.notes = state.notes || [];
+  state.notes.unshift({id:"n"+Date.now()+Math.random().toString(36).slice(2,5), text:lines.join("\n"), color:NOTE_COLORS[state.notes.length % NOTE_COLORS.length], createdAt:Date.now(), updatedAt:Date.now()});
+  save(); toast("📝 Sent to Notes");
 }
 function qpEdgePath(e){
   const a=qpPos[e.from], b=qpPos[e.to];
@@ -12627,56 +12519,76 @@ function qpRedrawEdges(){
     p.setAttribute("d", qpEdgePath({from:p.dataset.ef, to:p.dataset.et}));
   });
 }
-// Swaps just the detail panel, so inspecting a quest never moves the tree or the page.
-function qpShowDetail(db){
-  const box = $("#qpDetail");
-  if(box) box.innerHTML = qpDetailHtml(state.qpSel, db);
-  $$("#qpResult .qp-node").forEach(x=>x.classList.toggle("sel", x.dataset.qpnode===state.qpSel));
-  qpWireDetail(db);
+function qpPopOpen(){ const el = $("#qpq"); return !!el && !el.classList.contains("hidden"); }
+// Light a quest's whole path: everything it needs and everything it opens. null clears it.
+function qpLight(n){
+  const tree = document.querySelector("#qpResult .qp-tree"); if(!tree) return;
+  $$("#qpResult .qp-node.sel").forEach(x=>x.classList.remove("sel"));
+  if(!n || !qpPos[n]){ tree.classList.remove("hl"); $$("#qpResult .lit").forEach(x=>x.classList.remove("lit")); return; }
+  const keep = new Set([n]);
+  const up = x => qpEdges.forEach(e=>{ if(e.to===x && !keep.has(e.from)){ keep.add(e.from); up(e.from); } });
+  const down = x => qpEdges.forEach(e=>{ if(e.from===x && !keep.has(e.to)){ keep.add(e.to); down(e.to); } });
+  up(n); down(n);
+  tree.classList.add("hl");
+  $$("#qpResult .qp-node").forEach(x=>{ x.classList.toggle("lit", keep.has(x.dataset.qpnode)); x.classList.toggle("sel", x.dataset.qpnode===n); });
+  $$("#qpResult .qp-tree svg path").forEach(p=>p.classList.toggle("lit", keep.has(p.dataset.ef) && keep.has(p.dataset.et)));
 }
-function qpWireDetail(db){
-  // browsing a related quest just moves the panel — it doesn't rebuild the tree
-  $$("#qpDetail [data-qpgo]").forEach(b=>b.onclick=()=>{
-    state.qpSel = b.dataset.qpgo; save(); qpShowDetail(db);
-  });
-  $$("#qpDetail [data-qpfocus]").forEach(b=>b.onclick=()=>{
+function qpOpen(n, opt){
+  const db = questDB(); if(!db || !n) return;
+  state.qpSel = n; save();
+  const body = $("#qpqBody"); if(!body) return;
+  body.innerHTML = qpPopupHtml(n, db);
+  if(!(opt && opt.keep)) body.scrollTop = 0;
+  $("#qpq").classList.remove("hidden"); $("#qpqScrim").classList.remove("hidden");
+  qpLight(n);
+  qpPopWire(db);
+}
+function qpClose(){
+  const el = $("#qpq"); if(!el) return;
+  el.classList.add("hidden"); $("#qpqScrim").classList.add("hidden");
+  $$(".qp-foldmenu").forEach(m=>m.remove());
+  state.qpSel = null; save();
+  qpLight(null);
+}
+function qpPopWire(db){
+  $$("#qpq [data-qpclose]").forEach(b=>b.onclick=qpClose);
+  // a related quest swaps the panel; the tree stays put
+  $$("#qpq [data-qpgo]").forEach(b=>b.onclick=()=>qpOpen(b.dataset.qpgo));
+  $$("#qpq [data-rtq]").forEach(row=>row.onclick=e=>{ if(e.target.closest("button, input, label")) return; qpOpen(row.dataset.rtq); });
+  $$("#qpq [data-qpfocus]").forEach(b=>b.onclick=()=>{
     if(state.qpTarget) qpTrail().push(state.qpTarget);
-    state.qpTarget = b.dataset.qpfocus; save(); renderQuestPlanner();
+    state.qpTarget = b.dataset.qpfocus; state.qpTab = "route"; save(); renderQuestPlanner();
     $("#view-quests").scrollIntoView({behavior:"smooth", block:"start"});
   });
-  $$("#qpDetail [data-qpdone2]").forEach(b=>b.onclick=e=>{
-    e.stopPropagation();
-    const n = b.dataset.qpdone2;
-    qpTick(n, !questDone(n));
+  $$("#qpq [data-qpdone2]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); const n = b.dataset.qpdone2; qpTick(n, !questDone(n)); });
+  $$("#qpq [data-qpdone]").forEach(c=>c.onchange=()=>qpTick(c.dataset.qpdone, c.checked));
+  $$("#qpq [data-qppin]").forEach(b=>b.onclick=()=>{
+    const n = b.dataset.qppin;
+    if(qpBoardHas(n)){ qpBoardRemove(n); toast(qpCrumbName(n)+" taken off the board"); }
+    else if(qpBoardAdd(n)) toast("📌 "+qpCrumbName(n)+" pinned. It sits under the tree and on Home.");
+    else return;
+    qpStripsRefresh(); qpOpen(n, {keep:true});
   });
-  // the details at the top belong to the charted quest, so a related quest there charts that one
-  $$("#qpTopDetail [data-qpgo]").forEach(b=>b.onclick=()=>{
-    if(state.qpTarget) qpTrail().push(state.qpTarget);
-    state.qpTarget = b.dataset.qpgo; state.qpSel = null; save(); renderQuestPlanner();
+  $$("#qpq [data-qpnotes]").forEach(b=>b.onclick=()=>qpSendToNotes(b.dataset.qpnotes, db));
+  // a gap row opens the quests that pay XP in that skill
+  $$("#qpq [data-qpgap]").forEach(el=>el.onclick=e=>{
+    if(e.target.closest("[data-qpgo]")) return;
+    const bx = el.parentElement.querySelector(".qp-boost"); if(bx) bx.classList.toggle("hidden");
+    el.classList.toggle("open");
   });
-  $$("#qpTopDetail [data-qpdone2]").forEach(b=>b.onclick=e=>{
-    e.stopPropagation();
-    const n = b.dataset.qpdone2;
-    qpTick(n, !questDone(n));
-  });
-  qpWirePinButtons();
+  qpWireFolderButtons();
+}
+function qpTogglePop(force){
+  qpPopped = force==null ? !qpPopped : !!force;
+  const p = $("#qpTreePanel"); if(p) p.classList.toggle("popped", qpPopped);
+  document.body.style.overflow = qpPopped ? "hidden" : "";
+  const pop = $("#qpPop");
+  if(pop){ pop.textContent = qpPopped ? "⤡ Exit full screen" : "⤢ Full screen"; pop.title = qpPopped ? "Back to the page (Esc)" : "Fill the window"; }
+  const f = $("#qpFull"); if(f) f.textContent = qpPopped ? "⤡" : "⤢";
+  qpFitTree();
 }
 function qpWire(db){
   const tree = document.querySelector("#qpResult .qp-tree");
-  $$("#qpResult .qp-node").forEach(x=>x.classList.toggle("sel", x.dataset.qpnode===state.qpSel));
-  qpWireDetail(db);
-  // gap row → the quests that pay XP in that skill; a quest click opens its detail panel
-  $$("#qpResult [data-qpgap]").forEach(el=>el.onclick=(e)=>{
-    if(e.target.closest("[data-qpgo]")) return;
-    const b = el.parentElement.querySelector(".qp-boost");
-    if(b) b.classList.toggle("hidden");
-    el.classList.toggle("open");
-  });
-  $$("#qpResult .qp-boost [data-qpgo]").forEach(b=>b.onclick=(e)=>{
-    e.stopPropagation();
-    state.qpSel = b.dataset.qpgo; save(); qpShowDetail(db);
-    const d=$("#qpDetail"); if(d) d.scrollIntoView({behavior:"smooth", block:"center"});
-  });
   // ---- hover highlight: light this quest's direct connections, fade everything else
   if(tree){
     $$("#qpResult [data-qpnode]").forEach(el=>{
@@ -12690,8 +12602,8 @@ function qpWire(db){
         $$("#qpResult .qp-tree svg path").forEach(p=>p.classList.toggle("lit", p.dataset.ef===n || p.dataset.et===n));
       });
       el.addEventListener("mouseleave", ()=>{
-        tree.classList.remove("hl");
-        $$("#qpResult .lit").forEach(x=>x.classList.remove("lit"));
+        // back to the open quest's lit path, or to nothing
+        qpLight(qpPopOpen() ? state.qpSel : null);
       });
     });
   }
@@ -12722,10 +12634,9 @@ function qpWire(db){
           state.qpLayout[t][n] = {...qpPos[n]};
           save();
         } else {
-          // A click inspects rather than navigates — jumping the whole view on a
-          // half-finished drag was too easy to trigger by accident.
-          state.qpSel = (state.qpSel===n) ? null : n; save();
-          qpShowDetail(db);
+          // A click opens the quest's panel rather than charting it: jumping the whole view on a
+          // half-finished drag was too easy to trigger by accident. The same quest again closes it.
+          if(qpPopOpen() && state.qpSel===n) qpClose(); else { state.qpTab = "over"; qpOpen(n); }
         }
       };
       qpDrag = true;
@@ -12733,18 +12644,8 @@ function qpWire(db){
       document.addEventListener("mouseup", up);
     });
   });
-  const pop = $("#qpPop");
-  if(pop) pop.onclick = ()=>{
-    qpPopped = !qpPopped;
-    const p = $("#qpTreePanel");
-    if(p) p.classList.toggle("popped", qpPopped);
-    document.body.style.overflow = qpPopped ? "hidden" : "";
-    if(pop){
-      pop.textContent = qpPopped ? "⤡ Exit full screen" : "⤢ Full screen";
-      pop.title = qpPopped ? "Back to the page (Esc)" : "Fill the window — easier on big chains";
-    }
-    qpFitTree();
-  };
+  const pop = $("#qpPop"); if(pop) pop.onclick = ()=>qpTogglePop();
+  const rf = $("#qpRefresh"); if(rf) rf.onclick = qpLoad;
   const pin = $("#qpPin");
   if(pin) pin.onclick = ()=>{
     const t = state.qpTarget;
@@ -12783,8 +12684,8 @@ function qpWire(db){
       if(e.key!=="Escape") return;
       if(state.lastView!=="quests") return;
       if(/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement||{}).tagName||"")) return;
-      const pb = $("#qpPop");
-      if(qpPopped && pb){ pb.click(); return; }  // leave full screen first
+      if(qpPopOpen()){ qpClose(); return; }       // the panel first
+      if(qpPopped){ qpTogglePop(false); return; }   // then full screen
       if(qpTrail().length) goBack();
     });
   }
@@ -13415,7 +13316,11 @@ $("#bossGrid").onclick = (e)=>{
   const t = e.target.closest("[data-bossinfo]");
   if(t) openBossModal(t.dataset.bossinfo);
 };
-$("#qpRefresh").onclick = qpLoad;
+$("#qpGuideBtn").onclick = ()=>setMapSec("guide");
+$("#qpFull").onclick = ()=>qpTogglePop();
+$("#qpqScrim").onclick = qpClose;
+// Enter charts the first hit
+$("#qpSearch").addEventListener("keydown", e=>{ if(e.key==="Enter"){ const b = $("#qpSuggest [data-qptarget]"); if(b) b.click(); } });
 $("#qpSearch").addEventListener("input", ()=>{
   const db=questDB(), t=$("#qpSearch").value.trim().toLowerCase(), el=$("#qpSuggest");
   if(!db) return;
@@ -13433,9 +13338,7 @@ $("#qpSearch").addEventListener("input", ()=>{
     const n2 = b.dataset.qbadd;
     if(qpBoardAdd(n2)){
       toast("📌 "+qpCrumbName(n2)+" pinned to the board");
-      const db2 = questDB();
-      $("#qpBoardWrap").innerHTML = qpBoardHtml(db2, state.qpTarget);
-      qpWireBoard(db2);
+      qpStripsRefresh();
       b.classList.add("on"); b.textContent = "📌"; b.title = "Already on the board";
     }
   });
@@ -14617,7 +14520,7 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", board:"Board", museum:"Museum", start:"Roadmap", ask:"Ask Bud", quests:"Map", coffer:"Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", board:"Board", mockups:"Mockups", museum:"Museum", start:"Roadmap", ask:"Ask Bud", quests:"Map", coffer:"Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
 // ---- Scroll sections ----
 // The page got big enough that one long scroll stopped working. Same data, five
 // sections, heatmap first because that's what people open the page for.
@@ -14711,14 +14614,14 @@ const QL_HINT = "Opens the full entry, with skills picked out from what you type
 let qlm = null;   // {skills:Set, off:Set, prios:Set, milestone:bool} while the window is open
 
 // one tap: today was a chill day. Tap again to take it back.
-function logChillDay(){
-  const date = todayISO();
+function logChillDay(when){
+  const date = when || todayISO();
   state.scroll.log = state.scroll.log || [];
   const i = state.scroll.log.findIndex(e=>e && e.date === date && e.chill);
   if(i >= 0){ state.scroll.log.splice(i, 1); save(); renderScroll(); toast("Chill day taken back"); return; }
   state.scroll.log.push({id:"l"+Date.now()+Math.random().toString(36).slice(2,5), date, text:"Chill day", skills:[], types:["social"], prios:[], chill:true, createdAt:Date.now()});
   save(); renderScroll();
-  toast("☕ Chill day logged. Still counts as a day played.");
+  toast(date === todayISO() ? "☕ Chill day logged. Still counts as a day played." : "☕ Chill day logged for " + fmtDay(date) + ".");
 }
 function openQuickLog(){
   const text = ($("#qlText").value || "").trim();
@@ -14829,7 +14732,7 @@ function switchView(name){
   const now = $("#view-"+name); if(now && now !== was) viewIn(now);
   state.lastView=name; save();
   // the planner is a map — let it use the whole window instead of the reading column
-  document.body.toggleAttribute("data-wide", name==="quests");
+  document.body.toggleAttribute("data-wide", name==="quests" || name==="mockups");
   closeSidebar(); window.scrollTo(0,0);
   // heatmaps size themselves to their container — refit when their view becomes visible
   // Both heatmaps open on 30 days each time you come to them. Pick another range and it
@@ -14840,9 +14743,10 @@ function switchView(name){
   if(name==="home"){ renderHomeHeatControls(); renderFunFact(true); }
   // the board shows live status against your stats and quest progress, so it has to be
   // rebuilt on entry rather than left as whatever it was at launch
-  if(name==="quests") applyMapSec();
+  if(name==="quests") applyMapSec(); else if(typeof qpClose === "function") qpClose();
   if(name==="coffer") applyCofferSec();
   if(name==="board") boardOpen();
+  if(name==="mockups") mockupsOpen();
   if(name==="museum") renderMuseum();
   if(name==="arcade") renderArcade();
   // the recap is something you open and close, not a place, so coming back to Scroll
@@ -15254,6 +15158,58 @@ function isBetaApp(){ return /\.beta$/.test(appIdent); }
 // Beta only, and only once the app has said which build it is
 function boardNavShow(){ const b = $("#navBoard"); if(b && isBetaApp()) b.classList.remove("hidden"); }
 if(window.__TAURI__ && window.__TAURI__.core) setTimeout(boardNavShow, 400);
+
+// ---- Mockups ----
+// Design mockups live in design/mockups. tools/sync-mockups.js copies them into data/mockups,
+// the one folder the Beta serves beside the followed page, and writes index.json. The shell
+// hands those files over as plain bytes, so the page fetches the text and puts it in the frame
+// itself. Shown in the Beta and in the local preview, nowhere else.
+let mkList = null;
+function mockupsNavShow(){
+  const b = $("#navMockups"); if(!b) return;
+  if(isBetaApp() || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) b.classList.remove("hidden");
+}
+setTimeout(mockupsNavShow, 450);
+async function mockupsOpen(){
+  const grid = $("#mkGrid"); if(!grid) return;
+  mockupClose();
+  try{
+    const r = await fetch("data/mockups/index.json", {cache:"no-store"});
+    mkList = r.ok ? await r.json() : [];
+  }catch(e){ mkList = []; }
+  $("#mkSub").textContent = mkList.length ? `${mkList.length} page${mkList.length===1?"":"s"}` : "";
+  if(!mkList.length){
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">No mockups found. In the project folder run <code>node tools/sync-mockups.js</code>, then press Reload.</div>`;
+    return;
+  }
+  grid.innerHTML = mkList.map(m=>`<button class="mk-card" data-mk="${escapeHtml(m.file)}"><h4>${escapeHtml(m.title)}</h4><p>${escapeHtml(m.desc||"")}</p><div class="small muted" style="margin-top:6px">${escapeHtml(m.date||"")}</div></button>`).join("");
+  $$("#mkGrid [data-mk]").forEach(b=>{ b.onclick = ()=>mockupShow(b.dataset.mk); });
+}
+async function mockupShow(file){
+  const m = (mkList||[]).find(x=>x.file===file); if(!m) return;
+  $("#mkGrid").classList.add("hidden"); $("#mkIntro").classList.add("hidden");
+  $("#mkHost").classList.remove("hidden"); $("#mkBack").classList.remove("hidden"); $("#mkFull").classList.remove("hidden");
+  $("#mkSub").textContent = m.title;
+  const fr = $("#mkFrame");
+  try{
+    const r = await fetch("data/mockups/" + file, {cache:"no-store"});
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    fr.srcdoc = await r.text();
+  }catch(e){
+    fr.srcdoc = `<p style="font-family:sans-serif;color:#ccc;padding:20px">Couldn't load ${escapeHtml(file)}: ${escapeHtml(String(e && e.message || e))}</p>`;
+  }
+  window.scrollTo(0,0);
+}
+function mockupClose(){
+  const fr = $("#mkFrame"); if(fr) fr.srcdoc = "";
+  $("#mkHost").classList.add("hidden"); $("#mkBack").classList.add("hidden"); $("#mkFull").classList.add("hidden");
+  $("#mkGrid").classList.remove("hidden"); $("#mkIntro").classList.remove("hidden");
+  $("#mkSub").textContent = mkList && mkList.length ? `${mkList.length} page${mkList.length===1?"":"s"}` : "";
+}
+(function(){
+  const b = $("#mkBack"); if(b) b.onclick = mockupClose;
+  const f = $("#mkFull"); if(f) f.onclick = ()=>{ const fr = $("#mkFrame"); if(fr && fr.requestFullscreen) fr.requestFullscreen().catch(()=>{}); };
+})();
 function ceGroup(files){
   const groups = {};
   (files||[]).forEach(f=>{

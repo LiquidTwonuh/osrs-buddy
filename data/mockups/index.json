@@ -1,0 +1,26 @@
+[
+  {
+    "file": "map-tree-first.html",
+    "title": "Map tree-first mockup",
+    "desc": "Map, tree first (Josh's direction). The tree is the page, search and the Optimal quest guide button above it, a popup per quest with everything in it.",
+    "date": "2026-11-02"
+  },
+  {
+    "file": "upgrades-v2.html",
+    "title": "Upgrades mockup",
+    "desc": "Account upgrades read three ways: by skill ladder, by what they do, by stage. No tiers.",
+    "date": "2026-11-02"
+  },
+  {
+    "file": "map-calm.html",
+    "title": "Map mockups",
+    "desc": "Map, calmer. Two directions: one goal at a time, or one ready-now list.",
+    "date": "2026-11-01"
+  },
+  {
+    "file": "upgrades.html",
+    "title": "Big upgrades",
+    "desc": "Account upgrades as a tier list. Kept for comparison.",
+    "date": "2026-11-02"
+  }
+]

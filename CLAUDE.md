@@ -9,6 +9,8 @@ A character companion for Old School RuneScape. One HTML file is the whole app; 
 - `app/`: the Tauri shell. `src-tauri/src/lib.rs` (commands, page-file following, the Board), `sync.rs` (Wi-Fi sync server), `vault.rs` (save file and backups). `tauri.conf.json` is stable, `tauri.beta.conf.json` is the Beta.
 - `BOARD.md`: the plan, shared with the Beta's Board page. Edit freely, keep the headings.
 - `museum/`: screenshots of every stage of the app. Add one when something visibly changes.
+- `ai-notes/`: the brief for any other AI (ChatGPT first). `ALL.md` is the one-paste bundle, `INBOX.md` is where other AIs write back; read it when Josh points at it. A daily routine refreshes the folder; when something big is decided, update `04-decisions.md` by hand the same turn.
+- `design/mockups/`: standalone mockups for page-level rethinks. After adding or changing one, run `node tools/sync-mockups.js` so the Beta's Mockups page sees it.
 - `releases/`: a runnable copy of every released version. Never edit them.
 - `archive/`: old pages and the original patch notes. Never delete.
 - `../mortimeter-private/`: Krystal Klear, the private edition for Josh's fiancée. **Nothing from it ever goes in this repo.**
