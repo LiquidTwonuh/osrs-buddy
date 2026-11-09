@@ -2338,6 +2338,19 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <div class="act-legend" id="actLegend"></div>
 
     </div>
+      <!-- Quick entry: type a line, then the log window opens with the skills picked out of it. -->
+      <div class="panel quick-log">
+        <div class="ql-head">
+          <h3>Quick entry</h3>
+          <button class="ql-more" id="qlMore" type="button">Open journal ›</button>
+        </div>
+        <div class="ql-row">
+          <input type="text" id="qlText" placeholder="What did you do today? e.g. questing and a slayer task" autocomplete="off" maxlength="300">
+          <button class="primary" id="qlGo" type="button">Log it</button>
+          <button class="ghost" id="qlChill" type="button" title="Played, but no XP: talking, sorting the bank, hanging about. Counts as a day played.">☕ Chill day</button>
+        </div>
+        <div class="ql-note" id="qlNote">Opens the full entry, with skills picked out from what you type.</div>
+      </div>
       <!-- Recap isn't a tab. It's a look back over everything, so it gets its own panel under the map. -->
       <div class="panel recap-cta" id="recapCta" role="button" tabindex="0" title="Open your recap">
         <div class="rcta-t">Click for your personalized recap <span class="ar">›</span></div>
@@ -2352,19 +2365,6 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       </div>
 
 
-      <!-- Quick entry: type a line, then the log window opens with the skills picked out of it. -->
-      <div class="panel quick-log">
-        <div class="ql-head">
-          <h3>Quick entry</h3>
-          <button class="ql-more" id="qlMore" type="button">Open journal ›</button>
-        </div>
-        <div class="ql-row">
-          <input type="text" id="qlText" placeholder="What did you do today? e.g. questing and a slayer task" autocomplete="off" maxlength="300">
-          <button class="primary" id="qlGo" type="button">Log it</button>
-          <button class="ghost" id="qlChill" type="button" title="Played, but no XP: talking, sorting the bank, hanging about. Counts as a day played.">☕ Chill day</button>
-        </div>
-        <div class="ql-note" id="qlNote">Opens the full entry, with skills picked out from what you type.</div>
-      </div>
     </div>
 
     <div class="scroll-sec hidden" data-ssec="trophies">
@@ -2389,6 +2389,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
         <div class="act-picker" id="actPicker"></div>
         <div style="text-align:center">
           <span class="act-chip mile-chip" id="logMile" title="Mark this day as a big milestone. It gets a rainbow ring on the heatmap.">🏆 Milestone day</span>
+          <span class="act-chip" id="logChill" title="Played, but no XP: talking, sorting the bank, hanging about. Logs the chosen date as a day played. Tap again to take it back.">☕ Chill day</span>
         </div>
         <div id="logPrioWrap" class="hidden" style="text-align:center">
           <span class="small muted">Priorities touched</span>
@@ -6056,6 +6057,8 @@ $("#customText").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#addCust
 $("#logAddBtn").onclick = saveLogEntry;
 $("#logCancelBtn").onclick = resetLogForm;
 $("#logMile").onclick = ()=>{ logMilestone=!logMilestone; $("#logMile").classList.toggle("on", logMilestone); };
+// the composer's chill day logs the date in the date box, today when it's empty
+$("#logChill").onclick = ()=>{ const d = $("#logDate"); logChillDay((d && d.value) || todayISO()); };
 $("#logText").addEventListener("keydown",e=>{ if(e.key==="Enter") saveLogEntry(); });
 $("#hideDone").onchange = renderTodo;
 $("#sortGoals").onchange = renderTodo;
@@ -14566,14 +14569,14 @@ const QL_HINT = "Opens the full entry, with skills picked out from what you type
 let qlm = null;   // {skills:Set, off:Set, prios:Set, milestone:bool} while the window is open
 
 // one tap: today was a chill day. Tap again to take it back.
-function logChillDay(){
-  const date = todayISO();
+function logChillDay(when){
+  const date = when || todayISO();
   state.scroll.log = state.scroll.log || [];
   const i = state.scroll.log.findIndex(e=>e && e.date === date && e.chill);
   if(i >= 0){ state.scroll.log.splice(i, 1); save(); renderScroll(); toast("Chill day taken back"); return; }
   state.scroll.log.push({id:"l"+Date.now()+Math.random().toString(36).slice(2,5), date, text:"Chill day", skills:[], types:["social"], prios:[], chill:true, createdAt:Date.now()});
   save(); renderScroll();
-  toast("☕ Chill day logged. Still counts as a day played.");
+  toast(date === todayISO() ? "☕ Chill day logged. Still counts as a day played." : "☕ Chill day logged for " + fmtDay(date) + ".");
 }
 function openQuickLog(){
   const text = ($("#qlText").value || "").trim();
