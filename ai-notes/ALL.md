@@ -1,6 +1,6 @@
 # Mortimeter, the whole brief
 
-Bundled 2026-11-09 from ai-notes/ in C:\Projects\mortimeter. Read it top to bottom; the rules every AI should know are in the first section of the workflow file at the end. Write back through ai-notes/INBOX.md.
+Bundled 2026-11-10 from ai-notes/ in C:\Projects\mortimeter. Read it top to bottom; the rules every AI should know are in the first section of the workflow file at the end. Write back through ai-notes/INBOX.md.
 
 
 
@@ -231,6 +231,7 @@ The live list is `BOARD.md` (Now, Next, Small fixes, Ideas, Parked). This is the
 
 ## Ideas, not started
 
+- **Coffer runs panel (2026-11-10).** Tree runs, herb runs and the like, tracked properly: Repeatables already times them, this would know the patches, what is planted and when it is ready, what a run yields and costs, and a weekly tally. Josh expects it to be very useful. Queued behind shipping the Map.
 - **Priorities that matter (opt-in).** Home leads with your priorities and what moved on them; Scroll entries tagged with a priority feed a per-priority streak and share of XP; Coffer and Map filter by the active priority; the weekly recap says how much of the week went to them.
 - **Mortimeter as a skill (opt-in).** The app itself has a level: XP from days logged, quests ticked, goals finished, recaps read, Coffer picks done, streaks held. Level-ups with the 99-style fireworks, a tab on Home, maybe unlocks (themes, Mortimer lines). Incentive, never a nag. Needs its own XP table and a cap so it can't be farmed by clicking.
 - **More life.** Shared-element transitions between a card and the page it opens, rows that stagger in, a sidebar highlight that slides instead of jumps. Another Coffer pass later.
