@@ -13,13 +13,13 @@ A character companion for Old School RuneScape. One HTML file is the whole app; 
 - `design/mockups/`: standalone mockups for page-level rethinks. After adding or changing one, run `node tools/sync-mockups.js` so the Beta's Mockups page sees it.
 - `releases/`: a runnable copy of every released version. Never edit them.
 - `archive/`: old pages and the original patch notes. Never delete.
-- `../mortimeter-private/`: Krystal Klear, the private edition for Josh's fiancée. **Nothing from it ever goes in this repo.**
+- `../mortimeter-private/`: Krystal Klear, the private edition for Josh's fiancée. It is stable plus her layer, generated from `OSRS-Buddy.html`, never from dev (Josh, 2026-11-10). **Nothing from it ever goes in this repo.**
 
 ## Rules Josh has set
 - Never bundle Jagex audio or art. Mortimer art must be our own.
 - Commit as `LiquidTwonuh <201085695+LiquidTwonuh@users.noreply.github.com>`. Always `git fetch` before a push (Josh edits the README on GitHub). Never force-push.
 - Checkpoints are local commits plus a Beta build when the Rust side changed. Don't push, tag or release unless Josh says ship. Don't ask "ship?" after every batch.
-- Never launch, install or copy an installer into AppData from a Claude session. The session's sandbox virtualises AppData, so an install from here is not an install Josh has, and chasing it once cost real data. Build the installer, hand it over with SendUserFile, Josh double-clicks it from Explorer. Never force-kill the app.
+- Never hand Josh an installer (his words, 2026-11-10: stop making me download these, install it for me, you live in my PC). The Beta follows the dev page file, so page work never needs a build: edit, he presses Reload. When the shell itself changes and a Beta build is unavoidable, install it from the session with the sandbox off (the Bash tool's dangerouslyDisableSandbox), silently (NSIS /S), only while the app is closed, and then check the real exe's date changed; the sandbox virtualises AppData, and chasing a virtual install once cost real data. Never force-kill the app. Anything the session writes for the app to read (the follow marker, the Board) also goes through the sandbox-off path, or the app never sees it.
 - Builds go to the Beta (`npm run build:beta` in `app/`, product "OSRS Buddy Beta" until the rename), never over stable.
 - "Run setup again" and anything else that could drop data needs two confirmations. The save key `osrs_todo_state_v1` never changes.
 - Copy is plain: no em dashes, few emojis, no AI-flavoured jokes. Describe what things do. Colours only through the theme tokens in `:root`.

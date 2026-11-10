@@ -41,6 +41,7 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 - [x] Coffer: General Graardor showed "Needs Dad". "Must have defeated X" no longer reads as a quest
 
 ## Ideas
+- [ ] Coffer, favourite and hide on each money making card (Josh, 2026-11-10): a card gets its own small menu, favourite it so it floats up, hide it so it never comes back, without touching the filters. His example: Last Man Standing is PvP and he never wants to see it, but the rest of the current filtering should stay as it is. Hidden methods live in a list in Settings so they can be brought back. Small, after the Map ships
 - [ ] Coffer, a runs panel (Josh, 2026-11-10): a panel or section for tracking the money-and-XP routines, tree runs and herb runs first. Repeatables already times them (herb, tree, bird houses, with the interval and the quest and diary gates), so this is the step past a timer: which patches you have unlocked, what's planted where and when it's ready, what a run yields and costs, a tally over the week. Josh: "itll be SUPER useful". After the Map ships
 - [ ] Map, calmer (Josh, 2026-11-01): everyone but Josh says Map is overwhelming on first sight. Rule from now on: mockups first, no full-send redesigns. Two directions drawn in design/mockups/map-calm.html (A one goal at a time with rings and grouped lists, B one ready-now list across the board; the tree becomes a full-screen destination). Lean iOS: one question per screen, grouped lists, colour from skill icons, counts as sentences. Josh picks a direction, then it gets built behind the existing page
 - [ ] Priorities that matter (Josh, 2026-11-01): opt-in only. Candidates: Home leads with your priorities and what moved on them; Scroll entries tagged with a priority feed a per-priority streak and share of XP; Coffer and Map filter by the active priority; weekly recap says how much of the week went to them
@@ -72,4 +73,6 @@ Shared between Josh and Claude. Edit it in the Beta (Board in the sidebar) or fr
 - Dev page is `OSRS-Buddy-dev.html`. The Beta follows it: edit, press Reload in the Beta
 - Other AIs read ai-notes/ALL.md and write back in ai-notes/INBOX.md. Big decisions go in ai-notes/04-decisions.md the same turn they land here
 - Stable only changes when Josh says ship
+- Krystal Klear is stable plus her layer, generated from OSRS-Buddy.html, never from dev (Josh, 2026-11-10; the generator was pointed at dev from 10-31 to 11-10, and the installer built on 11-09 from dev is not to be installed)
+- No installers for Josh, ever (2026-11-10). Page work reaches the Beta through the followed file. If the shell must change, Claude installs the Beta build itself from the session with the sandbox off, app closed, and checks the real exe changed
 - Krystal Klear is private and never goes in this repo
