@@ -130,8 +130,42 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   /* The shell fills the window. Individual views cap their own content where a wide
      line would actually hurt (prose), rather than boxing the whole app in. */
   .app{display:flex; min-height:100vh; margin:0 auto}
-  .sidebar{width:214px; flex:0 0 auto; background:var(--panel); border-right:1px solid var(--border);
+  :root{--sbw:214px}   /* the sidebar's width, so overlays can centre over the content column */
+  .sidebar{width:var(--sbw); flex:0 0 auto; background:var(--panel); border-right:1px solid var(--border);
     padding:16px 12px; display:flex; flex-direction:column; gap:14px; position:sticky; top:0; height:100vh; overflow-y:auto}
+  /* Scrollbars: one thin thumb in the accent, a bare track, nothing else. The stock bar never shows. */
+  ::-webkit-scrollbar{width:8px; height:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--gold3); border-radius:8px; border:2px solid transparent; background-clip:padding-box}
+  ::-webkit-scrollbar-thumb:hover{background:var(--gold-dim); border:2px solid transparent; background-clip:padding-box}
+  ::-webkit-scrollbar-corner{background:transparent}
+  /* Collapsed sidebar: a rail of icons. Labels are clipped by font size, not removed, so nothing
+     re-renders and the active state, tooltips and clicks all keep working. Desktop and tablet
+     only; the phone has its drawer. */
+  .sb-toggle{display:none; margin-left:auto; width:24px; height:24px; align-items:center; justify-content:center; border-radius:7px;
+    background:transparent; border:1px solid transparent; color:var(--muted); cursor:pointer; font-size:15px; line-height:1; padding:0; box-shadow:none; text-shadow:none}
+  .sb-toggle:hover{color:var(--gold); background:var(--panel2)}
+  @media(min-width:701px){
+    .sb-toggle{display:inline-flex}
+    .sidebar{transition:width .2s ease, padding .2s ease}
+    @media(prefers-reduced-motion:reduce){ .sidebar{transition:none} }
+    body.sb-rail{--sbw:64px}
+    body.sb-rail .sidebar{padding:14px 8px; gap:10px}
+    body.sb-rail .brand{font-size:0; gap:0; justify-content:center; padding:0 0 4px; text-shadow:none}
+    body.sb-rail .brand .ver{display:none}
+    body.sb-rail .sb-toggle{margin:0; font-size:15px}
+    body.sb-rail .nav-sec{font-size:0; padding:8px 0 0; margin:4px 8px 0; border-top:1px solid var(--border)}
+    body.sb-rail .nav-sec:first-child{border:0; margin:0; padding:0}
+    body.sb-rail .navitem{justify-content:center; padding:10px 0; gap:0; font-size:0}
+    body.sb-rail .nav-sub{display:none}
+    body.sb-rail .side-mini{padding:6px; justify-content:center; cursor:pointer}
+    body.sb-rail .side-mini .grow, body.sb-rail .side-mini .sm-refresh, body.sb-rail .char-pop{display:none}
+    body.sb-rail .side-foot{align-items:center}
+    body.sb-rail .side-foot .ghost.small{font-size:0; padding:7px 9px; width:auto}
+    body.sb-rail #themeBtn::before{content:"🎨"; font-size:15px}
+    body.sb-rail #settingsBtn::before{content:"⚙️"; font-size:15px}
+    body.sb-rail #lastUpdated, body.sb-rail #updBanner{display:none}
+  }
   .vin{animation:viewIn .26s cubic-bezier(.2,.7,.2,1)}
   @keyframes viewIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
   @media (prefers-reduced-motion: reduce){ .vin{animation:none} }
@@ -417,8 +451,10 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qp-chip .n{color:var(--muted); font-size:11px}
   /* a centred card over the tree; the scrim is light so the lit path still reads behind it */
   .qpq-scrim{position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:80}
-  .qpq{position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); width:620px; max-width:calc(100% - 24px); max-height:min(84vh, 780px); background:var(--bg2); border:1px solid var(--border); border-radius:16px; z-index:81; display:flex; flex-direction:column; box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .qpq{position:fixed; left:calc(50% + var(--sbw) / 2); top:50%; transform:translate(-50%,-50%); width:620px; max-width:calc(100% - 24px); max-height:min(84vh, 780px); background:var(--bg2); border:1px solid var(--border); border-radius:16px; z-index:81; display:flex; flex-direction:column; box-shadow:0 30px 80px rgba(0,0,0,.6)}
   .qpq-in{position:relative; overflow:auto; padding:18px 20px 24px; flex:1; min-height:0}
+  .qpq-in::-webkit-scrollbar-thumb{background:transparent}
+  .qpq-in:hover::-webkit-scrollbar-thumb{background:var(--gold3); background-clip:padding-box}
   .qpq-x{position:absolute; top:12px; right:14px; width:30px; height:30px; border-radius:8px; background:var(--panel2); border:1px solid var(--border); color:var(--text); cursor:pointer; font:inherit; box-shadow:none; padding:0; z-index:2}
   .qpq h3{margin:0; font-family:var(--font-display); font-size:26px; color:var(--gold); font-weight:600; line-height:1.05; padding-right:40px}
   .qpq-meta{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:7px; font-size:12px; color:var(--muted)}
@@ -1611,6 +1647,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .tb-title{font-family:var(--font-display); color:var(--gold); font-size:19px}
   .tb-prev{font-size:11px; padding:4px 8px; white-space:nowrap}
   @media(max-width:700px){
+    :root{--sbw:0px}
     .app{display:block; max-width:none}
     .sidebar{position:fixed; left:0; top:0; bottom:0; height:100dvh; z-index:40; width:240px;
       transform:translateX(-100%); transition:transform .2s ease}
@@ -1624,7 +1661,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   /* A tablet, or a folding phone opened up (the Fold's inner screen is about 800 by 720): the
      sidebar stays on screen, just slimmer, and the content takes the rest. */
   @media(min-width:701px) and (max-width:1000px){
-    .sidebar{width:170px}
+    :root{--sbw:170px}
     .navitem{padding:7px 9px; font-size:13px}
     .nav-sec{font-size:10px}
     .content{padding:18px 16px 80px}
@@ -2086,7 +2123,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
 <div class="app">
 
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><span>⚔️</span> Mortimeter <span class="ver" id="verBadge"></span></div>
+    <div class="brand"><span>⚔️</span> Mortimeter <span class="ver" id="verBadge"></span><button class="sb-toggle" id="sbToggle" title="Collapse the sidebar">‹</button></div>
     <nav class="nav">
       <div class="nav-sec">Character</div>
       <button class="navitem active" data-view="home"><span class="ni-ic">🏠</span>Home</button>
@@ -15157,6 +15194,26 @@ let appIdent = "";
 if(window.__TAURI__ && window.__TAURI__.core) ceInvoke("app_identifier").then(v=>{ appIdent = String(v || ""); }).catch(()=>{});
 function isBetaApp(){ return /\.beta$/.test(appIdent); }
 // Beta only, and only once the app has said which build it is
+// ---- the sidebar rail ----
+// The chevron by the brand folds the sidebar to icons; the choice is saved. In the rail the
+// character badge is the way back out, since its name and the refresh are hidden.
+function applySidebarRail(){
+  const on = !!state.sbRail;
+  document.body.classList.toggle("sb-rail", on);
+  const b = $("#sbToggle"); if(b){ b.textContent = on ? "›" : "‹"; b.title = on ? "Expand the sidebar" : "Collapse the sidebar"; }
+}
+(function(){
+  const b = $("#sbToggle"); if(!b) return;
+  b.onclick = e=>{ e.stopPropagation(); state.sbRail = !state.sbRail; save(); applySidebarRail(); };
+  $$(".navitem").forEach(n=>{ if(!n.title) n.title = n.textContent.trim(); });
+  const sc = $("#sideChar");
+  if(sc) sc.addEventListener("click", e=>{
+    if(!document.body.classList.contains("sb-rail") || innerWidth <= 700) return;
+    e.preventDefault(); e.stopPropagation();
+    state.sbRail = false; save(); applySidebarRail();
+  }, true);
+  applySidebarRail();
+})();
 function boardNavShow(){ const b = $("#navBoard"); if(b && isBetaApp()) b.classList.remove("hidden"); }
 if(window.__TAURI__ && window.__TAURI__.core) setTimeout(boardNavShow, 400);
 
