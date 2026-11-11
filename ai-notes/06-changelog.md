@@ -1,8 +1,14 @@
 # Changelog, by day
 
-Updated 2026-11-09 (covers commits through 2026-11-09)
+Updated 2026-11-11 (covers commits through 2026-11-11)
 
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
+
+## 2026-11-11
+- dev: the Map quest panel is a centred card (was a side panel); clicking the page behind it closes it.
+
+## 2026-11-10
+- board: Coffer ideas (favourite and hide per card, a runs panel); rules: no installers for Josh, Krystal Klear generates from stable.
 
 ## 2026-11-09
 - dev: Map rebuilt tree first. Search, the Optimal quest guide button and full screen above the tree; a goal strip with a progress ring; Pinned and Folders as chip rows; clicking a quest lights its path and opens a side panel (a bottom sheet on a phone) with actions, Overview, Steps and, for the charted goal, a Route tab. The board panel, the pinned tabs, the Tree/Route switch and the Focus section are gone from the page.

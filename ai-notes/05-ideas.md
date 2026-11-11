@@ -6,7 +6,7 @@ The live list is `BOARD.md` (Now, Next, Small fixes, Ideas, Parked). This is the
 
 ## Decisions Josh owes (blocking something)
 
-- **Tree-first Map: does it stay as built?** Live in dev since 2026-11-09 with the side panel. Josh checks it in the Beta; stable keeps the old Map until he says.
+- **Tree-first Map: ship it?** Live in dev since 2026-11-09; Josh loves the popup (centred card since 11-11). Stable keeps the old Map until he says ship.
 - **Upgrades: do the skill ladders lead the page?** The v2 mockup opens on By skill. If yes, it becomes a real page with quest chips opening Map and skill rows opening Grind.
 - **Debrief of launch day's five changes.** Roadmap why-lines, bracket cleanup on quest steps, Achievements under Character, Gilded, the quarter-second rise. Stable got two of them; Josh picks which others stay.
 - **Rename Map and Coffer?** Wanted once Coffer is finished; Scroll stays.

@@ -1,6 +1,6 @@
 # Mortimeter, the whole brief
 
-Bundled 2026-11-10 from ai-notes/ in C:\Projects\mortimeter. Read it top to bottom; the rules every AI should know are in the first section of the workflow file at the end. Write back through ai-notes/INBOX.md.
+Bundled 2026-11-11 from ai-notes/ in C:\Projects\mortimeter. Read it top to bottom; the rules every AI should know are in the first section of the workflow file at the end. Write back through ai-notes/INBOX.md.
 
 
 
@@ -124,7 +124,7 @@ Character: Home, Scroll, Achievements. Planning: Goals, Roadmap, Map, Coffer, No
 
 **Roadmap.** Mid-game progression tracks: gear ladders, unlock quests, a bossing ladder, skill milestones, with an "in reach" list from current levels. Every level milestone says why it matters; a fresh account sees the three nearest instead of six far ones.
 
-**Map.** The quest planner, tree first since 2026-11-09 (dev, so the Beta; stable still has the older layout). Pick a goal (one quest, or the cape) and the whole dependency tree draws itself: done, ready now, blocked, with the chain's own XP rewards counted toward later requirements. The Planner page is: a search bar with a big Optimal quest guide button and a full-screen button beside it, a goal strip (progress ring, name, done and ready counts, Route and details, Pin), the tree with its legend, and two chip rows under it, Pinned and Folders. Clicking a quest lights its whole path and opens a side panel on the right (a bottom sheet on a phone) with status, Mark done, Plan this, Pin, Folder, Notes (sends a note with requirements and rewards), Wiki, then tabs: Overview (requirements against your levels, the quests it needs, rewards, what it opens), Steps (tickable quick guide or walkthrough), and on the charted goal a Route tab (counts, the levels still in the way with the quests that pay that XP, every quest in order). Route for all pinned sits in the Pinned row. The other sections are Folders (the board with reordering, and your own lists) and the optimal guide. Quest steps come from the repo's own `data/quest-steps.json` (every quest's quick guide and walkthrough, verbatim from the wiki, CC BY-NC-SA), the live wiki as a fallback. Esc closes the panel, then leaves full screen, then walks back the trail of charted quests.
+**Map.** The quest planner, tree first since 2026-11-09 (dev, so the Beta; stable still has the older layout). Pick a goal (one quest, or the cape) and the whole dependency tree draws itself: done, ready now, blocked, with the chain's own XP rewards counted toward later requirements. The Planner page is: a search bar with a big Optimal quest guide button and a full-screen button beside it, a goal strip (progress ring, name, done and ready counts, Route and details, Pin), the tree with its legend, and two chip rows under it, Pinned and Folders. Clicking a quest lights its whole path and opens a centred card over the tree (a bottom sheet on a phone; click outside, Esc or the X closes it) with status, Mark done, Plan this, Pin, Folder, Notes (sends a note with requirements and rewards), Wiki, then tabs: Overview (requirements against your levels, the quests it needs, rewards, what it opens), Steps (tickable quick guide or walkthrough), and on the charted goal a Route tab (counts, the levels still in the way with the quests that pay that XP, every quest in order). Route for all pinned sits in the Pinned row. The other sections are Folders (the board with reordering, and your own lists) and the optimal guide. Quest steps come from the repo's own `data/quest-steps.json` (every quest's quick guide and walkthrough, verbatim from the wiki, CC BY-NC-SA), the live wiki as a fallback. Esc closes the panel, then leaves full screen, then walks back the trail of charted quests.
 
 **Coffer.** Money making. A quiz (love, like, hate per skill; stage from your data) builds a page: skill pills lead (the lens), a podium of best methods, a ledger. Tabs for Repeatables, Vault and Flip (Grand Exchange margins; Flip still trusts a single stale trade, on the fix list). 525 methods from the wiki. Josh called it finished for now.
 
@@ -168,7 +168,7 @@ Things that were decided and should not be reopened without Josh. Newest first w
 
 ## Pages
 
-- **2026-11-09, the Map quest panel is a side panel, not a card.** A centred card covers the lit path in the tree, and the lit path is the point of clicking. On a phone it is a bottom sheet. Built the same day in dev; the Focus section was folded away because the goal strip and the Route tab do its job.
+- **2026-11-11, the Map quest panel is a centred card.** Built as a side panel on 11-09 (reasoning: a card covers the lit path); Josh saw it, loved the popup and asked for it centred, so it is a 620px card with a light scrim that the lit path still reads through. Clicking the page behind it closes it, as do Esc and the X. On a phone it is a bottom sheet. The Focus section was folded away because the goal strip and the Route tab do its job.
 - **2026-11-09, Chill day in every edition.** Josh: "every edition needs chill day". A chip in the Journal composer and Quick entry under the heatmap, in dev, stable (as a local checkpoint, not a ship) and Krystal Klear.
 - **2026-11-02, Upgrades is not a tier list.** Josh: "i actually hate it as a tier list". The data (67 upgrades) is read three ways: by skill ladder (the lead), by what it does, by stage. Anything relevant to an item links to it: a quest chip opens Map on that quest with the path lit, a level row opens Grind on that skill. Ownership is the one thing the app can't know, so the "Got it" tick is the user's.
 - **2026-11-02, Map goes tree first.** Josh's direction: the tree is the page, front and centre, the search bar above it, a big button for the optimal quest guide, full screen a tap away. Clicking a quest lights the path and opens a popup with everything (status, Mark done, Plan this, Pin, Folder, Notes, Wiki; Overview with requirements, needed quests, rewards and what it opens; Steps). Rewards live in the Overview tab, not their own tab. Pinned and Folders are chip rows under the tree. Open: card or side panel for the popup.
@@ -212,7 +212,7 @@ The live list is `BOARD.md` (Now, Next, Small fixes, Ideas, Parked). This is the
 
 ## Decisions Josh owes (blocking something)
 
-- **Tree-first Map: does it stay as built?** Live in dev since 2026-11-09 with the side panel. Josh checks it in the Beta; stable keeps the old Map until he says.
+- **Tree-first Map: ship it?** Live in dev since 2026-11-09; Josh loves the popup (centred card since 11-11). Stable keeps the old Map until he says ship.
 - **Upgrades: do the skill ladders lead the page?** The v2 mockup opens on By skill. If yes, it becomes a real page with quest chips opening Map and skill rows opening Grind.
 - **Debrief of launch day's five changes.** Roadmap why-lines, bracket cleanup on quest steps, Achievements under Character, Gilded, the quarter-second rise. Stable got two of them; Josh picks which others stay.
 - **Rename Map and Coffer?** Wanted once Coffer is finished; Scroll stays.
@@ -261,9 +261,15 @@ The live list is `BOARD.md` (Now, Next, Small fixes, Ideas, Parked). This is the
 
 # Changelog, by day
 
-Updated 2026-11-09 (covers commits through 2026-11-09)
+Updated 2026-11-11 (covers commits through 2026-11-11)
 
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
+
+## 2026-11-11
+- dev: the Map quest panel is a centred card (was a side panel); clicking the page behind it closes it.
+
+## 2026-11-10
+- board: Coffer ideas (favourite and hide per card, a runs panel); rules: no installers for Josh, Krystal Klear generates from stable.
 
 ## 2026-11-09
 - dev: Map rebuilt tree first. Search, the Optimal quest guide button and full screen above the tree; a goal strip with a progress ring; Pinned and Folders as chip rows; clicking a quest lights its path and opens a side panel (a bottom sheet on a phone) with actions, Overview, Steps and, for the charted goal, a Route tab. The board panel, the pinned tabs, the Tree/Route switch and the Focus section are gone from the page.

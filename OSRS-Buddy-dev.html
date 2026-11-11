@@ -415,8 +415,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qp-chip.fold i{background:var(--muted)}
   .qp-chip.dim{color:var(--muted); border-style:dashed}
   .qp-chip .n{color:var(--muted); font-size:11px}
-  .qpq-scrim{position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:80; display:none}
-  .qpq{position:fixed; top:0; right:0; bottom:0; width:460px; max-width:100%; background:var(--bg2); border-left:1px solid var(--border); z-index:81; display:flex; flex-direction:column; box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  /* a centred card over the tree; the scrim is light so the lit path still reads behind it */
+  .qpq-scrim{position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:80}
+  .qpq{position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); width:620px; max-width:calc(100% - 24px); max-height:min(84vh, 780px); background:var(--bg2); border:1px solid var(--border); border-radius:16px; z-index:81; display:flex; flex-direction:column; box-shadow:0 30px 80px rgba(0,0,0,.6)}
   .qpq-in{position:relative; overflow:auto; padding:18px 20px 24px; flex:1; min-height:0}
   .qpq-x{position:absolute; top:12px; right:14px; width:30px; height:30px; border-radius:8px; background:var(--panel2); border:1px solid var(--border); color:var(--text); cursor:pointer; font:inherit; box-shadow:none; padding:0; z-index:2}
   .qpq h3{margin:0; font-family:var(--font-display); font-size:26px; color:var(--gold); font-weight:600; line-height:1.05; padding-right:40px}
@@ -427,9 +428,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qpq .panel{box-shadow:none; margin:0; padding:0; border:0; background:transparent}
   .qpq .qp-sum{justify-content:flex-start}
   @media (max-width:700px){
-    .qpq{top:auto; left:0; right:0; width:auto; max-height:88vh; border-left:0; border-top:1px solid var(--border); border-radius:16px 16px 0 0}
+    .qpq{top:auto; left:0; right:0; bottom:0; transform:none; width:auto; max-width:none; max-height:88vh; border:0; border-top:1px solid var(--border); border-radius:16px 16px 0 0}
     .qpq h3{font-size:22px}
-    .qpq-scrim:not(.hidden){display:block}
+    .qpq-scrim{background:rgba(0,0,0,.45)}
   }
   /* tech tree */
   .qp-tree-wrap{overflow:auto; padding:6px 2px 12px}
