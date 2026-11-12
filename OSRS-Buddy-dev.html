@@ -418,8 +418,8 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   /* Map, tree first: search and the guide above, the tree as the page, chips under it, one quest in a side panel */
   .qp-bar{display:flex; gap:10px; align-items:stretch; margin-top:10px}
   .qp-search{flex:1; position:relative; min-width:0}
-  .qp-search input{width:100%; box-sizing:border-box; min-width:0; background:var(--inset); border:1px solid var(--border); color:var(--text); border-radius:12px; padding:11px 14px 11px 38px; font:inherit; font-size:15px}
-  .qp-search input:focus{outline:none; border-color:var(--gold-dim); box-shadow:0 0 0 3px var(--glow)}
+  .qp-search input[type=text]{width:100%; box-sizing:border-box; min-width:0; background:var(--inset); border:1px solid var(--border); color:var(--text); border-radius:12px; padding:11px 14px 11px 38px; font:inherit; font-size:15px}
+  .qp-search input[type=text]:focus{outline:none; border-color:var(--gold-dim); box-shadow:0 0 0 3px var(--glow)}
   .qp-search .g{position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:16px; pointer-events:none}
   .qp-big{display:inline-flex; align-items:center; gap:10px; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:12px; padding:0 16px; font:inherit; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap; text-align:left; box-shadow:none}
   .qp-big:hover{background:var(--btnhov1); border-color:var(--gold-dim)}
@@ -427,7 +427,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qp-big small{display:block; font-weight:400; color:var(--muted); font-size:11.5px}
   .qp-iconbtn{background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:12px; width:46px; flex:none; display:grid; place-items:center; font-size:17px; cursor:pointer; box-shadow:none; padding:0}
   .qp-iconbtn:hover{background:var(--btnhov1)}
-  @media (max-width:700px){ .qp-big .lbl{display:none} .qp-big{padding:0 12px} .qp-search input{font-size:14px} }
+  @media (max-width:700px){ .qp-big .lbl{display:none} .qp-big{padding:0 12px} .qp-search input[type=text]{font-size:14px} }
   .qp-goal{display:flex; align-items:center; gap:14px; margin:4px 0 12px; flex-wrap:wrap}
   .qp-goal .qg-ring{width:46px; height:46px; flex:none}
   .qp-goal .qg-t{min-width:0}
