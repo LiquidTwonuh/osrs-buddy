@@ -454,7 +454,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qpq{position:fixed; left:calc(50% + var(--sbw) / 2); top:50%; transform:translate(-50%,-50%); width:900px; max-width:calc(100% - 48px); max-height:min(94vh, 1000px); background:var(--bg2); border:1px solid var(--border); border-radius:16px; z-index:81; display:flex; flex-direction:column; box-shadow:0 30px 80px rgba(0,0,0,.6)}
   .qpq-in{position:relative; overflow:auto; padding:20px 24px 26px; flex:1; min-height:0}
   /* Rewards lead the overview: a lit band, bigger chips, the thing you see before the requirements */
-  .qpd-hero{grid-column:1/-1; background:linear-gradient(180deg, var(--active), var(--inset)); border:1px solid var(--gold3); border-radius:14px; padding:14px 16px 13px; box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+  .qpd-hero{grid-column:1/-1; background:var(--inset); border:1px solid var(--gold3); border-radius:14px; padding:14px 16px 13px}
   .qpd-hero h5{color:var(--gold); font-size:13px; letter-spacing:.1em; margin-bottom:8px; display:flex; align-items:baseline; gap:10px}
   .qpd-hero h5 span{font-weight:normal; text-transform:none; letter-spacing:0; color:var(--muted); font-size:12px}
   .qpd-hero .qpd-xp{gap:8px; margin:0 0 8px}
@@ -12589,13 +12589,13 @@ function qpPopupHtml(n, db){
     : st==="ready" ? `<span class="qp-tag free">ready to start</span>` : `<span class="qp-tag">blocked</span>`;
   const none = t => `<div class="qpd-row"><span class="have" style="margin:0">${t}</span></div>`;
   const overview = `<div class="qpd-grid">
-      ${qpRewardsHtml(q) || `<div class="qpd-sec"><h5>Rewards</h5>${none("Nothing listed.")}</div>`}
       <div class="qpd-sec"><h5>Requirements</h5>
         <div class="qpd-list">${reqRows+qpRow || none("Nothing required.")}</div></div>
       <div class="qpd-sec"><h5>Needs these quests${prereqs.length?` (${prereqs.filter(p=>!questDone(p)).length} left)`:""}</h5>
         <div class="qpd-list">${prereqs.length?prereqs.map(t=>qpQuestRow(t,db)).join(""):none("None. No quests gate this.")}</div></div>
       <div class="qpd-sec"><h5>${opensHead}</h5>
         <div class="qpd-list">${opens.length?opens.map(t=>qpQuestRow(t,db)).join(""):none("Nothing depends on this.")}</div></div>
+      ${qpRewardsHtml(q) || `<div class="qpd-sec"><h5>Rewards</h5>${none("Nothing listed.")}</div>`}
     </div>`;
   const body = tab==="steps" ? `<div class="qpd-steps">${qpStepsHtml(n)}</div>` : tab==="route" ? qpRouteTabHtml(n, db) : overview;
   return `${x}<h3>${e(qpLabel(n))}</h3>

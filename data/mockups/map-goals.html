@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map goal tiles</title>
+<style>
+  /* The popular goals under the Map search, three ways that are not plain pills. Quests have no
+     icons of their own, so each direction leans on something else we do have: the rewards (skill
+     icons from the wiki), a colour per quest, and your progress through its chain. */
+  :root{
+    --bg:#1a1712; --bg2:#241f18; --panel:#26211a; --panel2:#2f2820; --border:#4a3f2e;
+    --gold:#e6c35c; --gold-dim:#b9974a; --gold2:#c9a642; --gold3:#8a6f2e;
+    --text:#e8e0cf; --muted:#a99b7d; --inset:#15120d; --active:#3a3122; --glow:rgba(230,195,92,.18);
+    --green:#6fbf5b; --font-display:"EB Garamond",Georgia,serif; --font-body:"Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:#0f0d0a; color:var(--text); font-family:var(--font-body); font-size:14px; -webkit-font-smoothing:antialiased}
+  .top{position:sticky; top:0; z-index:5; background:#0f0d0a; border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .top h1{font-family:var(--font-display); font-size:18px; color:var(--gold); margin:0 14px 0 0; font-weight:600}
+  .top p{margin:0; color:var(--muted); font-size:12.5px; flex:1; min-width:200px}
+  .wrap{width:1100px; max-width:100%; margin:0 auto; padding:0 16px 60px}
+  .sec{margin-top:34px}
+  .sec h2{font-family:var(--font-display); font-size:22px; color:var(--gold); margin:0 0 4px; font-weight:600}
+  .sec p{margin:0 0 14px; color:var(--muted); font-size:13px; max-width:70ch}
+  .search{position:relative; margin-bottom:14px}
+  .search input{width:100%; background:var(--inset); border:1px solid var(--border); color:var(--text); border-radius:12px; padding:12px 14px 12px 40px; font:inherit; font-size:15px}
+  .search .g{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none}
+  .muted{color:var(--muted)} .small{font-size:12px}
+
+  /* ---- A: reward-led cards ---- */
+  .cards{display:grid; grid-template-columns:repeat(auto-fill, minmax(196px, 1fr)); gap:10px}
+  .gc{position:relative; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:12px 12px 11px; cursor:pointer; overflow:hidden; transition:border-color .15s, transform .15s}
+  .gc:hover{border-color:var(--gold-dim); transform:translateY(-1px)}
+  .gc.on{border-color:var(--gold); box-shadow:0 0 0 3px var(--glow)}
+  .gc .rw{display:flex; gap:6px; align-items:center; margin-bottom:8px}
+  .gc .rw img{width:26px; height:26px; object-fit:contain; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7))}
+  .gc .rw b{font-size:13px; color:var(--green); font-weight:600}
+  .gc .rw .qp{margin-left:auto; font-size:11px; color:var(--gold); border:1px solid var(--gold3); border-radius:999px; padding:1px 7px}
+  .gc h4{margin:0; font-family:var(--font-display); font-size:17px; font-weight:600; line-height:1.1; color:var(--text)}
+  .gc .sub{font-size:11.5px; color:var(--muted); margin-top:3px}
+  .gc .bar{height:4px; background:var(--inset); border-radius:4px; margin-top:9px; overflow:hidden}
+  .gc .bar i{display:block; height:100%; background:linear-gradient(90deg, var(--gold3), var(--gold)); border-radius:4px}
+  .gc .pr{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:4px}
+  .gc.cape{background:linear-gradient(135deg, #1d2a33, var(--panel) 60%)}
+
+  /* ---- B: banners, a colour per quest ---- */
+  .banners{display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:10px}
+  .bn{position:relative; height:84px; border-radius:14px; border:1px solid var(--border); overflow:hidden; cursor:pointer; display:flex; align-items:center; gap:14px; padding:0 16px; background:linear-gradient(100deg, color-mix(in srgb, var(--hue) 28%, var(--panel)) 0%, var(--panel) 70%); transition:border-color .15s}
+  .bn:hover{border-color:color-mix(in srgb, var(--hue) 60%, var(--border))}
+  .bn.on{border-color:var(--gold); box-shadow:0 0 0 3px var(--glow)}
+  .bn .sig{position:absolute; right:-6px; bottom:-18px; font-size:84px; line-height:1; opacity:.09; filter:grayscale(1); pointer-events:none; user-select:none}
+  .bn .ring{width:46px; height:46px; flex:none}
+  .bn .ring circle{fill:none; stroke-width:4}
+  .bn .ring .t{stroke:rgba(255,255,255,.08)}
+  .bn .ring .v{stroke:var(--hue); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%}
+  .bn .ring text{fill:var(--text); font-size:11px; font-weight:700; text-anchor:middle; dominant-baseline:central; font-family:var(--font-body)}
+  .bn h4{margin:0; font-family:var(--font-display); font-size:18px; font-weight:600; line-height:1.05; color:var(--text); position:relative}
+  .bn .sub{font-size:11.5px; color:var(--muted); margin-top:3px; position:relative}
+  .bn .sub b{color:color-mix(in srgb, var(--hue) 70%, var(--text)); font-weight:600}
+
+  /* ---- C: medallions ---- */
+  .meds{display:flex; flex-wrap:wrap; gap:18px 22px; justify-content:center; padding:6px 0}
+  .md{width:96px; text-align:center; cursor:pointer}
+  .md .coin{position:relative; width:72px; height:72px; margin:0 auto 7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--panel2), var(--inset) 70%); border:1px solid var(--border); display:grid; place-items:center; transition:transform .15s, border-color .15s}
+  .md:hover .coin{transform:scale(1.05); border-color:var(--gold-dim)}
+  .md.on .coin{border-color:var(--gold); box-shadow:0 0 0 3px var(--glow)}
+  .md .coin svg{position:absolute; inset:-1px; width:calc(100% + 2px); height:calc(100% + 2px)}
+  .md .coin circle{fill:none; stroke-width:3}
+  .md .coin .t{stroke:rgba(255,255,255,.06)}
+  .md .coin .v{stroke:var(--gold); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%}
+  .md .coin img{width:30px; height:30px; object-fit:contain; position:relative; filter:drop-shadow(0 1px 1px rgba(0,0,0,.8))}
+  .md .coin .em{font-size:28px; position:relative; line-height:1}
+  .md .coin .n{position:absolute; right:-2px; bottom:-2px; background:var(--panel2); border:1px solid var(--border); color:var(--muted); font-size:10px; border-radius:999px; padding:1px 6px}
+  .md h4{margin:0; font-family:var(--font-display); font-size:14px; font-weight:600; line-height:1.1; color:var(--text)}
+  .md .sub{font-size:10.5px; color:var(--muted); margin-top:2px}
+  .note{margin-top:14px; font-size:12.5px; color:var(--muted); border-left:2px solid var(--gold3); padding-left:10px}
+  @media (max-width:700px){ .wrap{padding:0 8px 40px} .bn{height:74px} }
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>Map goal tiles</h1>
+  <p>The popular goals under the Map search, three ways that are not pills. Quests have no icons of their own, so each direction leans on something we do have: the rewards, a colour per quest, your progress through its chain. All pictures are the wiki's skill icons, already in the app.</p>
+</div>
+<div class="wrap">
+  <div class="sec">
+    <div class="search"><span class="g">⌕</span><input type="text" placeholder="Search any quest, or pick a goal below" disabled></div>
+  </div>
+
+  <div class="sec">
+    <h2>A · Reward cards</h2>
+    <p>Lead with what you get. The biggest XP reward and its skill icon sit on top, the quest name under it, then how far through the chain you already are. The cape card is the whole log.</p>
+    <div class="cards" id="cards"></div>
+    <div class="note">Why it might win: the rewards are the pitch, and the card says "you are already 17 of 34 of the way there". Costs the most height.</div>
+  </div>
+
+  <div class="sec">
+    <h2>B · Banners</h2>
+    <p>A colour per quest, a faint sigil in the corner, the name in the display face, and a progress ring. Identity comes from colour and type, the way the game's quest journal groups things by series.</p>
+    <div class="banners" id="banners"></div>
+    <div class="note">Why it might win: the most "artsy" at a glance and still one row of information. The colours need choosing once per quest; the rest of the log would get a neutral banner.</div>
+  </div>
+
+  <div class="sec">
+    <h2>C · Medallions</h2>
+    <p>Seals in a row. The ring is your progress through the chain, the glyph is the top reward skill, the little number is the chain length. Compact enough to keep more than eight.</p>
+    <div class="meds" id="meds"></div>
+    <div class="note">Why it might win: smallest and the most distinct from everything else in the app. Names get tight on long titles.</div>
+  </div>
+</div>
+
+<script>
+const WIKI = "https://oldschool.runescape.wiki/images/";
+const ico = s => WIKI + s + "_icon.png";
+const GOALS = [
+  {n:"Dragon Slayer II", d:"Grandmaster", chain:34, done:17, qp:5,  sk:"Attack",     xp:"100k", hue:"#c8462b", sig:"🐉"},
+  {n:"Monkey Madness II", d:"Grandmaster", chain:22, done:14, qp:4, sk:"Slayer",     xp:"25k",  hue:"#4f9a3c", sig:"🐒"},
+  {n:"Song of the Elves", d:"Grandmaster", chain:32, done:20, qp:4, sk:"Agility",    xp:"40k",  hue:"#3aa6a0", sig:"✦"},
+  {n:"Desert Treasure I", d:"Master",      chain:20, done:15, qp:3, sk:"Magic",      xp:"20k",  hue:"#c89a3c", sig:"☥"},
+  {n:"Recipe for Disaster", d:"Grandmaster", chain:48, done:30, qp:10, sk:"Cooking", xp:"20k",  hue:"#d0702e", sig:"🍴"},
+  {n:"Lunar Diplomacy", d:"Experienced",  chain:19, done:12, qp:2,  sk:"Magic",      xp:"5k",   hue:"#5b7fcf", sig:"☾"},
+  {n:"Legends' Quest",  d:"Master",       chain:13, done:9,  qp:4,  sk:"Herblore",   xp:"7.6k", hue:"#3f8f5a", sig:"✴"},
+  {n:"Sins of the Father", d:"Master",    chain:11, done:6,  qp:2,  sk:"Attack",     xp:"25k",  hue:"#9a2f3d", sig:"🦇"},
+  {n:"Quest cape", d:"Everything", chain:212, done:109, qp:0, sk:null, xp:"", hue:"#2f6f8f", sig:"🏆", cape:true},
+];
+const pct = g => Math.round(100 * g.done / g.chain);
+const ring = (g, r, cls) => { const c = 2 * Math.PI * r; return `<svg class="${cls}" viewBox="0 0 ${r*2+8} ${r*2+8}"><circle class="t" cx="${r+4}" cy="${r+4}" r="${r}"/><circle class="v" cx="${r+4}" cy="${r+4}" r="${r}" stroke-dasharray="${(c*g.done/g.chain).toFixed(1)} ${c.toFixed(1)}"/>${cls==="ring" ? `<text x="${r+4}" y="${r+4}">${pct(g)}%</text>` : ""}</svg>`; };
+document.getElementById("cards").innerHTML = GOALS.map((g, i) => `<div class="gc ${g.cape ? "cape" : ""} ${i===0 ? "on" : ""}">
+  <div class="rw">${g.sk ? `<img src="${ico(g.sk)}" alt=""><b>+${g.xp} ${g.sk}</b>` : `<span style="font-size:22px">🏆</span><b style="color:var(--gold)">Every quest</b>`}${g.qp ? `<span class="qp">${g.qp} QP</span>` : ""}</div>
+  <h4>${g.n}</h4><div class="sub">${g.d}${g.cape ? "" : ` · ${g.chain} quests in the chain`}</div>
+  <div class="bar"><i style="width:${pct(g)}%"></i></div>
+  <div class="pr"><span>${g.done} of ${g.chain} done</span><span>${pct(g)}%</span></div></div>`).join("");
+document.getElementById("banners").innerHTML = GOALS.map((g, i) => `<div class="bn ${i===0 ? "on" : ""}" style="--hue:${g.hue}">
+  <span class="sig">${g.sig}</span>${ring(g, 19, "ring")}
+  <div><h4>${g.n}</h4><div class="sub"><b>${g.d}</b> · ${g.done} of ${g.chain}${g.cape ? " quests" : " in the chain"}</div></div></div>`).join("");
+document.getElementById("meds").innerHTML = GOALS.map((g, i) => `<div class="md ${i===0 ? "on" : ""}">
+  <div class="coin">${ring(g, 34, "")}${g.sk ? `<img src="${ico(g.sk)}" alt="">` : `<span class="em">🏆</span>`}<span class="n">${g.chain}</span></div>
+  <h4>${g.n}</h4><div class="sub">${g.done} of ${g.chain}</div></div>`).join("");
+</script>
+</body>
+</html>

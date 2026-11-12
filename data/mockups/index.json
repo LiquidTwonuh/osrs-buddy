@@ -1,5 +1,11 @@
 [
   {
+    "file": "map-goals.html",
+    "title": "Map goal tiles",
+    "desc": "The popular goals under the Map search, three ways that are not pills: reward cards, colour banners, medallions.",
+    "date": "2026-11-12"
+  },
+  {
     "file": "vault-bank.html",
     "title": "Vault as the bank",
     "desc": "Vault as the bank. Two directions: the bank window itself, or today's Vault with the bank under it. Reads your real bank from the app; a wizard marks where your tabs begin.",
