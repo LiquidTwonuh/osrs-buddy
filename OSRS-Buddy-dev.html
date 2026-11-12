@@ -10935,7 +10935,7 @@ function mmgGaps(m){
 }
 // ---- the quiz: six questions that set the filters ----
 // ---- the questions ----
-// Twelve, and they earn their place: every answer either filters the list or decides what the
+// Thirteen, and they earn their place: every answer either filters the list or decides what the
 // curated page leads with. Account, ironman, session length and gear rarely change, so once
 // answered they just sit in the filter strip.
 const COFFER_QUIZ = [
@@ -10947,12 +10947,13 @@ const COFFER_QUIZ = [
   {id:"session", q:"How long is a normal session?", opts:[["any","Doesn't matter"],["short","20 minutes or so"],["hour","About an hour"],["long","A long evening"]], hint:"Short sessions skip raids and anything with a long setup."},
   {id:"stage",   q:"Where are you in the game?", opts:[["auto","Let the app decide"],["early","Early game"],["mid","Mid game"],["late","Late game"],["end","Endgame"]], hint:"From your levels, quests and gear it already has a view. Override it if it's wrong."},
   {id:"xp",      q:"Does the XP matter, or just the GP?", opts:[["gp","Just the GP"],["both","XP too, ideally"]]},
-  {id:"wildy",   q:"Risky methods, where you can be attacked or lose your stuff?", opts:[["ok","I'll risk it"],["no","No thanks"]]},
+  {id:"wildy",   q:"The Wilderness, where other players can attack you?", opts:[["ok","I'll risk it"],["no","Keep me out of it"]], hint:"Keep me out of it also skips the Abyss, which crosses low Wilderness on the way."},
+  {id:"market",  q:"Methods the wiki flags as a financial risk?", opts:[["ok","Don't mind"],["no","Steady earners only"]], hint:"Prices that can move while you work, or a profit that hangs on one rare drop. It is the wiki's own flag and it is a wide one: bosses with big drop tables sit beside pie making."},
   {id:"reach",   q:"Methods you can't do yet?", opts:[["ready","Hide them"],["close","Show the near ones"],["all","Show everything"]]},
   {id:"goal",    q:"Saving for something?", number:true, hint:"Roughly how much. Leave it empty if not, and it won't nag."},
   {id:"floor",   q:"What's worth your time?", slider:true},
 ];
-const COFFER_DEFAULTS = {members:"yes", iron:"no", style:"any", skillTiers:{}, pace:"any", session:"any", stage:"auto", xp:"gp", wildy:"ok", reach:"close", goal:"", floor:"0"};
+const COFFER_DEFAULTS = {members:"yes", iron:"no", style:"any", skillTiers:{}, pace:"any", session:"any", stage:"auto", xp:"gp", wildy:"ok", market:"ok", reach:"close", goal:"", floor:"0"};
 const SKILL_TIERS = [["love","❤️ Love"],["like","👍 Like"],["hate","👎 Hate"]];
 // The answers double as the filter strip under the picks, so they can be nudged without
 // retaking the lot.
@@ -10988,6 +10989,7 @@ function cofferSet(k, v){ cofferPrefs()[k] = v; save(); renderCoffer(); }
 function cofferMatches(m, pf){
   if(pf.members === "no" && !m.f2p) return false;
   if(pf.wildy === "no" && (m.wildy || m.wildyPass)) return false;
+  if(pf.market === "no" && m.market) return false;
   if(pf.pace !== "any" && m.pace && m.pace !== pf.pace) return false;
   if(pf.floor !== "0" && m.profit < +pf.floor) return false;
   if(pf.style === "combat" && m.group !== "Combat") return false;
@@ -11334,7 +11336,7 @@ function renderCoffer(){
   const st = cofferStage(pf);
   const loves = Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(nice);
   const words = [optLabel("iron"), optLabel("members"), st.label + (st.auto ? "" : ", your call"), optLabel("style"), optLabel("session"),
-    pf.xp === "xp" ? "XP too" : "", +pf.floor ? cfGp(pf.floor) + "/hr or better" : "", loves.length ? "❤️ " + loves.join(", ") : ""].filter(w=>w && !/^(Doesn't matter|Don't mind|A bit of everything)$/.test(w));
+    pf.xp === "xp" ? "XP too" : "", pf.wildy === "no" ? "No Wilderness" : "", pf.market === "no" ? "Steady earners" : "", +pf.floor ? cfGp(pf.floor) + "/hr or better" : "", loves.length ? "❤️ " + loves.join(", ") : ""].filter(w=>w && !/^(Doesn't matter|Don't mind|A bit of everything)$/.test(w));
   const tuneOpen = !!state.coffer.tune;
   // one section per loved skill, for the methods that skill is the point of; thin ones are skipped
   const shown = new Set(top.concat(more).map(m=>m.name));
@@ -11369,7 +11371,7 @@ function renderCoffer(){
       </div>
       <div class="cf-tune"><div><div class="cf-tunein">
         ${state.coffer.tuneIntro ? `<div class="cf-intro">Your answers live here. Change any one and the page follows. This tucks away on its own; Tune brings it back.</div>` : ""}
-        <div class="cf-chips">${chip("members","Account")}${chip("iron","Iron")}${chip("style","Enjoy")}${chip("skills","Skills")}${chip("pace","Pace")}${chip("session","Session")}${chip("stage","Stage")}${chip("xp","XP")}${chip("wildy","Risk")}${chip("reach","Out of reach")}${chip("goal","Goal")}${chip("floor","At least")}</div>
+        <div class="cf-chips">${chip("members","Account")}${chip("iron","Iron")}${chip("style","Enjoy")}${chip("skills","Skills")}${chip("pace","Pace")}${chip("session","Session")}${chip("stage","Stage")}${chip("xp","XP")}${chip("wildy","Wilderness")}${chip("market","Money risk")}${chip("reach","Out of reach")}${chip("goal","Goal")}${chip("floor","At least")}</div>
         <div class="row" style="gap:8px; margin-top:10px; align-items:center">
           <span class="grow"></span>
           <button class="ghost small" id="cfQuiz">↻ Retake the quiz</button>
