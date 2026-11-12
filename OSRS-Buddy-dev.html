@@ -10525,6 +10525,7 @@ function gpShort(n){
 // The history keeps one point whenever the value moves, so the chart shows where you've been.
 let bankBusy = false;
 function vaultBank(){ const ce = state.charExport; return ce && Array.isArray(ce.bank) ? ce.bank : null; }
+function vaultBankAt(){ const ce = state.charExport; return ce && ce.bankAt || null; }   // read by the Vault prototype in Mockups
 function vaultHistory(){ const v = state.vault = state.vault || {}; v.history = v.history || []; return v.history; }
 async function vaultData(force){
   if(bankBusy) return;
@@ -10779,7 +10780,12 @@ function reachText(v){
 // skills it wants, a category and how busy it keeps you. We read it, check every skill against
 // your own levels, and let the quiz do the filtering for you. The quiz is only a friendly way to
 // set the filters: they stay on screen afterwards and you can change any of them.
-const MMG_VERSION = 6;   // 6: "must have defeated X" no longer reads as a quest
+const MMG_VERSION = 7;   // 7: Wilderness from the wiki's warning box, market risk split off
+// In the Wilderness without the wiki's warning box: the Corporeal Beast's cave opens off level 21
+// Wilderness (the games necklace lands you there), and both obelisks sit in it.
+const MMG_WILDY_EXTRA = /Corporeal Beast|Charging (air|earth) orbs/i;
+// Through low-level Wilderness on the way, not in it: the Abyss, by the Mage of Zamorak
+const MMG_WILDY_PASS = /through the Abyss|^Crafting blood runes$/i;
 const MMG_PAGE = "Money making guide";
 let mmgBusy = false;
 function mmgDB(){ const d = state.mmgDB; return (d && d.v===MMG_VERSION && d.methods && d.methods.length) ? d : null; }
@@ -10880,7 +10886,15 @@ async function mmgDetails(methods){
         m.loc = plain(field("Location")).slice(0, 120);
         m.items = plain(field("Item")).slice(0, 400);
         m.other = plain(field("Other")).slice(0, 300);
-        m.wildy = /wilderness/i.test(field("Location"));
+        // Danger: the wiki puts {{MMGWarning|...}} at the top of a page set in the Wilderness.
+        // The Location field alone misses most (Venenatis is "Boneyard") and catches alternatives
+        // ("Wilderness Rune Mine, Heroes' Guild Mine, et al."), so the warning leads and the field
+        // only counts when it names the Wilderness and nothing else.
+        const warn = (wt.match(/\{\{MMGWarning\|([\s\S]*?)\}\}/gi) || []).join(" ");
+        const locF = field("Location");
+        m.wildy = /wilderness|wildy/i.test(warn) || MMG_WILDY_EXTRA.test(m.name)
+          || (/wilderness/i.test(locF) && !/except the/i.test(locF) && !/,|\bor\b|et\.? al/i.test(locF));
+        m.wildyPass = !m.wildy && MMG_WILDY_PASS.test(m.name);
         const mem = plain(field("Members"));
         if(/^(yes|no)$/i.test(mem)) m.f2p = /^no$/i.test(mem);
         // quests the method needs: the ones we know get checked against your record; the rest
@@ -10894,10 +10908,11 @@ async function mmgDetails(methods){
     }catch(e){ /* one bad batch shouldn't cost the whole list */ }
   }
 }
-// The wiki keeps its own lists: which methods can get you killed, which ones you can only do
-// once a day or week, and which are meant for ironmen. One call each, and far better than
+// The wiki keeps its own lists: which methods carry market risk (prices that swing, or a profit
+// that hangs on one rare drop; the Wilderness is read off each page, not from here), and which
+// ones are meant for ironmen. One call each, and far better than
 // guessing from the words on the page.
-const MMG_TAGS = [["MMG/Risky","risky"], ["MMG/Ironman","iron"]];
+const MMG_TAGS = [["MMG/Risky","market"], ["MMG/Ironman","iron"]];
 async function mmgTags(methods){
   const byName = {};
   methods.forEach(m=>{ byName[achNorm(m.name)] = m; });
@@ -10911,8 +10926,6 @@ async function mmgTags(methods){
       await new Promise(r=>setTimeout(r, 200));
     }catch(e){ /* a missing tag list just means that filter finds nothing */ }
   }
-  // a method in the Wilderness is risky whether or not the wiki says so
-  methods.forEach(m=>{ if(m.wildy) m.risky = true; });
 }
 // what a method still wants from you, plus the levels the wiki only recommends
 function mmgGaps(m){
@@ -10974,7 +10987,7 @@ function cofferSet(k, v){ cofferPrefs()[k] = v; save(); renderCoffer(); }
 // hard filters: these decide whether a method is shown at all
 function cofferMatches(m, pf){
   if(pf.members === "no" && !m.f2p) return false;
-  if(pf.wildy === "no" && m.risky) return false;
+  if(pf.wildy === "no" && (m.wildy || m.wildyPass)) return false;
   if(pf.pace !== "any" && m.pace && m.pace !== pf.pace) return false;
   if(pf.floor !== "0" && m.profit < +pf.floor) return false;
   if(pf.style === "combat" && m.group !== "Combat") return false;
@@ -11030,7 +11043,8 @@ function cofferWhy(m, pf){
     if(RAID_RE.test(m.name)){ why.push("long setup for a short session"); mult *= 0.25; }
     else if(m.pace === "High") mult *= 0.7;
   } else if(pf.session === "long" && RAID_RE.test(m.name)){ why.push("worth it with a long evening"); mult *= 1.1; }
-  if(m.risky && pf.wildy === "ok") why.push(m.wildy ? "Wilderness, you said that's fine" : "risky, you said that's fine");
+  if(m.wildy && pf.wildy === "ok") why.push("Wilderness, you said that's fine");
+  else if(m.wildyPass && pf.wildy === "ok") why.push("low Wilderness on the way, you said that's fine");
   return {score: m.profit * mult, why};
 }
 function cofferGoalText(m, pf){
@@ -11080,7 +11094,8 @@ function cofferPayHtml(m){
   return m.recur ? `${fmt(m.perRun)}<span class="muted">/run</span>` : `${fmt(m.profit)}<span class="muted">/hr</span>`;
 }
 function cofferTagsHtml(m){
-  return `${m.risky?`<span class="cf-tag wild">${m.wildy?"Wilderness":"Risky"}</span>`:""}
+  return `${m.wildy?`<span class="cf-tag wild">Wilderness</span>`:m.wildyPass?`<span class="cf-tag wild">Low Wilderness on the way</span>`:""}
+    ${m.market?`<span class="cf-tag" title="The wiki's own flag: prices swing, or the profit hangs on one rare drop">Market risk</span>`:""}
     ${m.recur && m.every?`<span class="cf-tag">every ${escapeHtml(mmgEvery(m.every))}</span>`:""}
     ${m.f2p?`<span class="cf-tag">F2P</span>`:""}
     <span class="cf-tag">${escapeHtml(m.cat)}</span>

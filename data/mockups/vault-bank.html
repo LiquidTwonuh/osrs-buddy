@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vault as the bank</title>
+<style>
+  /* Two directions for Vault drawn like the in-game bank. Opened from the Mockups page in the app it
+     reads your real bank, prices and names out of the app; anywhere else it shows a sample bank.
+     The export has no tab breaks, so a small wizard lets you mark where each tab starts. */
+  :root{
+    --bg:#1a1712; --bg2:#241f18; --panel:#26211a; --panel2:#2f2820; --border:#4a3f2e;
+    --gold:#e6c35c; --gold-dim:#b9974a; --gold2:#c9a642; --gold3:#8a6f2e;
+    --text:#e8e0cf; --muted:#a99b7d; --inset:#15120d; --active:#3a3122;
+    --btnhov1:#463a26; --glow:rgba(230,195,92,.18);
+    --green:#6fbf5b; --red:#d46a5a;
+    --font-display:"EB Garamond",Georgia,serif;
+    --font-body:"Segoe UI",system-ui,sans-serif;
+    --hair:rgba(255,255,255,.07);
+    /* stack numbers, the game's own convention: yellow, white from 100k, green from 10m */
+    --qty:#ffe94a; --qty-k:#f4f1e6; --qty-m:#7fe36a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:#0f0d0a; color:var(--text); font-family:var(--font-body); font-size:14px; -webkit-font-smoothing:antialiased}
+  ::-webkit-scrollbar{width:8px; height:8px} ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--gold3); border-radius:8px; border:2px solid transparent; background-clip:padding-box}
+  .top{position:sticky; top:0; z-index:5; background:#0f0d0a; border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .top h1{font-family:var(--font-display); font-size:18px; color:var(--gold); margin:0 14px 0 0; font-weight:600}
+  .top p{margin:0; color:var(--muted); font-size:12.5px; flex:1; min-width:200px}
+  .seg{display:inline-flex; background:var(--inset); border:1px solid var(--border); border-radius:10px; padding:3px; gap:2px}
+  .seg button{border:0; background:none; color:var(--muted); font:inherit; font-size:12.5px; padding:5px 12px; border-radius:8px; cursor:pointer}
+  .seg button.on{background:var(--panel2); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .src{font-size:12px; color:var(--muted); padding:5px 10px; border:1px solid var(--border); border-radius:999px}
+  .src b{color:var(--green); font-weight:600}
+  .wrap{width:1080px; max-width:100%; margin:22px auto 60px; padding:0 16px}
+  .ghost{background:none; border:1px solid var(--border); color:var(--muted); border-radius:9px; padding:6px 11px; font:inherit; font-size:12.5px; cursor:pointer}
+  .ghost:hover{color:var(--text); background:var(--panel2)}
+  .ghost.on{color:var(--gold); border-color:var(--gold-dim)}
+  .primary{background:linear-gradient(180deg, var(--gold), var(--gold2)); color:#1a1408; border:1px solid var(--gold-dim); border-radius:9px; padding:6px 12px; font:inherit; font-size:12.5px; font-weight:600; cursor:pointer}
+  .muted{color:var(--muted)} .small{font-size:12px}
+  .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+  .grow{flex:1}
+
+  /* ---- A: the bank window ---- */
+  .bank{background:var(--bg); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .bk-head{display:flex; align-items:center; gap:14px; padding:12px 16px; background:var(--bg2); border-bottom:1px solid var(--border)}
+  .bk-head h2{margin:0; font-family:var(--font-display); font-size:22px; color:var(--gold); font-weight:600}
+  .bk-head .val{margin-left:auto; text-align:right}
+  .bk-head .val b{display:block; font-family:var(--font-display); font-size:22px; color:var(--gold); font-weight:600; line-height:1}
+  .bk-head .val span{font-size:11.5px; color:var(--muted)}
+  .tabs{display:flex; gap:4px; padding:8px 10px; background:var(--panel); border-bottom:1px solid var(--border); overflow-x:auto}
+  .tab{flex:none; width:46px; height:42px; border-radius:9px; border:1px solid var(--border); background:var(--inset); display:grid; place-items:center; cursor:pointer; position:relative; color:var(--muted); font-size:11px}
+  .tab:hover{border-color:var(--gold-dim)}
+  .tab.on{background:var(--active); border-color:var(--gold); box-shadow:0 0 0 2px var(--glow)}
+  .tab img{width:32px; height:28px; object-fit:contain; image-rendering:pixelated}
+  .tab .n{position:absolute; right:3px; bottom:2px; font-size:9.5px; color:var(--muted)}
+  .tab.all{font-family:var(--font-display); font-size:13px; color:var(--text)}
+  .tab.add{border-style:dashed; font-size:18px}
+  .tabname{padding:6px 14px 0; font-size:12.5px; color:var(--muted); display:flex; gap:10px; align-items:center}
+  .tabname b{color:var(--text); font-weight:600}
+  .grid{display:grid; grid-template-columns:repeat(8, 1fr); gap:3px; padding:10px 14px 14px; max-height:620px; overflow:auto}
+  .slot{position:relative; aspect-ratio:1; background:var(--inset); border:1px solid var(--hair); border-radius:6px; display:grid; place-items:center; cursor:default}
+  .slot img{width:36px; height:32px; object-fit:contain; image-rendering:pixelated; filter:drop-shadow(0 1px 0 rgba(0,0,0,.8))}
+  .slot:hover{border-color:var(--gold-dim); background:var(--active)}
+  .slot .q{position:absolute; left:4px; top:2px; font-size:11.5px; font-weight:700; color:var(--qty); text-shadow:1px 1px 0 #000, 0 0 2px #000; font-family:Verdana,"Segoe UI",sans-serif; letter-spacing:-.2px}
+  .slot .q.k{color:var(--qty-k)} .slot .q.m{color:var(--qty-m)}
+  .slot .v{position:absolute; right:3px; bottom:2px; font-size:9.5px; color:var(--muted); display:none}
+  .bank.values .slot .v{display:block}
+  .slot.hit{outline:2px solid var(--gold); outline-offset:-1px}
+  .slot.dim{opacity:.18}
+  .slot.mark{border-left:3px solid var(--gold); border-radius:3px 6px 6px 3px}
+  .slot .m{position:absolute; left:-1px; top:-1px; background:var(--gold); color:#1a1408; font-size:9.5px; font-weight:700; padding:0 4px; border-radius:5px 0 5px 0; display:none}
+  .slot.mark .m{display:block}
+  .slot.tabstart{box-shadow:inset 0 0 0 1px var(--gold3)}
+  .bk-foot{display:flex; gap:10px; align-items:center; padding:10px 14px; border-top:1px solid var(--border); background:var(--panel); flex-wrap:wrap}
+  .search{position:relative; flex:1; min-width:180px}
+  .search input{width:100%; background:var(--inset); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:8px 12px 8px 32px; font:inherit; font-size:13.5px}
+  .search input:focus{outline:none; border-color:var(--gold-dim); box-shadow:0 0 0 3px var(--glow)}
+  .search .g{position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none}
+  .tip{position:fixed; z-index:20; pointer-events:none; background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:8px 11px; font-size:12.5px; box-shadow:0 10px 30px rgba(0,0,0,.5); display:none; max-width:260px}
+  .tip b{display:block; color:var(--gold); font-weight:600; margin-bottom:2px}
+  .tip.on{display:block}
+  .wiz{background:var(--panel2); border-bottom:1px solid var(--border); padding:10px 14px; display:none; gap:10px; align-items:center; flex-wrap:wrap; font-size:13px}
+  .bank.wizard .wiz{display:flex}
+  .wiz .chips{display:flex; gap:5px; flex-wrap:wrap}
+  .wiz .chip{background:var(--inset); border:1px solid var(--border); border-radius:999px; padding:2px 9px; font-size:12px; display:inline-flex; align-items:center; gap:6px}
+  .wiz .chip img{width:18px; height:16px; object-fit:contain; image-rendering:pixelated}
+
+  /* ---- B: bank-flavoured Vault ---- */
+  .panel{background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin-bottom:14px}
+  .hero{display:flex; align-items:flex-end; gap:24px; flex-wrap:wrap}
+  .eyebrow{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+  .total{font-family:var(--font-display); font-size:40px; color:var(--gold); font-weight:600; line-height:1.05}
+  .chg{display:flex; gap:22px; margin-left:auto}
+  .chg b{display:block; font-size:16px; font-weight:600}
+  .up{color:var(--green)} .down{color:var(--red)}
+  .spark{display:flex; align-items:flex-end; gap:2px; height:48px; margin-top:12px}
+  .spark i{flex:1; background:var(--gold3); border-radius:2px 2px 0 0; opacity:.8}
+  .cards{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px}
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px; cursor:pointer}
+  .card:hover{border-color:var(--gold-dim)}
+  .card.on{border-color:var(--gold); box-shadow:0 0 0 2px var(--glow)}
+  .card h4{margin:0 0 2px; font-family:var(--font-display); font-size:17px; font-weight:600; color:var(--text)}
+  .card .sub{font-size:12px; color:var(--muted)}
+  .card .worth{font-weight:700; color:var(--gold); font-size:15px; margin:6px 0 8px}
+  .strip{display:flex; gap:3px}
+  .strip span{width:30px; height:28px; background:var(--inset); border:1px solid var(--hair); border-radius:5px; display:grid; place-items:center}
+  .strip img{width:26px; height:23px; object-fit:contain; image-rendering:pixelated}
+  .strip .more{font-size:10.5px; color:var(--muted)}
+  .open{margin-top:12px}
+  .open .grid{max-height:420px; padding:0; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px}
+  .b-list{display:flex; flex-direction:column; gap:4px}
+  .b-row{display:grid; grid-template-columns:34px 1fr auto; gap:10px; align-items:center; padding:5px 8px; border-radius:8px}
+  .b-row:hover{background:var(--panel)}
+  .b-row img{width:30px; height:26px; object-fit:contain; image-rendering:pixelated}
+  .b-row .nm{font-size:13px} .b-row .nm span{color:var(--muted); font-size:11.5px; margin-left:6px}
+  .b-row .gp{font-weight:600; color:var(--gold); font-size:13px}
+  .sect{display:flex; align-items:baseline; gap:10px; margin:0 0 10px}
+  .sect h3{margin:0; font-family:var(--font-display); font-size:19px; color:var(--gold); font-weight:600}
+  .hidden{display:none !important}
+  @media (max-width:700px){ .grid{grid-template-columns:repeat(6, 1fr)} .wrap{padding:0 8px} .total{font-size:32px} }
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>Vault as the bank</h1>
+  <p>Two directions. A: the bank window itself, tabs and slots. B: today's Vault with the bank folded in under it. Both share the tab wizard, since the export does not say where tabs begin.</p>
+  <span class="src" id="src"></span>
+  <div class="seg" id="dirSeg"><button class="on" data-dir="a">A · The bank window</button><button data-dir="b">B · Vault, bank-flavoured</button></div>
+</div>
+
+<div class="wrap">
+  <!-- A -->
+  <div id="dirA">
+    <div class="bank" id="bank">
+      <div class="bk-head">
+        <h2>Your bank</h2>
+        <span class="small muted" id="bkMeta"></span>
+        <div class="val"><b id="bkTotal"></b><span id="bkTotalSub">in the tab you are looking at</span></div>
+      </div>
+      <div class="wiz">
+        <span><b>Mark your tabs.</b> Tap the first item of each tab, in the order they sit in game. Everything after your last mark is the main tab. Tap a mark again to clear it.</span>
+        <span class="chips" id="wizChips"></span>
+        <span class="grow"></span>
+        <button class="ghost" id="wizClear">Clear all</button>
+        <button class="primary" id="wizDone">Done</button>
+      </div>
+      <div class="tabs" id="tabs"></div>
+      <div class="tabname" id="tabName"></div>
+      <div class="grid" id="grid"></div>
+      <div class="bk-foot">
+        <div class="search"><span class="g">⌕</span><input type="text" id="q" placeholder="Search your bank" autocomplete="off"></div>
+        <button class="ghost" id="valBtn" title="Show each stack's worth in its corner">gp in the corner</button>
+        <button class="ghost" id="wizBtn">Mark tabs</button>
+        <span class="small muted" id="bkCount"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div id="dirB" class="hidden">
+    <div class="panel">
+      <div class="hero">
+        <div><div class="eyebrow">Bank value</div><div class="total" id="bTotal"></div><div class="small muted" id="bMeta"></div></div>
+        <div class="chg"><div><span class="small muted">Today</span><b class="up">+1.2m <span class="small muted">(+0.6%)</span></b></div><div><span class="small muted">This week</span><b class="down">-4.8m <span class="small muted">(-2.3%)</span></b></div></div>
+      </div>
+      <div class="spark" id="spark"></div>
+    </div>
+    <div class="panel">
+      <div class="sect"><h3>Your tabs</h3><span class="small muted" id="bTabsSub">each tab as a card, what it is worth and what leads it. Tap one to open it</span><span class="grow"></span><button class="ghost" id="bWiz">Mark tabs</button></div>
+      <div class="cards" id="cards"></div>
+      <div class="open hidden" id="bOpen"></div>
+    </div>
+    <div class="panel">
+      <div class="sect"><h3>Biggest holdings</h3><span class="small muted">what is carrying the number</span></div>
+      <div class="b-list" id="bTop"></div>
+    </div>
+  </div>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+// ---- data: the app's bank when we live inside it, a sample otherwise ----
+const SAMPLE = [[995,12480331],[13190,3],[4151,1],[11802,1],[6585,1],[11832,1],[11834,1],[4587,1],[1215,1],[385,842],[13441,210],[2434,55],[3024,40],[6685,30],[2440,24],[561,14200],[554,33475],[555,2237],[556,9451],[558,12742],[557,4100],[9075,3000],[565,1200],[566,800],[1513,2500],[1515,1200],[1511,400],[440,900],[453,1500],[2357,320],[1617,80],[1619,140],[1621,300],[1623,500],[12934,41000],[892,3200],[11212,400],[1079,1],[1127,1],[1163,1],[1201,1],[536,350],[1753,600],[1751,300],[1749,200],[8007,593],[8008,17],[8009,22],[8010,88],[8011,171],[8012,100],[1704,3],[2552,8],[3853,5],[11978,4],[2412,1],[2413,1],[2414,1],[7462,1],[10828,1],[6570,1],[4675,1],[1725,1],[1712,4],[11128,1],[12954,1],[19553,1],[21295,1],[13652,1],[22109,1],[20997,1],[26382,1],[26384,1],[26386,1],[27226,1],[27229,1],[27232,1]];
+const SAMPLE_NAMES = {995:"Coins",13190:"Old school bond",4151:"Abyssal whip",11802:"Armadyl godsword",6585:"Amulet of fury",11832:"Bandos chestplate",11834:"Bandos tassets",4587:"Dragon scimitar",1215:"Dragon dagger",385:"Shark",13441:"Anglerfish",2434:"Prayer potion(4)",3024:"Super restore(4)",6685:"Saradomin brew(4)",2440:"Super strength(4)",561:"Nature rune",554:"Fire rune",555:"Water rune",556:"Air rune",558:"Mind rune",557:"Earth rune",9075:"Astral rune",565:"Blood rune",566:"Soul rune",1513:"Magic logs",1515:"Yew logs",1511:"Logs",440:"Iron ore",453:"Coal",2357:"Gold bar",1617:"Uncut diamond",1619:"Uncut ruby",1621:"Uncut emerald",1623:"Uncut sapphire",12934:"Zulrah's scales",892:"Rune arrow",11212:"Dragon arrow",1079:"Rune platelegs",1127:"Rune platebody",1163:"Rune full helm",1201:"Rune kiteshield",536:"Dragon bones",1753:"Green dragonhide",1751:"Blue dragonhide",1749:"Red dragonhide",8007:"Varrock teleport",8008:"Lumbridge teleport",8009:"Falador teleport",8010:"Camelot teleport",8011:"Ardougne teleport",8012:"Watchtower teleport",1704:"Amulet of glory",2552:"Ring of dueling(8)",3853:"Games necklace(8)",11978:"Amulet of glory(6)",2412:"Saradomin cape",2413:"Guthix cape",2414:"Zamorak cape",7462:"Barrows gloves",10828:"Helm of neitiznot",6570:"Fire cape",4675:"Ancient staff",1725:"Amulet of strength",1712:"Amulet of glory(4)",11128:"Berserker necklace",12954:"Dragon defender",19553:"Amulet of torture",21295:"Infernal cape",13652:"Dragon claws",22109:"Ava's assembler",20997:"Twisted bow",26382:"Torva full helm",26384:"Torva platebody",26386:"Torva platelegs",27226:"Masori mask (f)",27229:"Masori body (f)",27232:"Masori chaps (f)"};
+const SAMPLE_PRICE = {995:1,13190:9800000,4151:1600000,11802:9500000,6585:2100000,11832:16000000,11834:22000000,4587:60000,1215:17000,385:900,13441:1500,2434:9000,3024:11000,6685:7000,2440:2500,561:95,554:4,555:4,556:4,558:3,557:4,9075:60,565:210,566:140,1513:1100,1515:280,1511:60,440:120,453:150,2357:110,1617:2600,1619:1000,1621:500,1623:300,12934:120,892:70,11212:1800,1079:37000,1127:38000,1163:20000,1201:32000,536:2600,1753:1700,1751:1900,1749:2000,8007:400,8008:350,8009:350,8010:500,8011:900,8012:800,1704:12000,2552:1400,3853:1100,11978:12500,2412:50000,2413:50000,2414:50000,10828:48000,4675:90000,1725:1600,1712:12000,11128:40000,19553:11000000,13652:60000000,22109:0,20997:1500000000,26382:280000000,26384:600000000,26386:420000000,27226:60000000,27229:300000000,27232:140000000};
+function fmt(n){ return Math.round(n).toLocaleString("en-US"); }
+function gpShort(n){ n = Math.round(+n||0); const a = Math.abs(n), s = n<0?"-":""; if(a>=1e9) return s+(a/1e9).toFixed(2).replace(/\.?0+$/,"")+"b"; if(a>=1e6) return s+(a/1e6).toFixed(a>=1e8?0:1).replace(/\.0$/,"")+"m"; if(a>=1e4) return s+Math.round(a/1e3)+"k"; return s+fmt(a); }
+const icon = id => `https://static.runelite.net/cache/item/icon/${id}.png`;
+let bank, price, name, srcLabel, when = null;
+try{
+  const p = window.parent && window.parent !== window ? window.parent : null;
+  // the app's state is a script-level variable, not a window property, so go through its functions
+  const b = p && typeof p.vaultBank === "function" ? p.vaultBank() : null;
+  if(b && b.length){
+    bank = b.map(([id, qty])=>({id, qty}));
+    price = id => { try{ return p.itemPrice(id) || 0; }catch(e){ return 0; } };
+    name = id => { try{ return p.itemName(id); }catch(e){ return "Item " + id; } };
+    try{ const at = p.vaultBankAt ? p.vaultBankAt() : null; when = at ? new Date(at) : null; }catch(e){}
+    srcLabel = `<b>Live</b> · your bank from the app, ${fmt(bank.length)} stacks`;
+  }
+}catch(e){}
+if(!bank){
+  bank = SAMPLE.map(([id, qty])=>({id, qty}));
+  price = id => SAMPLE_PRICE[id] || 0; name = id => SAMPLE_NAMES[id] || ("Item " + id);
+  srcLabel = `Sample bank · open this from the Mockups page in the app to see yours`;
+}
+document.getElementById("src").innerHTML = srcLabel;
+bank.forEach((it, i)=>{ it.slot = i; it.p = price(it.id); it.v = it.p * it.qty; it.n = name(it.id); });
+const total = bank.reduce((a, it)=>a + it.v, 0);
+
+// ---- tabs: marks are the slots where a tab begins; everything after the last one is the main tab ----
+const KEY = "mt-proto-vault-tabs";
+let marks = []; try{ marks = JSON.parse(localStorage.getItem(KEY) || "[]").filter(n=>n > 0 && n < bank.length); }catch(e){}
+marks.sort((a,b)=>a-b);
+function tabsOf(){
+  // with marks: tab 1 starts at slot 0, each mark begins the next; the last stretch is the main tab
+  if(!marks.length) return [{id:0, label:"Everything", items:bank, main:true}];
+  const bounds = [0].concat(marks).concat([bank.length]);
+  const out = [];
+  for(let i = 0; i < bounds.length - 1; i++){
+    const items = bank.slice(bounds[i], bounds[i+1]);
+    const last = i === bounds.length - 2;
+    out.push({id:i+1, label: last ? "Main tab" : "Tab " + (i+1), items, main:last});
+  }
+  return out;
+}
+let cur = -1, wizard = false, q = "", showVals = false, dir = "a", bCard = -1;
+const qtyClass = n => n >= 1e7 ? "m" : n >= 1e5 ? "k" : "";
+const qtyText = n => n >= 1e7 ? Math.floor(n/1e6) + "M" : n >= 1e5 ? Math.floor(n/1e3) + "K" : n > 1 ? String(n) : "";
+function slotHtml(it, tabStarts){
+  const mi = marks.indexOf(it.slot);
+  const hit = q && it.n.toLowerCase().includes(q);
+  return `<div class="slot ${mi>-1?"mark":""} ${q ? (hit ? "hit" : "dim") : ""} ${tabStarts && tabStarts.has(it.slot) ? "tabstart" : ""}" data-slot="${it.slot}">
+    <img src="${icon(it.id)}" alt="" loading="lazy"><span class="q ${qtyClass(it.qty)}">${qtyText(it.qty)}</span><span class="m">${mi+2}</span><span class="v">${it.v ? gpShort(it.v) : ""}</span></div>`;
+}
+function render(){
+  const tabs = tabsOf();
+  const bankEl = document.getElementById("bank");
+  bankEl.classList.toggle("wizard", wizard); bankEl.classList.toggle("values", showVals);
+  const showAll = wizard || cur < 0 || !!q;
+  const tabEls = [`<div class="tab all ${cur<0 && !wizard ? "on" : ""}" data-tab="-1" title="Every tab at once">All</div>`];
+  if(marks.length) tabs.forEach((t, i)=>{ const lead = t.items.slice().sort((a,b)=>b.v-a.v)[0] || t.items[0]; tabEls.push(`<div class="tab ${cur===i && !wizard ? "on" : ""}" data-tab="${i}" title="${t.label} · ${fmt(t.items.length)} ${t.items.length===1?"stack":"stacks"} · ${gpShort(t.items.reduce((a,x)=>a+x.v,0))}">${lead ? `<img src="${icon(lead.id)}" alt="">` : ""}<span class="n">${t.main ? "★" : t.id}</span></div>`); });
+  tabEls.push(`<div class="tab add" data-tab="wiz" title="${marks.length ? "Change where your tabs begin" : "Mark where your tabs begin"}">${marks.length ? "✎" : "+"}</div>`);
+  document.getElementById("tabs").innerHTML = tabEls.join("");
+  const t = !showAll ? tabs[cur] : null;
+  const items = t ? t.items : bank;
+  const starts = new Set(marks);
+  const shown = q ? items.filter(it=>it.n.toLowerCase().includes(q)) : items;
+  document.getElementById("grid").innerHTML = (q ? shown : items).map(it=>slotHtml(it, showAll ? starts : null)).join("") || `<div class="muted small" style="grid-column:1/-1; padding:20px; text-align:center">Nothing in your bank matches.</div>`;
+  const worth = shown.reduce((a, it)=>a + it.v, 0);
+  document.getElementById("bkTotal").textContent = gpShort(worth) + " gp";
+  document.getElementById("bkTotalSub").textContent = q ? `${fmt(shown.length)} matching stacks` : t ? `${t.label}, ${fmt(t.items.length)} stacks` : `everything, ${fmt(bank.length)} stacks`;
+  document.getElementById("tabName").innerHTML = wizard ? `<b>Marking tabs</b> · ${marks.length ? marks.length + 1 + " tabs so far" : "no marks yet, so it is all one tab"}` : t ? `<b>${t.label}</b> · ${fmt(t.items.length)} ${t.items.length===1?"stack":"stacks"} · ${gpShort(t.items.reduce((a,x)=>a+x.v,0))} gp` : `<b>Everything</b>${marks.length ? ` · ${tabs.length} tabs, the gold edge shows where each begins` : " · no tabs marked yet, so this is the whole bank in slot order"}`;
+  document.getElementById("bkMeta").textContent = when ? `as of ${when.toLocaleDateString()} ${when.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}` : "";
+  document.getElementById("bkCount").textContent = `${fmt(bank.length)} stacks · ${gpShort(total)} gp in all`;
+  document.getElementById("wizChips").innerHTML = marks.map((s, i)=>`<span class="chip"><img src="${icon(bank[s].id)}" alt="">Tab ${i+2} from ${bank[s].n}</span>`).join("");
+  document.getElementById("wizBtn").classList.toggle("on", wizard);
+  document.getElementById("valBtn").classList.toggle("on", showVals);
+  renderB(tabs);
+}
+function renderB(tabs){
+  document.getElementById("bTotal").textContent = fmt(total) + " gp";
+  document.getElementById("bMeta").textContent = `${fmt(bank.length)} stacks${when ? ` · as of ${when.toLocaleDateString()}` : ""} · priced at the middle of buy and sell`;
+  const sp = document.getElementById("spark"); if(!sp.children.length){ let v = 0.72; sp.innerHTML = Array.from({length:40}, ()=>{ v = Math.min(1, Math.max(.4, v + (Math.random()-.47)*.08)); return `<i style="height:${Math.round(v*100)}%"></i>`; }).join(""); }
+  document.getElementById("cards").innerHTML = tabs.map((t, i)=>{ const top = t.items.slice().sort((a,b)=>b.v-a.v); const w = t.items.reduce((a,x)=>a+x.v,0);
+    return `<div class="card ${bCard===i?"on":""}" data-card="${i}"><h4>${t.label}</h4><div class="sub">${fmt(t.items.length)} ${t.items.length===1?"stack":"stacks"} · led by ${top[0] ? top[0].n : "nothing"}</div><div class="worth">${gpShort(w)} gp <span class="small muted" style="font-weight:400">· ${total ? Math.round(100*w/total) : 0}% of the bank</span></div>
+      <div class="strip">${top.slice(0, 6).map(it=>`<span title="${it.n}"><img src="${icon(it.id)}" alt="" loading="lazy"></span>`).join("")}${t.items.length > 6 ? `<span class="more">+${fmt(t.items.length-6)}</span>` : ""}</div></div>`; }).join("");
+  const op = document.getElementById("bOpen");
+  if(bCard > -1 && tabs[bCard]){ op.classList.remove("hidden"); op.innerHTML = `<div class="grid">${tabs[bCard].items.map(it=>slotHtml(it)).join("")}</div>`; } else op.classList.add("hidden");
+  document.getElementById("bTabsSub").textContent = marks.length ? "each tab as a card, what it is worth and what leads it. Tap one to open it" : "no tabs marked yet. Mark them once and this becomes one card per tab";
+  document.getElementById("bTop").innerHTML = bank.slice().sort((a,b)=>b.v-a.v).slice(0, 10).map(it=>`<div class="b-row"><img src="${icon(it.id)}" alt=""><div class="nm">${it.n}<span>× ${fmt(it.qty)}</span></div><div class="gp">${gpShort(it.v)}</div></div>`).join("");
+}
+// ---- wiring ----
+document.getElementById("tabs").onclick = e => { const t = e.target.closest("[data-tab]"); if(!t) return; if(t.dataset.tab === "wiz"){ wizard = true; cur = -1; } else { cur = +t.dataset.tab; wizard = false; } render(); };
+document.getElementById("wizBtn").onclick = () => { wizard = !wizard; if(wizard) cur = -1; render(); };
+document.getElementById("bWiz").onclick = () => { dir = "a"; swapDir(); wizard = true; cur = -1; render(); };
+document.getElementById("wizDone").onclick = () => { wizard = false; cur = -1; render(); };
+document.getElementById("wizClear").onclick = () => { marks = []; try{ localStorage.setItem(KEY, "[]"); }catch(e){} render(); };
+document.getElementById("valBtn").onclick = () => { showVals = !showVals; render(); };
+document.getElementById("q").oninput = e => { q = e.target.value.trim().toLowerCase(); render(); };
+document.getElementById("cards").onclick = e => { const c = e.target.closest("[data-card]"); if(!c) return; bCard = bCard === +c.dataset.card ? -1 : +c.dataset.card; render(); };
+document.getElementById("dirSeg").onclick = e => { const b = e.target.closest("[data-dir]"); if(!b) return; dir = b.dataset.dir; swapDir(); };
+function swapDir(){ document.querySelectorAll("#dirSeg button").forEach(b=>b.classList.toggle("on", b.dataset.dir === dir)); document.getElementById("dirA").classList.toggle("hidden", dir !== "a"); document.getElementById("dirB").classList.toggle("hidden", dir !== "b"); }
+// in the wizard a tap marks (or clears) the start of a tab; otherwise slots just carry a tooltip
+document.addEventListener("click", e => {
+  const s = e.target.closest(".slot"); if(!s || !wizard) return;
+  const slot = +s.dataset.slot; if(!slot) return;      // slot 0 always begins tab 1
+  const i = marks.indexOf(slot); if(i > -1) marks.splice(i, 1); else marks.push(slot);
+  marks.sort((a,b)=>a-b); try{ localStorage.setItem(KEY, JSON.stringify(marks)); }catch(e){}
+  render();
+});
+const tip = document.getElementById("tip");
+document.addEventListener("mousemove", e => {
+  const s = e.target.closest(".slot");
+  if(!s){ tip.classList.remove("on"); return; }
+  const it = bank[+s.dataset.slot];
+  tip.innerHTML = `<b>${it.n}</b>${fmt(it.qty)} × ${it.p ? fmt(it.p) + " gp" : "no price"}${it.v ? ` · <span style="color:var(--gold)">${gpShort(it.v)}</span>` : ""}<div class="small muted">slot ${it.slot}${wizard ? (it.slot ? " · tap to start a tab here" : " · tab 1 always starts here") : ""}</div>`;
+  tip.classList.add("on");
+  const x = Math.min(e.clientX + 14, innerWidth - 280), y = e.clientY + 16 > innerHeight - 90 ? e.clientY - 80 : e.clientY + 16;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+});
+render();
+</script>
+</body>
+</html>
