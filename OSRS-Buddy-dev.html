@@ -451,8 +451,22 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qp-chip .n{color:var(--muted); font-size:11px}
   /* a centred card over the tree; the scrim is light so the lit path still reads behind it */
   .qpq-scrim{position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:80}
-  .qpq{position:fixed; left:calc(50% + var(--sbw) / 2); top:50%; transform:translate(-50%,-50%); width:620px; max-width:calc(100% - 24px); max-height:min(84vh, 780px); background:var(--bg2); border:1px solid var(--border); border-radius:16px; z-index:81; display:flex; flex-direction:column; box-shadow:0 30px 80px rgba(0,0,0,.6)}
-  .qpq-in{position:relative; overflow:auto; padding:18px 20px 24px; flex:1; min-height:0}
+  .qpq{position:fixed; left:calc(50% + var(--sbw) / 2); top:50%; transform:translate(-50%,-50%); width:900px; max-width:calc(100% - 48px); max-height:min(94vh, 1000px); background:var(--bg2); border:1px solid var(--border); border-radius:16px; z-index:81; display:flex; flex-direction:column; box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .qpq-in{position:relative; overflow:auto; padding:20px 24px 26px; flex:1; min-height:0}
+  /* Rewards lead the overview: a lit band, bigger chips, the thing you see before the requirements */
+  .qpd-hero{grid-column:1/-1; background:linear-gradient(180deg, var(--active), var(--inset)); border:1px solid var(--gold3); border-radius:14px; padding:14px 16px 13px; box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+  .qpd-hero h5{color:var(--gold); font-size:13px; letter-spacing:.1em; margin-bottom:8px; display:flex; align-items:baseline; gap:10px}
+  .qpd-hero h5 span{font-weight:normal; text-transform:none; letter-spacing:0; color:var(--muted); font-size:12px}
+  .qpd-hero .qpd-xp{gap:8px; margin:0 0 8px}
+  .qpd-hero .qreq{font-size:15px; padding:7px 12px 7px 9px; gap:6px; border-radius:10px; background:var(--panel2); font-weight:600}
+  .qpd-hero .qreq img{width:22px; height:22px}
+  .qpd-hero .qreq.qp{font-size:16px; color:var(--gold); border-color:var(--gold-dim); padding-left:11px}
+  .qpd-hero .qreq.qp i{font-size:12px; margin-left:3px}
+  .qpd-hero .qpd-items{gap:8px}
+  .qpd-hero .qpd-item{font-size:13.5px; padding:5px 11px 5px 6px; background:var(--panel2)}
+  .qpd-hero .qpd-item img{width:28px; height:28px}
+  .qpd-hero .qpd-uns{margin-top:8px; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:2px 16px}
+  .qpd-hero .qpd-un{color:var(--text); font-size:13px}
   .qpq-in::-webkit-scrollbar-thumb{background:transparent}
   .qpq-in:hover::-webkit-scrollbar-thumb{background:var(--gold3); background-clip:padding-box}
   .qpq-x{position:absolute; top:12px; right:14px; width:30px; height:30px; border-radius:8px; background:var(--panel2); border:1px solid var(--border); color:var(--text); cursor:pointer; font:inherit; box-shadow:none; padding:0; z-index:2}
@@ -460,12 +474,12 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qpq-meta{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:7px; font-size:12px; color:var(--muted)}
   .qpq-acts{display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; position:relative}
   .qpq .qpd-tabs{margin-top:14px}
-  .qpq .qpd-grid{grid-template-columns:1fr}
   .qpq .panel{box-shadow:none; margin:0; padding:0; border:0; background:transparent}
   .qpq .qp-sum{justify-content:flex-start}
   @media (max-width:700px){
     .qpq{top:auto; left:0; right:0; bottom:0; transform:none; width:auto; max-width:none; max-height:88vh; border:0; border-top:1px solid var(--border); border-radius:16px 16px 0 0}
     .qpq h3{font-size:22px}
+    .qpd-hero{padding:12px 12px 11px}
     .qpq-scrim{background:rgba(0,0,0,.45)}
   }
   /* tech tree */
@@ -526,7 +540,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qpd-head{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:8px}
   .qpd-head h4{margin:0; font-size:15px; color:var(--gold)}
   .qpd-acts{display:flex; gap:6px; margin-left:auto; flex-wrap:wrap}
-  .qpd-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px}
+  .qpd-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px 18px}
   .qpd-sec h5{margin:0 0 5px; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:bold}
   .qpd-list{display:flex; flex-direction:column; gap:3px}
   .qpd-tabs{display:flex; gap:4px; margin:4px 0 10px; border-bottom:1px solid var(--border)}
@@ -12325,13 +12339,13 @@ function qpBoostList(s, db, plan){
 // What the quest hands you: QP + XP as chips, items/unlocks as one-line bullets.
 function qpRewardsHtml(q){
   const xpChips = Object.entries(q.rewards||{}).sort((a,b)=>b[1]-a[1]).map(([s,a])=>
-    `<span class="qreq ok" title="+${a.toLocaleString("en-US")} ${nice(s)} XP"><img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">+${a>=1000?Math.round(a/1000)+"k":a}</span>`).join("");
+    `<span class="qreq ok" title="+${a.toLocaleString("en-US")} ${nice(s)} XP"><img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">+${a>=1000?(a/1000).toFixed(a>=10000?0:1).replace(/\.0$/,"")+"k":a} ${nice(s)}</span>`).join("");
   const qpChip = q.qpGain ? `<span class="qreq qp">${q.qpGain}<i>QP</i></span>` : "";
   const items = (q.items||[]).map(it=>
     `<span class="qpd-item" title="${escapeHtml(it.n)}">${it.img?`<img src="${it.img}" alt="" onerror="this.style.display='none'">`:""}${escapeHtml(it.n)}</span>`).join("");
   const unlocks = (q.unlocks||[]).map(u=>`<div class="qpd-un" title="${escapeHtml(u)}">🔓 ${escapeHtml(u)}</div>`).join("");
   if(!qpChip && !xpChips && !items && !unlocks) return "";
-  return `<div class="qpd-sec" style="grid-column:1/-1"><h5>Rewards</h5>
+  return `<div class="qpd-sec qpd-hero"><h5>Rewards <span>what you walk away with</span></h5>
     ${(qpChip||xpChips)?`<div class="qpd-xp">${qpChip}${xpChips}</div>`:""}
     ${items?`<div class="qpd-items">${items}</div>`:""}
     ${unlocks?`<div class="qpd-uns">${unlocks}</div>`:""}</div>`;
@@ -12575,11 +12589,11 @@ function qpPopupHtml(n, db){
     : st==="ready" ? `<span class="qp-tag free">ready to start</span>` : `<span class="qp-tag">blocked</span>`;
   const none = t => `<div class="qpd-row"><span class="have" style="margin:0">${t}</span></div>`;
   const overview = `<div class="qpd-grid">
+      ${qpRewardsHtml(q) || `<div class="qpd-sec"><h5>Rewards</h5>${none("Nothing listed.")}</div>`}
       <div class="qpd-sec"><h5>Requirements</h5>
         <div class="qpd-list">${reqRows+qpRow || none("Nothing required.")}</div></div>
       <div class="qpd-sec"><h5>Needs these quests${prereqs.length?` (${prereqs.filter(p=>!questDone(p)).length} left)`:""}</h5>
         <div class="qpd-list">${prereqs.length?prereqs.map(t=>qpQuestRow(t,db)).join(""):none("None. No quests gate this.")}</div></div>
-      ${qpRewardsHtml(q) || `<div class="qpd-sec"><h5>Rewards</h5>${none("Nothing listed.")}</div>`}
       <div class="qpd-sec"><h5>${opensHead}</h5>
         <div class="qpd-list">${opens.length?opens.map(t=>qpQuestRow(t,db)).join(""):none("Nothing depends on this.")}</div></div>
     </div>`;

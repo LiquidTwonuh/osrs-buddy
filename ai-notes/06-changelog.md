@@ -13,6 +13,7 @@ Newest first. Written from the local git history in plain words; "dev" means the
 - dev: Coffer's Risk question is two: Wilderness, and financial risk (the wiki's flag), each its own filter.
 - dev: Map console noise gone (image fallback clash). Flip margins come from averages of real trades (5m or 1h), both sides must have traded, buy limit beside the margin.
 - Josh signed off on the Map for now (2026-11-11).
+- dev: the quest card is bigger (900px, three columns, no scrolling on a normal screen) and Rewards lead it as a lit band.
 
 ## 2026-11-10
 - board: Coffer ideas (favourite and hide per card, a runs panel); rules: no installers for Josh, Krystal Klear generates from stable.
