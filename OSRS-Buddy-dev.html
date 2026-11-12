@@ -949,7 +949,13 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-lrow.short .cf-lbar{background:repeating-linear-gradient(135deg, var(--gold3) 0 5px, transparent 5px 9px)}
   .cf-lgp{position:absolute; right:8px; font-weight:700; font-size:12.5px; color:var(--text); text-shadow:0 1px 2px rgba(0,0,0,.8)}
   .cf-lgp .muted{font-size:10px; font-weight:500}
-  .cf-lrow .qp-pin{grid-area:pin}
+  .cf-lacts{grid-area:pin; display:flex; gap:4px; align-items:center}
+  .cf-hidebtn{opacity:.35}
+  .cf-lrow:hover .cf-hidebtn, .rd-row:hover .cf-hidebtn, .cf-hidebtn:focus-visible{opacity:1}
+  @media (hover:none){ .cf-hidebtn{opacity:.7} }
+  .cf-hiddenbox summary{cursor:pointer}
+  .cf-hiddenbox .cf-lrow{cursor:default; opacity:.8}
+  .cf-hiddenbox .cf-lrow:hover{opacity:1}
   .cf-lsub{grid-area:sub; display:flex; flex-wrap:wrap; gap:3px 8px; align-items:center; font-size:12px; color:var(--muted); min-width:0}
   .cf-lsub .cf-why{margin:0}
   @keyframes cfgrow{from{width:0}}
@@ -10401,13 +10407,15 @@ function roundRowHtml(m, pins){
       </div>
       <div class="rd-pay">${pay}</div>
       <button class="qp-pin ${on ? "on" : ""}" data-cfpin="${escapeHtml(m.name)}" title="${on ? "On your picks" : "Add to your picks"}">${on ? "📌" : "+"}</button>
+      ${m.extra ? "" : `<button class="qp-pin cf-hidebtn" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">⊘</button>`}
     </div>`;
 }
 // the line on Home: what's up right now, and the next thing coming back
 function renderRoundsHome(){
   const el = $("#homeRoundsList"), panel = $("#homeRounds"); if(!el || !panel) return;
   const db = mmgDB();
-  const rows = roundsSorted(roundsAll(db).filter(m=>m.gap.ok));
+  const hid = new Set(cofferHidden());
+  const rows = roundsSorted(roundsAll(db).filter(m=>m.gap.ok && !hid.has(m.name)));
   if(!rows.length){ panel.classList.add("hidden"); return; }
   panel.classList.remove("hidden");
   const up = rows.filter(m=>m.st.up), waiting = rows.filter(m=>!m.st.up);
@@ -11044,6 +11052,23 @@ function mmgEvery(t){
 // The methods you've decided on sit at the top as cards, the way pinned quests sit on Map's
 // board. Click one for the full picture; the list underneath is for finding the next one.
 function cofferPins(){ const c = state.coffer = state.coffer || {}; c.pins = c.pins || []; return c.pins; }
+// Hidden methods: the ones you never want to see, whatever the filters say. They leave every
+// section and the Home line, and wait in the Hidden box at the foot of Coffer until brought back.
+function cofferHidden(){ const c = state.coffer = state.coffer || {}; c.hidden = c.hidden || []; return c.hidden; }
+function cofferHide(name){
+  const hid = cofferHidden(); if(hid.includes(name)) return;
+  hid.push(name);
+  const pins = cofferPins(), i = pins.indexOf(name); if(i !== -1) pins.splice(i, 1);
+  if(state.coffer.sel === name) state.coffer.sel = null;
+  save(); renderCoffer(); renderRoundsHome();
+  toast(name + " hidden. It waits under Hidden at the foot of the page.");
+}
+function cofferUnhide(name){
+  const hid = cofferHidden(), i = hid.indexOf(name); if(i === -1) return;
+  hid.splice(i, 1);
+  save(); renderCoffer(); renderRoundsHome();
+  toast(name + " is back.");
+}
 function cofferPinToggle(name){
   const pins = cofferPins(), i = pins.indexOf(name);
   if(i === -1) pins.push(name); else pins.splice(i, 1);
@@ -11101,6 +11126,7 @@ function cofferDetailHtml(m){
     <div class="row" style="gap:6px; margin-top:14px">
       <button class="ghost small" data-cfpin="${escapeHtml(m.name)}">${cofferPins().includes(m.name) ? "📌 On your picks" : "📌 Add to picks"}</button>
       <a class="ghost small" href="${cofferGuideUrl(m)}" target="_blank" rel="noopener">Wiki guide ↗</a>
+      <button class="ghost small" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">Hide this one</button>
       <span class="grow"></span>
       <button class="ghost small" id="cfClose">Close</button>
     </div>
@@ -11179,7 +11205,8 @@ function renderCoffer(){
   }
 
   // ---- the curated page ----
-  const all = db.methods.map(m=>Object.assign({}, m, {gap: mmgGaps(m)}));
+  const hiddenNames = cofferHidden(), hiddenSet = new Set(hiddenNames);
+  const all = db.methods.filter(m=>!hiddenSet.has(m.name)).map(m=>Object.assign({}, m, {gap: mmgGaps(m)}));
   const byName = {}; all.forEach(m=>{ byName[m.name] = m; });
   const picked = all.filter(m=>cofferMatches(m, pf));
   picked.forEach(m=>{ const w = cofferWhy(m, pf); m.score = w.score; m.why = w.why; m.beyond = w.why.some(x=>/beyond/.test(x)); });
@@ -11188,7 +11215,7 @@ function renderCoffer(){
   const inLens = m => !lens || mmgCatSkill(m) === lens || (m.skills || []).some(r=>r.skill === lens);
   const ready = picked.filter(m=>m.gap.ok && !m.recur && inLens(m)).sort(byScore);
   const f2pOnly = /free/i.test((((COFFER_QUIZ.find(q=>q.id==="members") || {}).opts || []).find(o=>o[0]===pf.members) || [])[1] || "");
-  const rounds = roundsSorted(roundsAll(db).filter(m=>(!f2pOnly || m.f2p) && inLens(m)));
+  const rounds = roundsSorted(roundsAll(db).filter(m=>!hiddenSet.has(m.name) && (!f2pOnly || m.f2p) && inLens(m)));
   const dailies = rounds.filter(m=>m.gap.ok);
   const close = picked.filter(m=>m.gap.band==="close" && !m.recur && inLens(m)).sort((a,b)=> b.score - a.score);
   const far = picked.filter(m=>m.gap.band==="far" && !m.recur && inLens(m)).sort((a,b)=> a.gap.effort-b.gap.effort || b.profit-a.profit);
@@ -11248,7 +11275,7 @@ function renderCoffer(){
     return `<div class="cf-lrow ${m.gap.ok?"":"short"} ${on?"pinned":""} ${sel && sel.name===m.name?"sel":""}" data-cfopen="${escapeHtml(m.name)}">
       <div class="cf-lname">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : `<span class="cf-lgroup">${groupIcon(m)}</span>`}<b>${escapeHtml(m.name)}</b></div>
       <div class="cf-ltrack"><div class="cf-lbar" style="width:${pct.toFixed(1)}%"></div><span class="cf-lgp">${cofferPayHtml(m)}</span></div>
-      <button class="qp-pin ${on?"on":""}" data-cfpin="${escapeHtml(m.name)}" title="${on?"On your picks":"Add to your picks"}">${on?"📌":"+"}</button>
+      <div class="cf-lacts"><button class="qp-pin ${on?"on":""}" data-cfpin="${escapeHtml(m.name)}" title="${on?"On your picks":"Add to your picks"}">${on?"📌":"+"}</button><button class="qp-pin cf-hidebtn" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">⊘</button></div>
       <div class="cf-lsub">${cofferTagsHtml(m)}<span>${need ? `Needs ${need}` : rec ? `Wiki recommends ${rec}` : "You've got the levels"}${
         m.gap.ok ? "" : ` <span class="cf-eff">${xpText(m.gap.effort)} away</span>`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}</span>${
         why.length ? `<span class="cf-why">${why.map(escapeHtml).join(" · ")}</span>` : ""}</div>
@@ -11276,6 +11303,8 @@ function renderCoffer(){
         <div class="row cf-hacts">
           <button class="ghost small" data-cfpin="${escapeHtml(m.name)}">${on ? "📌 On your picks" : "📌 Pick"}</button>
           <a class="ghost small" href="${cofferGuideUrl(m)}" target="_blank" rel="noopener">Guide ↗</a>
+          <span class="grow"></span>
+          <button class="ghost small cf-hidebtn" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">Hide</button>
         </div>
       </div>
     </div>`;
@@ -11349,7 +11378,15 @@ function renderCoffer(){
       <div class="cf-ledger">${ready.filter(m=>!inTop.has(m.name)).slice(0, 80).map(m=>ledgerRow(m, false)).join("") || `<div class="empty">That's all of them above.</div>`}</div>
       ${pf.reach!=="ready" && close.length ? `<div class="section-title"><h3>🎯 Within reach</h3></div><div class="cf-ledger">${close.slice(0, 40).map(m=>ledgerRow(m, false)).join("")}</div>` : ""}
       ${pf.reach==="all" && far.length ? `<div class="section-title"><h3>🧗 Further off</h3></div><div class="cf-ledger">${far.slice(0, 40).map(m=>ledgerRow(m, false)).join("")}</div>` : ""}
-    </details>`;
+    </details>
+    ${hiddenNames.length ? `<details class="panel cf-hiddenbox" ${state.coffer.hiddenOpen ? "open" : ""}><summary><h3 style="display:inline">⊘ Hidden</h3> <span class="small muted">${hiddenNames.length} method${hiddenNames.length===1?"":"s"} you've put away · out of every section until you bring ${hiddenNames.length===1?"it":"them"} back</span></summary>
+      <div class="cf-ledger" style="margin-top:8px">${hiddenNames.map(n=>{
+        const m = db.methods.find(x=>x.name===n), sk = m ? mmgCatSkill(m) : null;
+        return `<div class="cf-lrow"><div class="cf-lname">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : m ? `<span class="cf-lgroup">${groupIcon(m)}</span>` : ""}<b>${escapeHtml(n)}</b></div>
+          <div class="cf-lsub">${m ? cofferTagsHtml(m) + `<span>${cofferPayHtml(m)}</span>` : `<span>No longer in the wiki's guide</span>`}</div>
+          <div class="cf-lacts"><button class="ghost small" data-cfunhide="${escapeHtml(n)}" title="Back into the lists">↩ Bring back</button></div></div>`; }).join("")}</div>
+      ${hiddenNames.length > 1 ? `<div class="row" style="margin-top:8px"><span class="grow"></span><button class="ghost small" id="cfUnhideAll">Bring them all back</button></div>` : ""}
+    </details>` : ""}`;
 
   // the strip opens and closes in place, no re-render, so it can animate
   $("#cfTune").onclick = ()=>{
@@ -11388,6 +11425,10 @@ function renderCoffer(){
   $$("#cofferView [data-rdtick]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); roundTick(b.dataset.rdtick); });
   $("#cfQuiz").onclick = ()=>{ state.coffer.quizOpen = true; state.coffer.single = false; state.coffer.step = 0; save(); renderCoffer(); };
   const full = $("#cofferView .cf-full"); if(full) full.ontoggle = ()=>{ state.coffer.full = full.open; save(); };
+  const hbox = $("#cofferView .cf-hiddenbox"); if(hbox) hbox.ontoggle = ()=>{ state.coffer.hiddenOpen = hbox.open; save(); };
+  $$("#cofferView [data-cfhide]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferHide(b.dataset.cfhide); });
+  $$("#cofferView [data-cfunhide]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferUnhide(b.dataset.cfunhide); });
+  const ua = $("#cfUnhideAll"); if(ua) ua.onclick = ()=>{ const n = cofferHidden().length; cofferHidden().length = 0; save(); renderCoffer(); renderRoundsHome(); toast(`All ${n} back in the lists.`); };
   $$("#cofferView [data-cfpin]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferPinToggle(b.dataset.cfpin); });
   $$("#cofferView [data-cfunpin]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferPinToggle(b.dataset.cfunpin); });
   // a row or a card opens the detail panel; opening it again closes it

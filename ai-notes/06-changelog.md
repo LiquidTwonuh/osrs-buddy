@@ -6,6 +6,8 @@ Newest first. Written from the local git history in plain words; "dev" means the
 
 ## 2026-11-11
 - dev: the Map quest panel is a centred card (was a side panel); clicking the page behind it closes it.
+- dev: scrollbars styled app-wide (thin gold thumb), the quest card centres over the content column, the sidebar folds to a rail; the Map search glass no longer sits on the placeholder.
+- dev: Coffer, hide any method (⊘ beside the pin, Hide on cards and in the detail); a Hidden box at the foot of the page brings them back.
 
 ## 2026-11-10
 - board: Coffer ideas (favourite and hide per card, a runs panel); rules: no installers for Josh, Krystal Klear generates from stable.

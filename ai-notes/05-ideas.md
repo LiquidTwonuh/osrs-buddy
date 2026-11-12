@@ -25,7 +25,8 @@ The live list is `BOARD.md` (Now, Next, Small fixes, Ideas, Parked). This is the
 
 ## Ideas, not started
 
-- **Coffer, favourite and hide per card (2026-11-10).** Each money making card gets favourite (floats up) and hide (gone for good, with a list in Settings to bring it back), independent of the filters. Josh's example: hide Last Man Standing because it is PvP, keep everything else as filtered. Small, after the Map ships.
+- **Coffer, favourite per card (2026-11-10).** Favourite floats a method up, independent of the filters. Hide shipped to dev on 2026-11-11 (a ⊘ beside the pin; a Hidden box at the foot of Coffer brings any back). Favourite still open.
+- **Vault as the bank UI (2026-11-11).** Josh asked whether Vault could simulate the in-game bank. Mockups first, two directions. Item icons already come from RuneLite's icon cache; the frame, tabs and slot grid would be our own CSS.
 - **Coffer runs panel (2026-11-10).** Tree runs, herb runs and the like, tracked properly: Repeatables already times them, this would know the patches, what is planted and when it is ready, what a run yields and costs, and a weekly tally. Josh expects it to be very useful. Queued behind shipping the Map.
 - **Priorities that matter (opt-in).** Home leads with your priorities and what moved on them; Scroll entries tagged with a priority feed a per-priority streak and share of XP; Coffer and Map filter by the active priority; the weekly recap says how much of the week went to them.
 - **Mortimeter as a skill (opt-in).** The app itself has a level: XP from days logged, quests ticked, goals finished, recaps read, Coffer picks done, streaks held. Level-ups with the 99-style fireworks, a tab on Home, maybe unlocks (themes, Mortimer lines). Incentive, never a nag. Needs its own XP table and a cap so it can't be farmed by clicking.
