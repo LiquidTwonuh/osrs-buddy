@@ -15,6 +15,8 @@
     --green:#6fbf5b; --font-display:"EB Garamond",Georgia,serif; --font-body:"Segoe UI",system-ui,sans-serif;
   }
   *{box-sizing:border-box}
+  ::-webkit-scrollbar{width:8px; height:8px} ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--gold3); border-radius:8px; border:2px solid transparent; background-clip:padding-box}
   body{margin:0; background:#0f0d0a; color:var(--text); font-family:var(--font-body); font-size:14px; -webkit-font-smoothing:antialiased}
   .top{position:sticky; top:0; z-index:5; background:#0f0d0a; border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
   .top h1{font-family:var(--font-display); font-size:18px; color:var(--gold); margin:0 14px 0 0; font-weight:600}
