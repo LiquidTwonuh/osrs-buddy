@@ -15,6 +15,8 @@ Things that were decided and should not be reopened without Josh. Newest first w
 
 ## Pages
 
+- **2026-11-11, Flip prices are averages, never a single trade.** The latest high and low are one trade each and showed margins nobody could buy at. Now five-minute averages when at least ten traded each way, else hour averages, and both sides must have traded. Josh's call after trying a bead at 2k each.
+- **2026-11-11, Coffer asks about the Wilderness and financial risk separately.** Josh's suggestion once the sweep showed the wiki's Risky flag is mostly market risk. Each is its own hard filter.
 - **2026-11-11, Coffer reads Wilderness danger from the wiki's warning box.** The Location field missed most Wilderness methods and the MMG/Risky category is mostly market risk, so Risk = No thanks had let the Corporeal Beast through. Now the MMGWarning box decides, a short list covers what the wiki does not flag (Corp, the obelisks), the Abyss is Low Wilderness on the way, and market risk is its own tag that the Risk answer ignores. Evidence: a sweep of all 655 guide pages.
 - **2026-11-11, the Map quest panel is a centred card.** Built as a side panel on 11-09 (reasoning: a card covers the lit path); Josh saw it, loved the popup and asked for it centred, so it is a 620px card with a light scrim that the lit path still reads through. Clicking the page behind it closes it, as do Esc and the X. On a phone it is a bottom sheet. The Focus section was folded away because the goal strip and the Route tab do its job.
 - **2026-11-09, Chill day in every edition.** Josh: "every edition needs chill day". A chip in the Journal composer and Quick entry under the heatmap, in dev, stable (as a local checkpoint, not a ship) and Krystal Klear.

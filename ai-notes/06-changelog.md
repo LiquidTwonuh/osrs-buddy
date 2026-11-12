@@ -10,6 +10,9 @@ Newest first. Written from the local git history in plain words; "dev" means the
 - dev: Coffer, hide any method (⊘ beside the pin, Hide on cards and in the detail); a Hidden box at the foot of the page brings them back. The podium always fills to three.
 - dev: Coffer reads Wilderness from the wiki's warning box (Corp, KBD, the obelisks now flagged; the Abyss is Low Wilderness on the way; Market risk is its own tag). Guide cache v7.
 - mockups: Vault as the bank prototype (vault-bank.html), reads the real bank from the app, tab wizard.
+- dev: Coffer's Risk question is two: Wilderness, and financial risk (the wiki's flag), each its own filter.
+- dev: Map console noise gone (image fallback clash). Flip margins come from averages of real trades (5m or 1h), both sides must have traded, buy limit beside the margin.
+- Josh signed off on the Map for now (2026-11-11).
 
 ## 2026-11-10
 - board: Coffer ideas (favourite and hide per card, a runs panel); rules: no installers for Josh, Krystal Klear generates from stable.

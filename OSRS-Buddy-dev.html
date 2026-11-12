@@ -2952,7 +2952,9 @@ const WIKI = "https://oldschool.runescape.wiki/images/";
 // dot with the name on hover, and the layout holds. Capture phase, because error doesn't bubble.
 window.addEventListener("error", e=>{
   const img = e.target;
-  if(!img || img.tagName !== "IMG" || !/runescape\.wiki\/images/.test(img.src || "") || img.dataset.fb) return;
+  // a picture with its own onerror (the metric icons, which fall back to an emoji) is left alone:
+  // replacing it here first left that handler with no sibling, and an error in the console per picture
+  if(!img || img.tagName !== "IMG" || !/runescape\.wiki\/images/.test(img.src || "") || img.dataset.fb || img.hasAttribute("onerror")) return;
   img.dataset.fb = "1";
   const fb = document.createElement("span");
   fb.className = "ico-fb"; fb.title = img.alt || img.title || "picture unavailable";
@@ -10467,7 +10469,7 @@ function renderNavSubCoffer(){
 // few minutes. It's the same source the wiki's own pages show, read by thousands of tools.
 const PRICES_API = "https://prices.runescape.wiki/api/v1/osrs/";
 const PRICEMAP_VERSION = 1;
-let priceLatest = null, priceVol = null, priceAt = 0, priceBusy = false, priceMapBusy = false;
+let priceLatest = null, priceVol = null, priceHour = null, priceAt = 0, priceBusy = false, priceMapBusy = false;
 function priceMap(){ const d = state.priceMap; return (d && d.v===PRICEMAP_VERSION && d.items) ? d : null; }
 async function priceMapEnsure(force){
   const have = priceMap();
@@ -10487,9 +10489,9 @@ async function priceLatestEnsure(force){
   priceBusy = true;
   let ok = false;
   try{
-    const [a, b] = await Promise.all([fetch(PRICES_API + "latest"), fetch(PRICES_API + "5m")]);
-    const la = await a.json(), vo = await b.json();
-    if(la && la.data){ priceLatest = la.data; priceVol = (vo && vo.data) || {}; priceAt = Date.now(); ok = true; }
+    const [a, b, c] = await Promise.all([fetch(PRICES_API + "latest"), fetch(PRICES_API + "5m"), fetch(PRICES_API + "1h")]);
+    const la = await a.json(), vo = await b.json(), ho = await c.json();
+    if(la && la.data){ priceLatest = la.data; priceVol = (vo && vo.data) || {}; priceHour = (ho && ho.data) || {}; priceAt = Date.now(); ok = true; }
   }catch(e){}
   priceBusy = false;
   return ok;
@@ -10608,8 +10610,10 @@ function renderVault(){
 }
 
 // ============ FLIP ============
-// A margins table, not a bot. It shows what the last trades suggest you could buy at, sell at,
-// and keep after tax, and how much of the item actually moves. You do the trading.
+// A margins table, not a bot. It shows what recent trades say you could buy at, sell at, and keep
+// after tax, and how much of the item actually moves. You do the trading. A single trade is not
+// a price: the numbers are averages over the last five minutes when enough traded, else the last
+// hour, and an item only shows when both sides traded in that window.
 let flipBusy = false;
 function flipPrefs(){
   const f = state.flip = state.flip || {};
@@ -10631,18 +10635,23 @@ function flipRows(){
   for(const id in priceLatest){
     const it = m.items[id]; if(!it) continue;
     if(!members && it[2]) continue;
-    const p = priceLatest[id], buy = p.low || 0, sell = p.high || 0;
-    if(!buy || !sell || sell <= buy) continue;
+    const p = priceLatest[id];
     // stale quotes (hours old) say nothing about now
     const age = Math.max(Date.now()/1000 - (p.highTime||0), Date.now()/1000 - (p.lowTime||0));
     if(age > 6*3600) continue;
-    const vol5 = priceVol && priceVol[id] ? (priceVol[id].highPriceVolume||0) + (priceVol[id].lowPriceVolume||0) : 0;
-    const perHour = vol5 * 12;
+    const v5 = (priceVol && priceVol[id]) || {}, h1 = (priceHour && priceHour[id]) || {};
+    const perHour = (h1.highPriceVolume||0) + (h1.lowPriceVolume||0) || ((v5.highPriceVolume||0) + (v5.lowPriceVolume||0)) * 12;
+    // the window: five minutes when at least ten traded each way in it, else the hour
+    let buy, sell, win;
+    if(v5.avgLowPrice && v5.avgHighPrice && (v5.lowPriceVolume||0) >= 10 && (v5.highPriceVolume||0) >= 10){ buy = v5.avgLowPrice; sell = v5.avgHighPrice; win = "5m"; }
+    else if(h1.avgLowPrice && h1.avgHighPrice && h1.lowPriceVolume && h1.highPriceVolume){ buy = h1.avgLowPrice; sell = h1.avgHighPrice; win = "1h"; }
+    else continue;   // one side never traded: there is no margin, whatever the last trade says
+    if(sell <= buy) continue;
     const margin = sell - geTax(sell) - buy;
     if(margin <= 0) continue;
     const limit = it[1] || 0;
     const perLimit = margin * (limit ? Math.min(limit, Math.max(1, perHour)) : 1);
-    out.push({id:+id, name:it[0], buy, sell, margin, roi: margin/buy*100, perHour, limit, perLimit, members: !!it[2]});
+    out.push({id:+id, name:it[0], buy, sell, margin, roi: margin/buy*100, perHour, limit, perLimit, members: !!it[2], win, last: p});
   }
   return out;
 }
@@ -10658,10 +10667,10 @@ function flipFiltered(rows){
 function flipRowHtml(r, watching){
   return `<div class="fl-row ${watching?"on":""}">
     <img class="vt-ico" src="${itemIcon(r.id)}" alt="" loading="lazy">
-    <div class="fl-name"><b>${escapeHtml(r.name)}</b><div class="small muted">limit ${r.limit ? fmt(r.limit) : "none"} · ${r.members ? "members" : "F2P"}</div></div>
-    <div class="fl-col"><span class="small muted">buy</span>${fmt(r.buy)}</div>
-    <div class="fl-col"><span class="small muted">sell</span>${fmt(r.sell)}</div>
-    <div class="fl-col fl-margin"><span class="small muted">margin</span>+${fmt(r.margin)}<div class="small muted">${r.roi.toFixed(1)}%</div></div>
+    <div class="fl-name"><b>${escapeHtml(r.name)}</b><div class="small muted">${r.members ? "members" : "F2P"} · ${r.win === "5m" ? "last 5 min" : "last hour"} average</div></div>
+    <div class="fl-col" title="Average of what buyers paid in that window${r.last && r.last.low ? ". Last trade " + fmt(r.last.low) : ""}"><span class="small muted">buy</span>${fmt(r.buy)}</div>
+    <div class="fl-col" title="Average of what sellers got in that window${r.last && r.last.high ? ". Last trade " + fmt(r.last.high) : ""}"><span class="small muted">sell</span>${fmt(r.sell)}</div>
+    <div class="fl-col fl-margin"><span class="small muted">margin</span>+${fmt(r.margin)}<div class="small muted">${r.roi.toFixed(1)}% · limit ${r.limit ? fmt(r.limit) : "none"}</div></div>
     <div class="fl-col"><span class="small muted">traded/hr</span>${gpShort(r.perHour)}</div>
     <div class="fl-col fl-per"><span class="small muted">per limit</span>${gpShort(r.perLimit)}</div>
     <button class="qp-pin ${watching?"on":""}" data-flwatch="${r.id}" title="${watching?"Watching":"Watch this item"}">${watching?"👁":"+"}</button>
@@ -10693,9 +10702,9 @@ function renderFlip(){
     ${watch.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>👁 Watching</h3><span class="small muted">${watch.length} item${watch.length===1?"":"s"}</span></div>
       <div class="fl-list">${watch.map(r=>flipRowHtml(r, true)).join("")}</div></div>` : ""}
     <div class="panel">
-      <div class="section-title" style="margin-top:0"><h3>📈 Margins</h3><span class="small muted">after the 1% tax · "per limit" is the margin times how many you could move in an hour, capped by the buy limit</span></div>
+      <div class="section-title" style="margin-top:0"><h3>📈 Margins</h3><span class="small muted">averages of real trades, after the 1% tax · "per limit" is the margin times how many you could move in an hour, capped by the buy limit</span></div>
       <div class="fl-list">${list.slice(0, 50).map(r=>flipRowHtml(r, pf.watch.includes(r.id))).join("") || `<div class="empty">Nothing matches. Loosen a filter.</div>`}</div>
-      <p class="small muted" style="margin:10px 0 0">Prices come from the wiki's real-time API and change by the minute. A margin is what the last trades suggest, not a promise: the gap can close while your offer sits.</p>
+      <p class="small muted" style="margin:10px 0 0">Prices come from the wiki's real-time API and change by the minute. Buy and sell are averages of trades that actually went through, in the last five minutes when enough did, else the last hour; an item only appears when both sides traded. A margin is still not a promise: the gap can close while your offer sits.</p>
     </div>`;
   $$("#flipView [data-flset]").forEach(b=>b.onclick=()=>{ pf[b.dataset.flset] = b.dataset.flval; save(); renderFlip(); });
   $("#flRefresh").onclick = ()=>flipData(true);
