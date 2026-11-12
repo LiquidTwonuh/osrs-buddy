@@ -11225,9 +11225,13 @@ function renderCoffer(){
   // each section rotates through its candidates when its refresh is pressed
   const off = state.coffer.off || (state.coffer.off = {});
   const rot = (list, key)=>{ const k = list.length ? ((off[key] || 0) % list.length) : 0; return list.slice(k).concat(list.slice(0, k)); };
-  const top = rot(fit, "top").slice(0, 3);
+  // the podium always fills to three: the ones that fit your stage first, then the next best
+  // you can do now, so hiding a method brings another one up instead of leaving a gap
+  let top = rot(fit, "top").slice(0, 3);
+  if(top.length < 3) top = top.concat(rot(rest, "top").slice(0, 3 - top.length));
+  if(top.length < 3) top = top.concat(close.slice(0, 3 - top.length));   // within reach, labelled with what it needs
   const topSet = new Set(top.map(m=>m.name));
-  const more = rot(fit.filter(m=>!topSet.has(m.name)).concat(rest), "more").slice(0, 6);
+  const more = rot(fit.filter(m=>!topSet.has(m.name)).concat(rest.filter(m=>!topSet.has(m.name))), "more").slice(0, 6);
   const train = rot(close, "train").slice(0, 3);
   const sref = (key, n, len)=> len > n ? `<button class="ghost small cf-sref" data-cfsref="${key}" data-n="${n}" data-len="${len}" title="Show me different ones">⟲</button>` : "";
   const inTop = new Set(top.map(m=>m.name).concat(more.map(m=>m.name)));
@@ -11299,6 +11303,7 @@ function renderCoffer(){
         <div class="cf-ltrack slim"><div class="cf-lbar" style="width:${pct.toFixed(1)}%"></div></div>
         <div class="cf-h">${cofferTagsHtml(m)}</div>
         ${why.length ? `<div class="cf-why">${why.map(escapeHtml).join(" · ")}</div>` : ""}
+        ${m.gap.ok ? "" : `<div class="small"><span class="cf-eff">Needs ${m.gap.text} · ${xpText(m.gap.effort)} away</span></div>`}
         ${m.loc ? `<div class="small muted">${escapeHtml(m.loc)}</div>` : ""}
         <div class="row cf-hacts">
           <button class="ghost small" data-cfpin="${escapeHtml(m.name)}">${on ? "📌 On your picks" : "📌 Pick"}</button>
@@ -11363,7 +11368,7 @@ function renderCoffer(){
       <div class="qb-grid">${pins.map(n=>cofferCardHtml(byName[n], sel && sel.name===n)).join("")}</div>
     </div>` : ""}
     <div class="panel cf-hero">
-      <div class="section-title" style="margin-top:0"><h3>✦ ${lens ? `Best for ${nice(lens)}` : "Best for you tonight"}</h3><span class="small muted">${lens ? `${fit.length} you can do now with ${nice(lens)}, measured against your levels` : `${st.label}${st.auto ? "" : " (your call)"} · ${escapeHtml(st.why)}`}</span><span class="grow"></span>${sref("top", 3, fit.length)}</div>
+      <div class="section-title" style="margin-top:0"><h3>✦ ${lens ? `Best for ${nice(lens)}` : "Best for you tonight"}</h3><span class="small muted">${lens ? `${fit.length} you can do now with ${nice(lens)}, measured against your levels` : `${st.label}${st.auto ? "" : " (your call)"} · ${escapeHtml(st.why)}`}</span><span class="grow"></span>${sref("top", 3, fit.length >= 3 ? fit.length : fit.length + rest.length)}</div>
       ${top.length ? `<div class="cf-podium">${top.map(heroCard).join("")}</div>`
       : `<div class="empty">Nothing you can do yet fits those answers. Loosen one under Tune, or look under Worth training for.</div>`}
     </div>
