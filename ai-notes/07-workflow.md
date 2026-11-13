@@ -40,12 +40,8 @@ The Claude memory folder (`C:\Users\joshf\.claude\projects\C--Projects\memory\`,
 
 Page-level rethinks skip step 1 and start with a mockup in `design/mockups/`: two directions, real data from Josh's save, Josh picks.
 
-## Routines (scheduled tasks on Josh's desktop; they pause while it is off)
-
-- **Quest steps**, hourly at :05: runs `tools/quest-steps.js`, which gathers quests' quick guides and walkthroughs into `data/quest-steps.json`, and notes progress at the bottom of `BOARD.md`.
-- **Wiki watch**, daily at 9: checks the wiki's money making guides for new, gone or sharply changed methods and notes them at the bottom of `BOARD.md`.
-- **AI notes**, daily in the evening: refreshes this folder from the git history, the Board, CLAUDE.md and the memory folder, rebuilds `ALL.md`, and reports what is waiting in `INBOX.md`.
-
+## Routines (scheduled tasks on Josh's desktop)
+- All cancelled or paused on 2026-11-13. Quest steps and Wiki watch are gone (they kept failing, and the quest data gathered so far is enough). AI notes is paused: this folder is refreshed from the Claude session as part of each day's work instead. If a routine comes back, the Board's Routines section says so.
 ## What an AI may and may not do here
 
 May: read everything in the repo; propose; write into `INBOX.md`; design themes from the theme kit; draw Mortimer in our own style; critique pages against the design rules; draft copy in plain words.

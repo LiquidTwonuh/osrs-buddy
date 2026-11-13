@@ -4,6 +4,9 @@ Updated 2026-11-11 (covers commits through 2026-11-11)
 
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
 
+## 2026-11-13
+- routines: Quest steps and Wiki watch deleted, AI notes paused (Josh).
+
 ## 2026-11-11
 - dev: the Map quest panel is a centred card (was a side panel); clicking the page behind it closes it.
 - dev: scrollbars styled app-wide (thin gold thumb), the quest card centres over the content column, the sidebar folds to a rail; the Map search glass no longer sits on the placeholder.

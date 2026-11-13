@@ -31,4 +31,4 @@ This folder is the project's memory for any AI that isn't the Claude session tha
 
 ## How it stays current
 
-A scheduled routine on Josh's desktop ("AI notes", every evening) reads the git history since the last changelog entry, `BOARD.md`, `CLAUDE.md` and the Claude memory folder, updates the numbered files, rebuilds `ALL.md` with `node tools/ai-notes-bundle.js`, and reports what is waiting in `INBOX.md`. The Claude session also updates these files by hand when something big is decided. The "Updated" line at the top of each file says when it was last touched.
+The Claude session refreshes this folder as part of the day's work (a nightly routine did it until 2026-11-13 and is paused). It reads the git history since the last changelog entry, `BOARD.md`, `CLAUDE.md` and the Claude memory folder, updates the numbered files, rebuilds `ALL.md` with `node tools/ai-notes-bundle.js`, and reports what is waiting in `INBOX.md`. The Claude session also updates these files by hand when something big is decided. The "Updated" line at the top of each file says when it was last touched.

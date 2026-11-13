@@ -1,6 +1,6 @@
 # Mortimeter, the whole brief
 
-Bundled 2026-11-11 from ai-notes/ in C:\Projects\mortimeter. Read it top to bottom; the rules every AI should know are in the first section of the workflow file at the end. Write back through ai-notes/INBOX.md.
+Bundled 2026-11-13 from ai-notes/ in C:\Projects\mortimeter. Read it top to bottom; the rules every AI should know are in the first section of the workflow file at the end. Write back through ai-notes/INBOX.md.
 
 
 
@@ -168,6 +168,9 @@ Things that were decided and should not be reopened without Josh. Newest first w
 
 ## Pages
 
+- **2026-11-11, Flip prices are averages, never a single trade.** The latest high and low are one trade each and showed margins nobody could buy at. Now five-minute averages when at least ten traded each way, else hour averages, and both sides must have traded. Josh's call after trying a bead at 2k each.
+- **2026-11-11, Coffer asks about the Wilderness and financial risk separately.** Josh's suggestion once the sweep showed the wiki's Risky flag is mostly market risk. Each is its own hard filter.
+- **2026-11-11, Coffer reads Wilderness danger from the wiki's warning box.** The Location field missed most Wilderness methods and the MMG/Risky category is mostly market risk, so Risk = No thanks had let the Corporeal Beast through. Now the MMGWarning box decides, a short list covers what the wiki does not flag (Corp, the obelisks), the Abyss is Low Wilderness on the way, and market risk is its own tag that the Risk answer ignores. Evidence: a sweep of all 655 guide pages.
 - **2026-11-11, the Map quest panel is a centred card.** Built as a side panel on 11-09 (reasoning: a card covers the lit path); Josh saw it, loved the popup and asked for it centred, so it is a 620px card with a light scrim that the lit path still reads through. Clicking the page behind it closes it, as do Esc and the X. On a phone it is a bottom sheet. The Focus section was folded away because the goal strip and the Route tab do its job.
 - **2026-11-09, Chill day in every edition.** Josh: "every edition needs chill day". A chip in the Journal composer and Quick entry under the heatmap, in dev, stable (as a local checkpoint, not a ship) and Krystal Klear.
 - **2026-11-02, Upgrades is not a tier list.** Josh: "i actually hate it as a tier list". The data (67 upgrades) is read three ways: by skill ladder (the lead), by what it does, by stage. Anything relevant to an item links to it: a quest chip opens Map on that quest with the path lit, a level row opens Grind on that skill. Ownership is the one thing the app can't know, so the "Got it" tick is the user's.
@@ -231,7 +234,8 @@ The live list is `BOARD.md` (Now, Next, Small fixes, Ideas, Parked). This is the
 
 ## Ideas, not started
 
-- **Coffer, favourite and hide per card (2026-11-10).** Each money making card gets favourite (floats up) and hide (gone for good, with a list in Settings to bring it back), independent of the filters. Josh's example: hide Last Man Standing because it is PvP, keep everything else as filtered. Small, after the Map ships.
+- **Coffer, favourite per card (2026-11-10).** Favourite floats a method up, independent of the filters. Hide shipped to dev on 2026-11-11 (a ⊘ beside the pin; a Hidden box at the foot of Coffer brings any back). Favourite still open.
+- **Vault as the bank (2026-11-11).** Prototype live in Mockups (vault-bank.html): A the bank window, B today's Vault with tab cards under it, a wizard to mark tab starts because the export has none. Josh picks a direction next; then it moves into Vault with marks in the save and tab names.
 - **Coffer runs panel (2026-11-10).** Tree runs, herb runs and the like, tracked properly: Repeatables already times them, this would know the patches, what is planted and when it is ready, what a run yields and costs, and a weekly tally. Josh expects it to be very useful. Queued behind shipping the Map.
 - **Priorities that matter (opt-in).** Home leads with your priorities and what moved on them; Scroll entries tagged with a priority feed a per-priority streak and share of XP; Coffer and Map filter by the active priority; the weekly recap says how much of the week went to them.
 - **Mortimeter as a skill (opt-in).** The app itself has a level: XP from days logged, quests ticked, goals finished, recaps read, Coffer picks done, streaks held. Level-ups with the 99-style fireworks, a tab on Home, maybe unlocks (themes, Mortimer lines). Incentive, never a nag. Needs its own XP table and a cap so it can't be farmed by clicking.
@@ -265,8 +269,19 @@ Updated 2026-11-11 (covers commits through 2026-11-11)
 
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
 
+## 2026-11-13
+- routines: Quest steps and Wiki watch deleted, AI notes paused (Josh).
+
 ## 2026-11-11
 - dev: the Map quest panel is a centred card (was a side panel); clicking the page behind it closes it.
+- dev: scrollbars styled app-wide (thin gold thumb), the quest card centres over the content column, the sidebar folds to a rail; the Map search glass no longer sits on the placeholder.
+- dev: Coffer, hide any method (⊘ beside the pin, Hide on cards and in the detail); a Hidden box at the foot of the page brings them back. The podium always fills to three.
+- dev: Coffer reads Wilderness from the wiki's warning box (Corp, KBD, the obelisks now flagged; the Abyss is Low Wilderness on the way; Market risk is its own tag). Guide cache v7.
+- mockups: Vault as the bank prototype (vault-bank.html), reads the real bank from the app, tab wizard.
+- dev: Coffer's Risk question is two: Wilderness, and financial risk (the wiki's flag), each its own filter.
+- dev: Map console noise gone (image fallback clash). Flip margins come from averages of real trades (5m or 1h), both sides must have traded, buy limit beside the margin.
+- Josh signed off on the Map for now (2026-11-11).
+- dev: the quest card is bigger (900px, three columns, no scrolling on a normal screen) and Rewards lead it as a lit band.
 
 ## 2026-11-10
 - board: Coffer ideas (favourite and hide per card, a runs panel); rules: no installers for Josh, Krystal Klear generates from stable.
@@ -397,12 +412,8 @@ The Claude memory folder (`C:\Users\joshf\.claude\projects\C--Projects\memory\`,
 
 Page-level rethinks skip step 1 and start with a mockup in `design/mockups/`: two directions, real data from Josh's save, Josh picks.
 
-## Routines (scheduled tasks on Josh's desktop; they pause while it is off)
-
-- **Quest steps**, hourly at :05: runs `tools/quest-steps.js`, which gathers quests' quick guides and walkthroughs into `data/quest-steps.json`, and notes progress at the bottom of `BOARD.md`.
-- **Wiki watch**, daily at 9: checks the wiki's money making guides for new, gone or sharply changed methods and notes them at the bottom of `BOARD.md`.
-- **AI notes**, daily in the evening: refreshes this folder from the git history, the Board, CLAUDE.md and the memory folder, rebuilds `ALL.md`, and reports what is waiting in `INBOX.md`.
-
+## Routines (scheduled tasks on Josh's desktop)
+- All cancelled or paused on 2026-11-13. Quest steps and Wiki watch are gone (they kept failing, and the quest data gathered so far is enough). AI notes is paused: this folder is refreshed from the Claude session as part of each day's work instead. If a routine comes back, the Board's Routines section says so.
 ## What an AI may and may not do here
 
 May: read everything in the repo; propose; write into `INBOX.md`; design themes from the theme kit; draw Mortimer in our own style; critique pages against the design rules; draft copy in plain words.
