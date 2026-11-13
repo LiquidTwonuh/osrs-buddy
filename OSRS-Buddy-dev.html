@@ -2470,7 +2470,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <div class="nav-sec">Planning</div>
       <button class="navitem" data-view="goals"><span class="ni-ic">✅</span>Goals</button>
       <button class="navitem" data-view="start"><span class="ni-ic">🗺️</span>Roadmap</button>
-      <button class="navitem" data-view="quests"><span class="ni-ic">🧭</span>Compass</button>
+      <button class="navitem" data-view="quests"><span class="ni-ic">🧭</span>Quest Hub</button>
       <div class="nav-sub hidden" id="navSubMap"></div>
       <button class="navitem" data-view="coffer"><span class="ni-ic">🪙</span>Coffer</button>
       <div class="nav-sub hidden" id="navSubCoffer"></div>
@@ -2953,7 +2953,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     <div class="panel">
       <div class="goals-head">
         <div class="sh-eyebrow" id="mapEyebrow">Planner</div>
-        <h2>🧭 Compass</h2>
+        <h2>🧭 Quest Hub</h2>
         <p class="goals-blurb" id="mapBlurb"></p>
         <span class="small muted" id="qpSub"></span>
       </div>
@@ -10791,7 +10791,7 @@ setInterval(()=>{ if(document.hidden) return; const v = $("#view-home"); if(v &&
 // Earn is what you can do for GP. Vault is what you've got, valued live from your bank. Flip is
 // the Grand Exchange's margins, for the trading kind of GP.
 const COFFER_SECTIONS = [
-  {id:"earn",  label:"Ventures", icon:"⛏️"},
+  {id:"earn",  label:"GP Grinds", icon:"⛏️"},
   {id:"vault", label:"Bank",     icon:"🏦"},
   {id:"flip",  label:"Exchange", icon:"📈"},
   {id:"runs",  label:"Farm",     icon:"🌿"},
@@ -13694,7 +13694,7 @@ async function budTrainAnswer(sk){
   if(db){
     const rows = Object.keys(db.quests).map(n=>({n, xp:(db.quests[n].rewards||{})[sk]||0}))
       .filter(r=>r.xp>0 && !questDone(r.n)).sort((a,b)=>b.xp-a.xp).slice(0,3);
-    if(rows.length) qline = ` Quests still holding ${nice(sk)} XP for you: ${rows.map(r=>`<b>${qpLabel(r.n)}</b> (+${fmt(r.xp)})`).join(" · ")} — Compass charts the route.`;
+    if(rows.length) qline = ` Quests still holding ${nice(sk)} XP for you: ${rows.map(r=>`<b>${qpLabel(r.n)}</b> (+${fmt(r.xp)})`).join(" · ")} — Quest Hub charts the route.`;
   }
   let path = "", link = "";
   const lad = await budTrainLadder(sk);
@@ -15259,7 +15259,7 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", board:"Board", mockups:"Mockups", museum:"Museum", start:"Roadmap", ask:"Ask Bud", quests:"Compass", coffer:"Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", board:"Board", mockups:"Mockups", museum:"Museum", start:"Roadmap", ask:"Ask Bud", quests:"Quest Hub", coffer:"Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
 // ---- Scroll sections ----
 // The page got big enough that one long scroll stopped working. Same data, five
 // sections, heatmap first because that's what people open the page for.
