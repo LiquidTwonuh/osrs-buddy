@@ -25,8 +25,8 @@ The live list is `BOARD.md` (Now, Next, Small fixes, Ideas, Parked). This is the
 
 ## Ideas, not started
 
-- **Coffer, favourite per card (2026-11-10).** Favourite floats a method up, independent of the filters. Hide shipped to dev on 2026-11-11 (a ⊘ beside the pin; a Hidden box at the foot of Coffer brings any back). Favourite still open.
-- **Vault as the bank (2026-11-11).** Prototype live in Mockups (vault-bank.html): A the bank window, B today's Vault with tab cards under it, a wizard to mark tab starts because the export has none. Josh picks a direction next; then it moves into Vault with marks in the save and tab names.
+- **Coffer, favourite and hide per card (2026-11-10).** Both done in dev: hide on 2026-11-11, favourite (a star, 1.8 times the score) on 2026-11-13.
+- **Vault as the bank (2026-11-11).** Done: Josh picked A on 2026-11-13 and it is in Vault. The mockup stays for B.
 - **Coffer runs panel (2026-11-10).** Tree runs, herb runs and the like, tracked properly: Repeatables already times them, this would know the patches, what is planted and when it is ready, what a run yields and costs, and a weekly tally. Josh expects it to be very useful. Queued behind shipping the Map.
 - **Priorities that matter (opt-in).** Home leads with your priorities and what moved on them; Scroll entries tagged with a priority feed a per-priority streak and share of XP; Coffer and Map filter by the active priority; the weekly recap says how much of the week went to them.
 - **Mortimeter as a skill (opt-in).** The app itself has a level: XP from days logged, quests ticked, goals finished, recaps read, Coffer picks done, streaks held. Level-ups with the 99-style fireworks, a tab on Home, maybe unlocks (themes, Mortimer lines). Incentive, never a nag. Needs its own XP table and a cap so it can't be farmed by clicking.

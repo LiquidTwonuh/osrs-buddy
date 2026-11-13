@@ -5,6 +5,8 @@ Updated 2026-11-11 (covers commits through 2026-11-11)
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
 
 ## 2026-11-13
+- dev: Vault opens with the bank window (direction A): tabs, slot grid, stack numbers, search, gp in the corner, Mark tabs wizard with names in the save.
+- dev: Coffer favourites (star), floats a method up the rankings.
 - routines: Quest steps and Wiki watch deleted, AI notes paused (Josh).
 
 ## 2026-11-11

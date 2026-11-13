@@ -790,6 +790,51 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .vt-row{display:flex; align-items:center; gap:10px; padding:7px 10px; border-radius:10px; border:1px solid var(--border); background:var(--inset)}
   .vt-ico{width:28px; height:28px; object-fit:contain; flex:none; image-rendering:pixelated}
   .vt-val{text-align:right; font-weight:700; color:var(--gold); font-variant-numeric:tabular-nums}
+  /* the bank window: our own frame, the game's stack-number colours, icons from RuneLite's cache */
+  .bk{padding:0; overflow:hidden}
+  .bk-head{display:flex; align-items:center; gap:14px; padding:12px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap}
+  .bk-head h3{margin:0; font-family:var(--font-display); font-size:22px; color:var(--gold); font-weight:600}
+  .bk-head .bk-val{margin-left:auto; text-align:right}
+  .bk-head .bk-val b{display:block; font-family:var(--font-display); font-size:22px; color:var(--gold); font-weight:600; line-height:1; font-variant-numeric:tabular-nums}
+  .bk-head .bk-val span{font-size:11.5px; color:var(--muted)}
+  .bk-wiz{display:none; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 14px; background:var(--panel2); border-bottom:1px solid var(--border); font-size:13px}
+  .bk.wizard .bk-wiz{display:flex}
+  .bk-chips{display:flex; gap:5px; flex-wrap:wrap}
+  .bk-chip{background:var(--inset); border:1px solid var(--border); border-radius:999px; padding:2px 9px; font-size:12px; display:inline-flex; align-items:center; gap:6px}
+  .bk-chip img{width:18px; height:16px; object-fit:contain; image-rendering:pixelated}
+  .bk-tabs{display:flex; gap:4px; padding:8px 10px; background:var(--panel2); border-bottom:1px solid var(--border); overflow-x:auto}
+  .bk-tab{flex:none; width:46px; height:42px; border-radius:9px; border:1px solid var(--border); background:var(--inset); display:grid; place-items:center; cursor:pointer; position:relative; color:var(--muted); font-size:11px; padding:0; box-shadow:none}
+  .bk-tab:hover{border-color:var(--gold-dim); background:var(--inset)}
+  .bk-tab.on{background:var(--active); border-color:var(--gold); box-shadow:0 0 0 2px var(--glow)}
+  .bk-tab img{width:32px; height:28px; object-fit:contain; image-rendering:pixelated}
+  .bk-tab .n{position:absolute; right:3px; bottom:2px; font-size:9.5px; color:var(--muted)}
+  .bk-tab.all{font-family:var(--font-display); font-size:13px; color:var(--text)}
+  .bk-tab.add{border-style:dashed; font-size:18px}
+  .bk-name{padding:7px 14px 0; font-size:12.5px; color:var(--muted); display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .bk-name b{color:var(--text); font-weight:600}
+  .bk-name input{background:transparent; border:1px solid transparent; border-radius:6px; color:var(--text); font:inherit; font-weight:600; padding:2px 6px; width:150px}
+  .bk-name input:hover{border-color:var(--border)} .bk-name input:focus{border-color:var(--gold-dim); background:var(--inset); outline:none}
+  .bk-grid{display:grid; grid-template-columns:repeat(8, 1fr); gap:3px; padding:10px 14px 14px; max-height:620px; overflow:auto}
+  .bk-slot{position:relative; aspect-ratio:1; background:var(--inset); border:1px solid var(--hair, rgba(255,255,255,.07)); border-radius:6px; display:grid; place-items:center; cursor:default}
+  .bk-slot img{width:36px; height:32px; object-fit:contain; image-rendering:pixelated; filter:drop-shadow(0 1px 0 rgba(0,0,0,.8))}
+  .bk-slot:hover{border-color:var(--gold-dim); background:var(--active)}
+  .bk-slot .q{position:absolute; left:4px; top:2px; font-size:11.5px; font-weight:700; color:#ffe94a; text-shadow:1px 1px 0 #000, 0 0 2px #000; font-family:Verdana,"Segoe UI",sans-serif; letter-spacing:-.2px}
+  .bk-slot .q.k{color:#f4f1e6} .bk-slot .q.m{color:#7fe36a}
+  .bk-slot .v{position:absolute; right:3px; bottom:2px; font-size:9.5px; color:var(--muted); display:none}
+  .bk.values .bk-slot .v{display:block}
+  .bk-slot.hit{outline:2px solid var(--gold); outline-offset:-1px}
+  .bk-slot.dim{opacity:.18}
+  .bk.wizard .bk-slot{cursor:pointer}
+  .bk-slot.mark{border-left:3px solid var(--gold); border-radius:3px 6px 6px 3px}
+  .bk-slot .tb{position:absolute; left:-1px; top:-1px; background:var(--gold); color:#1a1408; font-size:9.5px; font-weight:700; padding:0 4px; border-radius:5px 0 5px 0; display:none}
+  .bk-slot.mark .tb{display:block}
+  .bk-slot.tabstart{box-shadow:inset 0 0 0 1px var(--gold3)}
+  .bk-foot{display:flex; gap:10px; align-items:center; padding:10px 14px; border-top:1px solid var(--border); background:var(--panel2); flex-wrap:wrap}
+  .bk-search{position:relative; flex:1; min-width:180px}
+  .bk-search input[type=text]{width:100%; background:var(--inset); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:8px 12px 8px 32px; font:inherit; font-size:13.5px}
+  .bk-search input[type=text]:focus{outline:none; border-color:var(--gold-dim); box-shadow:0 0 0 3px var(--glow)}
+  .bk-search .g{position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none}
+  @media (max-width:700px){ .bk-grid{grid-template-columns:repeat(6, 1fr); padding:8px} .bk-slot img{width:30px; height:27px} .bk-head h3{font-size:19px} }
   /* Flip */
   .fl-list{display:flex; flex-direction:column; gap:6px}
   .fl-row{display:grid; grid-template-columns:28px minmax(140px,1.4fr) repeat(5, minmax(72px,1fr)) 32px; align-items:center; gap:10px; padding:7px 10px;
@@ -965,6 +1010,8 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-lgp .muted{font-size:10px; font-weight:500}
   .cf-lacts{grid-area:pin; display:flex; gap:4px; align-items:center}
   .cf-hidebtn{opacity:.35}
+  .cf-fav{opacity:.35} .cf-fav.on{opacity:1; color:var(--gold); border-color:var(--gold-dim); cursor:pointer}
+  .cf-lrow:hover .cf-fav, .rd-row:hover .cf-fav{opacity:1}
   .cf-lrow:hover .cf-hidebtn, .rd-row:hover .cf-hidebtn, .cf-hidebtn:focus-visible{opacity:1}
   @media (hover:none){ .cf-hidebtn{opacity:.7} }
   .cf-hiddenbox summary{cursor:pointer}
@@ -10581,6 +10628,83 @@ function vaultChange(sinceMs){
   if(base.t > cut && h.length < 2) return null;
   return {diff: cur - base.v, pct: base.v ? (cur-base.v)/base.v*100 : 0};
 }
+// ---- the bank window ----
+// Tab marks are the slots where a tab begins (slot 0 always begins tab 1, the stretch after the
+// last mark is the main tab, the way the game orders the container). They live in the save with
+// the tab names; the search text and the wizard flag are for this visit only.
+let vtQ = "", vtWiz = false;
+function vaultTabs(bank){
+  const vt = state.vault = state.vault || {};
+  const marks = (vt.marks || []).filter(n=>n > 0 && n < bank.length).sort((a,b)=>a-b);
+  const names = vt.names || {};
+  if(!marks.length) return [{id:0, label:"Everything", from:0, to:bank.length, main:true}];
+  const bounds = [0].concat(marks).concat([bank.length]), out = [];
+  for(let i = 0; i < bounds.length - 1; i++){
+    const last = i === bounds.length - 2;
+    out.push({id:i, label: names[i] || (last ? "Main tab" : "Tab " + (i+1)), from:bounds[i], to:bounds[i+1], main:last});
+  }
+  return out;
+}
+function vaultSlotHtml(it, marks, showStarts){
+  const mi = marks.indexOf(it.slot), q = it.qty;
+  const qt = q >= 1e7 ? Math.floor(q/1e6) + "M" : q >= 1e5 ? Math.floor(q/1e3) + "K" : q > 1 ? String(q) : "";
+  const hit = vtQ && it.n.toLowerCase().includes(vtQ);
+  return `<div class="bk-slot ${mi>-1?"mark":""} ${vtQ ? (hit ? "hit" : "dim") : ""} ${showStarts && mi>-1 ? "tabstart" : ""}" data-slot="${it.slot}" title="${escapeHtml(it.n)} · ${fmt(q)}${it.p ? ` × ${fmt(it.p)} gp = ${gpShort(it.v)}` : " · no price"}${vtWiz ? (it.slot ? "\nTap to start a tab here" : "\nTab 1 always starts here") : ""}">
+    <img src="${itemIcon(it.id)}" alt="" loading="lazy"><span class="q ${q>=1e7?"m":q>=1e5?"k":""}">${qt}</span><span class="tb">${mi+2}</span><span class="v">${it.v ? gpShort(it.v) : ""}</span></div>`;
+}
+function vaultWindowHtml(bank, total, when){
+  const vt = state.vault = state.vault || {};
+  const items = bank.map(([id, qty], slot)=>{ const p = itemPrice(id); return {id, qty, slot, p, v:p*qty, n:itemName(id)}; });
+  const tabs = vaultTabs(bank), marks = (vt.marks || []).slice().sort((a,b)=>a-b);
+  const cur = typeof vt.tab === "number" && tabs[vt.tab] && marks.length ? vt.tab : -1;
+  const showAll = vtWiz || cur < 0 || !!vtQ;
+  const t = showAll ? null : tabs[cur];
+  const pool = t ? items.slice(t.from, t.to) : items;
+  const shown = vtQ ? pool.filter(it=>it.n.toLowerCase().includes(vtQ)) : pool;
+  const worth = l => l.reduce((a, it)=>a + it.v, 0);
+  const tabBtns = [`<button class="bk-tab all ${cur<0 && !vtWiz ? "on" : ""}" data-vtab="-1" title="Every tab at once">All</button>`]
+    .concat(marks.length ? tabs.map((tb, i)=>{ const lead = items.slice(tb.from, tb.to).sort((a,b)=>b.v-a.v)[0]; return `<button class="bk-tab ${cur===i && !vtWiz ? "on" : ""}" data-vtab="${i}" title="${escapeHtml(tb.label)} · ${fmt(tb.to-tb.from)} ${tb.to-tb.from===1?"stack":"stacks"} · ${gpShort(worth(items.slice(tb.from, tb.to)))} gp">${lead ? `<img src="${itemIcon(lead.id)}" alt="">` : ""}<span class="n">${tb.main ? "★" : i+1}</span></button>`; }) : [])
+    .concat([`<button class="bk-tab add" data-vtab="wiz" title="${marks.length ? "Change where your tabs begin" : "Mark where your tabs begin"}">${marks.length ? "✎" : "+"}</button>`]);
+  const nameBar = vtWiz ? `<b>Marking tabs</b> · ${marks.length ? marks.length + 1 + " tabs so far" : "no marks yet, so it is all one tab"}`
+    : t ? `<input type="text" id="vtName" value="${escapeHtml(t.label)}" title="Name this tab" maxlength="24"> · ${fmt(t.to-t.from)} ${t.to-t.from===1?"stack":"stacks"} · ${gpShort(worth(pool))} gp`
+    : `<b>Everything</b>${marks.length ? ` · ${tabs.length} tabs, the gold edge shows where each begins` : " · no tabs marked yet, so this is the whole bank in slot order"}`;
+  return `<div class="panel bk ${vtWiz ? "wizard" : ""} ${vt.vals ? "values" : ""}" id="bkWin">
+    <div class="bk-head"><h3>Your bank</h3><span class="small muted">${when ? `as of ${fmtDay(isoDate(when))} at ${when.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}` : ""}</span>
+      <div class="bk-val"><b>${gpShort(worth(shown))} gp</b><span>${vtQ ? `${fmt(shown.length)} matching ${shown.length===1?"stack":"stacks"}` : t ? `${escapeHtml(t.label)}, ${fmt(pool.length)} ${pool.length===1?"stack":"stacks"}` : `everything, ${fmt(bank.length)} stacks`}</span></div></div>
+    <div class="bk-wiz"><span><b>Mark your tabs.</b> Tap the first item of each tab, in the order they sit in game. Everything after your last mark is the main tab. Tap a mark again to clear it.</span>
+      <span class="bk-chips">${marks.map((m, i)=>`<span class="bk-chip"><img src="${itemIcon(items[m].id)}" alt="">Tab ${i+2} from ${escapeHtml(items[m].n)}</span>`).join("")}</span>
+      <span class="grow"></span><button class="ghost small" id="vtWizClear">Clear all</button><button class="primary small" id="vtWizDone">Done</button></div>
+    <div class="bk-tabs">${tabBtns.join("")}</div>
+    <div class="bk-name" id="vtNameBar">${nameBar}</div>
+    <div class="bk-grid" id="vtGrid">${(vtQ ? shown : pool).map(it=>vaultSlotHtml(it, marks, showAll)).join("") || `<div class="muted small" style="grid-column:1/-1; padding:20px; text-align:center">Nothing in your bank matches.</div>`}</div>
+    <div class="bk-foot">
+      <div class="bk-search"><span class="g" aria-hidden="true">⌕</span><input type="text" id="vtQ" placeholder="Search your bank" autocomplete="off" value="${escapeHtml(vtQ)}"></div>
+      <button class="ghost small ${vt.vals ? "on" : ""}" id="vtVals" title="Show each stack's worth in its corner">gp in the corner</button>
+      <button class="ghost small ${vtWiz ? "on" : ""}" id="vtWiz">${marks.length ? "Change tabs" : "Mark tabs"}</button>
+      <span class="small muted">${fmt(bank.length)} stacks · ${gpShort(total)} gp in all</span>
+    </div></div>`;
+}
+function vaultWireWindow(bank){
+  const vt = state.vault = state.vault || {};
+  $$("#bkWin [data-vtab]").forEach(b=>b.onclick = ()=>{
+    if(b.dataset.vtab === "wiz"){ vtWiz = true; vt.tab = -1; } else { vt.tab = +b.dataset.vtab; vtWiz = false; }
+    save(); renderVault();
+  });
+  const wz = $("#vtWiz"); if(wz) wz.onclick = ()=>{ vtWiz = !vtWiz; if(vtWiz) vt.tab = -1; save(); renderVault(); };
+  const wd = $("#vtWizDone"); if(wd) wd.onclick = ()=>{ vtWiz = false; renderVault(); };
+  const wc = $("#vtWizClear"); if(wc) wc.onclick = ()=>{ vt.marks = []; vt.names = {}; save(); renderVault(); };
+  const vb = $("#vtVals"); if(vb) vb.onclick = ()=>{ vt.vals = !vt.vals; save(); renderVault(); };
+  const nm = $("#vtName"); if(nm) nm.onchange = ()=>{ vt.names = vt.names || {}; const v = nm.value.trim(); if(v) vt.names[vt.tab] = v; else delete vt.names[vt.tab]; save(); renderVault(); };
+  const q = $("#vtQ"); if(q) q.oninput = ()=>{ vtQ = q.value.trim().toLowerCase(); const pos = q.selectionStart; renderVault(); const q2 = $("#vtQ"); if(q2){ q2.focus(); q2.setSelectionRange(pos, pos); } };
+  // in the wizard a tap marks (or clears) the start of a tab; slot 0 always begins tab 1
+  $$("#vtGrid .bk-slot").forEach(sl=>sl.onclick = ()=>{
+    if(!vtWiz) return;
+    const slot = +sl.dataset.slot; if(!slot) return;
+    vt.marks = vt.marks || []; const i = vt.marks.indexOf(slot);
+    if(i > -1) vt.marks.splice(i, 1); else vt.marks.push(slot);
+    vt.marks.sort((a,b)=>a-b); save(); renderVault();
+  });
+}
 function renderVault(){
   const el = $("#vaultView"); if(!el) return;
   const bank = vaultBank();
@@ -10603,7 +10727,8 @@ function renderVault(){
   const top = v.rows.filter(r=>r.v > 0).slice(0, 12);
   const hist = vaultHistory().slice(-40);
   const hi = Math.max(...hist.map(h=>h.v), 1);
-  el.innerHTML = `<div class="panel">
+  el.innerHTML = `${vaultWindowHtml(bank, v.total, when)}
+    <div class="panel">
       <div class="vt-hero">
         <div><div class="sh-eyebrow">Bank value</div><div class="vt-total">${fmt(v.total)} <span class="muted">gp</span></div>
           <div class="small muted">${when ? `as of ${fmtDay(isoDate(when))} at ${when.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}` : ""} · ${fmt(bank.length)} items, ${v.unpriced ? `${v.unpriced} untradeable or unpriced` : "all priced"}</div></div>
@@ -10621,6 +10746,7 @@ function renderVault(){
         </div>`).join("")}</div>
       <p class="small muted" style="margin:10px 0 0">Prices are the middle of the latest Grand Exchange buy and sell. Untradeable items count as nothing here, which is why a bank full of capes can look poor.</p>
     </div>`;
+  vaultWireWindow(bank);
 }
 
 // ============ FLIP ============
@@ -11058,6 +11184,7 @@ function cofferWhy(m, pf){
   if(tier === "love"){ why.push("trains " + nice(sk) + ", which you love"); mult *= 1.6; }
   else if(tier === "like"){ why.push("trains " + nice(sk) + ", which you like"); mult *= 1.25; }
   if(pf.xp === "both" && ["Skilling","Processing"].includes(m.group)){ why.push("XP as well as GP"); mult *= 1.15; }
+  if(cofferFavs().includes(m.name)){ why.push("one of your favourites"); mult *= 1.8; }
   // the wiki's high-end boss rates assume an account that's there; judge them against your stage
   const stage = cofferStage(pf).id;
   if(/^Combat\/High/.test(m.cat)){
@@ -11094,6 +11221,14 @@ function cofferPins(){ const c = state.coffer = state.coffer || {}; c.pins = c.p
 // Hidden methods: the ones you never want to see, whatever the filters say. They leave every
 // section and the Home line, and wait in the Hidden box at the foot of Coffer until brought back.
 function cofferHidden(){ const c = state.coffer = state.coffer || {}; c.hidden = c.hidden || []; return c.hidden; }
+// Favourites float up the rankings without touching a filter: a star on any method.
+function cofferFavs(){ const c = state.coffer = state.coffer || {}; c.favs = c.favs || []; return c.favs; }
+function cofferFavToggle(name){
+  const f = cofferFavs(), i = f.indexOf(name);
+  if(i === -1) f.push(name); else f.splice(i, 1);
+  save(); renderCoffer();
+  toast(i === -1 ? "★ " + name + " is a favourite now. It floats up." : name + " is no longer a favourite.");
+}
 function cofferHide(name){
   const hid = cofferHidden(); if(hid.includes(name)) return;
   hid.push(name);
@@ -11165,6 +11300,7 @@ function cofferDetailHtml(m){
     ${m.items ? `<div class="qpd-sec" style="margin-top:12px"><h5>Bring</h5><div class="small">${escapeHtml(m.items)}</div></div>` : ""}
     <div class="row" style="gap:6px; margin-top:14px">
       <button class="ghost small" data-cfpin="${escapeHtml(m.name)}">${cofferPins().includes(m.name) ? "📌 On your picks" : "📌 Add to picks"}</button>
+      <button class="ghost small" data-cffav="${escapeHtml(m.name)}" title="Floats it up the lists">${cofferFavs().includes(m.name) ? "★ Favourite" : "☆ Favourite"}</button>
       <a class="ghost small" href="${cofferGuideUrl(m)}" target="_blank" rel="noopener">Wiki guide ↗</a>
       <button class="ghost small" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">Hide this one</button>
       <span class="grow"></span>
@@ -11319,7 +11455,7 @@ function renderCoffer(){
     return `<div class="cf-lrow ${m.gap.ok?"":"short"} ${on?"pinned":""} ${sel && sel.name===m.name?"sel":""}" data-cfopen="${escapeHtml(m.name)}">
       <div class="cf-lname">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : `<span class="cf-lgroup">${groupIcon(m)}</span>`}<b>${escapeHtml(m.name)}</b></div>
       <div class="cf-ltrack"><div class="cf-lbar" style="width:${pct.toFixed(1)}%"></div><span class="cf-lgp">${cofferPayHtml(m)}</span></div>
-      <div class="cf-lacts"><button class="qp-pin ${on?"on":""}" data-cfpin="${escapeHtml(m.name)}" title="${on?"On your picks":"Add to your picks"}">${on?"📌":"+"}</button><button class="qp-pin cf-hidebtn" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">⊘</button></div>
+      <div class="cf-lacts"><button class="qp-pin cf-fav ${cofferFavs().includes(m.name)?"on":""}" data-cffav="${escapeHtml(m.name)}" title="${cofferFavs().includes(m.name)?"A favourite. Tap to take the star off":"Favourite: floats it up the lists"}">${cofferFavs().includes(m.name)?"★":"☆"}</button><button class="qp-pin ${on?"on":""}" data-cfpin="${escapeHtml(m.name)}" title="${on?"On your picks":"Add to your picks"}">${on?"📌":"+"}</button><button class="qp-pin cf-hidebtn" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">⊘</button></div>
       <div class="cf-lsub">${cofferTagsHtml(m)}<span>${need ? `Needs ${need}` : rec ? `Wiki recommends ${rec}` : "You've got the levels"}${
         m.gap.ok ? "" : ` <span class="cf-eff">${xpText(m.gap.effort)} away</span>`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}</span>${
         why.length ? `<span class="cf-why">${why.map(escapeHtml).join(" · ")}</span>` : ""}</div>
@@ -11347,6 +11483,7 @@ function renderCoffer(){
         ${m.loc ? `<div class="small muted">${escapeHtml(m.loc)}</div>` : ""}
         <div class="row cf-hacts">
           <button class="ghost small" data-cfpin="${escapeHtml(m.name)}">${on ? "📌 On your picks" : "📌 Pick"}</button>
+          <button class="ghost small" data-cffav="${escapeHtml(m.name)}" title="Floats it up the lists">${cofferFavs().includes(m.name) ? "★ Favourite" : "☆ Favourite"}</button>
           <a class="ghost small" href="${cofferGuideUrl(m)}" target="_blank" rel="noopener">Guide ↗</a>
           <span class="grow"></span>
           <button class="ghost small cf-hidebtn" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">Hide</button>
@@ -11472,6 +11609,7 @@ function renderCoffer(){
   const full = $("#cofferView .cf-full"); if(full) full.ontoggle = ()=>{ state.coffer.full = full.open; save(); };
   const hbox = $("#cofferView .cf-hiddenbox"); if(hbox) hbox.ontoggle = ()=>{ state.coffer.hiddenOpen = hbox.open; save(); };
   $$("#cofferView [data-cfhide]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferHide(b.dataset.cfhide); });
+  $$("#cofferView [data-cffav]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferFavToggle(b.dataset.cffav); });
   $$("#cofferView [data-cfunhide]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferUnhide(b.dataset.cfunhide); });
   const ua = $("#cfUnhideAll"); if(ua) ua.onclick = ()=>{ const n = cofferHidden().length; cofferHidden().length = 0; save(); renderCoffer(); renderRoundsHome(); toast(`All ${n} back in the lists.`); };
   $$("#cofferView [data-cfpin]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); cofferPinToggle(b.dataset.cfpin); });
