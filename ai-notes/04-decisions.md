@@ -15,6 +15,7 @@ Things that were decided and should not be reopened without Josh. Newest first w
 
 ## Pages
 
+- **2026-11-13, the rune themes ship as CSS, the Canvas landscape waits.** ChatGPT's catalog has palettes, a decoration layer and a Canvas renderer. Palettes and decoration went in (generated from the catalog, mapped to the app's classes). The renderer did not: it is a cost on phones and the push is close. The brand mark is the catalog's cel-shaded Mortimer. The Theme button opens the Look step instead of cycling.
 - **2026-11-11, Flip prices are averages, never a single trade.** The latest high and low are one trade each and showed margins nobody could buy at. Now five-minute averages when at least ten traded each way, else hour averages, and both sides must have traded. Josh's call after trying a bead at 2k each.
 - **2026-11-11, Coffer asks about the Wilderness and financial risk separately.** Josh's suggestion once the sweep showed the wiki's Risky flag is mostly market risk. Each is its own hard filter.
 - **2026-11-11, Coffer reads Wilderness danger from the wiki's warning box.** The Location field missed most Wilderness methods and the MMG/Risky category is mostly market risk, so Risk = No thanks had let the Corporeal Beast through. Now the MMGWarning box decides, a short list covers what the wiki does not flag (Corp, the obelisks), the Abyss is Low Wilderness on the way, and market risk is its own tag that the Risk answer ignores. Evidence: a sweep of all 655 guide pages.

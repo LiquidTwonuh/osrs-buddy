@@ -64,14 +64,6 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     --cellbg:#141922; --code:#a9c6d9; --ph:#6b7d8e; --xp:#7d92a4; --catbd:#283140;
     --dotdim:#3f566b; --swempty:#2c3a4c; --glow:rgba(159,220,236,.16);
   }
-  body[data-theme="nature"]{
-    --bg:#131a13; --bg2:#1a231a; --panel:#1b241b; --panel2:#243024; --border:#3a4d38;
-    --gold:#a4d98a; --gold-dim:#74a85e; --gold2:#8cc470; --gold3:#4c7a3a;
-    --text:#e4ecdf; --muted:#99ac92;
-    --inset:#0f150f; --active:#2a3d28; --btnlo:#1d281c; --btnhov1:#31452e; --btnhov2:#25321f;
-    --cellbg:#141b13; --code:#bcd9a9; --ph:#6f8168; --xp:#7f947a; --catbd:#2a382a;
-    --dotdim:#46603f; --swempty:#31452e; --glow:rgba(164,217,138,.15);
-  }
   body[data-theme="shadow"]{
     --bg:#101014; --bg2:#16161c; --panel:#17171d; --panel2:#202028; --border:#3a3a48;
     --gold:#b9a7e8; --gold-dim:#8a77bd; --gold2:#a390d6; --gold3:#5c4e88;
@@ -113,6 +105,229 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     --cellbg:#1a110d; --code:#e6b394; --ph:#86685a; --xp:#9a7c6c; --catbd:#382317;
     --dotdim:#6b4430; --swempty:#4a2c1c; --glow:rgba(240,146,92,.15);
   }
+  /* ===== Rune themes (ChatGPT's catalog, 2026-11-13): 23 runes and Earth Clay, every token set ===== */
+  body[data-theme="air"]{
+    --bg:#161c1f; --bg2:#21292d; --panel:#263035; --panel2:#303b40; --inset:#121719; --cellbg:#1a2226; --active:#35464b;
+    --border:#4e636b; --catbd:#425359; --gold:#e4f4f5; --gold-dim:#b4cbd0; --gold2:#c7e0e3; --gold3:#7e9da4;
+    --glow:rgba(228,244,245,.18); --text:#edf4f4; --muted:#b3c6cb; --ph:#9aafb5; --code:#d7eced; --xp:#a6bec2;
+    --btnlo:#2b363a; --btnhov1:#42565c; --btnhov2:#36464c; --green:#9dd7b0; --green-bg:#2a3d34; --red:#ff9d9a;
+    --blue:#9dccff; --dotdim:#597278; --swempty:#35454b; --shadow:0 2px 0 #121719, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="water"]{
+    --bg:#0c1720; --bg2:#142630; --panel:#182c37; --panel2:#203943; --inset:#0b151d; --cellbg:#11212b; --active:#204654;
+    --border:#3b5f6e; --catbd:#304a54; --gold:#68c8e2; --gold-dim:#509fb7; --gold2:#57b3ce; --gold3:#3c778e;
+    --glow:rgba(104,200,226,.18); --text:#e4eef2; --muted:#a4bbc3; --ph:#8baab5; --code:#a7d7e6; --xp:#94b7c3;
+    --btnlo:#1b3340; --btnhov1:#2b4b5b; --btnhov2:#243e4a; --green:#93d6a1; --green-bg:#243b31; --red:#ff9699;
+    --blue:#88beff; --dotdim:#365e70; --swempty:#294450; --shadow:0 2px 0 #0b151d, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="earth"]{
+    --bg:#151b13; --bg2:#202a1a; --panel:#252e1e; --panel2:#303a25; --inset:#10160e; --cellbg:#1b2317; --active:#394c25;
+    --border:#495b36; --catbd:#3c4a2e; --gold:#a8bb5a; --gold-dim:#879a49; --gold2:#97aa50; --gold3:#5d7138;
+    --glow:rgba(168,187,90,.18); --text:#e9ebdb; --muted:#b3b99e; --ph:#9da78b; --code:#c7d49c; --xp:#a5b38b;
+    --btnlo:#293522; --btnhov1:#404f2e; --btnhov2:#354128; --green:#a2d782; --green-bg:#2c402a; --red:#fb9e92;
+    --blue:#95c4e3; --dotdim:#4a6034; --swempty:#38472a; --shadow:0 2px 0 #10160e, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="fire"]{
+    --bg:#1c1414; --bg2:#281a18; --panel:#2e211e; --panel2:#3c2a24; --inset:#150e0d; --cellbg:#201714; --active:#4b2d20;
+    --border:#67463a; --catbd:#53372e; --gold:#ffb35f; --gold-dim:#d38b49; --gold2:#eca151; --gold3:#a75d2c;
+    --glow:rgba(255,179,95,.18); --text:#faece1; --muted:#c9afa3; --ph:#b89a8f; --code:#f9d0aa; --xp:#c7a38d;
+    --btnlo:#392620; --btnhov1:#583628; --btnhov2:#462e24; --green:#a8d989; --green-bg:#313e26; --red:#ff9092;
+    --blue:#98c0f0; --dotdim:#7d4d30; --swempty:#493128; --shadow:0 2px 0 #150e0d, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="sunfire"]{
+    --bg:#21180c; --bg2:#2e220f; --panel:#332610; --panel2:#3d2e13; --inset:#17130e; --cellbg:#281e0e; --active:#483616;
+    --border:#634b1c; --catbd:#4f3b17; --gold:#f0b83f; --gold-dim:#c09333; --gold2:#d7a539; --gold3:#8d6b27;
+    --glow:rgba(240,184,63,.18); --text:#eae5d6; --muted:#bfbdaa; --ph:#adac96; --code:#e2d6b2; --xp:#b3b399;
+    --btnlo:#362811; --btnhov1:#4f3b17; --btnhov2:#423214; --green:#99d4a3; --green-bg:#323826; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#6c521e; --swempty:#443315; --shadow:0 2px 0 #13100e, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="mind"]{
+    --bg:#1c1516; --bg2:#291e20; --panel:#2e2224; --panel2:#3a2a2d; --inset:#160f11; --cellbg:#201719; --active:#442b2e;
+    --border:#634449; --catbd:#50353a; --gold:#f4aa87; --gold-dim:#d18a70; --gold2:#e29376; --gold3:#aa5f49;
+    --glow:rgba(244,170,135,.18); --text:#f7e7df; --muted:#c8a9a5; --ph:#b79995; --code:#f4c6ae; --xp:#c29d93;
+    --btnlo:#382529; --btnhov1:#573239; --btnhov2:#472b30; --green:#9bd696; --green-bg:#293b2a; --red:#ff9298;
+    --blue:#9cc8f3; --dotdim:#755049; --swempty:#473134; --shadow:0 2px 0 #160f11, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="body"]{
+    --bg:#201827; --bg2:#2b2133; --panel:#2e2337; --panel2:#372a40; --inset:#17131e; --cellbg:#261d2e; --active:#40314a;
+    --border:#564363; --catbd:#453550; --gold:#ca9de1; --gold-dim:#a37eb6; --gold2:#b68dcb; --gold3:#785d88;
+    --glow:rgba(202,157,225,.18); --text:#e4e1ef; --muted:#b8b7cb; --ph:#a5a6ba; --code:#d6cde6; --xp:#a9acc3;
+    --btnlo:#31253a; --btnhov1:#453550; --btnhov2:#3b2d45; --green:#99d4a3; --green-bg:#31383a; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#5d486a; --swempty:#3d2f47; --shadow:0 2px 0 #121019, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="cosmic"]{
+    --bg:#101527; --bg2:#181e32; --panel:#1b2136; --panel2:#22293f; --inset:#0d101d; --cellbg:#151a2d; --active:#2b334c;
+    --border:#3c4562; --catbd:#2a314a; --gold:#a7baf2; --gold-dim:#8696c5; --gold2:#98aade; --gold3:#66739b;
+    --glow:rgba(167,186,242,.18); --text:#e5e9f2; --muted:#b9c1d0; --ph:#a7b2c3; --code:#cfdcee; --xp:#a5b6c9;
+    --btnlo:#1c2237; --btnhov1:#303852; --btnhov2:#252c43; --green:#99d4a3; --green-bg:#233339; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#424b6a; --swempty:#2a314a; --shadow:0 2px 0 #0b0d16, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="chaos"]{
+    --bg:#271619; --bg2:#321c1e; --panel:#361e20; --panel2:#3e2325; --inset:#1c1114; --cellbg:#2d191c; --active:#4a292b;
+    --border:#603536; --catbd:#48282a; --gold:#ea817d; --gold-dim:#bf6967; --gold2:#d67673; --gold3:#965352;
+    --glow:rgba(234,129,125,.18); --text:#ede2e3; --muted:#c3b8bd; --ph:#b0abb4; --code:#dcd1d7; --xp:#afadb8;
+    --btnlo:#371f21; --btnhov1:#502c2e; --btnhov2:#422527; --green:#99d4a3; --green-bg:#35332e; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#67393a; --swempty:#48282a; --shadow:0 2px 0 #140e11, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="astral"]{
+    --bg:#1e1c31; --bg2:#292536; --panel:#2e2938; --panel2:#37313c; --inset:#161523; --cellbg:#242134; --active:#433b41;
+    --border:#5a4e4b; --catbd:#413940; --gold:#edc88a; --gold-dim:#bfa276; --gold2:#d8b781; --gold3:#947e64;
+    --glow:rgba(237,200,138,.18); --text:#eeebe4; --muted:#c4c3bf; --ph:#b0b4b6; --code:#dddfd9; --xp:#b0b8ba;
+    --btnlo:#2f2a38; --btnhov1:#494044; --btnhov2:#3b343d; --green:#99d4a3; --green-bg:#2e3841; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#62554e; --swempty:#413940; --shadow:0 2px 0 #11101a, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="nature"]{
+    --bg:#14231b; --bg2:#1b2c22; --panel:#1d2f25; --panel2:#23372a; --inset:#101915; --cellbg:#18281f; --active:#2a4132;
+    --border:#385340; --catbd:#293f31; --gold:#8fc99a; --gold-dim:#74a47e; --gold2:#83b88d; --gold3:#5a8263;
+    --glow:rgba(143,201,154,.18); --text:#e2ebe7; --muted:#b5c3c1; --ph:#a4b4b8; --code:#cadfdc; --xp:#a2b8bc;
+    --btnlo:#1e3025; --btnhov1:#2e4636; --btnhov2:#253a2d; --green:#99d4a3; --green-bg:#263e2f; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#3d5a45; --swempty:#293f31; --shadow:0 2px 0 #0d1311, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="law"]{
+    --bg:#1b222a; --bg2:#242b34; --panel:#282f38; --panel2:#303640; --inset:#14191f; --cellbg:#20272f; --active:#3a404b;
+    --border:#4d535f; --catbd:#383f49; --gold:#c6cbe0; --gold-dim:#a0a6b8; --gold2:#b5bace; --gold3:#7c8292;
+    --glow:rgba(198,203,224,.18); --text:#e9ebf0; --muted:#bec3cd; --ph:#abb4c1; --code:#d5e0ea; --xp:#aab8c6;
+    --btnlo:#293039; --btnhov1:#3f4550; --btnhov2:#333a43; --green:#99d4a3; --green-bg:#2c3d3b; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#535a66; --swempty:#383f49; --shadow:0 2px 0 #101217, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="death"]{
+    --bg:#131418; --bg2:#1e1e21; --panel:#222224; --panel2:#2a2a2b; --inset:#0f1013; --cellbg:#191a1d; --active:#363634;
+    --border:#4b4a46; --catbd:#343433; --gold:#d5cfb5; --gold-dim:#aaa692; --gold2:#c2bca5; --gold3:#827f71;
+    --glow:rgba(213,207,181,.18); --text:#ebecea; --muted:#c0c4c6; --ph:#adb5bb; --code:#d8e1e2; --xp:#acb9c0;
+    --btnlo:#232325; --btnhov1:#3c3b39; --btnhov2:#2e2e2e; --green:#99d4a3; --green-bg:#25322d; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#53524c; --swempty:#343433; --shadow:0 2px 0 #0c0d10, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="blood"]{
+    --bg:#241215; --bg2:#2f181b; --panel:#331b1d; --panel2:#3c2022; --inset:#1a0e11; --cellbg:#2a1518; --active:#482729;
+    --border:#5e3335; --catbd:#462628; --gold:#ed8585; --gold-dim:#c16c6c; --gold2:#d97a7a; --gold3:#975455;
+    --glow:rgba(237,133,133,.18); --text:#eee2e4; --muted:#c4b8be; --ph:#b0abb5; --code:#ddd2d8; --xp:#b0aeb9;
+    --btnlo:#341b1e; --btnhov1:#4e2a2d; --btnhov2:#402225; --green:#99d4a3; --green-bg:#33302b; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#66383a; --swempty:#462628; --shadow:0 2px 0 #130c0f, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="soul"]{
+    --bg:#15232a; --bg2:#1d2d34; --panel:#203037; --panel2:#27383f; --inset:#10191f; --cellbg:#19282f; --active:#2f434a;
+    --border:#3f575e; --catbd:#2e4148; --gold:#a7d6dd; --gold-dim:#87afb6; --gold2:#98c4cb; --gold3:#688990;
+    --glow:rgba(167,214,221,.18); --text:#e5edef; --muted:#b9c5cc; --ph:#a7b6c0; --code:#cfe2ea; --xp:#a5bac6;
+    --btnlo:#213138; --btnhov1:#344950; --btnhov2:#293c43; --green:#99d4a3; --green-bg:#273e3b; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#455e65; --swempty:#2e4148; --shadow:0 2px 0 #0d1317, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="wrath"]{
+    --bg:#1a1524; --bg2:#261e29; --panel:#2a222b; --panel2:#34292f; --inset:#14101b; --cellbg:#201a27; --active:#413335;
+    --border:#58463f; --catbd:#3f3234; --gold:#f1bd82; --gold-dim:#c2986d; --gold2:#dcac79; --gold3:#95755a;
+    --glow:rgba(241,189,130,.18); --text:#eee9e3; --muted:#c4c1be; --ph:#b1b3b4; --code:#deddd8; --xp:#b0b6b8;
+    --btnlo:#2b222c; --btnhov1:#473838; --btnhov2:#382d31; --green:#99d4a3; --green-bg:#2b3336; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#614c43; --swempty:#3f3234; --shadow:0 2px 0 #0f0d15, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="mist"]{
+    --bg:#19272c; --bg2:#223136; --panel:#253439; --panel2:#2c3c41; --inset:#131c20; --cellbg:#1e2c31; --active:#36464c;
+    --border:#485a5f; --catbd:#34454a; --gold:#bad6dc; --gold-dim:#97b0b5; --gold2:#aac4ca; --gold3:#758b90;
+    --glow:rgba(186,214,220,.18); --text:#e7edef; --muted:#bcc5cc; --ph:#a9b6c0; --code:#d3e2ea; --xp:#a8bac6;
+    --btnlo:#26353a; --btnhov1:#3b4c51; --btnhov2:#304045; --green:#99d4a3; --green-bg:#2a413d; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#4e6166; --swempty:#34454a; --shadow:0 2px 0 #0f1418, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="dust"]{
+    --bg:#2a221a; --bg2:#342a20; --panel:#372d22; --panel2:#3f3427; --inset:#1e1915; --cellbg:#2f261d; --active:#493c2e;
+    --border:#5c4d3a; --catbd:#483b2d; --gold:#d8b58a; --gold-dim:#b29571; --gold2:#c7a67f; --gold3:#8d765a;
+    --glow:rgba(216,181,138,.18); --text:#ebe8e4; --muted:#c0c0bf; --ph:#adb2b6; --code:#d9dbd9; --xp:#adb5ba;
+    --btnlo:#382e23; --btnhov1:#4f4132; --btnhov2:#42372a; --green:#99d4a3; --green-bg:#373d2f; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#63533f; --swempty:#483b2d; --shadow:0 2px 0 #161211, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="mud"]{
+    --bg:#202219; --bg2:#292a1f; --panel:#2c2c21; --panel2:#333325; --inset:#171914; --cellbg:#25261c; --active:#3d3b2b;
+    --border:#4e4a37; --catbd:#3b392a; --gold:#c0ac7f; --gold-dim:#9d8e69; --gold2:#b09e75; --gold3:#7b7153;
+    --glow:rgba(192,172,127,.18); --text:#e8e7e3; --muted:#bdbebd; --ph:#aab0b4; --code:#d4dad7; --xp:#a9b4b8;
+    --btnlo:#2d2d21; --btnhov1:#423f2e; --btnhov2:#363527; --green:#99d4a3; --green-bg:#303d2e; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#55503b; --swempty:#3b392a; --shadow:0 2px 0 #121211, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="smoke"]{
+    --bg:#201c23; --bg2:#2a252d; --panel:#2d2831; --panel2:#342f39; --inset:#17151b; --cellbg:#252129; --active:#3d3742;
+    --border:#504957; --catbd:#413b46; --gold:#b7a9c4; --gold-dim:#94899f; --gold2:#a598b1; --gold3:#6f6577;
+    --glow:rgba(183,169,196,.18); --text:#e2e3ea; --muted:#b4bac5; --ph:#a0a8b4; --code:#cfd1dc; --xp:#a4afbb;
+    --btnlo:#2f2a33; --btnhov1:#413b46; --btnhov2:#38333d; --green:#99d4a3; --green-bg:#313b37; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#564f5d; --swempty:#3a343e; --shadow:0 2px 0 #121218, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="steam"]{
+    --bg:#202530; --bg2:#2a303b; --panel:#2e333f; --panel2:#363c48; --inset:#171b23; --cellbg:#252b36; --active:#414853;
+    --border:#545d69; --catbd:#3f4651; --gold:#d5e5f4; --gold-dim:#adbbc9; --gold2:#c3d2e0; --gold3:#8792a0;
+    --glow:rgba(213,229,244,.18); --text:#ebeff2; --muted:#c0c8d0; --ph:#adb8c3; --code:#d8e5ee; --xp:#acbcca;
+    --btnlo:#2e3440; --btnhov1:#464d59; --btnhov2:#39404b; --green:#99d4a3; --green-bg:#303f40; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#5c6471; --swempty:#3f4651; --shadow:0 2px 0 #12141a, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="lava"]{
+    --bg:#291713; --bg2:#351f18; --panel:#39221a; --panel2:#43291e; --inset:#1d1210; --cellbg:#2f1b16; --active:#503224;
+    --border:#67422f; --catbd:#4d3023; --gold:#ffab72; --gold-dim:#d08a5d; --gold2:#ea9c68; --gold3:#a36b49;
+    --glow:rgba(255,171,114,.18); --text:#f0e7e1; --muted:#c7bebb; --ph:#b2b0b2; --code:#e1d9d4; --xp:#b2b4b6;
+    --btnlo:#3a231b; --btnhov1:#563627; --btnhov2:#472c20; --green:#99d4a3; --green-bg:#373429; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#704832; --swempty:#4d3023; --shadow:0 2px 0 #150e0e, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="aether"]{
+    --bg:#1c192b; --bg2:#262338; --panel:#2a263c; --panel2:#322d46; --inset:#141320; --cellbg:#221e32; --active:#3b3651;
+    --border:#50496a; --catbd:#3f3a57; --gold:#bdb0f1; --gold-dim:#988dc3; --gold2:#aa9ed9; --gold3:#706892;
+    --glow:rgba(189,176,241,.18); --text:#e2e4f1; --muted:#b5bbce; --ph:#a2aabe; --code:#d1d3eb; --xp:#a6b1c7;
+    --btnlo:#2c283f; --btnhov1:#3f3a57; --btnhov2:#36314b; --green:#99d4a3; --green-bg:#2e383d; --red:#fa9a99;
+    --blue:#9ec9f6; --dotdim:#564f72; --swempty:#37334d; --shadow:0 2px 0 #11111b, 0 6px 14px rgba(0,0,0,.36);
+  }
+  body[data-theme="clay"]{
+    --bg:#1c1713; --bg2:#272019; --panel:#2d251d; --panel2:#392e24; --inset:#16110d; --cellbg:#211b15; --active:#473527;
+    --border:#624b37; --catbd:#4b392b; --gold:#d9a05e; --gold-dim:#b7834b; --gold2:#c28a4d; --gold3:#875d37;
+    --glow:rgba(217,160,94,.18); --text:#f2e8d9; --muted:#c6b19a; --ph:#b19a80; --code:#e4bd90; --xp:#baa58b;
+    --btnlo:#35291f; --btnhov1:#4f3928; --btnhov2:#433226; --green:#9dd284; --green-bg:#303b25; --red:#fda18f;
+    --blue:#93bde5; --dotdim:#715339; --swempty:#493529; --shadow:0 2px 0 #16110d, 0 6px 14px rgba(0,0,0,.36);
+  }
+  /* The decoration layer: each theme's wash, pattern and scene light, read off the catalog */
+  body[data-theme="air"]{--rune-wash:linear-gradient(157deg, #bdd9e52b, transparent 58%); --rune-pattern:repeating-linear-gradient(165deg, transparent 0 10px, #d2edf233 10px 11px, transparent 11px 17px); --scene-light:linear-gradient(158deg, #a0c8dd2c 8%, transparent 64%); --scene-lines:repeating-linear-gradient(161deg, transparent 0 24px, #c5e7ec1c 26px 28px, transparent 31px 48px);}
+  body[data-theme="water"]{--rune-wash:radial-gradient(ellipse at 85% -8%, #1589a852, transparent 72%); --rune-pattern:repeating-radial-gradient(ellipse at 96% -25%, transparent 0 12px, #68c8e258 13px 14px, transparent 15px 22px); --scene-light:radial-gradient(ellipse at 82% 1%, #197d984d, transparent 66%); --scene-lines:repeating-radial-gradient(ellipse 57% 34% at 86% -7%, transparent 0 20px, #68c8e227 22px 23px, transparent 25px 41px);}
+  body[data-theme="earth"]{--rune-wash:linear-gradient(163deg, #71852b53, transparent 66%); --rune-pattern:repeating-linear-gradient(172deg, #a8bb5a4a 0 1px, transparent 1px 5px, #a8bb5a28 5px 7px, transparent 7px 14px); --scene-light:radial-gradient(ellipse at 88% 0%, #61772e59, transparent 58%); --scene-lines:repeating-linear-gradient(169deg, transparent 0 14px, #a8bb5a24 15px 16px, #a8bb5a0e 17px 23px, transparent 24px 32px);}
+  body[data-theme="fire"]{--rune-wash:radial-gradient(ellipse at 82% 0%, #e565244a, transparent 71%); --rune-pattern:radial-gradient(circle, #ffc47b80 0 1px, transparent 1.6px) 0 0 / 23px 13px, radial-gradient(circle, #ff753b76 0 1px, transparent 1.5px) 7px 5px / 29px 17px; --scene-light:radial-gradient(ellipse at 90% 0%, #bd4b2566, transparent 59%); --scene-lines:radial-gradient(circle, #ffc47b64 0 1px, transparent 1.6px) 0 0 / 49px 37px, radial-gradient(circle, #fb743d52 0 1px, transparent 1.6px) 12px 6px / 57px 29px;}
+  body[data-theme="sunfire"]{--scene-light:radial-gradient(ellipse at 85% 1%, #f0b83f3b, transparent 63%), radial-gradient(ellipse at 12% 0%, #f0b83f1f, transparent 58%); --scene-lines:repeating-conic-gradient(from 18deg at 91% 2%, transparent 0 8deg, #f0b83f33 9deg 10deg, transparent 11deg 20deg); --rune-wash:linear-gradient(155deg, #f0b83f31, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="mind"]{--rune-wash:radial-gradient(ellipse at 92% -12%, #ae514b55, transparent 68%); --rune-pattern:repeating-linear-gradient(135deg, transparent 0 7px, #f4aa8730 7px 8px, transparent 8px 11px); --scene-light:radial-gradient(ellipse at 96% 3%, #85423c58, transparent 58%); --scene-lines:repeating-radial-gradient(circle at 92% 8%, transparent 0 16px, #f4aa871b 17px 18px, transparent 19px 28px);}
+  body[data-theme="body"]{--scene-light:radial-gradient(ellipse at 85% 1%, #ca9de13b, transparent 63%), radial-gradient(ellipse at 12% 0%, #ca9de11f, transparent 58%); --scene-lines:repeating-radial-gradient(ellipse at 93% 20%, transparent 0 14px, #ca9de123 15px 16px, transparent 17px 29px); --rune-wash:linear-gradient(155deg, #ca9de131, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="cosmic"]{--scene-light:radial-gradient(ellipse at 85% 1%, #d4b7773b, transparent 63%), radial-gradient(ellipse at 12% 0%, #d4b7771f, transparent 58%); --scene-lines:radial-gradient(circle, #d4b77733 0 1px, transparent 1.7px) 0 0 / 29px 21px, radial-gradient(circle, #d4b77733 0 .8px, transparent 1.6px) 11px 9px / 43px 31px; --rune-wash:linear-gradient(155deg, #d4b77731, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="chaos"]{--scene-light:radial-gradient(ellipse at 85% 1%, #e7a3693b, transparent 63%), radial-gradient(ellipse at 12% 0%, #e7a3691f, transparent 58%); --scene-lines:repeating-conic-gradient(from 45deg at 90% 0%, transparent 0 13deg, #e7a36933 14deg 15deg, transparent 16deg 31deg); --rune-wash:linear-gradient(155deg, #e7a36931, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="astral"]{--scene-light:radial-gradient(ellipse at 85% 1%, #c3a6ed3b, transparent 63%), radial-gradient(ellipse at 12% 0%, #c3a6ed1f, transparent 58%); --scene-lines:repeating-radial-gradient(ellipse 76% 106% at 91% -23%, transparent 0 22px, #c3a6ed23 23px 24px, transparent 25px 43px); --rune-wash:linear-gradient(155deg, #c3a6ed31, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="nature"]{--scene-light:radial-gradient(ellipse at 85% 1%, #82c5903b, transparent 63%), radial-gradient(ellipse at 12% 0%, #82c5901f, transparent 58%); --scene-lines:repeating-linear-gradient(36deg, transparent 0 12px, #82c59023 13px 14px, transparent 15px 25px), repeating-linear-gradient(145deg, transparent 0 13px, #82c59023 14px 15px, transparent 16px 31px); --rune-wash:linear-gradient(155deg, #82c59031, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="law"]{--scene-light:radial-gradient(ellipse at 85% 1%, #95bdf13b, transparent 63%), radial-gradient(ellipse at 12% 0%, #95bdf11f, transparent 58%); --scene-lines:repeating-linear-gradient(90deg, #95bdf123 0 1px, transparent 1px 26px), repeating-linear-gradient(0deg, #95bdf123 0 1px, transparent 1px 26px); --rune-wash:linear-gradient(155deg, #95bdf131, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="death"]{--scene-light:radial-gradient(ellipse at 85% 1%, #d5cfb53b, transparent 63%), radial-gradient(ellipse at 12% 0%, #d5cfb51f, transparent 58%); --scene-lines:repeating-linear-gradient(114deg, transparent 0 16px, #d5cfb523 17px 18px, transparent 19px 29px); --rune-wash:linear-gradient(155deg, #d5cfb531, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="blood"]{--scene-light:radial-gradient(ellipse at 85% 1%, #ec89933b, transparent 63%), radial-gradient(ellipse at 12% 0%, #ec89931f, transparent 58%); --scene-lines:repeating-radial-gradient(ellipse 100px 37px at 99% 0%, transparent 0 11px, #ec899323 12px 13px, transparent 14px 23px); --rune-wash:linear-gradient(155deg, #ec899331, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="soul"]{--scene-light:radial-gradient(ellipse at 85% 1%, #9ad3cb3b, transparent 63%), radial-gradient(ellipse at 12% 0%, #9ad3cb1f, transparent 58%); --scene-lines:repeating-radial-gradient(ellipse 55% 86% at 82% -42%, transparent 0 18px, #9ad3cb23 19px 20px, transparent 21px 40px); --rune-wash:linear-gradient(155deg, #9ad3cb31, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="wrath"]{--scene-light:radial-gradient(ellipse at 85% 1%, #ec9d833b, transparent 63%), radial-gradient(ellipse at 12% 0%, #ec9d831f, transparent 58%); --scene-lines:repeating-linear-gradient(142deg, transparent 0 22px, #ec9d8323 22px 24px, transparent 25px 28px, #ec9d8323 29px 30px, transparent 31px 45px); --rune-wash:linear-gradient(155deg, #ec9d8331, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="mist"]{--scene-light:radial-gradient(ellipse at 85% 1%, #a0c8d43b, transparent 63%), radial-gradient(ellipse at 12% 0%, #a0c8d41f, transparent 58%); --scene-lines:repeating-linear-gradient(170deg, transparent 0 14px, #a0c8d423 20px 21px, transparent 29px 42px); --rune-wash:linear-gradient(155deg, #a0c8d431, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="dust"]{--scene-light:radial-gradient(ellipse at 85% 1%, #c8af803b, transparent 63%), radial-gradient(ellipse at 12% 0%, #c8af801f, transparent 58%); --scene-lines:radial-gradient(circle, #c8af8023 0 .8px, transparent 1.3px) 0 0 / 13px 9px, repeating-linear-gradient(167deg, transparent 0 17px, #c8af8023 18px 19px, transparent 20px 27px); --rune-wash:linear-gradient(155deg, #c8af8031, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="mud"]{--scene-light:radial-gradient(ellipse at 85% 1%, #aaa8743b, transparent 63%), radial-gradient(ellipse at 12% 0%, #aaa8741f, transparent 58%); --scene-lines:repeating-linear-gradient(176deg, transparent 0 9px, #aaa87423 11px 13px, transparent 17px 29px); --rune-wash:linear-gradient(155deg, #aaa87431, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="smoke"]{--scene-light:radial-gradient(ellipse at 85% 1%, #b7a9c43b, transparent 63%), radial-gradient(ellipse at 12% 0%, #b7a9c41f, transparent 58%); --scene-lines:repeating-radial-gradient(ellipse 48% 61% at 94% 7%, transparent 0 14px, #b7a9c423 22px 23px, transparent 31px 45px); --rune-wash:linear-gradient(155deg, #b7a9c431, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="steam"]{--scene-light:radial-gradient(ellipse at 85% 1%, #c0d1a13b, transparent 63%), radial-gradient(ellipse at 12% 0%, #83bed41f, transparent 58%); --scene-lines:repeating-linear-gradient(116deg, transparent 0 16px, #c0d1a123 22px 23px, transparent 31px 41px); --rune-wash:linear-gradient(155deg, #c0d1a131, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="lava"]{--scene-light:radial-gradient(ellipse at 85% 1%, #f292613b, transparent 63%), radial-gradient(ellipse at 12% 0%, #f292611f, transparent 58%); --scene-lines:repeating-linear-gradient(156deg, transparent 0 19px, #f2926123 19px 21px, transparent 23px 29px, #f2926123 29px 30px, transparent 31px 46px); --rune-wash:linear-gradient(155deg, #f2926131, transparent 73%); --rune-pattern:var(--scene-lines);}
+  body[data-theme="clay"]{--rune-wash:linear-gradient(160deg, #9b67394c, transparent 70%); --rune-pattern:repeating-linear-gradient(167deg, #d9a05e54 0 2px, transparent 2px 9px); --scene-light:radial-gradient(ellipse at 85% 3%, #a2693952, transparent 62%); --scene-lines:repeating-linear-gradient(172deg, transparent 0 17px, #d9a05e24 18px 20px, #b8714915 20px 29px, transparent 30px 38px);}
+  /* body.rune is set by applyTheme for every catalog theme. The sidebar takes the wash, the brand
+     a pattern band, panels a hairline, the active nav a light, the content column its scene. */
+  body.rune .sidebar{background-image:var(--rune-wash); background-repeat:no-repeat; background-size:100% 235px}
+  body.rune .brand{background-image:var(--rune-pattern); background-repeat:no-repeat; background-size:62% 6px; background-position:0 100%; padding-bottom:10px}
+  body.rune .panel{background-image:linear-gradient(90deg, var(--gold3), transparent 68%); background-size:100% 1px; background-repeat:no-repeat}
+  body.rune .navitem.active{background-image:linear-gradient(90deg, var(--glow), transparent 73%)}
+  body.rune .content{position:relative; isolation:isolate}
+  body.rune .content::before{content:""; position:absolute; left:0; right:0; top:0; height:440px; z-index:-1; pointer-events:none;
+    background-image:var(--scene-light, none), var(--scene-lines, none); background-repeat:no-repeat;
+    -webkit-mask-image:linear-gradient(#000 0 55%, transparent); mask-image:linear-gradient(#000 0 55%, transparent)}
+  body[data-theme="aether"] .content::before{background-image:radial-gradient(ellipse at 98% 0%, var(--glow), transparent 69%)}
+  body[data-theme="dust"] :is(.sidebar, .panel, .ghost){background-image:radial-gradient(circle, #edc48d27 0 .65px, transparent 1px), radial-gradient(circle, #edc48d20 0 .5px, transparent 1px); background-size:13px 11px, 19px 17px; background-repeat:repeat}
+  body[data-theme="death"] .panel{border-top-color:#646375}
+  body[data-theme="wrath"] .navitem.active, body[data-theme="blood"] .navitem.active{background-image:linear-gradient(105deg, var(--glow), transparent 69%)}
+  @media (prefers-reduced-transparency:reduce){ body.rune .content::before{display:none} }
+  /* The brand mark: Mortimer's helmet crest, visor and jaw as flat shapes, cel shaded, in the accent */
+  .mortimeter-mark{position:relative; display:inline-block; isolation:isolate; flex:none; width:.95em; height:.99em; color:var(--gold); --ink:#100d0b; --shine:color-mix(in srgb, var(--gold), #fff4d5 30%);
+    filter:drop-shadow(.65px 0 0 var(--ink)) drop-shadow(-.65px 0 0 var(--ink)) drop-shadow(0 .65px 0 var(--ink)) drop-shadow(0 -.55px 0 var(--ink))}
+  .mortimeter-mark::before, .mortimeter-mark::after, .mortimeter-mark :is(i,b,em,.helmet-plane){content:""; position:absolute; inset:0; pointer-events:none}
+  .mortimeter-mark::before{background:var(--ink); clip-path:polygon(50% 2%,58% 18%,77% 25%,91% 49%,86% 58%,89% 77%,76% 83%,72% 62%,28% 62%,24% 83%,11% 77%,14% 58%,9% 49%,23% 25%,42% 18%)}
+  .mortimeter-mark .helmet-plane{background:linear-gradient(126deg, var(--gold-dim) 0 48%, var(--gold3) 48%); transform:scale(.89);
+    clip-path:polygon(50% 2%,58% 18%,77% 25%,91% 49%,86% 58%,89% 77%,76% 83%,72% 62%,28% 62%,24% 83%,11% 77%,14% 58%,9% 49%,23% 25%,42% 18%)}
+  .mortimeter-mark::after{z-index:1; background:linear-gradient(102deg, var(--shine) 0 48%, var(--gold) 48% 64%, var(--gold-dim) 64%);
+    clip-path:polygon(50% 3%,57% 31%,57% 51%,75% 48%,85% 40%,91% 49%,85% 58%,69% 56%,56% 60%,53% 75%,47% 75%,44% 60%,31% 56%,15% 58%,9% 49%,15% 40%,25% 48%,43% 51%,43% 31%)}
+  .mortimeter-mark i{background:var(--ink); opacity:.67; clip-path:polygon(24% 31%,38% 24%,38% 47%,24% 44%,18% 40%,76% 31%,82% 40%,76% 44%,62% 47%,62% 24%,76% 31%,18% 40%)}
+  .mortimeter-mark b{background:linear-gradient(130deg, var(--shine) 0 53%, var(--gold) 53% 77%, var(--gold-dim) 77%);
+    clip-path:polygon(evenodd, 23% 55%,76% 55%,77% 71%,69% 77%,66% 88%,60% 96%,39% 96%,33% 88%,30% 77%,22% 71%,23% 55%,30% 61%,33% 71%,45% 67%,40% 61%,30% 61%,23% 55%,59% 61%,55% 67%,67% 71%,70% 61%,59% 61%,23% 55%,39% 83%,41% 88%,58% 88%,61% 83%,39% 83%,23% 55%)}
+  .mortimeter-mark em{z-index:2; background:var(--ink); clip-path:polygon(50% 72%,54% 79%,46% 79%)}
+  .brand .mortimeter-mark{font-size:22px; margin-right:2px}
+  body.sb-rail .brand .mortimeter-mark{font-size:22px; margin:0}
   *{box-sizing:border-box}
   body{
     margin:0; background:var(--bg); color:var(--text);
@@ -2190,7 +2405,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
 <div class="app">
 
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><span>⚔️</span> Mortimeter <span class="ver" id="verBadge"></span><button class="sb-toggle" id="sbToggle" title="Collapse the sidebar">‹</button></div>
+    <div class="brand"><span class="mortimeter-mark" aria-hidden="true"><span class="helmet-plane"></span><i></i><b></b><em></em></span> Mortimeter <span class="ver" id="verBadge"></span><button class="sb-toggle" id="sbToggle" title="Collapse the sidebar">‹</button></div>
     <nav class="nav">
       <div class="nav-sec">Character</div>
       <button class="navitem active" data-view="home"><span class="ni-ic">🏠</span>Home</button>
@@ -2231,7 +2446,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     </div>
     <div class="side-foot">
       <div id="updBanner" class="hidden"></div>
-      <button class="ghost small" id="themeBtn" title="Cycle through themes">🎨 Theme</button>
+      <button class="ghost small" id="themeBtn" title="Choose a theme">🎨 Theme</button>
       <button class="ghost small" id="settingsBtn" title="Settings">⚙️ Settings</button>
       <span class="small muted" id="lastUpdated"></span>
     </div>
@@ -6558,22 +6773,49 @@ function renderNotes(){
 $("#addNoteBtn").onclick = addNote;
 
 // ============ THEMES (the elements) ============
+// Gilded first, then the rune themes from ChatGPT's catalog (elemental, catalytic, combination),
+// Clay, and the older looks at the end. Icons are the wiki's rune pictures, loaded live.
 const THEMES = [
   ["parchment","Gilded","Papyrus.png"],
-  ["crystal","Crystal","Crystal_shard_1.png"],
+  ["air","Air","Air_rune.png"],
+  ["water","Water","Water_rune.png"],
+  ["earth","Earth","Earth_rune.png"],
+  ["fire","Fire","Fire_rune.png"],
+  ["sunfire","Sunfire","Sunfire_rune.png"],
+  ["mind","Mind","Mind_rune.png"],
+  ["body","Body","Body_rune.png"],
+  ["cosmic","Cosmic","Cosmic_rune.png"],
+  ["chaos","Chaos","Chaos_rune.png"],
+  ["astral","Astral","Astral_rune.png"],
   ["nature","Nature","Nature_rune.png"],
+  ["law","Law","Law_rune.png"],
+  ["death","Death","Death_rune.png"],
+  ["blood","Blood","Blood_rune.png"],
+  ["soul","Soul","Soul_rune.png"],
+  ["wrath","Wrath","Wrath_rune.png"],
+  ["mist","Mist","Mist_rune.png"],
+  ["dust","Dust","Dust_rune.png"],
+  ["mud","Mud","Mud_rune.png"],
+  ["smoke","Smoke","Smoke_rune.png"],
+  ["steam","Steam","Steam_rune.png"],
+  ["lava","Lava","Lava_rune.png"],
+  ["aether","Aether","Aether_rune.png"],
+  ["clay","Clay","Soft_clay.png"],
+  ["crystal","Crystal","Crystal_shard_1.png"],
   ["shadow","Shadow","Soul_rune.png"],
   ["ember","Ember","Fire_rune.png"],
   ["dark","Dark","Coal.png"],
   ["black","Pitch black","Black_partyhat.png"],
 ];
+const RUNE_THEMES = new Set(["air", "water", "earth", "fire", "sunfire", "mind", "body", "cosmic", "chaos", "astral", "nature", "law", "death", "blood", "soul", "wrath", "mist", "dust", "mud", "smoke", "steam", "lava", "aether", "clay"]);
 const DEFAULT_THEME = "parchment";
 function applyTheme(){
   const t = state.theme || DEFAULT_THEME;
   document.body.dataset.theme = t;
+  document.body.classList.toggle("rune", RUNE_THEMES.has(t));
   const e = THEMES.find(x=>x[0]===t) || THEMES[0];
   const b = $("#themeBtn");
-  if(b){ b.innerHTML = '<img class="theme-ic" src="' + WIKI + e[2] + '" alt=""> ' + e[1]; b.title = e[1] + " theme — click to cycle"; }
+  if(b){ b.innerHTML = '<img class="theme-ic" src="' + WIKI + e[2] + '" alt=""> ' + e[1]; b.title = e[1] + " theme. Click to choose another"; }
   $$(".theme-ic-slot").forEach(img=>{ img.src = WIKI + e[2]; });
 }
 // ============ ASK RELDO (prototype) ============
@@ -13615,12 +13857,8 @@ $("#openPatch").onclick = ()=>{ closeSettings(); switchView("patch"); };
 $("#settingsX").onclick = closeSettings;
 $("#settingsBack").onclick = closeSettings;
 
-$("#themeBtn").onclick = ()=>{
-  const cur = state.theme || DEFAULT_THEME;
-  const i = THEMES.findIndex(x=>x[0]===cur);
-  state.theme = THEMES[(i+1) % THEMES.length][0];
-  save(); applyTheme();
-};
+// thirty themes is too many to cycle through: the button opens the Look step of Setup
+$("#themeBtn").onclick = ()=>openSetup(SU_STEPS.findIndex(x=>x.id==="look"), {single:true});
 
 // ============ INSIGHTS ENGINE ============
 // One place that reads your stats, history and goals and works out what's worth saying.
@@ -15178,7 +15416,7 @@ function closeSetup(){
 function renderSetup(){
   if(!su) return;
   const st = SU_STEPS[su.step];
-  $("#suDots").innerHTML = su.single ? `<div class="su-single-h">RuneLite data</div>` : SU_STEPS.map((x,i)=>
+  $("#suDots").innerHTML = su.single ? `<div class="su-single-h">${SU_STEPS[su.step].id==="rl" ? "RuneLite data" : SU_STEPS[su.step].label}</div>` : SU_STEPS.map((x,i)=>
     `<button class="su-dot ${i===su.step?"on":""} ${i<su.step?"past":""}" data-sustep="${i}" title="${x.label}"><span>${x.label}</span></button>`).join("");
   $("#suBody").innerHTML = SU_VIEW[st.id]();
   $("#suPrev").classList.toggle("hidden", su.step===0 || su.single);
