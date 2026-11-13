@@ -7,6 +7,7 @@ const src = path.join(root, "design", "mockups"), dst = path.join(root, "data", 
 // One line per mockup, in the order the page shows them. A file not listed here still copies,
 // with its <title> as the name and no description.
 const DESC = {
+  "coffer-runs.html": "A Runs section in Coffer, tree and herb runs first. Two directions: a board of your patches, or a log of runs tallied over the week.",
   "map-goals.html": "The popular goals under the Map search, three ways that are not pills: reward cards, colour banners, medallions.",
   "vault-bank.html": "Vault as the bank. Two directions: the bank window itself, or today's Vault with the bank under it. Reads your real bank from the app; a wizard marks where your tabs begin.",
   "map-tree-first.html": "Map, tree first (Josh's direction). The tree is the page, search and the Optimal quest guide button above it, a popup per quest with everything in it.",

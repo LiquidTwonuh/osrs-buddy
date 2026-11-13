@@ -1,5 +1,11 @@
 [
   {
+    "file": "coffer-runs.html",
+    "title": "Coffer runs",
+    "desc": "A Runs section in Coffer, tree and herb runs first. Two directions: a board of your patches, or a log of runs tallied over the week.",
+    "date": "2026-11-13"
+  },
+  {
     "file": "map-goals.html",
     "title": "Map goal tiles",
     "desc": "The popular goals under the Map search, three ways that are not pills: reward cards, colour banners, medallions.",

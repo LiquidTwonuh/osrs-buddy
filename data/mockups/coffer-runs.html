@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coffer runs</title>
+<style>
+  /* Two directions for a Runs section in Coffer: tree runs and herb runs first. Repeatables already
+     times a run; this is the step past the timer: which patches, what is in them, what a run gives. */
+  :root{
+    --bg:#1a1712; --bg2:#241f18; --panel:#26211a; --panel2:#2f2820; --border:#4a3f2e;
+    --gold:#e6c35c; --gold-dim:#b9974a; --gold2:#c9a642; --gold3:#8a6f2e;
+    --text:#e8e0cf; --muted:#a99b7d; --inset:#15120d; --active:#3a3122; --glow:rgba(230,195,92,.18);
+    --green:#6fbf5b; --green-bg:#2c3d24; --red:#d46a5a; --blue:#5a9fd4;
+    --font-display:"EB Garamond",Georgia,serif; --font-body:"Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  ::-webkit-scrollbar{width:8px; height:8px} ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--gold3); border-radius:8px; border:2px solid transparent; background-clip:padding-box}
+  body{margin:0; background:#0f0d0a; color:var(--text); font-family:var(--font-body); font-size:14px; -webkit-font-smoothing:antialiased}
+  .top{position:sticky; top:0; z-index:5; background:#0f0d0a; border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .top h1{font-family:var(--font-display); font-size:18px; color:var(--gold); margin:0 14px 0 0; font-weight:600}
+  .top p{margin:0; color:var(--muted); font-size:12.5px; flex:1; min-width:200px}
+  .seg{display:inline-flex; background:var(--inset); border:1px solid var(--border); border-radius:10px; padding:3px; gap:2px}
+  .seg button{border:0; background:none; color:var(--muted); font:inherit; font-size:12.5px; padding:5px 12px; border-radius:8px; cursor:pointer}
+  .seg button.on{background:var(--panel2); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .wrap{width:1080px; max-width:100%; margin:22px auto 60px; padding:0 16px}
+  .panel{background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin-bottom:14px}
+  .sect{display:flex; align-items:baseline; gap:10px; margin:0 0 12px; flex-wrap:wrap}
+  .sect h3{margin:0; font-family:var(--font-display); font-size:19px; color:var(--gold); font-weight:600}
+  .grow{flex:1} .muted{color:var(--muted)} .small{font-size:12px}
+  .ghost{background:none; border:1px solid var(--border); color:var(--muted); border-radius:9px; padding:6px 11px; font:inherit; font-size:12.5px; cursor:pointer}
+  .ghost:hover{color:var(--text); background:var(--panel2)} .ghost.on{color:var(--gold); border-color:var(--gold-dim)}
+  .primary{background:linear-gradient(180deg, var(--gold), var(--gold2)); color:#1a1408; border:1px solid var(--gold-dim); border-radius:9px; padding:7px 13px; font:inherit; font-size:13px; font-weight:600; cursor:pointer}
+  .tally{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px}
+  .stat{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px 14px}
+  .stat .l{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+  .stat .v{font-family:var(--font-display); font-size:26px; color:var(--gold); font-weight:600; line-height:1.1; margin-top:2px}
+  .stat .s{font-size:11.5px; color:var(--muted); margin-top:2px}
+  .note{margin-top:14px; font-size:12.5px; color:var(--muted); border-left:2px solid var(--gold3); padding-left:10px}
+  .hidden{display:none !important}
+  img.ico{width:22px; height:22px; object-fit:contain; image-rendering:pixelated; vertical-align:middle}
+
+  /* ---- A: the patch board ---- */
+  .runhead{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px}
+  .runhead h4{margin:0; font-family:var(--font-display); font-size:20px; font-weight:600; color:var(--text)}
+  .runhead .when{font-size:12.5px; color:var(--muted)} .runhead .when b{color:var(--green); font-weight:600}
+  .patches{display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:8px}
+  .patch{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px 11px; position:relative}
+  .patch.locked{opacity:.5}
+  .patch.ready{border-color:var(--green)}
+  .patch h5{margin:0; font-size:13.5px; font-weight:600}
+  .patch .where{font-size:11px; color:var(--muted)}
+  .patch .crop{display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12.5px}
+  .patch .crop img{width:26px; height:26px; object-fit:contain; image-rendering:pixelated}
+  .patch .bar{height:4px; background:var(--inset); border-radius:4px; margin-top:8px; overflow:hidden}
+  .patch .bar i{display:block; height:100%; background:linear-gradient(90deg, var(--gold3), var(--gold)); border-radius:4px}
+  .patch.ready .bar i{background:var(--green)}
+  .patch .eta{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:4px}
+  .patch .eta b{color:var(--text); font-weight:600} .patch.ready .eta b{color:var(--green)}
+  .patch .lock{position:absolute; right:10px; top:9px; font-size:11px; color:var(--muted)}
+  .planted{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; font-size:12.5px; color:var(--muted)}
+  .seedpick{display:inline-flex; gap:4px; flex-wrap:wrap}
+  .seedpick button{background:var(--inset); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:4px 8px; font:inherit; font-size:12px; cursor:pointer; display:inline-flex; align-items:center; gap:5px}
+  .seedpick button.on{border-color:var(--gold); color:var(--gold)}
+  .seedpick img{width:18px; height:18px; object-fit:contain; image-rendering:pixelated}
+
+  /* ---- B: the run log ---- */
+  .log{display:flex; flex-direction:column; gap:4px}
+  .lrow{display:grid; grid-template-columns:110px 1fr auto auto auto; gap:12px; align-items:center; padding:8px 10px; border-radius:10px; border:1px solid transparent}
+  .lrow:hover{background:var(--panel); border-color:var(--border)}
+  .lrow .t{font-size:12px; color:var(--muted)}
+  .lrow .what{font-size:13.5px} .lrow .what span{color:var(--muted); font-size:12px; margin-left:6px}
+  .lrow .n{font-size:13px; text-align:right} .lrow .gp{font-weight:700; color:var(--gold); text-align:right; min-width:70px} .lrow .xp{font-size:12px; color:var(--muted); text-align:right; min-width:70px}
+  .lhead{display:grid; grid-template-columns:110px 1fr auto auto auto; gap:12px; padding:0 10px 6px; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+  .compose{display:flex; gap:8px; flex-wrap:wrap; align-items:center; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px 12px; margin-bottom:12px}
+  .compose select, .compose input{background:var(--inset); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:6px 9px; font:inherit; font-size:13px}
+  .compose input{width:70px}
+  .week{display:flex; gap:4px; margin-top:4px}
+  .week i{flex:1; height:28px; border-radius:5px; background:var(--inset); border:1px solid var(--border); display:grid; place-items:center; font-size:11px; color:var(--muted); font-style:normal}
+  .week i.d{background:var(--green-bg); border-color:var(--green); color:var(--text)}
+  @media (max-width:700px){ .lrow, .lhead{grid-template-columns:80px 1fr auto} .lrow .xp, .lhead .xp{display:none} .wrap{padding:0 8px} }
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>Coffer runs</h1>
+  <p>A Runs section in Coffer, tree runs and herb runs first. Two directions. A: a board of your patches, what is in each and when it is ready. B: a log of runs you did, what they gave, tallied over the week. Both know which patches you have unlocked from your quests and diaries.</p>
+  <div class="seg" id="dirSeg"><button class="on" data-dir="a">A · Patch board</button><button data-dir="b">B · Run log</button></div>
+</div>
+<div class="wrap">
+  <div class="panel">
+    <div class="tally" id="tally"></div>
+  </div>
+
+  <!-- A -->
+  <div id="dirA">
+    <div class="panel">
+      <div class="runhead"><h4>🌿 Herb run</h4><span class="when">7 of 9 patches unlocked · <b>5 ready</b> · next in 12 min</span><span class="grow"></span><button class="primary" id="aHerb">Picked and replanted</button></div>
+      <div class="planted">Planting <span class="seedpick" id="herbSeed"></span><span class="muted small">· one seed for the whole run, change a patch below if it differs</span></div>
+      <div class="patches" id="herbPatches" style="margin-top:10px"></div>
+    </div>
+    <div class="panel">
+      <div class="runhead"><h4>🌳 Tree run</h4><span class="when">6 of 6 patches unlocked · <b>all ready</b> · planted yesterday 19:40</span><span class="grow"></span><button class="primary">Checked and replanted</button></div>
+      <div class="planted">Planting <span class="seedpick" id="treeSeed"></span></div>
+      <div class="patches" id="treePatches" style="margin-top:10px"></div>
+    </div>
+    <div class="note">Why it might win: you see the farm at a glance and the app does the arithmetic (ready times, yield, worth). The one press per run keeps it honest: "Picked and replanted" stamps the time, counts the yield from the patch count, values it at today's prices and adds a row to the log. Each patch card can be opened to say what really happened (a dead patch, a different seed).</div>
+  </div>
+
+  <!-- B -->
+  <div id="dirB" class="hidden">
+    <div class="panel">
+      <div class="sect"><h3>Log a run</h3><span class="small muted">takes five seconds, the app values it</span></div>
+      <div class="compose">
+        <select><option>Herb run</option><option>Tree run</option><option>Fruit tree run</option><option>Bird houses</option></select>
+        <select><option>Ranarr</option><option>Snapdragon</option><option>Torstol</option><option>Toadflax</option></select>
+        <label class="small muted">patches <input type="number" value="7"></label>
+        <label class="small muted">herbs picked <input type="number" value="58"></label>
+        <span class="grow"></span>
+        <button class="primary">Add run</button>
+      </div>
+      <div class="sect"><h3>This week</h3><span class="small muted">a square per day, lit when you ran</span></div>
+      <div class="week"><i class="d">Mon</i><i class="d">Tue</i><i>Wed</i><i class="d">Thu</i><i class="d">Fri</i><i>Sat</i><i>Sun</i></div>
+    </div>
+    <div class="panel">
+      <div class="sect"><h3>Runs</h3><span class="small muted">newest first · worth is today's price minus the seeds</span></div>
+      <div class="lhead"><span>When</span><span>Run</span><span>Yield</span><span>Worth</span><span class="xp">XP</span></div>
+      <div class="log" id="log"></div>
+    </div>
+    <div class="note">Why it might win: nothing to set up, no patch map to keep true. You say what you did and the app keeps the tally. Lighter, and it works for runs the patch board does not model yet (bird houses, seaweed, hardwoods). The patch board can grow on top of it later.</div>
+  </div>
+</div>
+
+<script>
+const WIKI = "https://oldschool.runescape.wiki/images/";
+const img = f => WIKI + f;
+const HERB_PATCHES = [
+  {n:"Falador", w:"south of the city", on:true, p:.8},
+  {n:"Catherby", w:"north of the bank", on:true, p:1},
+  {n:"Ardougne", w:"north of the city", on:true, p:1},
+  {n:"Port Phasmatys", w:"west gate", on:true, p:1},
+  {n:"Hosidius", w:"by the vinery", on:true, p:1},
+  {n:"Farming Guild", w:"needs 65 Farming", on:true, p:1},
+  {n:"Troll Stronghold", w:"after My Arm's Big Adventure", on:true, p:.95},
+  {n:"Weiss", w:"after Making Friends with My Arm", on:false, lock:"Making Friends with My Arm"},
+  {n:"Harmony Island", w:"after the Morytania elite diary", on:false, lock:"Morytania elite"},
+];
+const TREE_PATCHES = [
+  {n:"Lumbridge", w:"behind the castle", on:true, p:1},
+  {n:"Varrock", w:"castle courtyard", on:true, p:1},
+  {n:"Falador", w:"park", on:true, p:1},
+  {n:"Taverley", w:"south of the town", on:true, p:1},
+  {n:"Gnome Stronghold", w:"by the agility course", on:true, p:1},
+  {n:"Farming Guild", w:"needs 65 Farming", on:true, p:1},
+];
+const HERB_SEEDS = [["Ranarr","Ranarr_seed_5.png"],["Toadflax","Toadflax_seed_5.png"],["Snapdragon","Snapdragon_seed_5.png"],["Torstol","Torstol_seed_5.png"]];
+const TREE_SEEDS = [["Maple","Maple_seed_5.png"],["Yew","Yew_seed_5.png"],["Magic","Magic_seed_5.png"]];
+let herbSeed = 0, treeSeed = 1;
+function seeds(el, list, cur, set){ el.innerHTML = list.map((s, i)=>`<button class="${i===cur?"on":""}" data-i="${i}"><img src="${img(s[1])}" alt="">${s[0]}</button>`).join(""); el.onclick = e => { const b = e.target.closest("button"); if(b){ set(+b.dataset.i); render(); } }; }
+function patchHtml(pt, seed, growMin){
+  if(!pt.on) return `<div class="patch locked"><h5>${pt.n}</h5><div class="where">${pt.w}</div><span class="lock">🔒 ${pt.lock}</span><div class="crop muted small">Locked</div></div>`;
+  const ready = pt.p >= 1, left = Math.round((1 - pt.p) * growMin);
+  return `<div class="patch ${ready?"ready":""}"><h5>${pt.n}</h5><div class="where">${pt.w}</div>
+    <div class="crop"><img src="${img(seed[1])}" alt=""><span>${seed[0]}<span class="muted"> · 1 patch</span></span></div>
+    <div class="bar"><i style="width:${Math.round(pt.p*100)}%"></i></div>
+    <div class="eta"><span>${ready ? "grown" : "growing"}</span><b>${ready ? "ready" : left + " min"}</b></div></div>`;
+}
+const LOG = [
+  ["Today 18:05","Herb run","Ranarr · 7 patches","58 herbs","+398k","+6.9k"],
+  ["Today 16:30","Herb run","Ranarr · 7 patches","61 herbs","+419k","+7.2k"],
+  ["Yesterday 19:40","Tree run","Yew · 6 patches","6 trees","-42k","+45k"],
+  ["Yesterday 15:10","Herb run","Snapdragon · 7 patches","49 herbs","+371k","+8.1k"],
+  ["Thu 21:00","Bird houses","Redwood · 4 houses","9 nests","+61k","+4.6k"],
+  ["Thu 20:05","Herb run","Ranarr · 6 patches","52 herbs","+357k","+6.2k"],
+];
+function render(){
+  document.getElementById("tally").innerHTML = [["This week","11 runs","4 herb, 2 tree, 5 bird house"],["Herbs picked","331","from 48 patches"],["Worth","2.4m gp","after seeds, at today's prices"],["Farming XP","+92k","trees carry it"],["Streak","5 days","a run a day since Monday"]].map(([l,v,s])=>`<div class="stat"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
+  seeds(document.getElementById("herbSeed"), HERB_SEEDS, herbSeed, i=>herbSeed=i);
+  seeds(document.getElementById("treeSeed"), TREE_SEEDS, treeSeed, i=>treeSeed=i);
+  document.getElementById("herbPatches").innerHTML = HERB_PATCHES.map(p=>patchHtml(p, HERB_SEEDS[herbSeed], 80)).join("");
+  document.getElementById("treePatches").innerHTML = TREE_PATCHES.map(p=>patchHtml(p, TREE_SEEDS[treeSeed], 400)).join("");
+  document.getElementById("log").innerHTML = LOG.map(r=>`<div class="lrow"><span class="t">${r[0]}</span><span class="what">${r[1]}<span>${r[2]}</span></span><span class="n">${r[3]}</span><span class="gp">${r[4]}</span><span class="xp">${r[5]}</span></div>`).join("");
+}
+document.getElementById("dirSeg").onclick = e => { const b = e.target.closest("[data-dir]"); if(!b) return; document.querySelectorAll("#dirSeg button").forEach(x=>x.classList.toggle("on", x===b)); document.getElementById("dirA").classList.toggle("hidden", b.dataset.dir!=="a"); document.getElementById("dirB").classList.toggle("hidden", b.dataset.dir!=="b"); };
+document.getElementById("aHerb").onclick = () => { HERB_PATCHES.forEach(p=>{ if(p.on) p.p = 0.02; }); render(); };
+render();
+</script>
+</body>
+</html>
