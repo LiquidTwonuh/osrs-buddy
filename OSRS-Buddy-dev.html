@@ -1235,6 +1235,44 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-lsub{grid-area:sub; display:flex; flex-wrap:wrap; gap:3px 8px; align-items:center; font-size:12px; color:var(--muted); min-width:0}
   .cf-lsub .cf-why{margin:0}
   @keyframes cfgrow{from{width:0}}
+  /* runs: the farm, one card per patch */
+  .fr-tally{display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px}
+  .fr-stat{background:var(--inset); border:1px solid var(--border); border-radius:12px; padding:11px 13px}
+  .fr-stat .l{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+  .fr-stat .v{font-family:var(--font-display); font-size:24px; color:var(--gold); font-weight:600; line-height:1.1; margin-top:2px; font-variant-numeric:tabular-nums}
+  .fr-stat .s{font-size:11.5px; color:var(--muted); margin-top:2px}
+  .fr-head{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:8px}
+  .fr-head h3{margin:0}
+  .fr-head .when{font-size:12.5px; color:var(--muted)} .fr-head .when b{color:var(--green); font-weight:600}
+  .fr-crop{display:flex; gap:14px; align-items:center; flex-wrap:wrap; background:var(--inset); border:1px solid var(--border); border-radius:12px; padding:10px 12px; margin:8px 0 10px}
+  .fr-crop img{width:36px; height:36px; object-fit:contain; image-rendering:pixelated}
+  .fr-crop .nm{font-weight:700; font-size:15px} .fr-crop .nm small{font-weight:400; color:var(--muted); font-size:12px; margin-left:6px}
+  .fr-crop .bits{display:flex; gap:4px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--muted)} .fr-crop .bits b{color:var(--text); font-weight:600}
+  .fr-crop .bits img{width:18px; height:18px; vertical-align:-4px; margin-right:2px}
+  .fr-picks{display:flex; gap:4px; flex-wrap:wrap; margin-top:6px}
+  .fr-picks button{display:inline-flex; align-items:center; gap:5px; background:var(--panel2); border:1px solid var(--border); color:var(--muted); border-radius:8px; padding:3px 8px; font:inherit; font-size:12px; cursor:pointer; box-shadow:none}
+  .fr-picks button img{width:18px; height:18px; object-fit:contain; image-rendering:pixelated}
+  .fr-picks button.on{color:var(--gold); border-color:var(--gold-dim)} .fr-picks button.far{opacity:.45}
+  .fr-picks button small{color:var(--muted)}
+  .fr-patches{display:grid; grid-template-columns:repeat(auto-fill, minmax(188px, 1fr)); gap:8px}
+  .fr-patch{background:var(--inset); border:1px solid var(--border); border-radius:12px; padding:9px 11px; position:relative}
+  .fr-patch.off{opacity:.5}
+  .fr-patch.ready{border-color:var(--green)}
+  .fr-patch h5{margin:0 24px 0 0; font-size:13.5px; font-weight:600}
+  .fr-patch .where{font-size:11px; color:var(--muted)}
+  .fr-patch .gate{font-size:11px; color:var(--muted); margin-top:4px} .fr-patch .gate.no{color:var(--red)} .fr-patch .gate.ok{color:var(--green)}
+  .fr-patch .have{position:absolute; right:8px; top:8px; width:20px; height:20px; border-radius:6px; border:1px solid var(--border); background:var(--panel2); color:var(--gold); display:grid; place-items:center; font-size:12px; cursor:pointer; padding:0; box-shadow:none}
+  .fr-patch .have.on{border-color:var(--gold-dim)}
+  .fr-patch .bar{height:4px; background:var(--panel2); border-radius:4px; margin-top:8px; overflow:hidden}
+  .fr-patch .bar i{display:block; height:100%; background:linear-gradient(90deg, var(--gold3), var(--gold)); border-radius:4px}
+  .fr-patch.ready .bar i{background:var(--green)}
+  .fr-patch .eta{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:4px} .fr-patch .eta b{color:var(--text); font-weight:600} .fr-patch.ready .eta b{color:var(--green)}
+  .fr-log{display:flex; flex-direction:column; gap:3px}
+  .fr-lrow{display:grid; grid-template-columns:120px 1fr auto auto auto 28px; gap:10px; align-items:center; padding:6px 8px; border-radius:9px; font-size:13px}
+  .fr-lrow:hover{background:var(--inset)}
+  .fr-lrow .t{font-size:12px; color:var(--muted)} .fr-lrow .gp{font-weight:700; color:var(--gold); text-align:right} .fr-lrow .xp{font-size:12px; color:var(--muted); text-align:right} .fr-lrow .n{text-align:right}
+  .fr-lrow .x{background:none; border:0; color:var(--muted); cursor:pointer; font-size:13px; padding:0; box-shadow:none} .fr-lrow .x:hover{color:var(--red)}
+  @media (max-width:700px){ .fr-lrow{grid-template-columns:90px 1fr auto 28px} .fr-lrow .xp, .fr-lrow .n{display:none} }
   /* rounds: a checklist that knows the clock */
   .rd-list{display:flex; flex-direction:column; gap:4px}
   .rd-row{display:flex; align-items:center; gap:10px; padding:7px 10px; border-radius:10px; border:1px solid transparent; cursor:pointer}
@@ -2936,6 +2974,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     <div class="cf-sec" data-csec="earn"><div id="cofferView"></div></div>
     <div class="cf-sec hidden" data-csec="vault"><div id="vaultView"></div></div>
     <div class="cf-sec hidden" data-csec="flip"><div id="flipView"></div></div>
+    <div class="cf-sec hidden" data-csec="runs"><div id="runsView"></div></div>
   </div>
 
   <!-- VIEW: GOALS (to-do list + tracked-goal builder) -->
@@ -10739,11 +10778,13 @@ const COFFER_SECTIONS = [
   {id:"earn",  label:"Earn",  icon:"⛏️"},
   {id:"vault", label:"Vault", icon:"🏦"},
   {id:"flip",  label:"Flip",  icon:"📈"},
+  {id:"runs",  label:"Runs",  icon:"🌿"},
 ];
 const COFFER_BLURB = {
   earn:  "Every money maker the wiki lists, measured against your own levels. Answer a few questions and it shows the ones worth your time.",
   vault: "Your bank, valued at today's prices and tracked over time. It updates whenever you open your bank in game.",
   flip:  "What the Grand Exchange is paying right now: buy and sell prices, the margin after tax, and how much actually trades.",
+  runs:  "Your farm runs, curated to your Farming level: what to plant, what it costs, what it pays, and which patches you have.",
 };
 function cofferSec(){ const x = state.cofferSec; return COFFER_SECTIONS.some(c=>c.id===x) ? x : "earn"; }
 function setCofferSec(id){ state.cofferSec = id; save(); applyCofferSec(); renderNavSubCoffer(); window.scrollTo(0,0); }
@@ -10754,6 +10795,7 @@ function applyCofferSec(){
   const bl = $("#cofferBlurb"); if(bl) bl.textContent = COFFER_BLURB[cur];
   if(cur==="vault"){ renderVault(); vaultData(true); }
   else if(cur==="flip"){ renderFlip(); flipData(true); }
+  else if(cur==="runs"){ renderRuns(); runsData(); }
   else { renderCoffer(); mmgDbEnsure(); }
 }
 function renderNavSubCoffer(){
@@ -10989,6 +11031,166 @@ function renderVault(){
       <p class="small muted" style="margin:10px 0 0">Prices are the middle of the latest Grand Exchange buy and sell. Untradeable items count as nothing here, which is why a bank full of capes can look poor.</p>
     </div>`;
   vaultWireWindow(bank);
+}
+
+// ============ RUNS ============
+// The farm, curated to your level. Crop tables and patch gates are the wiki's (Farming training,
+// the patch pages; read 2026-11-13, CC BY-NC-SA). Prices come from the GE map already in the app.
+// Herb yield assumes eight a patch, the wiki's own working figure with ultracompost.
+const FARM_KINDS = [
+  {id:"herb", label:"Herb run", icon:"🌿", every:80, round:"herbs", yieldN:8},
+  {id:"tree", label:"Tree run", icon:"🌳", round:"trees"},
+  {id:"fruit", label:"Fruit tree run", icon:"🍊"},
+  {id:"hardwood", label:"Hardwood run", icon:"🪵"},
+];
+// name, level, [plant XP, check or harvest-each XP], grow minutes, what you buy, the payment, the pictures
+const FARM_CROPS = {
+  herb: [["Guam",9,11,12.5],["Marrentill",14,13.5,15],["Tarromin",19,16,18],["Harralander",26,21.5,24],["Ranarr",32,27,30.5],["Toadflax",38,34,38.5],["Irit",44,43,48.5],["Avantoe",50,54.5,61.5],["Kwuarm",56,69,78],["Snapdragon",62,87.5,98.5],["Huasca",65,86.5,110],["Cadantine",67,106.5,120],["Lantadyme",73,134.5,151.5],["Dwarf weed",79,170.5,192],["Torstol",85,199.5,224.5]]
+    .map(([n,l,a,b])=>({n, lvl:l, xp:[a,b], grow:80, buy:n + " seed", produce:"Grimy " + (n==="Ranarr"?"ranarr weed":n==="Irit"?"irit leaf":n==="Guam"?"guam leaf":n.toLowerCase()), img:(n==="Ranarr"?"Grimy_ranarr_weed":n==="Irit"?"Grimy_irit_leaf":n==="Guam"?"Grimy_guam_leaf":"Grimy_"+n.toLowerCase().replace(/ /g,"_")) + ".png"})),
+  tree: [["Oak",15,14,467.3,200,"Tomatoes(5)",1,"a basket of tomatoes"],["Willow",30,25,1456.5,240,"Apples(5)",1,"a basket of apples"],["Maple",45,45,3403.4,320,"Oranges(5)",1,"a basket of oranges"],["Yew",60,81,7069.9,400,"Cactus spine",10,"10 cactus spines"],["Magic",75,145.5,13768.3,480,"Coconut",25,"25 coconuts"]]
+    .map(([n,l,a,b,g,pi,pn,pt])=>({n, lvl:l, xp:[a,b], grow:g, buy:n + " sapling", pay:{item:pi, n:pn, text:pt}, img:n + "_sapling.png"})),
+  fruit: [["Apple",27,22,1199.5,51,"Sweetcorn",9,"9 sweetcorn"],["Banana",33,28,1750.5,63,"Apples(5)",4,"4 baskets of apples"],["Orange",39,35.5,2470.2,81,"Strawberries(5)",3,"3 baskets of strawberries"],["Curry",42,40,2906.9,90,"Bananas(5)",5,"5 baskets of bananas"],["Pineapple",51,57,4605.7,129,"Watermelon",10,"10 watermelons"],["Papaya",57,72,6146.4,162,"Pineapple",10,"10 pineapples"],["Palm",68,110.5,10150.1,249,"Papaya fruit",15,"15 papaya fruit"],["Dragonfruit",81,140,17335,420,"Coconut",15,"15 coconuts"]]
+    .map(([n,l,a,b,h,pi,pn,pt])=>({n, lvl:l, xp:[a,b,h], grow:960, buy:n + " sapling", pay:{item:pi, n:pn, text:pt}, img:n + "_sapling.png"})),
+  hardwood: [["Teak",35,35,7290,4480,"Limpwurt root",15,"15 limpwurt roots"],["Mahogany",55,63,15720,5120,"Yanillian hops",25,"25 yanillian hops"],["Camphor",66,88,17840,5120,"White berries",10,"10 white berries"],["Ironwood",80,145,20380,5120,"Curry leaf",10,"10 curry leaves"],["Rosewood",92,252,23100,6400,"Dragonfruit",8,"8 dragonfruit"]]
+    .map(([n,l,a,b,g,pi,pn,pt])=>({n, lvl:l, xp:[a,b], grow:g, buy:n + " sapling", pay:{item:pi, n:pn, text:pt}, img:n + "_sapling.png"})),
+};
+// the patches, with what opens each one; "note" is the wiki's own bonus line
+const FARM_PATCHES = {
+  herb: [
+    {id:"h-fal", n:"Falador", w:"south of the city", note:"10% more XP with the medium Falador diary"},
+    {id:"h-pha", n:"Port Phasmatys", w:"west gate"},
+    {id:"h-cat", n:"Catherby", w:"north of the bank", note:"up to 15% more yield with the Kandarin diaries"},
+    {id:"h-ard", n:"Ardougne", w:"north of the city"},
+    {id:"h-hos", n:"Hosidius", w:"south-west corner", note:"disease-free with the easy Kourend & Kebos diary"},
+    {id:"h-gld", n:"Farming Guild", w:"second tier", lvl:65},
+    {id:"h-tro", n:"Troll Stronghold", w:"the roof", quest:"My Arm's Big Adventure", note:"disease-free"},
+    {id:"h-wei", n:"Weiss", w:"by the herb garden", quest:"Making Friends with My Arm", note:"disease-free"},
+    {id:"h-har", n:"Harmony Island", w:"the island", diary:["Morytania","elite"], note:"disease-free"},
+    {id:"h-ort", n:"Ortus Farm", w:"Varlamore", quest:"Children of the Sun"},
+  ],
+  tree: [
+    {id:"t-lum", n:"Lumbridge", w:"west of the castle"},
+    {id:"t-var", n:"Varrock", w:"castle courtyard"},
+    {id:"t-fal", n:"Falador", w:"the park", note:"disease-free with the elite Falador diary"},
+    {id:"t-tav", n:"Taverley", w:"south of the town"},
+    {id:"t-gno", n:"Gnome Stronghold", w:"by the agility course"},
+    {id:"t-gld", n:"Farming Guild", w:"middle tier", lvl:65},
+    {id:"t-nem", n:"Nemus Retreat", w:"Varlamore", quest:"Children of the Sun"},
+  ],
+  fruit: [
+    {id:"f-gno", n:"Gnome Stronghold", w:"by the spirit tree"},
+    {id:"f-cat", n:"Catherby", w:"east of the town"},
+    {id:"f-vil", n:"Tree Gnome Village", w:"west of the maze"},
+    {id:"f-bri", n:"Brimhaven", w:"north of the town"},
+    {id:"f-lle", n:"Lletya", w:"the elf town", quest:"Mourning's End Part I", started:true},
+    {id:"f-gld", n:"Farming Guild", w:"top tier", lvl:85},
+    {id:"f-kas", n:"Kastori", w:"Varlamore", quest:"Children of the Sun"},
+  ],
+  hardwood: [
+    {id:"w-fo1", n:"Fossil Island, west", w:"the Mushroom Forest", quest:"Bone Voyage"},
+    {id:"w-fo2", n:"Fossil Island, middle", w:"the Mushroom Forest", quest:"Bone Voyage"},
+    {id:"w-fo3", n:"Fossil Island, east", w:"the Mushroom Forest", quest:"Bone Voyage"},
+  ],
+};
+function runsState(){ const r = state.runs = state.runs || {}; r.have = r.have || {}; r.pick = r.pick || {}; r.planted = r.planted || {}; r.log = r.log || []; return r; }
+let frNameIdx = null;
+function itemIdByName(name){
+  const m = priceMap(); if(!m) return 0;
+  if(!frNameIdx || frNameIdx.src !== m){ frNameIdx = {src:m, by:{}}; for(const id in m.items) frNameIdx.by[m.items[id][0].toLowerCase()] = +id; }
+  return frNameIdx.by[String(name).toLowerCase()] || 0;
+}
+function frPrice(name){ const id = itemIdByName(name); return id ? itemPrice(id) : 0; }
+// what opens a patch, against what the app knows: true, false, or null when it cannot tell
+function frGate(pt){
+  if(pt.lvl) return live ? lvlOf("farming") >= pt.lvl : null;
+  if(pt.quest){ if(questDone(pt.quest)) return true; if(pt.started && typeof questInProgress === "function" && questInProgress(pt.quest)) return true; return state.questsDone ? false : null; }
+  if(pt.diary){ const dd = typeof diaryData === "function" ? diaryData() : null; if(!dd) return null; const r = dd.regions.find(x=>x.name.toLowerCase().startsWith(pt.diary[0].toLowerCase())); const t = r && r.tiers.find(x=>x.tier === pt.diary[1]); return t ? !!t.complete : null; }
+  return true;
+}
+function frGateText(pt){ return pt.lvl ? `${pt.lvl} Farming` : pt.quest ? pt.quest + (pt.started ? " (started)" : "") : pt.diary ? `${pt.diary[0]} ${pt.diary[1]} diary` : ""; }
+function frHave(pt){ const r = runsState(); if(pt.id in r.have) return !!r.have[pt.id]; return frGate(pt) !== false; }
+function frCropFor(kind){
+  const r = runsState(), list = FARM_CROPS[kind], L = live ? lvlOf("farming") : 1;
+  const picked = list.find(c=>c.n === r.pick[kind]);
+  if(picked) return picked;
+  const can = list.filter(c=>c.lvl <= L);
+  return can.length ? can[can.length-1] : list[0];
+}
+// per patch: what it costs, what it pays, what it teaches
+function frEcon(kind, c){
+  const k = FARM_KINDS.find(x=>x.id === kind);
+  const buy = frPrice(c.buy), pay = c.pay ? frPrice(c.pay.item) * c.pay.n : 0;
+  const cost = buy + pay;
+  const xp = kind === "herb" ? c.xp[0] + c.xp[1] * k.yieldN : c.xp[0] + c.xp[1] + (c.xp[2] || 0);
+  const income = kind === "herb" ? frPrice(c.produce) * k.yieldN : 0;
+  return {buy, pay, cost, xp, income, net: income - cost};
+}
+async function runsData(){ await priceMapEnsure(); await priceLatestEnsure(); renderRuns(); }
+function frWhen(ms){ const m = Math.round(ms / 6e4); if(m < 60) return m + " min"; const h = Math.floor(m / 60); return h < 48 ? `${h}h ${m % 60 ? (m % 60) + "m" : ""}`.trim() : Math.round(h / 24) + " days"; }
+function renderRuns(){
+  const el = $("#runsView"); if(!el) return;
+  const r = runsState(), L = live ? lvlOf("farming") : null, now = Date.now();
+  const week = now - 7 * 864e5, wk = r.log.filter(e=>e.t >= week);
+  const days = new Set(wk.map(e=>isoDate(new Date(e.t)))).size;
+  const tally = [["This week", `${wk.length} run${wk.length===1?"":"s"}`, FARM_KINDS.map(k=>{ const n = wk.filter(e=>e.kind===k.id).length; return n ? `${n} ${k.label.toLowerCase().replace(" run","")}` : ""; }).filter(Boolean).join(", ") || "none logged yet"],
+    ["Farming XP", "+" + fmt(Math.round(wk.reduce((a,e)=>a+e.xp,0))), "from what you logged"],
+    ["Worth", (wk.reduce((a,e)=>a+e.net,0) >= 0 ? "+" : "") + gpShort(wk.reduce((a,e)=>a+e.net,0)), "herbs sold, seeds and payments spent"],
+    ["Days", `${days} of 7`, days >= 7 ? "every day this week" : days ? "with a run" : "no runs yet"]];
+  const kinds = FARM_KINDS.map(k=>{
+    const c = frCropFor(k.id), e = frEcon(k.id, c), list = FARM_CROPS[k.id];
+    const patches = FARM_PATCHES[k.id], have = patches.filter(frHave);
+    const pl = r.planted[k.id];
+    const growMs = c.grow * 6e4;
+    const ready = pl ? now - pl.at >= growMs : false;
+    const picks = list.map(x=>`<button class="${x.n===c.n?"on":""} ${L!=null && x.lvl > L ? "far" : ""}" data-frpick="${k.id}" data-crop="${escapeHtml(x.n)}" title="${x.lvl} Farming · ${fmt(Math.round(frEcon(k.id, x).xp))} XP a patch · costs ${gpShort(frEcon(k.id, x).cost)}"><img src="${WIKI + x.img}" alt="">${escapeHtml(x.n)} <small>${x.lvl}</small></button>`).join("");
+    const pcards = patches.map(pt=>{
+      const g = frGate(pt), on = frHave(pt), inRun = pl && pl.patches.includes(pt.id);
+      const pct = inRun ? Math.min(1, (now - pl.at) / growMs) : 0;
+      return `<div class="fr-patch ${on?"":"off"} ${inRun && pct >= 1 ? "ready" : ""}">
+        <h5>${escapeHtml(pt.n)}</h5><div class="where">${escapeHtml(pt.w)}</div>
+        <button class="have ${on?"on":""}" data-frhave="${pt.id}" title="${on ? "You have this patch. Tap if you don't" : "Tap when you have this patch"}">${on ? "✓" : ""}</button>
+        ${frGateText(pt) ? `<div class="gate ${g===true?"ok":g===false?"no":""}">${g===true?"✓ ":g===false?"✕ ":""}${escapeHtml(frGateText(pt))}</div>` : pt.note ? `<div class="gate">${escapeHtml(pt.note)}</div>` : ""}
+        ${inRun ? `<div class="bar"><i style="width:${Math.round(pct*100)}%"></i></div><div class="eta"><span>${escapeHtml(pl.crop)}</span><b>${pct >= 1 ? "ready" : frWhen(growMs - (now - pl.at)) + " to go"}</b></div>` : on ? `<div class="eta"><span class="muted">nothing planted</span></div>` : ""}
+      </div>`; }).join("");
+    const costText = priceLatest ? `<span><img src="${WIKI + c.img}" alt="">${k.id==="herb" ? "seed" : "sapling"} <b>${gpShort(e.buy)}</b></span>${c.pay ? `<span>payment <b>${escapeHtml(c.pay.text)}</b> (${gpShort(e.pay)})</span>` : ""}<span>a patch costs <b>${gpShort(e.cost)}</b></span>${k.id==="herb" ? `<span>pays about <b>${gpShort(e.income)}</b> at eight herbs</span>` : ""}` : `<span class="muted">prices loading…</span>`;
+    return `<div class="panel">
+      <div class="fr-head"><h3>${k.icon} ${k.label}</h3><span class="when">${have.length} of ${patches.length} patches${pl ? ` · ${ready ? `<b>ready</b>, planted ${frWhen(now - pl.at)} ago` : `growing, ${frWhen(growMs - (now - pl.at))} to go`}` : ""}</span><span class="grow"></span>
+        ${pl ? `<button class="primary small" data-frharvest="${k.id}">${k.id==="herb" ? "Picked and replanted" : "Checked and replanted"}</button><button class="ghost small" data-frclear="${k.id}" title="Forget this planting">✕</button>` : `<button class="primary small" data-frplant="${k.id}" ${have.length ? "" : "disabled"}>Planted ${have.length} patch${have.length===1?"":"es"}</button>`}</div>
+      <div class="fr-crop"><img src="${WIKI + c.img}" alt="">
+        <div class="grow"><div class="nm">${escapeHtml(c.n)}<small>${L==null ? "load your stats and this picks for your level" : c.lvl <= L ? `the best you can plant at ${L} Farming` : `needs ${c.lvl} Farming, you're ${L}`}</small></div>
+          <div class="bits">${costText}<span><b>${fmt(Math.round(e.xp))} XP</b> a patch</span><span>grows in <b>${frWhen(growMs)}</b></span>${have.length ? `<span>a full run: <b>${fmt(Math.round(e.xp * have.length))} XP</b>, ${gpShort(e.cost * have.length)}${k.id==="herb" ? `, about ${gpShort(e.net * have.length)} profit` : ""}</span>` : ""}</div>
+          <div class="fr-picks">${picks}</div></div></div>
+      <div class="fr-patches">${pcards}</div>
+    </div>`;
+  }).join("");
+  const log = r.log.slice().reverse().slice(0, 30).map((e, i)=>`<div class="fr-lrow"><span class="t">${new Date(e.t).toLocaleString([], {weekday:"short", hour:"numeric", minute:"2-digit"})}</span><span>${escapeHtml((FARM_KINDS.find(k=>k.id===e.kind)||{}).label || e.kind)} <span class="muted small">${escapeHtml(e.crop)} · ${e.n} patch${e.n===1?"":"es"}</span></span><span class="n small muted">${e.kind==="herb" ? `~${e.n * 8} herbs` : ""}</span><span class="gp">${e.net >= 0 ? "+" : ""}${gpShort(e.net)}</span><span class="xp">+${fmt(Math.round(e.xp))} xp</span><button class="x" data-frdel="${e.t}" title="Remove">✕</button></div>`).join("");
+  el.innerHTML = `<div class="panel"><div class="fr-tally">${tally.map(([l,v,s])=>`<div class="fr-stat"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("")}</div>
+      ${L==null ? `<p class="small muted" style="margin:10px 0 0">Load your character and each run picks its crop for your Farming level. Until then it shows the lowest.</p>` : ""}</div>
+    ${kinds}
+    <div class="panel"><div class="section-title" style="margin-top:0"><h3>Runs logged</h3><span class="small muted">every harvest you pressed, valued at the prices of the day you pressed it</span></div>
+      <div class="fr-log">${log || `<div class="empty">Nothing yet. Press Planted on a run above, then Picked and replanted when you come back, and it lands here.</div>`}</div>
+      <p class="small muted" style="margin:10px 0 0">Crop levels, payments and XP are the wiki's (CC BY-NC-SA). Herb yield is taken as eight a patch, the wiki's working figure with ultracompost. Prices are today's Grand Exchange middle.</p></div>`;
+  // wiring
+  $$("#runsView [data-frpick]").forEach(b=>b.onclick = ()=>{ runsState().pick[b.dataset.frpick] = b.dataset.crop; save(); renderRuns(); });
+  $$("#runsView [data-frhave]").forEach(b=>b.onclick = ()=>{ const pt = Object.values(FARM_PATCHES).flat().find(x=>x.id===b.dataset.frhave); runsState().have[pt.id] = !frHave(pt); save(); renderRuns(); });
+  $$("#runsView [data-frplant]").forEach(b=>b.onclick = ()=>{
+    const k = b.dataset.frplant, c = frCropFor(k), ids = FARM_PATCHES[k].filter(frHave).map(p=>p.id);
+    runsState().planted[k] = {at: Date.now(), crop: c.n, patches: ids}; save(); renderRuns();
+    toast(`${c.n} in ${ids.length} patch${ids.length===1?"":"es"}. Back in ${frWhen(c.grow * 6e4)}.`);
+  });
+  $$("#runsView [data-frclear]").forEach(b=>b.onclick = ()=>{ delete runsState().planted[b.dataset.frclear]; save(); renderRuns(); });
+  $$("#runsView [data-frharvest]").forEach(b=>b.onclick = ()=>{
+    const k = b.dataset.frharvest, r = runsState(), pl = r.planted[k]; if(!pl) return;
+    const c = FARM_CROPS[k].find(x=>x.n === pl.crop) || frCropFor(k), e = frEcon(k, c), n = pl.patches.length;
+    r.log.push({t: Date.now(), kind: k, crop: c.n, n, xp: e.xp * n, net: e.net * n});
+    if(r.log.length > 400) r.log.splice(0, r.log.length - 400);
+    const kind = FARM_KINDS.find(x=>x.id===k); if(kind.round){ state.rounds = state.rounds || {}; state.rounds[kind.round] = Date.now(); }
+    // replant the same patches with the crop for your level now
+    const next = frCropFor(k); r.planted[k] = {at: Date.now(), crop: next.n, patches: FARM_PATCHES[k].filter(frHave).map(p=>p.id)};
+    save(); renderRuns(); renderRoundsHome();
+    toast(`Logged: ${n} ${c.n}, +${fmt(Math.round(e.xp * n))} XP. ${next.n} planted again.`);
+  });
+  $$("#runsView [data-frdel]").forEach(b=>b.onclick = ()=>{ const r = runsState(); const i = r.log.findIndex(e=>String(e.t)===b.dataset.frdel); if(i > -1) r.log.splice(i, 1); save(); renderRuns(); });
 }
 
 // ============ FLIP ============
