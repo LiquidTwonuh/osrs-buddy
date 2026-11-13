@@ -15,6 +15,7 @@ Things that were decided and should not be reopened without Josh. Newest first w
 
 ## Pages
 
+- **2026-11-13, Map is Compass; Coffer's sections are Ventures, Bank, Exchange, Farm.** Josh stopped liking Map and wanted the Coffer sections renamed before the push. Compass fits the page (pick a goal, the chain draws itself) and sits with Scroll and Coffer as a set. Internal ids are unchanged. Claude's proposal; Josh may swap any of them.
 - **2026-11-13, the rune themes ship as CSS, the Canvas landscape waits.** ChatGPT's catalog has palettes, a decoration layer and a Canvas renderer. Palettes and decoration went in (generated from the catalog, mapped to the app's classes). The renderer did not: it is a cost on phones and the push is close. The brand mark is the catalog's cel-shaded Mortimer. The Theme button opens the Look step instead of cycling.
 - **2026-11-11, Flip prices are averages, never a single trade.** The latest high and low are one trade each and showed margins nobody could buy at. Now five-minute averages when at least ten traded each way, else hour averages, and both sides must have traded. Josh's call after trying a bead at 2k each.
 - **2026-11-11, Coffer asks about the Wilderness and financial risk separately.** Josh's suggestion once the sweep showed the wiki's Risky flag is mostly market risk. Each is its own hard filter.
