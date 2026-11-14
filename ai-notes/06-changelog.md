@@ -5,6 +5,8 @@ Updated 2026-11-11 (covers commits through 2026-11-11)
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
 
 ## 2026-11-13
+- dev: loading screen (Mortimer, a line, a bar; quest log and steps warm behind it); Home repeatables tick and arrow; Coffer resolves quest names it could not; RuneLite conflicts one-press untick; Quest Hub goal banners; Repeatable runs with a Patch board / Run log switch; quest-steps.json regathered (190 quests).
+- note: the dev page is 3.7 MB since a direct edit by another tool baked the theme scenes as images; see the Board.
 - dev: renames. Map is Quest Hub; Coffer's sections are The Bakery, Bank, Exchange, Repeatable runs. Farm (was Runs) laid out as centred heroes; empty runs fold.
 - dev: Coffer Runs, the farm curated to your Farming level: crop, costs, XP, patches with gates and your own ticks, plant and harvest presses, a weekly tally and log.
 - dev: 24 themes from ChatGPT's catalog (23 runes and Clay) with their decoration layer; the cel-shaded Mortimer mark in the brand; the Theme button opens the Look step.

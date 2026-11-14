@@ -46,6 +46,8 @@ Page-level rethinks skip step 1 and start with a mockup in `design/mockups/`: tw
 
 May: read everything in the repo; propose; write into `INBOX.md`; design themes from the theme kit; draw Mortimer in our own style; critique pages against the design rules; draft copy in plain words.
 
+Other AIs do not edit `OSRS-Buddy-dev.html` or `OSRS-Buddy.html` directly (Claude's patches anchor on exact lines; a direct edit on 2026-11-13 slipped into a commit unseen). Hand files over in `handoff/` or write to `INBOX.md`.
+
 May not: push, tag or release; install anything; touch `OSRS-Buddy.html` (stable) without Josh saying ship; bring anything from Krystal Klear into the public repo; bundle Jagex art or audio; poll the wiki aggressively; use the WikiSync cloud API; rename the save key; add em dashes, jokes or emoji-on-everything; suggest removing the "OSRS Buddy DEV" shortcut; nudge Josh to ship.
 
 ## Data sources and their rules

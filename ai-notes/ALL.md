@@ -272,6 +272,8 @@ Updated 2026-11-11 (covers commits through 2026-11-11)
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
 
 ## 2026-11-13
+- dev: loading screen (Mortimer, a line, a bar; quest log and steps warm behind it); Home repeatables tick and arrow; Coffer resolves quest names it could not; RuneLite conflicts one-press untick; Quest Hub goal banners; Repeatable runs with a Patch board / Run log switch; quest-steps.json regathered (190 quests).
+- note: the dev page is 3.7 MB since a direct edit by another tool baked the theme scenes as images; see the Board.
 - dev: renames. Map is Quest Hub; Coffer's sections are The Bakery, Bank, Exchange, Repeatable runs. Farm (was Runs) laid out as centred heroes; empty runs fold.
 - dev: Coffer Runs, the farm curated to your Farming level: crop, costs, XP, patches with gates and your own ticks, plant and harvest presses, a weekly tally and log.
 - dev: 24 themes from ChatGPT's catalog (23 runes and Clay) with their decoration layer; the cel-shaded Mortimer mark in the brand; the Theme button opens the Look step.
@@ -426,6 +428,8 @@ Page-level rethinks skip step 1 and start with a mockup in `design/mockups/`: tw
 ## What an AI may and may not do here
 
 May: read everything in the repo; propose; write into `INBOX.md`; design themes from the theme kit; draw Mortimer in our own style; critique pages against the design rules; draft copy in plain words.
+
+Other AIs do not edit `OSRS-Buddy-dev.html` or `OSRS-Buddy.html` directly (Claude's patches anchor on exact lines; a direct edit on 2026-11-13 slipped into a commit unseen). Hand files over in `handoff/` or write to `INBOX.md`.
 
 May not: push, tag or release; install anything; touch `OSRS-Buddy.html` (stable) without Josh saying ship; bring anything from Krystal Klear into the public repo; bundle Jagex art or audio; poll the wiki aggressively; use the WikiSync cloud API; rename the save key; add em dashes, jokes or emoji-on-everything; suggest removing the "OSRS Buddy DEV" shortcut; nudge Josh to ship.
 
