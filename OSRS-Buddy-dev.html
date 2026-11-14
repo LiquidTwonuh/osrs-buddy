@@ -306,9 +306,22 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body.rune .navitem.active{background-image:linear-gradient(90deg, var(--glow), transparent 73%)}
   body.rune .content{position:relative; isolation:isolate}
   body.rune .content::before{content:""; position:absolute; left:0; right:0; top:0; height:440px; z-index:-1; pointer-events:none;
-    background-image:var(--scene-light, none), var(--scene-lines, none); background-repeat:no-repeat;
+    background:var(--scene-lines, none); background-repeat:repeat;
     -webkit-mask-image:linear-gradient(#000 0 55%, transparent); mask-image:linear-gradient(#000 0 55%, transparent)}
-  body[data-theme="aether"] .content::before{background-image:radial-gradient(ellipse at 98% 0%, var(--glow), transparent 69%)}
+  body.rune .content{background-image:var(--scene-light, none); background-repeat:no-repeat}
+  /* the painted scene: the canvas picture at the top right, the first panel of the open view fading into it */
+  body.art .sidebar{background-image:none}
+  body.art .content{background-image:none}
+  body.art .content::before{height:min(100%, 600px); background:var(--scene-preview) no-repeat right top / min(100%, 760px) auto;
+    -webkit-mask-image:linear-gradient(#000 3%, transparent 95%); mask-image:linear-gradient(#000 3%, transparent 95%)}
+  body.art .view:not(.hidden) > .panel:first-child{margin-top:30px;
+    background-image:linear-gradient(90deg, var(--panel) 18%, color-mix(in srgb, var(--panel) 74%, transparent) 56%, color-mix(in srgb, var(--panel) 25%, transparent)),
+      linear-gradient(180deg, transparent, var(--panel) 132px), var(--scene-preview);
+    background-repeat:no-repeat; background-position:top right; background-size:100% 132px, 100% 132px, min(100%, 760px) auto}
+  body.art[data-approach="illustrated"] .view:not(.hidden) > .panel:first-child{margin-top:116px; background-image:radial-gradient(ellipse at 98% 0%, var(--glow), transparent 69%); background-size:100% 104px}
+  body.art[data-approach="illustrated"] .panel{border-top-color:var(--gold3); box-shadow:inset 0 1px var(--glow), var(--shadow)}
+  body[data-theme="aether"].art[data-approach="focused"] .view:not(.hidden) > .panel:first-child{margin-top:96px; background-image:radial-gradient(ellipse at 98% 0%, var(--glow), transparent 69%); background-size:100% 104px}
+  @media (max-width:700px){ body.art .view:not(.hidden) > .panel:first-child{margin-top:15px} body.art[data-approach="illustrated"] .view:not(.hidden) > .panel:first-child{margin-top:65px} }
   body[data-theme="dust"] :is(.sidebar, .panel, .ghost){background-image:radial-gradient(circle, #edc48d27 0 .65px, transparent 1px), radial-gradient(circle, #edc48d20 0 .5px, transparent 1px); background-size:13px 11px, 19px 17px; background-repeat:repeat}
   body[data-theme="death"] .panel{border-top-color:#646375}
   body[data-theme="wrath"] .navitem.active, body[data-theme="blood"] .navitem.active{background-image:linear-gradient(105deg, var(--glow), transparent 69%)}
@@ -6828,6 +6841,306 @@ function renderNotes(){
 $("#addNoteBtn").onclick = addNote;
 
 // ============ THEMES (the elements) ============
+// ---- the scene behind the first panel: ChatGPT's painter from the theme catalog, ported as is ----
+// One offscreen canvas per theme change; the picture reaches CSS as --scene-preview. Focused is
+// the quiet version; Illustrated (the combination runes only) draws more.
+const RUNE_ART = {"chaos": ["271619", "ea817d", "c44a44"], "astral": ["1e1c31", "edc88a", "ad80cb"], "cosmic": ["101527", "a7baf2", "a875d4"], "nature": ["14231b", "8fc99a", "4c9660"], "law": ["1b222a", "c6cbe0", "b8a273"], "death": ["131418", "d5cfb5", "646d87"], "blood": ["241215", "ed8585", "ae3145"], "soul": ["15232a", "a7d6dd", "789abb"], "wrath": ["1a1524", "f1bd82", "9179f1"], "mist": ["19272c", "bad6dc", "8db9c6"], "dust": ["2a221a", "d8b58a", "b78b56"], "mud": ["202219", "c0ac7f", "77563c"], "smoke": ["201c23", "b7a9c4", "837194"], "steam": ["202530", "d5e5f4", "a1b0e0"], "lava": ["291713", "ffab72", "f0673b"], "aether": ["1c192b", "bdb0f1", "8776e1"]};
+const RUNE_COMBO = new Set(["mist","dust","mud","smoke","steam","lava","aether"]);
+const RuneScene = (()=>{
+let surface, art, W, H;
+const tau = Math.PI*2;
+function painter(seed) {
+  let state = seed;
+  const rnd = () => { state = (Math.imul(state,1664525)+1013904223)>>>0; return state/4294967296; };
+  function glow(x,y,r,color,opacity,flat=1) {
+    art.save();
+    art.translate(x,y);
+    art.scale(1,flat);
+    const g=art.createRadialGradient(0,0,0,0,0,r);
+    g.addColorStop(0,color);
+    g.addColorStop(1,color+"00");
+    art.globalAlpha=opacity;
+    art.fillStyle=g;
+    art.fillRect(-r,-r,r*2,r*2);
+    art.restore();
+  }
+  function shape(points,color,alpha=1) {
+    art.save();
+    art.globalAlpha=alpha;
+    art.beginPath();
+    art.moveTo(...points[0]);
+    for(const p of points.slice(1)) art.lineTo(...p);
+    art.closePath();
+    art.fillStyle=color;
+    art.fill();
+    art.restore();
+  }
+  function line(points,color,width=1,alpha=1) {
+    art.save();
+    art.globalAlpha=alpha;
+    art.beginPath();
+    art.moveTo(...points[0]);
+    for(const p of points.slice(1)) art.lineTo(...p);
+    art.strokeStyle=color;
+    art.lineWidth=width;
+    art.lineCap="round";
+    art.stroke();
+    art.restore();
+  }
+  function ellipse(x,y,rx,ry,angle,color,alpha=1) {
+    art.save();
+    art.globalAlpha=alpha;
+    art.beginPath();
+    art.ellipse(x,y,rx,ry,angle,0,tau);
+    art.fillStyle=color;
+    art.fill();
+    art.restore();
+  }
+  function cloud(x,y,length,thickness,color,alpha) {
+    for(let i=0;i<14;i++){
+      const t=i/13;
+      glow(x+t*length,y+Math.sin(t*4)*thickness*.32,thickness*(.67+rnd()*.6),color,alpha,.43);
+    }
+  }
+
+  function curves(start, segments, ink, width=0, alpha=1) {
+    art.save();
+    art.globalAlpha=alpha;
+    art.beginPath();
+    art.moveTo(...start);
+    for (const segment of segments) art.bezierCurveTo(...segment);
+    if (width) {art.lineWidth=width; art.lineCap="round"; art.strokeStyle=ink; art.stroke();}
+    else {art.closePath(); art.fillStyle=ink; art.fill();}
+    art.restore();
+  }
+  return {rnd,glow,shape,line,ellipse,cloud,curves};
+}
+
+function paintRuneScene(id, illustrated) {
+  const specs=RUNE_ART[id]; if(!specs) return false;
+  surface=document.createElement("canvas"); surface.width=1100; surface.height=620;
+  art=surface.getContext("2d"); W=surface.width; H=surface.height;
+  const [base,ink,shade]=specs.map(value=>"#"+value);
+  const power=illustrated?1:id==='aether'?.88:.65;
+  art.clearRect(0,0,W,H);
+  const {rnd,glow,shape,line,ellipse,cloud,curves}=painter([...id].reduce((a,c)=>a+c.charCodeAt(0),0));
+  glow(820,65,illustrated?640:480,shade,.24*power,.48);
+  if(id==="cosmic"||id==="astral"){
+    for(let i=0;i<39;i++){
+      const t=i/38;
+      glow(460+t*630,65+Math.sin(t*5)*60+rnd()*60,75+rnd()*95,i%3?shade:"#566fce",.09,.43);
+    }
+    for(let i=0;i<240;i++){
+      const x=rnd()*W,y=rnd()*290,size=rnd()<.93?1:2;
+      ellipse(x,y,size,size,0,i%5===0?ink:"#d5e1ff",.16+rnd()*.7);
+      if(size===2) {line([[x-5,y],[x+5,y]],ink,1,.66);line([[x,y-5],[x,y+5]],ink,1,.66);}
+    }
+    if(id==="astral"){
+      glow(856,120,145,"#f7ac55",.67);
+      ellipse(856,120,67,67,0,"#f2bc76");
+      ellipse(872,119,64,64,0,"#18182d");
+      glow(808,72,45,"#ffe2a0",.62);
+    } else {
+      ellipse(880,92,42,42,0,"#404a7b",.9);
+      ellipse(891,82,40,40,0,base);
+    }
+  } else if(id==="nature"){
+
+    for(let j=0;j<6;j++){
+      const root=670+j*66, y0=158+j%3*25, bow=35+j*11;
+      const tip=t=>[root+Math.sin(t*1.75+j*.22)*bow,y0-147*t];
+      const stem=Array.from({length:25},(_,i)=>tip(i/24));
+      line(stem,shade,1.05,.71);
+      for(let i=2;i<19;i++){
+        const t=i/20,[x,y]=tip(t),n=(1-t)*27+4;
+        for(const dir of [-1,1]){
+          const dx=dir*n*(.75+rnd()*.35), dy=-n*(.5+rnd()*.5);
+          curves([x,y],[[x+dx*.43,y-2,x+dx*.76,y+dy*.62,x+dx,y+dy],
+            [x+dx*.44,y+dy*.93,x+dx*.2,y+dy*.7,x,y]],i%4?shade:ink,0,.25+rnd()*.32);
+          line([[x,y],[x+dx*.39,y+dy*.56],[x+dx*.88,y+dy*.92]],ink,.55,.24);
+        }
+      }
+    }
+
+  } else if(id==="law"){
+
+    const x=860,y=24;
+    shape([[x-154,y+43],[x,y],[x+154,y+43]],shade,.22);
+    line([[x-157,y+44],[x,y],[x+157,y+44]],ink,1.5,.56);
+    line([[x-155,y+49],[x+155,y+49]],ink,1,.35);
+    for(const dx of [-118,-78,78,118]){
+      const px=x+dx;
+      shape([[px-8,y+55],[px+8,y+55],[px+7,y+126],[px-7,y+126]],ink,.12);
+      line([[px-11,y+55],[px+11,y+55]],ink,1.3,.45);
+      for(const edge of [-5,-1,3]) line([[px+edge,y+59],[px+edge,y+125]],ink,.65,.30);
+      line([[px-10,y+128],[px+10,y+128]],ink,1,.43);
+    }
+    for(let step=0;step<4;step++){
+      const wide=126+step*8, yy=y+131+step*6;
+      shape([[x-wide,yy],[x+wide,yy],[x+wide,yy+5],[x-wide,yy+5]],shade,.24);
+      line([[x-wide,yy],[x+wide,yy]],ink,.8,.51-step*.07);
+    }
+    line([[x,y+65],[x,y+118]],ink,1.3,.62);
+    line([[x-34,y+75],[x+34,y+75]],ink,1.4,.64);
+    for(const side of [-1,1]){
+      const px=x+side*34;
+      line([[px,y+76],[px-10,y+100],[px+10,y+100],[px,y+76]],ink,.8,.54);
+      ellipse(px,y+101,11,2,0,shade,.76);
+    }
+
+  } else if(id==="death"){
+
+    glow(922,60,142,shade,.39);
+    ellipse(922,60,39,39,0,ink,.60);
+    for(let i=0;i<19;i++){
+      const a=rnd()*tau,r=rnd()*34;
+      ellipse(922+Math.cos(a)*r,60+Math.sin(a)*r,2+rnd()*6,1+rnd()*4,a,shade,.14);
+    }
+    for(let j=0;j<11;j++){
+      const x=615+j*47+rnd()*9,y=92+rnd()*77,w=7+rnd()*12,h=22+rnd()*42;
+      const lean=rnd()*14-7;
+      const stroke=j%4===1?"#64616d":"#35333c";
+      curves([x-w,y+h],[[x-w,y+h*.7,x-w+lean,y+10,x-w+lean,y+7],
+        [x-w+lean,y-5,x+w+lean,y-7,x+w+lean,y+7],[x+w+lean,y+19,x+w,y+h*.7,x+w,y+h]],"#0b0b10",0,.92);
+      curves([x-w,y+h*.8],[[x-w,y+h*.55,x-w+lean,y-14,x+w+lean,y+7]],stroke,1,.68);
+      if(j%3===0) line([[x+lean-4,y+14],[x+lean+4,y+14],[x+lean+2,y+18]],stroke,.8,.57);
+    }
+    cloud(720,60,420,43,"#9c9fab",.17);
+    cloud(765,79,350,29,"#626477",.19);
+    cloud(535,165,625,47,"#7d818e",.10);
+
+  } else if(id==="blood"){
+
+    curves([650,0],[[750,37,791,5,832,21],[886,47,964,24,1011,38],
+      [1062,54,1090,36,1120,14],[1120,-8,778,-11,650,0]],"#621e2c",0,.76);
+    for(const [x,y,len,w] of [[779,13,29,4],[850,21,47,7],[919,27,18,3],[1008,29,58,9],[1064,31,27,5]]){
+      curves([x-w,y],[[x-w*.7,y+len*.25,x-1,y+len*.58,x-w*.35,y+len*.8],
+        [x-w*.8,y+len*1.16,x+w*.8,y+len*1.13,x+w*.42,y+len*.79],
+        [x+w*.07,y+len*.47,x+w*.66,y+len*.22,x+w,y]],shade,0,.88);
+      curves([x-1,y+len*.77],[[x-2,y+len*.92,x-1,y+len*.99,x+1,y+len*.96]],ink,.8,.47);
+    }
+    glow(960,24,118,shade,.32,.45);
+
+  } else if(id==="soul"){
+
+    const x=904,y=72;
+    glow(x,y,115,shade,.46);
+    for(const offset of [-1,1]){
+      const dx=offset*57;
+      shape([[x+dx-7,125],[x+dx+7,125],[x+dx+10,65],[x+dx+3,54],[x+dx-9,68]],base,.92);
+      line([[x+dx-7,124],[x+dx-8,72],[x+dx+4,55]],shade,1.2,.65);
+    }
+    line([[x-49,134],[x+49,134]],shade,1,.56);
+    curves([x,119],[[x-52,102,x-13,70,x-22,54],[x-10,59,x-6,68,x-3,74],
+      [x+14,58,x+1,35,x+9,19],[x+17,56,x+54,79,x+26,101],[x+18,110,x+6,109,x,119]],shade,0,.66);
+    curves([x,111],[[x-17,99,x+3,89,x+11,69],[x+22,86,x+17,104,x,111]],ink,0,.85);
+    for(let j=0;j<11;j++) ellipse(x-28+rnd()*54,17+rnd()*86,.7+rnd(),.7+rnd(),0,ink,.35);
+
+  } else if(id==="wrath"){
+
+    cloud(500,29,600,65,shade,.13);
+    glow(930,35,200,shade,.47,.52);
+    function strike(x,y,dx,dy,steps,amount){
+      return Array.from({length:steps+1},(_,i)=>{
+        const t=i/steps;
+        return [x+dx*t+(i&&i<steps?(rnd()-.5)*amount:0),y+dy*t];
+      });
+    }
+    const bolt=strike(984,-6,-222,189,23,31);
+    line(bolt,shade,16,.22);line(bolt,"#9d8df2",6,.53);line(bolt,"#fff2da",1.75,.97);
+    for(const [at,dx,dy] of [[4,74,52],[7,-115,47],[12,76,61],[16,-70,47]]){
+      const fork=strike(...bolt[at],dx,dy,10,20);
+      line(fork,shade,5,.35);line(fork,"#d9ccff",1,.78);
+      line(strike(...fork[4],dx*.38,dy*.45,5,10),"#c1abfa",.65,.57);
+    }
+
+  } else if(id==="chaos"){
+    for(let i=0;i<40;i++){
+      const x=560+rnd()*600,y=rnd()*171,z=8+rnd()*30;
+      shape([[x,y],[x+z*.8,y+z*.38],[x+z*.15,y+z]],i%4?shade:ink,.13+rnd()*.42);
+    }
+    const seal=[[920,12],[960,39],[945,71],[970,105],[910,114],[881,76],[889,44],[920,12]];
+    line(seal,ink,3,.51);line([[899,51],[938,63],[912,94]],ink,4,.66);
+  } else if(id==="mist"){
+    const n=illustrated?10:5;
+    for(let j=0;j<n;j++) cloud(360+rnd()*150,33+j*17,680,28+rnd()*32,j%3?shade:ink,.06*power);
+    if(illustrated) shape([[470,174],[570,135],[630,151],[690,122],[780,151],[910,142],[1100,175],[1100,220],[470,220]],base,.53);
+  } else if(id==="dust"){
+    for(let j=0;j<(illustrated?13:6);j++) cloud(380+rnd()*150,25+j*12,680,28+rnd()*47,shade,.07*power);
+    for(let i=0;i<(illustrated?400:135);i++){
+      const x=300+rnd()*850,y=9+rnd()*188;
+      line([[x,y],[x+1+rnd()*5,y-1]],ink,1,.08+rnd()*.35*power);
+    }
+  } else if(id==="mud"||id==="lava"){
+
+    if(id==="mud"){
+      for(let j=0;j<(illustrated?8:4);j++){
+        const points=Array.from({length:64},(_,i)=>[430+i*11,20+j*24+Math.sin(i*.13+j)*24+Math.sin(i*.21+j*.7)*12]);
+        const lower=points.map(([x,y],i)=>[x,y+8+Math.sin(i*.17+j)*7+(illustrated?14:4)]).reverse();
+        shape([...points,...lower],j%3===0?ink:shade,.42*power);
+        line(points,ink,1.1,.35*power);
+      }
+    } else {
+      glow(900,103,245,shade,.53*power,.55);
+      const molten=art.createLinearGradient(640,190,1040,27);
+      molten.addColorStop(0,"#5e251d"); molten.addColorStop(.5,"#ca4f29"); molten.addColorStop(.83,"#f99351"); molten.addColorStop(1,"#ffbd72");
+      curves([600,100],[[660,78,732,117,797,66],[870,15,931,48,1005,27],
+        [1068,8,1102,20,1147,28],[1147,91,1095,123,1039,127],[964,128,972,181,876,166],
+        [794,151,758,190,714,153],[678,122,619,150,600,100]],molten,0,.78*power);
+      for(let j=0;j<(illustrated?24:10);j++){
+        const x=702+rnd()*460,y=42+rnd()*120,w=5+rnd()*23,h=3+rnd()*13;
+        shape([[x-w,y],[x-w*.45,y-h],[x+w*.46,y-h*.6],[x+w,y+h*.35],[x+w*.3,y+h],[x-w*.64,y+h*.69]],"#251817",.88);
+        line([[x-w,y+1],[x-w*.63,y+h*.71],[x+w*.27,y+h]],ink,1,.49*power);
+      }
+      for(let j=0;j<(illustrated?12:5);j++){
+        const x=767+rnd()*290,y=69+rnd()*56;
+        curves([x,y],[[x+14,y-5,x+18,y+5,x+33,y-1]],"#ffcb7c",.8,.40*power);
+      }
+    }
+
+  } else if(id==="smoke"||id==="steam"){
+
+    const n=illustrated?8:5;
+    if(id==="steam"){
+      for(let j=0;j<n;j++) for(let i=0;i<19;i++){
+        const t=i/18,x=575+j*59+Math.sin(t*6+j)*55+t*89,y=175-t*173+j*2;
+        glow(x,y,15+t*35,j%2?shade:ink,power*(.14-t*.075),.62);
+      }
+    } else {
+      cloud(603,143,505,64,shade,.13*power);
+      for(let j=0;j<n;j++){
+        const x=670+j*60,y=170+j%3*10;
+        glow(x+32,y-68,91,shade,.23*power,.8);
+        curves([x-23,y+13],[[x-76,y-22,x+56,y-25,x+16,y-65],
+          [x-65,y-121,x+64,y-97,x+36,y-146],
+          [x+97,y-98,x-13,y-106,x+52,y-59],
+          [x+99,y-22,x-7,y-12,x+8,y+17]],j%3===0?ink:shade,0,.32*power);
+        curves([x-22,y+10],[[x-68,y-19,x+59,y-26,x+19,y-65],
+          [x-54,y-113,x+51,y-104,x+38,y-144]],ink,1.3,.32*power);
+      }
+    }
+
+  } else if(id==="aether"){
+    const x=921,y=83;
+    glow(x,y,181,shade,.55*power);
+    for(let j=0;j<(illustrated?13:11);j++){
+      const t=j*.49, r=illustrated?87:80;
+      const px=x+Math.cos(t)*r,py=y+Math.sin(t)*r*.81;
+      shape([[px-14,py-5],[px-4,py-17],[px+9,py-10],[px+13,py+6],[px,py+13],[px-12,py+6]],"#141122",.89);
+      line([[px-14,py-5],[px-4,py-17],[px+9,py-10]],ink,1,.38);
+    }
+    const rift=[[x+6,y-66],[x-7,y-34],[x+6,y-22],[x-12,y+8],[x+1,y+18],[x-9,y+63]];
+    line(rift,shade,14,.32);line(rift,ink,4,.61);line(rift,"#ebe3ff",1.4,.89);
+    for(let i=0;i<(illustrated?55:24);i++){
+      const px=x-134+rnd()*264,py=y-70+rnd()*143;
+      ellipse(px,py,.5+rnd(),.5+rnd(),0,ink,.33+rnd()*.28);
+    }
+  }
+  document.documentElement.style.setProperty("--scene-preview", 'url("' + surface.toDataURL() + '")');
+  return true;
+}
+return {paint: paintRuneScene};
+})();
 // Gilded first, then the rune themes from ChatGPT's catalog (elemental, catalytic, combination),
 // Clay, and the older looks at the end. Icons are the wiki's rune pictures, loaded live.
 const THEMES = [
@@ -6868,6 +7181,10 @@ function applyTheme(){
   const t = state.theme || DEFAULT_THEME;
   document.body.dataset.theme = t;
   document.body.classList.toggle("rune", RUNE_THEMES.has(t));
+  // the painted scene: on for the themes that have one, unless turned off in Look
+  const mode = state.themeArt || "focused", painted = RUNE_ART[t] && mode !== "off" && RuneScene.paint(t, mode === "illustrated" && RUNE_COMBO.has(t));
+  document.body.classList.toggle("art", !!painted);
+  document.body.dataset.approach = painted && mode === "illustrated" && RUNE_COMBO.has(t) ? "illustrated" : "focused";
   const e = THEMES.find(x=>x[0]===t) || THEMES[0];
   const b = $("#themeBtn");
   if(b){ b.innerHTML = '<img class="theme-ic" src="' + WIKI + e[2] + '" alt=""> ' + e[1]; b.title = e[1] + " theme. Click to choose another"; }
@@ -16200,6 +16517,8 @@ const SU_VIEW = {
     return `<h3 class="su-h">Look and feel <span class="su-opt">Optional</span></h3>
       <p class="su-p">Pick a theme. It changes as you click, so you can see it straight away.</p>
       <div class="su-themes">${THEMES.map(([id,label,ic])=>`<button class="su-theme ${id===cur?"on":""}" data-sutheme="${id}"><img src="${WIKI+ic}" alt=""><span>${label}</span></button>`).join("")}</div>
+      <div class="su-lbl">Scene art <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· the painted scene behind the top of a rune theme. Illustrated draws more on the combination runes</span></div>
+      <div class="seg su-seg">${[["focused","Focused"],["illustrated","Illustrated"],["off","Off"]].map(([id,label])=>`<button class="${(state.themeArt||"focused")===id?"on":""}" data-suart="${id}">${label}</button>`).join("")}</div>
       <div class="su-lbl">Font</div>
       <div class="seg su-seg">${FONT_CHOICES.map(([id,label])=>`<button class="${id===f?"on":""}" data-sufont="${id}">${label}</button>`).join("")}</div>
       <div class="su-lbl">Numbers</div>
@@ -16311,6 +16630,7 @@ const SU_WIRE = {
     $("#suPLabel").onkeydown = e=>{ if(e.key==="Enter") add(); };
   },
   look: ()=>{
+    $$("#suBody [data-suart]").forEach(b=>b.onclick=()=>{ state.themeArt = b.dataset.suart; save(); applyTheme(); $$("#suBody [data-suart]").forEach(x=>x.classList.toggle("on", x===b)); });
     $$("#suBody [data-sutheme]").forEach(b=>b.onclick=()=>{
       if(state.theme !== b.dataset.sutheme){
         state.theme = b.dataset.sutheme; save(); applyTheme();
