@@ -6,7 +6,7 @@ Newest first. Written from the local git history in plain words; "dev" means the
 
 ## 2026-11-13
 - dev: skill training guides as a card from any requirement (quest card, money maker card), the wiki's page for the level stretch you need.
-- dev: Skills, a section: every skill in a grid, a page per skill with the ladder and the quests waiting on it. Card entrances animated. Goal banners tinted by the theme.
+- dev: Skills, a section: the game's stats tab as the front, a page per skill with the ladder (rungs by level band only, you marked on the most advanced band you hold) and the quests waiting on it. Card entrances animated. Goal banners tinted by the theme.
 - dev: loading screen (Mortimer, a line, a bar; quest log and steps warm behind it); Home repeatables tick and arrow; Coffer resolves quest names it could not; RuneLite conflicts one-press untick; Quest Hub goal banners; Repeatable runs with a Patch board / Run log switch; quest-steps.json regathered (190 quests).
 - dev: the scene painter restored, the baked images removed (page back to 1.2 MB); Shift+A and Shift+D cycle themes; the loading screen shows the real icon and holds in the Beta; The Bakery opens methods in a centred card.
 - dev: renames. Map is Quest Hub; Coffer's sections are The Bakery, Bank, Exchange, Repeatable runs. Farm (was Runs) laid out as centred heroes; empty runs fold.

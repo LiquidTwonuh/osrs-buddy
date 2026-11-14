@@ -834,6 +834,20 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .sk-steps{margin:4px 0 0; padding-left:18px} .sk-steps li{font-size:13px; line-height:1.45; margin:3px 0; color:var(--text)}
   .sk-more{background:none; border:0; color:var(--gold-dim); font:inherit; font-size:12px; cursor:pointer; padding:2px 0; box-shadow:none} .sk-more:hover{color:var(--gold); background:none}
   .sk-foot{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:16px}
+  /* the Skills page: the front mimics the game's stats tab */
+  .skg{display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; max-width:600px; margin:0 auto}
+  .skb{position:relative; overflow:hidden; display:flex; align-items:center; gap:10px; background:var(--inset); border:1px solid var(--border); border-radius:10px; padding:9px 11px 11px; cursor:pointer; font:inherit; color:var(--text); text-align:left; box-shadow:none; transition:border-color .15s, transform .15s, background .15s}
+  .skb:hover{border-color:var(--gold-dim); transform:translateY(-1px); background:var(--active)}
+  .skb img{width:28px; height:28px; object-fit:contain; flex:none; filter:drop-shadow(0 1px 1px rgba(0,0,0,.7))}
+  .skb-t{display:flex; flex-direction:column; min-width:0}
+  .skb .lv{font-family:var(--font-display); font-size:23px; font-weight:600; color:var(--gold); line-height:1; display:flex; align-items:baseline; gap:2px; font-variant-numeric:tabular-nums}
+  .skb .lv small{font-size:11.5px; color:var(--muted); font-weight:400}
+  .skb .nm{font-size:11px; color:var(--muted); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .skb .xp{position:absolute; left:0; right:0; bottom:0; height:3px; background:var(--catbd)} .skb .xp i{display:block; height:100%; background:linear-gradient(90deg, var(--gold3), var(--gold))}
+  .skb.max .lv{color:var(--green)} .skb.max .xp i{background:var(--green)}
+  .skb.total{grid-column:1/-1; justify-content:center; gap:14px; background:var(--panel2); cursor:default; padding:10px}
+  .skb.total:hover{transform:none; border-color:var(--border)} .skb.total .lv{font-size:26px} .skb.total .nm{margin:0; font-size:12px; letter-spacing:.1em; text-transform:uppercase}
+  @media (max-width:700px){ .skg{gap:5px} .skb{padding:7px 8px 9px; gap:7px} .skb .lv{font-size:19px} .skb img{width:22px; height:22px} }
   /* the Skills page */
   .skg{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:10px}
   .skt{position:relative; display:flex; align-items:center; gap:10px; background:var(--inset); border:1px solid var(--border); border-radius:14px; padding:10px 12px; cursor:pointer; font:inherit; color:var(--text); text-align:left; box-shadow:none; transition:border-color .15s, transform .15s}
@@ -863,7 +877,8 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .skl-sec h5{margin:0 0 4px; font-size:15px; font-weight:600; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
   .skl-sec h5 .lv{font-size:11px; color:var(--gold); border:1px solid var(--gold3); border-radius:999px; padding:1px 7px} .skl-sec h5 .grp{font-size:11px; color:var(--muted); font-weight:normal}
   .skl-sec h5 .you{margin-left:auto; font-size:11px; color:var(--gold); letter-spacing:.08em; text-transform:uppercase}
-  .skl-sec .sk-steps li{font-size:12.5px}
+  .skl-sec .sk-steps li{font-size:12.5px} .skl-sec .sk-steps li a{color:var(--gold-dim)}
+  .sk-rest{margin-top:6px} .sk-rest summary{cursor:pointer; padding:6px 0}
   @media (max-width:700px){ .skg{grid-template-columns:repeat(2, 1fr)} .skp-hero .big{font-size:44px} }
   .qpd-row img{width:15px; height:15px; object-fit:contain; flex:none}
   .qpd-row .want{font-weight:bold}
@@ -12414,12 +12429,13 @@ async function skillGuideFetch(skill){
 function skillGuideParse(wt){
   const lines = wt.split("\n"), out = [];
   let group = "", cur = null;
-  const flush = ()=>{ if(!cur) return; const body = cur.body.join("\n").replace(/\{\|[\s\S]*?\n\|\}/g, ""); const secs = wikiStepsParse(body, {prose:true}); const steps = []; secs.forEach(sc=>sc.steps.forEach(st=>{ if(!st.note && st.t) steps.push(qsClean(st.t)); })); if(steps.length) out.push({h: cur.h, lo: cur.lo, hi: cur.hi, group, steps: steps.slice(0, 14)}); cur = null; };
+  const junk = t => t.length < 12 || /=\s*$/.test(t) || /^[^\s]+=[^\s]*$/.test(t) || /^\|/.test(t);
+  const flush = ()=>{ if(!cur) return; const body = cur.body.join("\n").replace(/\{\|[\s\S]*?\n\|\}/g, "").replace(/\{\{[^{}]*\n[^{}]*\}\}/g, ""); const secs = wikiStepsParse(body, {prose:true}); const steps = []; secs.forEach(sc=>sc.steps.forEach(st=>{ if(!st.note && st.t){ const t = qsClean(st.t); if(!junk(t)) steps.push(t); } })); if(steps.length) out.push({h: cur.h, lo: cur.lo, hi: cur.hi, ranged: cur.ranged, group, steps: steps.slice(0, 14)}); cur = null; };
   for(const ln of lines){
     const m = /^(={2,4})\s*(.*?)\s*\1\s*$/.exec(ln);
     if(m){
       const depth = m[1].length, title = wikiInline(m[2]);
-      if(depth === 2){ flush(); group = title; if(/references|see also|ore table|table|post 99|equipment|choosing/i.test(title)) group = ""; continue; }
+      if(depth === 2){ flush(); group = title; if(/references|see also|table|post 99|equipment|choosing|choice|gear|setup|notes|tips|trivia/i.test(title)) group = ""; continue; }
       // a sub-heading ("Setup and tips") stays inside its section
       if(depth >= 4 && cur){ cur.body.push(title + ":"); continue; }
       flush();
@@ -12427,13 +12443,19 @@ function skillGuideParse(wt){
       // "Levels 15–45/70: Iron ore" runs to 70 for some; the last number wins as the top
       const lv = /levels?\s*(\d+)\s*(?:[–\-]|to)\s*([\d\/]+)/i.exec(title) || /level\s*(\d+)\+?/i.exec(title);
       const hi = lv && lv[2] ? Math.max(...lv[2].split("/").map(Number).filter(n=>n > 0)) : 99;
-      cur = {h: title.replace(/^levels?\s*[\d–\-\/+ ]+:?\s*/i, "").trim() || title, lo: lv ? +lv[1] : 1, hi, body: []};
+      cur = {h: title.replace(/^levels?\s*[\d–\-\/+ ]+:?\s*/i, "").trim() || title, lo: lv ? +lv[1] : 1, hi, ranged: !!lv, body: []};
       continue;
     }
     if(cur) cur.body.push(ln);
   }
   flush();
   return out;
+}
+// "See Gemstone Crab/Strategies for more information." is a pointer, so it becomes the link
+function skStepHtml(t){
+  const m = /^See (?:the )?(.+?)(?: page)? for (?:more )?(?:information|details)\.?(.*)$/i.exec(t);
+  if(m){ const page = m[1].trim(); return `See <a href="https://oldschool.runescape.wiki/w/${encodeURIComponent(page.replace(/ /g, "_"))}" target="_blank" rel="noopener">${escapeHtml(page)}</a> on the wiki.${m[2] ? " " + escapeHtml(m[2].trim()) : ""}`; }
+  return escapeHtml(t);
 }
 function skqOpen(){ const q = $("#skq"); return !!(q && !q.classList.contains("hidden")); }
 function skillGuideClose(){ const q = $("#skq"), sc = $("#skqScrim"); if(q) q.classList.add("hidden"); if(sc) sc.classList.add("hidden"); }
@@ -12457,11 +12479,12 @@ async function skillGuideOpen(skill, need){
   try{ g = await skillGuideFetch(skill); }
   catch(err){ const m = String(err.message || err); body.innerHTML = head + `<div class="empty" style="margin-top:14px">${escapeHtml(/failed to fetch|networkerror|load failed/i.test(m) ? "Couldn't reach the wiki. It may be down for a moment." : m)} <button class="ghost small" data-skreread>Try again</button></div>`; return; }
   const from = have != null ? have : 1;
-  const fits = g.sections.filter(sc=>sc.lo <= need && sc.hi >= from);
+  const rungs = g.sections.filter(sc=>sc.ranged);
+  const fits = rungs.filter(sc=>sc.lo <= need && sc.hi >= from);
   const order = sc => /fastest/i.test(sc.group) ? 0 : /quest/i.test(sc.group) ? 2 : 1;
-  const list = (fits.length ? fits : g.sections).slice().sort((a,b)=>order(a) - order(b) || a.lo - b.lo);
+  const list = (fits.length ? fits : rungs.length ? rungs : g.sections).slice().sort((a,b)=>order(a) - order(b) || a.lo - b.lo);
   const secHtml = sc => `<div class="sk-sec"><h5><span class="lv">${sc.lo}${sc.hi < 99 || sc.lo > 1 ? "–" + sc.hi : "+"}</span>${escapeHtml(sc.h)}<span class="grp">${escapeHtml(sc.group)}</span></h5>
-    <ul class="sk-steps">${sc.steps.map((t, i)=>`<li ${i >= 5 ? "hidden" : ""}>${escapeHtml(t)}</li>`).join("")}</ul>${sc.steps.length > 5 ? `<button class="sk-more" data-skmore>${sc.steps.length - 5} more</button>` : ""}</div>`;
+    <ul class="sk-steps">${sc.steps.map((t, i)=>`<li ${i >= 5 ? "hidden" : ""}>${skStepHtml(t)}</li>`).join("")}</ul>${sc.steps.length > 5 ? `<button class="sk-more" data-skmore>${sc.steps.length - 5} more</button>` : ""}</div>`;
   const wiki = "https://oldschool.runescape.wiki/w/" + encodeURIComponent(g.page.replace(/ /g, "_"));
   body.innerHTML = head + (fits.length ? "" : `<p class="small muted" style="margin:12px 0 0">Nothing in the guide is headed for this exact stretch, so here is all of it.</p>`) + list.map(secHtml).join("") +
     `<div class="sk-foot"><button class="ghost small" data-skpage>Open in Skills</button><a class="ghost small" href="${wiki}" target="_blank" rel="noopener">The full guide on the wiki ↗</a><button class="ghost small" data-skreread title="Read the page again">⟲</button><span class="grow"></span><span class="small muted">Wiki text, CC BY-NC-SA · read ${fmtDay(isoDate(new Date(g.at)))}</span></div>`;
@@ -12483,9 +12506,10 @@ function renderSkills(){
   $("#skillsEyebrow").textContent = sel ? nice(sel) : "Training";
   if(!sel){
     el.innerHTML = `<div class="panel">${live ? "" : `<p class="small muted" style="margin:0 0 10px">Load your character and every tile fills in with your level.</p>`}
-      <div class="skg">${SKILL_ORDER.map(k=>{ const pr = skillProgress(k); return `<button class="skt ${pr.lvl>=99?"max":""}" data-skopen="${k}" title="${nice(k)}${live ? `, ${fmt(pr.xp)} XP` : ""}">
-        <span class="ring">${skillRing(live ? pr.frac : 0)}<img src="${skillIconUrl(k)}" alt=""></span>
-        <span><span class="lv">${live ? pr.lvl : "–"}</span><b>${nice(k)}</b><small>${live ? (pr.lvl >= 99 ? fmt(pr.xp) + " XP" : fmt(pr.toNext) + " to " + pr.next) : "no stats yet"}</small></span></button>`; }).join("")}</div></div>`;
+      <div class="skg">${SKILL_ORDER.map(k=>{ const pr = skillProgress(k); return `<button class="skb ${pr.lvl>=99?"max":""}" data-skopen="${k}" title="${nice(k)}${live ? `: ${fmt(pr.xp)} XP${pr.lvl < 99 ? `, ${fmt(pr.toNext)} to ${pr.next}` : ""}` : ""}">
+        <img src="${skillIconUrl(k)}" alt=""><span class="skb-t"><span class="lv">${live ? pr.lvl : "–"}<small>/99</small></span><span class="nm">${nice(k)}</span></span>
+        <span class="xp"><i style="width:${live ? Math.round(pr.frac * 100) : 0}%"></i></span></button>`; }).join("")}
+        <div class="skb total"><span class="nm">Total level</span><span class="lv">${live ? fmt(totalLvl()) : "–"}</span></div></div></div>`;
     $$("#skillsView [data-skopen]").forEach(b=>b.onclick = ()=>{ state.skillsSel = b.dataset.skopen; save(); renderSkills(); window.scrollTo(0, 0); });
     return;
   }
@@ -12506,12 +12530,17 @@ function renderSkills(){
   skillGuideFetch(k).then(g=>{
     if(state.skillsSel !== k) return;
     const have = live ? pr.lvl : 0;
-    const secs = g.sections.slice().sort((a,b)=>a.lo - b.lo || a.hi - b.hi);
+    const secs = g.sections.filter(sc=>sc.ranged).sort((a,b)=>a.lo - b.lo || a.hi - b.hi);
+    const rest = g.sections.filter(sc=>!sc.ranged);
     const wiki = "https://oldschool.runescape.wiki/w/" + encodeURIComponent(g.page.replace(/ /g, "_"));
+    // the rung you stand on is the most advanced band that holds your level
+    const holding = secs.filter(sc=>have >= sc.lo && (have < sc.hi || sc.hi >= 99)), hereLo = holding.length ? Math.max(...holding.map(sc=>sc.lo)) : -1;
     let marked = false;
-    $("#skLadder").innerHTML = `<div class="skl">${secs.map(sc=>{ let cls = have >= sc.hi && sc.hi < 99 ? "done" : have >= sc.lo ? "here" : "ahead"; const label = cls === "here" && !marked; if(label) marked = true; if(cls === "here" && !label) cls = "open";
-        return `<div class="skl-sec ${cls}"><h5><span class="lv">${sc.lo}${sc.hi < 99 || sc.lo > 1 ? "–" + sc.hi : "+"}</span>${escapeHtml(sc.h)}<span class="grp">${escapeHtml(sc.group)}</span>${label ? `<span class="you">you are here</span>` : ""}</h5>
-          <ul class="sk-steps">${sc.steps.map((t, i)=>`<li ${i >= 4 ? "hidden" : ""}>${escapeHtml(t)}</li>`).join("")}</ul>${sc.steps.length > 4 ? `<button class="sk-more" data-skmore>${sc.steps.length - 4} more</button>` : ""}</div>`; }).join("")}</div>
+    $("#skLadder").innerHTML = `<div class="skl">${secs.map(sc=>{ let cls = have >= sc.hi && sc.hi < 99 ? "done" : have >= sc.lo ? "here" : "ahead"; const label = cls === "here" && sc.lo === hereLo && !marked; if(label) marked = true; if(cls === "here" && !label) cls = "open";
+        const shown = cls === "done" ? 0 : 4;
+        return `<div class="skl-sec ${cls}"><h5><span class="lv">${sc.lo}${sc.hi < 99 || sc.lo > 1 ? "–" + sc.hi : "+"}</span>${escapeHtml(sc.h)}<span class="grp">${escapeHtml(sc.group)}</span>${label ? `<span class="you">you are here</span>` : cls === "done" ? `<span class="you" style="color:var(--green)">done</span>` : ""}</h5>
+          <ul class="sk-steps">${sc.steps.map((t, i)=>`<li ${i >= shown ? "hidden" : ""}>${skStepHtml(t)}</li>`).join("")}</ul>${sc.steps.length > shown ? `<button class="sk-more" data-skmore>${cls === "done" ? "show" : (sc.steps.length - shown) + " more"}</button>` : ""}</div>`; }).join("")}</div>
+      ${rest.length ? `<details class="sk-rest"><summary class="small muted">Also on the page: ${rest.map(r=>escapeHtml(r.h)).join(", ")}</summary>${rest.map(sc=>`<div class="skl-sec" style="margin-top:10px"><h5>${escapeHtml(sc.h)}<span class="grp">${escapeHtml(sc.group)}</span></h5><ul class="sk-steps">${sc.steps.slice(0, 6).map(t=>`<li>${skStepHtml(t)}</li>`).join("")}</ul></div>`).join("")}</details>` : ""}
       <div class="sk-foot"><a class="ghost small" href="${wiki}" target="_blank" rel="noopener">The full guide on the wiki ↗</a><span class="grow"></span><span class="small muted">Wiki text, CC BY-NC-SA · read ${fmtDay(isoDate(new Date(g.at)))}</span></div>`;
     $$("#skLadder [data-skmore]").forEach(m=>m.onclick = ()=>{ m.previousElementSibling.querySelectorAll("li[hidden]").forEach(li=>li.hidden = false); m.remove(); });
   }).catch(err=>{ const m = String(err.message || err); const l = $("#skLadder"); if(l) l.innerHTML = `<div class="empty">${escapeHtml(/failed to fetch|networkerror|load failed/i.test(m) ? "Couldn't reach the wiki. It may be down for a moment." : m)} <button class="ghost small" id="skRetry">Try again</button></div>`; const b = $("#skRetry"); if(b) b.onclick = ()=>renderSkills(); });
