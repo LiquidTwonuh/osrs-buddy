@@ -9,6 +9,7 @@ Newest first. Written from the local git history in plain words; "dev" means the
 - dev: Coffer Runs, the farm curated to your Farming level: crop, costs, XP, patches with gates and your own ticks, plant and harvest presses, a weekly tally and log.
 - dev: 24 themes from ChatGPT's catalog (23 runes and Clay) with their decoration layer; the cel-shaded Mortimer mark in the brand; the Theme button opens the Look step.
 - dev: the catalog's painted scenes ported (sixteen themes), Scene art choice in Look; the flat scene CSS fixed for the rest.
+- dev: the older themes are Blue, Purple, Orange, Dark, Black with their own icons; Gilded stays.
 - dev: Vault opens with the bank window (direction A): tabs, slot grid, stack numbers, search, gp in the corner, Mark tabs wizard with names in the save.
 - dev: Coffer favourites (star), floats a method up the rankings.
 - routines: Quest steps and Wiki watch deleted, AI notes paused (Josh).
