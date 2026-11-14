@@ -12500,7 +12500,7 @@ function skillProgress(k){
   const lo = xpForLevel(lvl), hi = xpForLevel(lvl + 1);
   return {lvl, xp, frac: hi > lo ? (xp - lo) / (hi - lo) : 0, next: lvl + 1, toNext: Math.max(0, hi - xp)};
 }
-function renderSkills(){
+function renderSkillsPage(){
   const el = $("#skillsView"); if(!el) return;
   const sel = state.skillsSel && SKILL_ORDER.includes(state.skillsSel) ? state.skillsSel : null;
   $("#skillsEyebrow").textContent = sel ? nice(sel) : "Training";
@@ -12510,7 +12510,7 @@ function renderSkills(){
         <img src="${skillIconUrl(k)}" alt=""><span class="skb-t"><span class="lv">${live ? pr.lvl : "–"}<small>/99</small></span><span class="nm">${nice(k)}</span></span>
         <span class="xp"><i style="width:${live ? Math.round(pr.frac * 100) : 0}%"></i></span></button>`; }).join("")}
         <div class="skb total"><span class="nm">Total level</span><span class="lv">${live ? fmt(totalLvl()) : "–"}</span></div></div></div>`;
-    $$("#skillsView [data-skopen]").forEach(b=>b.onclick = ()=>{ state.skillsSel = b.dataset.skopen; save(); renderSkills(); window.scrollTo(0, 0); });
+    $$("#skillsView [data-skopen]").forEach(b=>b.onclick = ()=>{ state.skillsSel = b.dataset.skopen; save(); renderSkillsPage(); window.scrollTo(0, 0); });
     return;
   }
   const k = sel, pr = skillProgress(k), db = questDB();
@@ -12524,8 +12524,8 @@ function renderSkills(){
         ${wants.length ? `<div class="sk-wants">${wants.map(w=>`<button data-skq="${escapeHtml(w.n)}" title="Open the quest"><b>${w.l}</b> ${escapeHtml(qpLabel(w.n))}</button>`).join("")}</div><div class="small muted" style="margin-top:6px">quests still waiting on this skill</div>` : ""}
       </div></div>`;
   el.innerHTML = head + `<div class="panel"><div class="section-title" style="margin-top:0"><h3>The ladder</h3><span class="small muted">the wiki's training guide, by level, with you marked on it</span></div><div id="skLadder"><div class="empty">Reading the wiki's guide…</div></div></div>`;
-  $("#skBack").onclick = ()=>{ state.skillsSel = null; save(); renderSkills(); };
-  $("#skReread").onclick = ()=>{ if(state.skillGuides) delete state.skillGuides[k]; renderSkills(); };
+  $("#skBack").onclick = ()=>{ state.skillsSel = null; save(); renderSkillsPage(); };
+  $("#skReread").onclick = ()=>{ if(state.skillGuides) delete state.skillGuides[k]; renderSkillsPage(); };
   $$("#skillsView [data-skq]").forEach(b=>b.onclick = ()=>{ state.qpTab = "over"; qpOpen(b.dataset.skq); });
   skillGuideFetch(k).then(g=>{
     if(state.skillsSel !== k) return;
@@ -12543,7 +12543,7 @@ function renderSkills(){
       ${rest.length ? `<details class="sk-rest"><summary class="small muted">Also on the page: ${rest.map(r=>escapeHtml(r.h)).join(", ")}</summary>${rest.map(sc=>`<div class="skl-sec" style="margin-top:10px"><h5>${escapeHtml(sc.h)}<span class="grp">${escapeHtml(sc.group)}</span></h5><ul class="sk-steps">${sc.steps.slice(0, 6).map(t=>`<li>${skStepHtml(t)}</li>`).join("")}</ul></div>`).join("")}</details>` : ""}
       <div class="sk-foot"><a class="ghost small" href="${wiki}" target="_blank" rel="noopener">The full guide on the wiki ↗</a><span class="grow"></span><span class="small muted">Wiki text, CC BY-NC-SA · read ${fmtDay(isoDate(new Date(g.at)))}</span></div>`;
     $$("#skLadder [data-skmore]").forEach(m=>m.onclick = ()=>{ m.previousElementSibling.querySelectorAll("li[hidden]").forEach(li=>li.hidden = false); m.remove(); });
-  }).catch(err=>{ const m = String(err.message || err); const l = $("#skLadder"); if(l) l.innerHTML = `<div class="empty">${escapeHtml(/failed to fetch|networkerror|load failed/i.test(m) ? "Couldn't reach the wiki. It may be down for a moment." : m)} <button class="ghost small" id="skRetry">Try again</button></div>`; const b = $("#skRetry"); if(b) b.onclick = ()=>renderSkills(); });
+  }).catch(err=>{ const m = String(err.message || err); const l = $("#skLadder"); if(l) l.innerHTML = `<div class="empty">${escapeHtml(/failed to fetch|networkerror|load failed/i.test(m) ? "Couldn't reach the wiki. It may be down for a moment." : m)} <button class="ghost small" id="skRetry">Try again</button></div>`; const b = $("#skRetry"); if(b) b.onclick = ()=>renderSkillsPage(); });
 }
 // a tap on a skill requirement, wherever it is, opens the guide for that stretch
 document.addEventListener("click", e=>{
@@ -16296,7 +16296,7 @@ function switchView(name){
   if(name==="quests") applyMapSec(); else if(typeof qpClose === "function") qpClose();
   if(name!=="coffer" && typeof cofferClose === "function" && cfqOpen()) cofferClose();
   if(name==="coffer") applyCofferSec();
-  if(name==="skills") renderSkills();
+  if(name==="skills") renderSkillsPage();
   if(name==="board") boardOpen();
   if(name==="mockups") mockupsOpen();
   if(name==="museum") renderMuseum();
