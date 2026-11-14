@@ -635,19 +635,20 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qp-sug{display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin-top:10px}
   .qp-sug button{font-size:12.5px}
   .qp-banners{display:grid; grid-template-columns:repeat(auto-fill, minmax(236px, 1fr)); gap:8px; align-items:center}
-  .qp-bn{position:relative; height:76px; border-radius:14px; border:1px solid var(--border); overflow:hidden; cursor:pointer; display:flex; align-items:center; gap:12px; padding:0 14px; text-align:left; font:inherit; color:var(--text); box-shadow:none; width:100%;
-    background:linear-gradient(100deg, color-mix(in srgb, var(--hue) 28%, var(--panel)) 0%, var(--panel) 70%); transition:border-color .15s, transform .15s}
-  .qp-bn:hover{border-color:color-mix(in srgb, var(--hue) 60%, var(--border)); background:linear-gradient(100deg, color-mix(in srgb, var(--hue) 34%, var(--panel)) 0%, var(--panel) 72%); transform:translateY(-1px)}
+  /* the quest's own hue is mixed with the theme's gold and sits lightly on the panel, so the row follows the theme */
+  .qp-bn{--tint:color-mix(in srgb, var(--hue) 38%, var(--gold)); position:relative; height:76px; border-radius:14px; border:1px solid var(--border); overflow:hidden; cursor:pointer; display:flex; align-items:center; gap:12px; padding:0 14px; text-align:left; font:inherit; color:var(--text); box-shadow:none; width:100%;
+    background:linear-gradient(100deg, color-mix(in srgb, var(--tint) 14%, var(--panel)) 0%, var(--panel) 72%); transition:border-color .15s, transform .15s}
+  .qp-bn:hover{border-color:color-mix(in srgb, var(--tint) 55%, var(--border)); background:linear-gradient(100deg, color-mix(in srgb, var(--tint) 20%, var(--panel)) 0%, var(--panel) 74%); transform:translateY(-1px)}
   .qp-bn.on{border-color:var(--gold); box-shadow:0 0 0 3px var(--glow)}
   .qp-bn .sig{position:absolute; right:-6px; bottom:-18px; font-size:80px; line-height:1; opacity:.09; filter:grayscale(1); pointer-events:none; user-select:none}
   .qp-bn .ring{width:44px; height:44px; flex:none}
   .qp-bn .ring circle{fill:none; stroke-width:4} .qp-bn .ring .t{stroke:rgba(255,255,255,.08)}
-  .qp-bn .ring .v{stroke:var(--hue); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%}
+  .qp-bn .ring .v{stroke:var(--tint); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%}
   .qp-bn .ring text{fill:var(--text); font-size:11px; font-weight:700; text-anchor:middle; dominant-baseline:central; font-family:var(--font-body)}
   .qp-bn .bn-body{min-width:0; position:relative}
   .qp-bn b{display:block; font-family:var(--font-display); font-size:17px; font-weight:600; line-height:1.05; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .qp-bn small{display:block; font-size:11.5px; color:var(--muted); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .qp-bn small em{font-style:normal; font-weight:600; color:color-mix(in srgb, var(--hue) 70%, var(--text))}
+  .qp-bn small em{font-style:normal; font-weight:600; color:color-mix(in srgb, var(--tint) 70%, var(--text))}
   .qp-banners .qp-pin{height:34px; justify-self:start}
   @media (max-width:700px){ .qp-bn{height:66px; padding:0 12px} .qp-bn b{font-size:15px} }
   .qp-hits{max-width:420px; margin:8px auto 0; display:flex; flex-direction:column; gap:3px}
@@ -715,6 +716,17 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qpd-hero .qpd-un{color:var(--text); font-size:13px}
   .qpq-in::-webkit-scrollbar-thumb{background:transparent}
   .qpq-in:hover::-webkit-scrollbar-thumb{background:var(--gold3); background-clip:padding-box}
+  /* every card arrives the same way: a short rise and settle, the scrim fading in behind it */
+  .qpq{animation:qpqIn .26s cubic-bezier(.2,.8,.2,1) both; background-image:linear-gradient(90deg, var(--gold3), transparent 62%); background-size:100% 1px; background-repeat:no-repeat}
+  @keyframes qpqIn{from{opacity:0; transform:translate(-50%,-50%) scale(.965) translateY(10px)} to{opacity:1; transform:translate(-50%,-50%) scale(1) translateY(0)}}
+  .qpq-scrim{animation:qpqScrim .26s ease both; backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px)}
+  @keyframes qpqScrim{from{opacity:0} to{opacity:1}}
+  .qpq-in > h3:first-of-type, .qpq-in > .sk-head, .qpq-in > .cf-detail .cf-dhead{animation:qpqText .5s ease both .08s}
+  @keyframes qpqText{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+  @media (max-width:700px){ .qpq{animation-name:qpqUp} @keyframes qpqUp{from{opacity:0; transform:translateY(28px)} to{opacity:1; transform:none}} }
+  @media (prefers-reduced-motion:reduce){ .qpq, .qpq-scrim, .qpq-in > *{animation:none !important} }
+  .qpq-x{transition:transform .18s ease, color .15s, border-color .15s}
+  .qpq-x:hover{transform:rotate(90deg); color:var(--gold); border-color:var(--gold-dim)}
   .qpq-x{position:absolute; top:12px; right:14px; width:30px; height:30px; border-radius:8px; background:var(--panel2); border:1px solid var(--border); color:var(--text); cursor:pointer; font:inherit; box-shadow:none; padding:0; z-index:2}
   .qpq h3{margin:0; font-family:var(--font-display); font-size:26px; color:var(--gold); font-weight:600; line-height:1.05; padding-right:40px}
   .qpq-meta{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:7px; font-size:12px; color:var(--muted)}
@@ -822,6 +834,37 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .sk-steps{margin:4px 0 0; padding-left:18px} .sk-steps li{font-size:13px; line-height:1.45; margin:3px 0; color:var(--text)}
   .sk-more{background:none; border:0; color:var(--gold-dim); font:inherit; font-size:12px; cursor:pointer; padding:2px 0; box-shadow:none} .sk-more:hover{color:var(--gold); background:none}
   .sk-foot{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:16px}
+  /* the Skills page */
+  .skg{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:10px}
+  .skt{position:relative; display:flex; align-items:center; gap:10px; background:var(--inset); border:1px solid var(--border); border-radius:14px; padding:10px 12px; cursor:pointer; font:inherit; color:var(--text); text-align:left; box-shadow:none; transition:border-color .15s, transform .15s}
+  .skt:hover{border-color:var(--gold-dim); transform:translateY(-1px); background:var(--inset)}
+  .skt .ring{width:44px; height:44px; flex:none; position:relative}
+  .skt .ring svg{position:absolute; inset:0; width:100%; height:100%}
+  .skt .ring circle{fill:none; stroke-width:3.5} .skt .ring .t{stroke:var(--catbd)} .skt .ring .v{stroke:var(--gold); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%}
+  .skt .ring img{position:absolute; left:50%; top:50%; width:22px; height:22px; transform:translate(-50%,-50%); object-fit:contain}
+  .skt b{display:block; font-size:13px; font-weight:600} .skt .lv{font-family:var(--font-display); font-size:22px; color:var(--gold); font-weight:600; line-height:1}
+  .skt small{display:block; font-size:11px; color:var(--muted)}
+  .skt.max .ring .v{stroke:var(--green)}
+  .sk-hero{text-align:center; padding-top:6px}
+  .sk-hero img{width:64px; height:64px; object-fit:contain; display:block; margin:0 auto 8px; filter:drop-shadow(0 3px 3px rgba(0,0,0,.6))}
+  .sk-hero .big{font-family:var(--font-display); font-size:56px; color:var(--gold); font-weight:600; line-height:1}
+  .sk-hero .big small{font-size:18px; color:var(--muted); font-weight:400; margin-left:4px}
+  .sk-hero .bar{width:min(100%, 420px); height:6px; margin:12px auto 6px; background:var(--inset); border-radius:6px; overflow:hidden}
+  .sk-hero .bar i{display:block; height:100%; background:linear-gradient(90deg, var(--gold3), var(--gold)); border-radius:6px}
+  .sk-wants{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-top:10px}
+  .sk-wants button{display:inline-flex; align-items:center; gap:6px; background:var(--inset); border:1px solid var(--border); border-radius:999px; padding:4px 10px; font:inherit; font-size:12.5px; color:var(--text); cursor:pointer; box-shadow:none}
+  .sk-wants button b{color:var(--gold); font-weight:600} .sk-wants button:hover{border-color:var(--gold-dim); background:var(--inset)}
+  .skl{position:relative; margin:6px 0 0 14px; padding-left:22px; border-left:2px solid var(--catbd)}
+  .skl-sec{position:relative; margin:0 0 14px; background:var(--inset); border:1px solid var(--border); border-radius:12px; padding:11px 14px}
+  .skl-sec::before{content:""; position:absolute; left:-29px; top:16px; width:12px; height:12px; border-radius:50%; background:var(--panel2); border:2px solid var(--catbd)}
+  .skl-sec.done{opacity:.55} .skl-sec.done::before{background:var(--green); border-color:var(--green)}
+  .skl-sec.here{border-color:var(--gold); box-shadow:0 0 0 3px var(--glow)} .skl-sec.here::before{background:var(--gold); border-color:var(--gold); box-shadow:0 0 0 4px var(--glow)}
+  .skl-sec.ahead::before{background:var(--inset)}
+  .skl-sec h5{margin:0 0 4px; font-size:15px; font-weight:600; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .skl-sec h5 .lv{font-size:11px; color:var(--gold); border:1px solid var(--gold3); border-radius:999px; padding:1px 7px} .skl-sec h5 .grp{font-size:11px; color:var(--muted); font-weight:normal}
+  .skl-sec h5 .you{margin-left:auto; font-size:11px; color:var(--gold); letter-spacing:.08em; text-transform:uppercase}
+  .skl-sec .sk-steps li{font-size:12.5px}
+  @media (max-width:700px){ .skg{grid-template-columns:repeat(2, 1fr)} .sk-hero .big{font-size:44px} }
   .qpd-row img{width:15px; height:15px; object-fit:contain; flex:none}
   .qpd-row .want{font-weight:bold}
   .qpd-row .have{color:var(--muted); font-size:11.5px; margin-left:auto}
@@ -2554,6 +2597,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <div class="nav-sub hidden" id="navSubMap"></div>
       <button class="navitem" data-view="coffer"><span class="ni-ic">🪙</span>Coffer</button>
       <div class="nav-sub hidden" id="navSubCoffer"></div>
+      <button class="navitem" data-view="skills"><span class="ni-ic">📚</span>Skills</button>
       <button class="navitem" data-view="notes"><span class="ni-ic">📝</span>Notes</button>
       <button class="navitem hidden" data-view="board" id="navBoard"><span class="ni-ic">📋</span>Board</button>
       <button class="navitem hidden" data-view="mockups" id="navMockups"><span class="ni-ic">🖼️</span>Mockups</button>
@@ -3077,6 +3121,18 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     <div class="cf-sec hidden" data-csec="vault"><div id="vaultView"></div></div>
     <div class="cf-sec hidden" data-csec="flip"><div id="flipView"></div></div>
     <div class="cf-sec hidden" data-csec="runs"><div id="runsView"></div></div>
+  </div>
+
+  <!-- VIEW: SKILLS (every skill, your level, and the wiki's guide as a ladder) -->
+  <div class="view hidden" id="view-skills">
+    <div class="panel">
+      <div class="goals-head">
+        <div class="sh-eyebrow" id="skillsEyebrow">Training</div>
+        <h2>📚 Skills</h2>
+        <p class="goals-blurb" id="skillsBlurb">Every skill, where you are in it, and the wiki's guide for the stretch ahead. Tap a skill.</p>
+      </div>
+    </div>
+    <div id="skillsView"></div>
   </div>
 
   <!-- VIEW: GOALS (to-do list + tracked-goal builder) -->
@@ -12394,7 +12450,8 @@ async function skillGuideOpen(skill, need){
   body.onclick = e=>{
     if(e.target.closest("[data-skclose]")){ skillGuideClose(); return; }
     const more = e.target.closest("[data-skmore]"); if(more){ const ul = more.previousElementSibling; ul.querySelectorAll("li[hidden]").forEach(li=>li.hidden = false); more.remove(); return; }
-    const re = e.target.closest("[data-skreread]"); if(re){ delete state.skillGuides[skill]; skillGuideOpen(skill, need); }
+    const re = e.target.closest("[data-skreread]"); if(re){ delete state.skillGuides[skill]; skillGuideOpen(skill, need); return; }
+    if(e.target.closest("[data-skpage]")){ skillGuideClose(); if(typeof qpClose === "function") qpClose(); if(typeof cofferClose === "function" && cfqOpen()) cofferClose(); state.skillsSel = skill; save(); switchView("skills"); }
   };
   let g;
   try{ g = await skillGuideFetch(skill); }
@@ -12407,8 +12464,57 @@ async function skillGuideOpen(skill, need){
     <ul class="sk-steps">${sc.steps.map((t, i)=>`<li ${i >= 5 ? "hidden" : ""}>${escapeHtml(t)}</li>`).join("")}</ul>${sc.steps.length > 5 ? `<button class="sk-more" data-skmore>${sc.steps.length - 5} more</button>` : ""}</div>`;
   const wiki = "https://oldschool.runescape.wiki/w/" + encodeURIComponent(g.page.replace(/ /g, "_"));
   body.innerHTML = head + (fits.length ? "" : `<p class="small muted" style="margin:12px 0 0">Nothing in the guide is headed for this exact stretch, so here is all of it.</p>`) + list.map(secHtml).join("") +
-    `<div class="sk-foot"><a class="ghost small" href="${wiki}" target="_blank" rel="noopener">The full guide on the wiki ↗</a><button class="ghost small" data-skreread title="Read the page again">⟲</button><span class="grow"></span><span class="small muted">Wiki text, CC BY-NC-SA · read ${fmtDay(isoDate(new Date(g.at)))}</span></div>`;
+    `<div class="sk-foot"><button class="ghost small" data-skpage>Open in Skills</button><a class="ghost small" href="${wiki}" target="_blank" rel="noopener">The full guide on the wiki ↗</a><button class="ghost small" data-skreread title="Read the page again">⟲</button><span class="grow"></span><span class="small muted">Wiki text, CC BY-NC-SA · read ${fmtDay(isoDate(new Date(g.at)))}</span></div>`;
   body.scrollTop = 0;
+}
+// ---- the Skills page ----
+// A grid of every skill with your level and the way to the next; tap one for its page: the
+// hero, what still wants it, and the wiki's guide laid out as a ladder with you marked on it.
+function skillRing(frac, cls){ const r = 19, c = 2 * Math.PI * r; return `<svg viewBox="0 0 46 46" class="${cls || ""}"><circle class="t" cx="23" cy="23" r="${r}"/><circle class="v" cx="23" cy="23" r="${r}" stroke-dasharray="${(c * Math.max(0, Math.min(1, frac))).toFixed(1)} ${c.toFixed(1)}"/></svg>`; }
+function skillProgress(k){
+  const lvl = lvlOf(k), xp = liveSkillXp(k);
+  if(lvl >= 99) return {lvl, xp, frac:1, next:0, toNext:0};
+  const lo = xpForLevel(lvl), hi = xpForLevel(lvl + 1);
+  return {lvl, xp, frac: hi > lo ? (xp - lo) / (hi - lo) : 0, next: lvl + 1, toNext: Math.max(0, hi - xp)};
+}
+function renderSkills(){
+  const el = $("#skillsView"); if(!el) return;
+  const sel = state.skillsSel && SKILL_ORDER.includes(state.skillsSel) ? state.skillsSel : null;
+  $("#skillsEyebrow").textContent = sel ? nice(sel) : "Training";
+  if(!sel){
+    el.innerHTML = `<div class="panel">${live ? "" : `<p class="small muted" style="margin:0 0 10px">Load your character and every tile fills in with your level.</p>`}
+      <div class="skg">${SKILL_ORDER.map(k=>{ const pr = skillProgress(k); return `<button class="skt ${pr.lvl>=99?"max":""}" data-skopen="${k}" title="${nice(k)}${live ? `, ${fmt(pr.xp)} XP` : ""}">
+        <span class="ring">${skillRing(live ? pr.frac : 0)}<img src="${skillIconUrl(k)}" alt=""></span>
+        <span><span class="lv">${live ? pr.lvl : "–"}</span><b>${nice(k)}</b><small>${live ? (pr.lvl >= 99 ? fmt(pr.xp) + " XP" : fmt(pr.toNext) + " to " + pr.next) : "no stats yet"}</small></span></button>`; }).join("")}</div></div>`;
+    $$("#skillsView [data-skopen]").forEach(b=>b.onclick = ()=>{ state.skillsSel = b.dataset.skopen; save(); renderSkills(); window.scrollTo(0, 0); });
+    return;
+  }
+  const k = sel, pr = skillProgress(k), db = questDB();
+  // the quests that still want more of this skill than you have, nearest first
+  const wants = db ? Object.keys(db.quests).filter(n=>!questDone(n) && db.quests[n].reqs && db.quests[n].reqs[k] > pr.lvl).map(n=>({n, l: db.quests[n].reqs[k]})).sort((a,b)=>a.l - b.l).slice(0, 8) : [];
+  const head = `<div class="panel">
+      <div class="row" style="margin-bottom:6px"><button class="ghost small" id="skBack">← All skills</button><span class="grow"></span><button class="ghost small" id="skReread" title="Read the wiki's guide again">⟲ Re-read</button></div>
+      <div class="sk-hero"><img src="${skillIconUrl(k)}" alt=""><div class="sh-eyebrow">${nice(k)}</div>
+        <div class="big">${live ? pr.lvl : "–"}${live && pr.lvl < 99 ? `<small>→ ${pr.next}</small>` : ""}</div>
+        ${live ? `<div class="bar"><i style="width:${Math.round(pr.frac * 100)}%"></i></div><div class="small muted">${fmt(pr.xp)} XP${pr.lvl < 99 ? ` · ${fmt(pr.toNext)} to level ${pr.next}` : " · the top"}</div>` : `<div class="small muted">load your character to see where you stand</div>`}
+        ${wants.length ? `<div class="sk-wants">${wants.map(w=>`<button data-skq="${escapeHtml(w.n)}" title="Open the quest"><b>${w.l}</b> ${escapeHtml(qpLabel(w.n))}</button>`).join("")}</div><div class="small muted" style="margin-top:6px">quests still waiting on this skill</div>` : ""}
+      </div></div>`;
+  el.innerHTML = head + `<div class="panel"><div class="section-title" style="margin-top:0"><h3>The ladder</h3><span class="small muted">the wiki's training guide, by level, with you marked on it</span></div><div id="skLadder"><div class="empty">Reading the wiki's guide…</div></div></div>`;
+  $("#skBack").onclick = ()=>{ state.skillsSel = null; save(); renderSkills(); };
+  $("#skReread").onclick = ()=>{ if(state.skillGuides) delete state.skillGuides[k]; renderSkills(); };
+  $$("#skillsView [data-skq]").forEach(b=>b.onclick = ()=>{ state.qpTab = "over"; qpOpen(b.dataset.skq); });
+  skillGuideFetch(k).then(g=>{
+    if(state.skillsSel !== k) return;
+    const have = live ? pr.lvl : 0;
+    const secs = g.sections.slice().sort((a,b)=>a.lo - b.lo || a.hi - b.hi);
+    const wiki = "https://oldschool.runescape.wiki/w/" + encodeURIComponent(g.page.replace(/ /g, "_"));
+    let marked = false;
+    $("#skLadder").innerHTML = `<div class="skl">${secs.map(sc=>{ let cls = have >= sc.hi && sc.hi < 99 ? "done" : have >= sc.lo ? "here" : "ahead"; const label = cls === "here" && !marked; if(label) marked = true; if(cls === "here" && !label) cls = "open";
+        return `<div class="skl-sec ${cls}"><h5><span class="lv">${sc.lo}${sc.hi < 99 || sc.lo > 1 ? "–" + sc.hi : "+"}</span>${escapeHtml(sc.h)}<span class="grp">${escapeHtml(sc.group)}</span>${label ? `<span class="you">you are here</span>` : ""}</h5>
+          <ul class="sk-steps">${sc.steps.map((t, i)=>`<li ${i >= 4 ? "hidden" : ""}>${escapeHtml(t)}</li>`).join("")}</ul>${sc.steps.length > 4 ? `<button class="sk-more" data-skmore>${sc.steps.length - 4} more</button>` : ""}</div>`; }).join("")}</div>
+      <div class="sk-foot"><a class="ghost small" href="${wiki}" target="_blank" rel="noopener">The full guide on the wiki ↗</a><span class="grow"></span><span class="small muted">Wiki text, CC BY-NC-SA · read ${fmtDay(isoDate(new Date(g.at)))}</span></div>`;
+    $$("#skLadder [data-skmore]").forEach(m=>m.onclick = ()=>{ m.previousElementSibling.querySelectorAll("li[hidden]").forEach(li=>li.hidden = false); m.remove(); });
+  }).catch(err=>{ const m = String(err.message || err); const l = $("#skLadder"); if(l) l.innerHTML = `<div class="empty">${escapeHtml(/failed to fetch|networkerror|load failed/i.test(m) ? "Couldn't reach the wiki. It may be down for a moment." : m)} <button class="ghost small" id="skRetry">Try again</button></div>`; const b = $("#skRetry"); if(b) b.onclick = ()=>renderSkills(); });
 }
 // a tap on a skill requirement, wherever it is, opens the guide for that stretch
 document.addEventListener("click", e=>{
@@ -15935,7 +16041,7 @@ function renderPatchNotes(){
 }
 
 // sidebar nav / views
-const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", board:"Board", mockups:"Mockups", museum:"Museum", start:"Roadmap", ask:"Ask Bud", quests:"Quest Hub", coffer:"Coffer", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
+const VIEW_TITLES = {home:"Home", scroll:"Scroll", goals:"Goals", notes:"Notes", board:"Board", mockups:"Mockups", museum:"Museum", start:"Roadmap", ask:"Ask Bud", quests:"Quest Hub", coffer:"Coffer", skills:"Skills", clog:"Achievements", arcade:"Game corner", rhythm:"Dance Dance RuneScape", survivors:"Gielinor Survivors", patch:"Patch notes"};
 // ---- Scroll sections ----
 // The page got big enough that one long scroll stopped working. Same data, five
 // sections, heatmap first because that's what people open the page for.
@@ -16161,6 +16267,7 @@ function switchView(name){
   if(name==="quests") applyMapSec(); else if(typeof qpClose === "function") qpClose();
   if(name!=="coffer" && typeof cofferClose === "function" && cfqOpen()) cofferClose();
   if(name==="coffer") applyCofferSec();
+  if(name==="skills") renderSkills();
   if(name==="board") boardOpen();
   if(name==="mockups") mockupsOpen();
   if(name==="museum") renderMuseum();
