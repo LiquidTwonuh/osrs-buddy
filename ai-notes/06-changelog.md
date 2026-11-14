@@ -5,6 +5,7 @@ Updated 2026-11-11 (covers commits through 2026-11-11)
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
 
 ## 2026-11-13
+- dev: skill training guides as a card from any requirement (quest card, money maker card), the wiki's page for the level stretch you need.
 - dev: loading screen (Mortimer, a line, a bar; quest log and steps warm behind it); Home repeatables tick and arrow; Coffer resolves quest names it could not; RuneLite conflicts one-press untick; Quest Hub goal banners; Repeatable runs with a Patch board / Run log switch; quest-steps.json regathered (190 quests).
 - dev: the scene painter restored, the baked images removed (page back to 1.2 MB); Shift+A and Shift+D cycle themes; the loading screen shows the real icon and holds in the Beta; The Bakery opens methods in a centred card.
 - dev: renames. Map is Quest Hub; Coffer's sections are The Bakery, Bank, Exchange, Repeatable runs. Farm (was Runs) laid out as centred heroes; empty runs fold.

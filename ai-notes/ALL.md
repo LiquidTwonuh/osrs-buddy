@@ -237,6 +237,7 @@ The live list is `BOARD.md` (Now, Next, Small fixes, Ideas, Parked). This is the
 ## Ideas, not started
 
 - **Coffer, favourite and hide per card (2026-11-10).** Both done in dev: hide on 2026-11-11, favourite (a star, 1.8 times the score) on 2026-11-13.
+- **A Skills page (2026-11-13).** The skill guide card exists (tap a requirement). Josh floated a page per skill; it would hold every guide, the level ladder, and the Upgrades mockup's skill ladders. Decide after he has used the card.
 - **Vault as the bank (2026-11-11).** Done: Josh picked A on 2026-11-13 and it is in Vault. The mockup stays for B.
 - **Coffer runs panel (2026-11-10).** Built 2026-11-13 as the Runs section. Left for later: allotments, flowers, bushes, calquat, celastrus, spirit trees, per-patch crops, diary yield bonuses. Original note: Tree runs, herb runs and the like, tracked properly: Repeatables already times them, this would know the patches, what is planted and when it is ready, what a run yields and costs, and a weekly tally. Josh expects it to be very useful. Queued behind shipping the Map.
 - **Priorities that matter (opt-in).** Home leads with your priorities and what moved on them; Scroll entries tagged with a priority feed a per-priority streak and share of XP; Coffer and Map filter by the active priority; the weekly recap says how much of the week went to them.
@@ -272,6 +273,7 @@ Updated 2026-11-11 (covers commits through 2026-11-11)
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
 
 ## 2026-11-13
+- dev: skill training guides as a card from any requirement (quest card, money maker card), the wiki's page for the level stretch you need.
 - dev: loading screen (Mortimer, a line, a bar; quest log and steps warm behind it); Home repeatables tick and arrow; Coffer resolves quest names it could not; RuneLite conflicts one-press untick; Quest Hub goal banners; Repeatable runs with a Patch board / Run log switch; quest-steps.json regathered (190 quests).
 - dev: the scene painter restored, the baked images removed (page back to 1.2 MB); Shift+A and Shift+D cycle themes; the loading screen shows the real icon and holds in the Beta; The Bakery opens methods in a centred card.
 - dev: renames. Map is Quest Hub; Coffer's sections are The Bakery, Bank, Exchange, Repeatable runs. Farm (was Runs) laid out as centred heroes; empty runs fold.

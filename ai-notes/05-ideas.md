@@ -26,6 +26,7 @@ The live list is `BOARD.md` (Now, Next, Small fixes, Ideas, Parked). This is the
 ## Ideas, not started
 
 - **Coffer, favourite and hide per card (2026-11-10).** Both done in dev: hide on 2026-11-11, favourite (a star, 1.8 times the score) on 2026-11-13.
+- **A Skills page (2026-11-13).** The skill guide card exists (tap a requirement). Josh floated a page per skill; it would hold every guide, the level ladder, and the Upgrades mockup's skill ladders. Decide after he has used the card.
 - **Vault as the bank (2026-11-11).** Done: Josh picked A on 2026-11-13 and it is in Vault. The mockup stays for B.
 - **Coffer runs panel (2026-11-10).** Built 2026-11-13 as the Runs section. Left for later: allotments, flowers, bushes, calquat, celastrus, spirit trees, per-patch crops, diary yield bonuses. Original note: Tree runs, herb runs and the like, tracked properly: Repeatables already times them, this would know the patches, what is planted and when it is ready, what a run yields and costs, and a weekly tally. Josh expects it to be very useful. Queued behind shipping the Map.
 - **Priorities that matter (opt-in).** Home leads with your priorities and what moved on them; Scroll entries tagged with a priority feed a per-priority streak and share of XP; Coffer and Map filter by the active priority; the weekly recap says how much of the week went to them.

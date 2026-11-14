@@ -808,6 +808,20 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qs-step.d1{margin-left:22px} .qs-step.d2{margin-left:44px} .qs-step.d3{margin-left:66px}
   .qs-note{font-size:12.5px; color:var(--gold); padding:4px 6px; opacity:.9}
   .qpd-row{display:flex; align-items:center; gap:7px; font-size:12.5px; padding:2px 0}
+  .qpd-row[data-skguide]{cursor:pointer; border-radius:6px; padding:2px 4px; margin:0 -4px}
+  .qpd-row[data-skguide]:hover{background:var(--inset)} .qpd-row[data-skguide]:hover .want{text-decoration:underline}
+  /* the skill guide card */
+  .sk-head{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .sk-head img{width:34px; height:34px; object-fit:contain}
+  .sk-gap{display:flex; gap:6px; flex-wrap:wrap; margin:10px 0 0}
+  .sk-gap span{background:var(--inset); border:1px solid var(--border); border-radius:999px; padding:4px 10px; font-size:12.5px; color:var(--muted)} .sk-gap span b{color:var(--text); font-weight:600}
+  .sk-sec{margin-top:14px; border-top:1px solid var(--border); padding-top:10px}
+  .sk-sec h5{margin:0 0 4px; font-size:14.5px; font-weight:600; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .sk-sec h5 .lv{font-size:11px; color:var(--gold); border:1px solid var(--gold3); border-radius:999px; padding:1px 7px; font-weight:600}
+  .sk-sec h5 .grp{font-size:11px; color:var(--muted); font-weight:normal}
+  .sk-steps{margin:4px 0 0; padding-left:18px} .sk-steps li{font-size:13px; line-height:1.45; margin:3px 0; color:var(--text)}
+  .sk-more{background:none; border:0; color:var(--gold-dim); font:inherit; font-size:12px; cursor:pointer; padding:2px 0; box-shadow:none} .sk-more:hover{color:var(--gold); background:none}
+  .sk-foot{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:16px}
   .qpd-row img{width:15px; height:15px; object-fit:contain; flex:none}
   .qpd-row .want{font-weight:bold}
   .qpd-row .have{color:var(--muted); font-size:11.5px; margin-left:auto}
@@ -3046,6 +3060,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   <!-- Coffer: one money maker, in the same kind of card -->
   <div class="qpq-scrim hidden" id="cfqScrim"></div>
   <aside class="qpq hidden" id="cfq" role="dialog" aria-modal="true" aria-label="Money maker details"><div class="qpq-in" id="cfqBody"></div></aside>
+  <!-- a skill's training guide for the stretch you need, over whichever card asked -->
+  <div class="qpq-scrim hidden" id="skqScrim" style="z-index:90"></div>
+  <aside class="qpq hidden" id="skq" style="z-index:91" role="dialog" aria-modal="true" aria-label="Skill training guide"><div class="qpq-in" id="skqBody"></div></aside>
 
   <!-- VIEW: THE COFFER (making GP) -->
   <div class="view hidden" id="view-coffer">
@@ -3807,7 +3824,7 @@ function storageReport(){
 // are ~96% of the bytes and re-download themselves, so they're excluded.
 const BACKUP_KEY = "osrs_todo_backups_v1";   // legacy home; migrated out on first run
 const BACKUP_KEEP = 8;
-const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","questGuides"];
+const BACKUP_SKIP = ["questDB","wikiCache","updCheck","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","questGuides","skillGuides"];
 // Snapshots live in IndexedDB, not localStorage. Keeping eight copies of your data in
 // a 5MB bucket meant the backup system was the thing that would eventually fill it —
 // journal history alone costs ~86KB/year, so the data is fine for decades; nine copies
@@ -12274,7 +12291,7 @@ function cofferCardHtml(m, on){
 function cofferDetailHtml(m){
   const skills = (m.skills || []).map(r=>{
     const have = lvlOf(r.skill), ok = have >= r.lvl;
-    return `<div class="qpd-row"><span class="${ok?"":"muted"}">${ok?"✅":"⬜"}</span> ${r.lvl} ${nice(r.skill)}${r.soft?` <span class="muted">recommended</span>`:""}
+    return `<div class="qpd-row" data-skguide="${r.skill}" data-need="${r.lvl}" title="How to train ${nice(r.skill)} to ${r.lvl}"><span class="${ok?"":"muted"}">${ok?"✅":"⬜"}</span> ${r.lvl} ${nice(r.skill)}${r.soft?` <span class="muted">recommended</span>`:""}
       <span class="muted" style="margin-left:auto">${live?`you're ${have}`:""}</span></div>`;
   }).join("");
   const quests = (m.quests || []).map(q=>`<div class="qpd-row"><span>${questDone(q)?"✅":"⬜"}</span> ${escapeHtml(qpLabel(q))}</div>`).join("");
@@ -12305,6 +12322,101 @@ function cofferDetailHtml(m){
     </div>
   </div>`;
 }
+// ============ SKILL GUIDES ============
+// The wiki keeps a training guide per skill, with sections headed by level range. Read once,
+// kept 30 days in state.skillGuides (not backed up; it is the wiki's), shown for the stretch
+// between where you are and where the requirement wants you.
+const SKILL_GUIDE_PAGES = {
+  attack:["Pay-to-play Melee training"], strength:["Pay-to-play Melee training"], defence:["Pay-to-play Melee training"],
+  hitpoints:["Pay-to-play Hitpoints training"], ranged:["Pay-to-play Ranged training"], magic:["Pay-to-play Magic training"], prayer:["Pay-to-play Prayer training"],
+};
+function skillGuidePages(skill){
+  const name = skill === "runecrafting" ? "Runecraft" : skill.charAt(0).toUpperCase() + skill.slice(1);
+  return (SKILL_GUIDE_PAGES[skill] || []).concat([`Pay-to-play ${name} training`, `${name} training`]);
+}
+const skqBusy = {};
+async function skillGuideFetch(skill){
+  state.skillGuides = state.skillGuides || {};
+  const have = state.skillGuides[skill];
+  if(have && have.sections && Date.now() - have.at < 30 * 864e5) return have;
+  let lastErr = null;
+  for(const page of skillGuidePages(skill)){
+    try{
+      const url = `${WIKI_API}?action=parse&page=${encodeURIComponent(page)}&redirects=1&prop=wikitext&format=json&formatversion=2&origin=*`;
+      const r = await fetch(url); if(!r.ok) throw new Error("The wiki answered " + r.status);
+      const j = await r.json(); const wt = j.parse && j.parse.wikitext; if(!wt) continue;
+      const sections = skillGuideParse(wt);
+      if(!sections.length) continue;
+      const rec = {at: Date.now(), page: (j.parse && j.parse.title) || page, sections};
+      state.skillGuides[skill] = rec; save(); return rec;
+    }catch(e){ lastErr = e; }
+  }
+  throw lastErr || new Error("No training guide on the wiki for this one");
+}
+// headings like "Levels 15–45/70: Iron ore" become sections with a level range; the text under
+// each is flattened to steps by the walkthrough parser. Tables are skipped.
+function skillGuideParse(wt){
+  const lines = wt.split("\n"), out = [];
+  let group = "", cur = null;
+  const flush = ()=>{ if(!cur) return; const body = cur.body.join("\n").replace(/\{\|[\s\S]*?\n\|\}/g, ""); const secs = wikiStepsParse(body, {prose:true}); const steps = []; secs.forEach(sc=>sc.steps.forEach(st=>{ if(!st.note && st.t) steps.push(qsClean(st.t)); })); if(steps.length) out.push({h: cur.h, lo: cur.lo, hi: cur.hi, group, steps: steps.slice(0, 14)}); cur = null; };
+  for(const ln of lines){
+    const m = /^(={2,4})\s*(.*?)\s*\1\s*$/.exec(ln);
+    if(m){
+      const depth = m[1].length, title = wikiInline(m[2]);
+      if(depth === 2){ flush(); group = title; if(/references|see also|ore table|table|post 99|equipment|choosing/i.test(title)) group = ""; continue; }
+      // a sub-heading ("Setup and tips") stays inside its section
+      if(depth >= 4 && cur){ cur.body.push(title + ":"); continue; }
+      flush();
+      if(!group) continue;
+      // "Levels 15–45/70: Iron ore" runs to 70 for some; the last number wins as the top
+      const lv = /levels?\s*(\d+)\s*(?:[–\-]|to)\s*([\d\/]+)/i.exec(title) || /level\s*(\d+)\+?/i.exec(title);
+      const hi = lv && lv[2] ? Math.max(...lv[2].split("/").map(Number).filter(n=>n > 0)) : 99;
+      cur = {h: title.replace(/^levels?\s*[\d–\-\/+ ]+:?\s*/i, "").trim() || title, lo: lv ? +lv[1] : 1, hi, body: []};
+      continue;
+    }
+    if(cur) cur.body.push(ln);
+  }
+  flush();
+  return out;
+}
+function skqOpen(){ const q = $("#skq"); return !!(q && !q.classList.contains("hidden")); }
+function skillGuideClose(){ const q = $("#skq"), sc = $("#skqScrim"); if(q) q.classList.add("hidden"); if(sc) sc.classList.add("hidden"); }
+async function skillGuideOpen(skill, need){
+  const body = $("#skqBody"), q = $("#skq"), sc = $("#skqScrim"); if(!body) return;
+  need = +need || 99;
+  const have = live ? lvlOf(skill) : null;
+  const xpLeft = have != null && have < need ? Math.max(0, xpForLevel(need) - liveSkillXp(skill)) : 0;
+  const head = `<button class="qpq-x" data-skclose title="Close (Esc)">✕</button>
+    <div class="sk-head"><img src="${skillIconUrl(skill)}" alt=""><div><h3 style="margin:0">${nice(skill)}</h3><div class="small muted">how to get there, from the wiki's training guide</div></div></div>
+    <div class="sk-gap">${have != null ? `<span>you're <b>${have}</b></span>` : `<span>stats not loaded</span>`}<span>need <b>${need}</b></span>${xpLeft ? `<span><b>${fmt(xpLeft)}</b> XP to go</span>` : have != null && have >= need ? `<span style="color:var(--green)">you have it</span>` : ""}</div>`;
+  q.classList.remove("hidden"); sc.classList.remove("hidden"); sc.onclick = skillGuideClose;
+  body.innerHTML = head + `<div class="empty" style="margin-top:14px">Reading the wiki's guide…</div>`;
+  body.onclick = e=>{
+    if(e.target.closest("[data-skclose]")){ skillGuideClose(); return; }
+    const more = e.target.closest("[data-skmore]"); if(more){ const ul = more.previousElementSibling; ul.querySelectorAll("li[hidden]").forEach(li=>li.hidden = false); more.remove(); return; }
+    const re = e.target.closest("[data-skreread]"); if(re){ delete state.skillGuides[skill]; skillGuideOpen(skill, need); }
+  };
+  let g;
+  try{ g = await skillGuideFetch(skill); }
+  catch(err){ const m = String(err.message || err); body.innerHTML = head + `<div class="empty" style="margin-top:14px">${escapeHtml(/failed to fetch|networkerror|load failed/i.test(m) ? "Couldn't reach the wiki. It may be down for a moment." : m)} <button class="ghost small" data-skreread>Try again</button></div>`; return; }
+  const from = have != null ? have : 1;
+  const fits = g.sections.filter(sc=>sc.lo <= need && sc.hi >= from);
+  const order = sc => /fastest/i.test(sc.group) ? 0 : /quest/i.test(sc.group) ? 2 : 1;
+  const list = (fits.length ? fits : g.sections).slice().sort((a,b)=>order(a) - order(b) || a.lo - b.lo);
+  const secHtml = sc => `<div class="sk-sec"><h5><span class="lv">${sc.lo}${sc.hi < 99 || sc.lo > 1 ? "–" + sc.hi : "+"}</span>${escapeHtml(sc.h)}<span class="grp">${escapeHtml(sc.group)}</span></h5>
+    <ul class="sk-steps">${sc.steps.map((t, i)=>`<li ${i >= 5 ? "hidden" : ""}>${escapeHtml(t)}</li>`).join("")}</ul>${sc.steps.length > 5 ? `<button class="sk-more" data-skmore>${sc.steps.length - 5} more</button>` : ""}</div>`;
+  const wiki = "https://oldschool.runescape.wiki/w/" + encodeURIComponent(g.page.replace(/ /g, "_"));
+  body.innerHTML = head + (fits.length ? "" : `<p class="small muted" style="margin:12px 0 0">Nothing in the guide is headed for this exact stretch, so here is all of it.</p>`) + list.map(secHtml).join("") +
+    `<div class="sk-foot"><a class="ghost small" href="${wiki}" target="_blank" rel="noopener">The full guide on the wiki ↗</a><button class="ghost small" data-skreread title="Read the page again">⟲</button><span class="grow"></span><span class="small muted">Wiki text, CC BY-NC-SA · read ${fmtDay(isoDate(new Date(g.at)))}</span></div>`;
+  body.scrollTop = 0;
+}
+// a tap on a skill requirement, wherever it is, opens the guide for that stretch
+document.addEventListener("click", e=>{
+  const r = e.target.closest("[data-skguide]"); if(!r || e.target.closest("[data-boost], button, a")) return;
+  skillGuideOpen(r.dataset.skguide, +r.dataset.need);
+});
+document.addEventListener("keydown", e=>{ if(e.key === "Escape" && skqOpen()){ e.stopImmediatePropagation(); e.preventDefault(); skillGuideClose(); } }, true);
+
 // ---- the card ----
 function cfqOpen(){ const q = $("#cfq"); return !!(q && !q.classList.contains("hidden")); }
 function cofferOpen(name, opts){
@@ -13731,7 +13843,7 @@ function qpPopupHtml(n, db){
   const reqs = Object.entries(q.reqs||{}).sort((a,b)=>b[1]-a[1]);
   const reqRows = reqs.map(([s,l])=>{
     const have = live ? lvlOf(s) : null, ok = have!=null && have>=l, boost = q.boostable && q.boostable[s];
-    return `<div class="qpd-row ${have==null?"":ok?"ok":"no"}">
+    return `<div class="qpd-row ${have==null?"":ok?"ok":"no"}" data-skguide="${s}" data-need="${l}" title="How to train ${nice(s)} to ${l}">
       <img src="${skillIconUrl(s)}" alt="" onerror="this.style.display='none'">
       <span class="want">${l}</span> <span>${nice(s)}</span>
       ${(have!=null&&!ok&&boost)?`<span class="qp-tag boost" data-boost="${s}" data-need="${l}" data-have="${have}">boostable</span>`:""}
