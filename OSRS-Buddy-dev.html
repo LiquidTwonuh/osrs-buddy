@@ -845,12 +845,12 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .skt b{display:block; font-size:13px; font-weight:600} .skt .lv{font-family:var(--font-display); font-size:22px; color:var(--gold); font-weight:600; line-height:1}
   .skt small{display:block; font-size:11px; color:var(--muted)}
   .skt.max .ring .v{stroke:var(--green)}
-  .sk-hero{text-align:center; padding-top:6px}
-  .sk-hero img{width:64px; height:64px; object-fit:contain; display:block; margin:0 auto 8px; filter:drop-shadow(0 3px 3px rgba(0,0,0,.6))}
-  .sk-hero .big{font-family:var(--font-display); font-size:56px; color:var(--gold); font-weight:600; line-height:1}
-  .sk-hero .big small{font-size:18px; color:var(--muted); font-weight:400; margin-left:4px}
-  .sk-hero .bar{width:min(100%, 420px); height:6px; margin:12px auto 6px; background:var(--inset); border-radius:6px; overflow:hidden}
-  .sk-hero .bar i{display:block; height:100%; background:linear-gradient(90deg, var(--gold3), var(--gold)); border-radius:6px}
+  .skp-hero{text-align:center; padding-top:6px}
+  .skp-hero img{width:64px; height:64px; object-fit:contain; display:block; margin:0 auto 8px; filter:drop-shadow(0 3px 3px rgba(0,0,0,.6))}
+  .skp-hero .big{font-family:var(--font-display); font-size:56px; color:var(--gold); font-weight:600; line-height:1}
+  .skp-hero .big small{font-size:18px; color:var(--muted); font-weight:400; margin-left:4px}
+  .skp-hero .bar{width:min(100%, 420px); height:6px; margin:12px auto 6px; background:var(--inset); border-radius:6px; overflow:hidden}
+  .skp-hero .bar i{display:block; height:100%; background:linear-gradient(90deg, var(--gold3), var(--gold)); border-radius:6px}
   .sk-wants{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-top:10px}
   .sk-wants button{display:inline-flex; align-items:center; gap:6px; background:var(--inset); border:1px solid var(--border); border-radius:999px; padding:4px 10px; font:inherit; font-size:12.5px; color:var(--text); cursor:pointer; box-shadow:none}
   .sk-wants button b{color:var(--gold); font-weight:600} .sk-wants button:hover{border-color:var(--gold-dim); background:var(--inset)}
@@ -864,7 +864,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .skl-sec h5 .lv{font-size:11px; color:var(--gold); border:1px solid var(--gold3); border-radius:999px; padding:1px 7px} .skl-sec h5 .grp{font-size:11px; color:var(--muted); font-weight:normal}
   .skl-sec h5 .you{margin-left:auto; font-size:11px; color:var(--gold); letter-spacing:.08em; text-transform:uppercase}
   .skl-sec .sk-steps li{font-size:12.5px}
-  @media (max-width:700px){ .skg{grid-template-columns:repeat(2, 1fr)} .sk-hero .big{font-size:44px} }
+  @media (max-width:700px){ .skg{grid-template-columns:repeat(2, 1fr)} .skp-hero .big{font-size:44px} }
   .qpd-row img{width:15px; height:15px; object-fit:contain; flex:none}
   .qpd-row .want{font-weight:bold}
   .qpd-row .have{color:var(--muted); font-size:11.5px; margin-left:auto}
@@ -12494,7 +12494,7 @@ function renderSkills(){
   const wants = db ? Object.keys(db.quests).filter(n=>!questDone(n) && db.quests[n].reqs && db.quests[n].reqs[k] > pr.lvl).map(n=>({n, l: db.quests[n].reqs[k]})).sort((a,b)=>a.l - b.l).slice(0, 8) : [];
   const head = `<div class="panel">
       <div class="row" style="margin-bottom:6px"><button class="ghost small" id="skBack">← All skills</button><span class="grow"></span><button class="ghost small" id="skReread" title="Read the wiki's guide again">⟲ Re-read</button></div>
-      <div class="sk-hero"><img src="${skillIconUrl(k)}" alt=""><div class="sh-eyebrow">${nice(k)}</div>
+      <div class="skp-hero"><img src="${skillIconUrl(k)}" alt=""><div class="sh-eyebrow">${nice(k)}</div>
         <div class="big">${live ? pr.lvl : "–"}${live && pr.lvl < 99 ? `<small>→ ${pr.next}</small>` : ""}</div>
         ${live ? `<div class="bar"><i style="width:${Math.round(pr.frac * 100)}%"></i></div><div class="small muted">${fmt(pr.xp)} XP${pr.lvl < 99 ? ` · ${fmt(pr.toNext)} to level ${pr.next}` : " · the top"}</div>` : `<div class="small muted">load your character to see where you stand</div>`}
         ${wants.length ? `<div class="sk-wants">${wants.map(w=>`<button data-skq="${escapeHtml(w.n)}" title="Open the quest"><b>${w.l}</b> ${escapeHtml(qpLabel(w.n))}</button>`).join("")}</div><div class="small muted" style="margin-top:6px">quests still waiting on this skill</div>` : ""}
