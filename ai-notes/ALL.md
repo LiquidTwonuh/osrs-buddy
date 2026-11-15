@@ -278,6 +278,7 @@ Updated 2026-11-15 (covers commits through 2026-11-15)
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
 
 ## 2026-11-15
+- dev: cleanup pass. Bakery's locked methods as a lit strip with the gap and guide/quest links; the loading screen's motion and quips; Melee as one Coffer rating; the skill ladder finished for every skill (tree parser, monster templates read, Hitpoints on the Melee guide, methods-as-cards for guides with no level bands) and the wiki link as a centred pill.
 - dev: phone pass. The page holds still under an open card on touch screens; swipe right opens the sidebar and swipe left closes it; Size in Look (four steps, through the viewport meta on phones); keep-out bands at a phone's top and bottom; the mark instead of the crossed swords in the phone top bar and the favicon; Quest Hub goal banners in the theme's gold only.
 - app: Android debug APK built from the dev page without Developer Mode (app/apk.mjs, npm run apk:dev; the stable page with npm run apk), 15 MB, label Mortimeter, same package id. Single-instance plugin desktop-only.
 
