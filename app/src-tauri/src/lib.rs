@@ -221,17 +221,20 @@ fn board_write(app: tauri::AppHandle, text: String) -> Result<u64, String> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  tauri::Builder::default()
-    // Must be registered first. A second launch hands its arguments here and exits, instead of
-    // opening another window on the same storage.
-    .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-      use tauri::Manager;
-      if let Some(w) = app.get_webview_window("main") {
-        let _ = w.unminimize();
-        let _ = w.show();
-        let _ = w.set_focus();
-      }
-    }))
+  let builder = tauri::Builder::default();
+  // Must be registered first. A second launch hands its arguments here and exits, instead of
+  // opening another window on the same storage. Desktop only: a phone has one instance anyway,
+  // and the plugin has no init there.
+  #[cfg(desktop)]
+  let builder = builder.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+    use tauri::Manager;
+    if let Some(w) = app.get_webview_window("main") {
+      let _ = w.unminimize();
+      let _ = w.show();
+      let _ = w.set_focus();
+    }
+  }));
+  builder
     .plugin(tauri_plugin_opener::init())
     .manage(sync::SyncState::default())
     .setup(|app| {

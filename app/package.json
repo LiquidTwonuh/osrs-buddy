@@ -5,6 +5,8 @@
   "scripts": {
     "sync": "node -e \"const d=require('fs');d.mkdirSync('dist/data',{recursive:true});if(d.existsSync('../data/quest-steps.json'))d.copyFileSync('../data/quest-steps.json','dist/data/quest-steps.json');if(d.existsSync('../data/mortimer-boot.png'))d.copyFileSync('../data/mortimer-boot.png','dist/data/mortimer-boot.png');const fs=require('fs');fs.copyFileSync('../OSRS-Buddy.html','dist/index.html');fs.copyFileSync('../sw.js','dist/sw.js');console.log('dist/index.html + dist/sw.js <- OSRS-Buddy.html, sw.js')\"",
     "build": "npm run sync && tauri build",
+    "apk": "node apk.mjs",
+    "apk:dev": "node apk.mjs --dev",
     "build:beta": "npm run sync:dev && tauri build --config src-tauri/tauri.beta.conf.json",
     "sync:dev": "node -e \"const d=require('fs');d.mkdirSync('dist/data',{recursive:true});if(d.existsSync('../data/quest-steps.json'))d.copyFileSync('../data/quest-steps.json','dist/data/quest-steps.json');if(d.existsSync('../data/mortimer-boot.png'))d.copyFileSync('../data/mortimer-boot.png','dist/data/mortimer-boot.png');const fs=require('fs');fs.copyFileSync('../OSRS-Buddy-dev.html','dist/index.html');fs.copyFileSync('../sw.js','dist/sw.js');console.log('dist/index.html + dist/sw.js <- OSRS-Buddy-dev.html, sw.js')\""
   },
