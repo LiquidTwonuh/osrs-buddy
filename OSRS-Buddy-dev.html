@@ -1230,20 +1230,20 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-tag{font-size:10px; padding:1px 7px; border-radius:999px; background:var(--panel); border:1px solid var(--border); color:var(--muted)}
   .cf-eff{color:var(--gold); opacity:.85}
   /* locked: a lock pill with the work left, then a chip per missing thing */
-  .rc-row{display:inline-flex; flex-wrap:wrap; gap:4px 5px; align-items:center}
-  .rc-lock{display:inline-flex; align-items:center; gap:4px; padding:2px 9px 2px 7px; border-radius:999px; font-size:11.5px; font-weight:600; color:var(--gold); background:color-mix(in srgb, var(--gold) 12%, var(--panel)); border:1px solid color-mix(in srgb, var(--gold) 40%, var(--border)); white-space:nowrap}
-  .rc{position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:5px; padding:2px 8px 3px 6px; border-radius:7px; font-size:11.5px; color:var(--text); background:var(--panel); border:1px solid var(--border); white-space:nowrap; line-height:1.3}
-  .rc img{width:14px; height:14px; object-fit:contain; flex:none}
-  .rc b{font-weight:700; color:var(--text)}
-  .rc-have{color:var(--muted); font-size:10.5px}
-  .rc-skill{cursor:pointer} .rc-skill:hover{border-color:var(--gold-dim)}
-  .rc-skill i{position:absolute; left:0; bottom:0; height:2px; background:linear-gradient(90deg, var(--gold3), var(--gold))}
-  .rc-quest{cursor:pointer} .rc-quest:hover{border-color:var(--gold-dim)}
-  .rc-other{color:var(--muted); border-style:dashed}
+  /* the strip: one lit band that says plainly what is lacking, a link beside each thing */
+  .rc-row{display:flex; flex-wrap:wrap; gap:3px 14px; align-items:center; width:100%; padding:5px 10px 5px 9px; border-radius:8px; background:color-mix(in srgb, var(--gold) 9%, var(--panel)); border-left:3px solid var(--gold); font-size:12px; color:var(--text)}
+  .rc-lead{font-weight:700; color:var(--gold); white-space:nowrap; letter-spacing:.02em}
+  .rc-item{display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap; min-width:0}
+  .rc-item img{width:15px; height:15px; object-fit:contain; flex:none}
+  .rc-item b{color:var(--gold); font-weight:700; white-space:nowrap}
+  .rc-item em{font-style:normal; color:var(--muted)}
+  .rc-item.dim b{color:var(--muted); font-weight:600}
+  .rc-go{color:var(--gold); text-decoration:underline; text-underline-offset:2px; text-decoration-color:color-mix(in srgb, var(--gold) 50%, transparent); cursor:pointer; white-space:nowrap; font-weight:600}
+  .rc-go:hover{text-decoration-color:var(--gold)}
+  .rc-work{margin-left:auto; color:var(--muted); white-space:nowrap; font-size:11.5px}
   .cf-lrow.short .cf-lname b, .cf-lrow.short .cf-lgp{color:var(--muted)}
   .cf-lrow.short .cf-lbar{opacity:.55}
   .cf-lrow.short .cf-lname{position:relative} .cf-lrow.short .cf-lname::after{content:"🔒"; font-size:10px; margin-left:2px; opacity:.7}
-  .cf-hc .rc-row .rc-lock{font-size:12px}
   /* the farewell: Buddy's own gold on black, whatever the theme */
   .fw{position:fixed; inset:0; z-index:9999; background:#050505; display:flex; align-items:center; justify-content:center; text-align:center; color:#e8e0cf; font-family:var(--font-display); overflow:auto; padding:24px}
   body.fw-on{overflow:hidden}
@@ -11291,7 +11291,7 @@ function roundRowHtml(m, pins){
       <button class="rd-tick ${st.up ? "" : "on"}" data-rdtick="${escapeHtml(m.key)}" ${m.gap.ok ? "" : "disabled"} title="${st.up ? "Done it? Tick it" : "Untick"}">${st.up ? "○" : "✓"}</button>
       <div class="rd-b">
         <div class="rd-h">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : `<span class="cf-lgroup">🌱</span>`}<b>${escapeHtml(m.name)}</b><span class="cf-tag">${roundEveryText(m.every)}</span>${m.extra ? "" : cofferTagsHtml(m).replace(/<span class="cf-tag">every [^<]*<\/span>/, "")}</div>
-        <div class="rd-sub">${need ? `<span class="rc-row">${reachChipsHtml(m.gap, {short:true})}</span>` : `<span class="rd-when ${st.up ? "up" : ""}">${st.text}</span>`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}${m.why && m.why.length && m.extra ? ` · ${escapeHtml(m.why[0])}` : ""}</div>
+        <div class="rd-sub">${need ? `<div class="rc-row">${reachChipsHtml(m.gap, {short:true})}</div>` : `<span class="rd-when ${st.up ? "up" : ""}">${st.text}</span>`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}${m.why && m.why.length && m.extra ? ` · ${escapeHtml(m.why[0])}` : ""}</div>
       </div>
       <div class="rd-pay">${pay}</div>
       <button class="qp-pin ${on ? "on" : ""}" data-cfpin="${escapeHtml(m.name)}" title="${on ? "On your picks" : "Add to your picks"}">${on ? "📌" : "+"}</button>
@@ -12045,14 +12045,14 @@ function reachOf(req){
 function reachChipsHtml(v, opts){
   if(v.ok) return "";
   opts = opts || {};
-  const out = [`<span class="rc-lock" title="You can't do this one yet">🔒 ${opts.short ? "" : "Not yet · "}${xpText(v.effort)} xp of work</span>`];
+  const items = [];
   v.skills.slice().sort((a,b)=>a.xp-b.xp).forEach(g=>{
-    const target = xpForLevel(g.lvl), frac = target ? Math.max(0, Math.min(1, 1 - g.xp / target)) : 0;
-    out.push(`<span class="rc rc-skill" data-skguide="${g.skill}" data-need="${g.lvl}" title="${nice(g.skill)}: you're ${g.have}, ${xpText(g.xp)} xp to ${g.lvl}. Tap for the training guide"><img src="${skillIconUrl(g.skill)}" alt=""><b>${g.lvl}</b><span class="rc-have">you're ${g.have}</span><i style="width:${(frac * 100).toFixed(1)}%"></i></span>`);
+    const lvls = g.lvl - g.have;
+    items.push(`<span class="rc-item"><img src="${skillIconUrl(g.skill)}" alt=""><b>${g.lvl} ${nice(g.skill)}</b><em>you're ${g.have}, ${lvls} level${lvls === 1 ? "" : "s"} and ${xpText(g.xp)} xp to go</em><span class="rc-go" data-skguide="${g.skill}" data-need="${g.lvl}">Training guide →</span></span>`);
   });
-  v.quests.forEach(q=>out.push(`<span class="rc rc-quest" data-qpopen="${escapeHtml(q.name)}" title="${q.ready ? "You could start this quest now" : "This quest and what it needs"}">📜 ${escapeHtml(qpLabel(q.name))}${q.ready ? "" : `<span class="rc-have">+ its chain</span>`}</span>`));
-  v.other.forEach(o=>{ const t = String(o).replace(/ \(the app can't tick this for you\)$/, ""); const manual = t !== String(o); out.push(`<span class="rc rc-other" title="${manual ? "The app can't check this one for you" : escapeHtml(t)}">${escapeHtml(t)}${manual ? `<span class="rc-have">can't check</span>` : ""}</span>`); });
-  return out.join("");
+  v.quests.forEach(q=>items.push(`<span class="rc-item"><b>📜 ${escapeHtml(qpLabel(q.name))}</b><em>${q.ready ? "you could start it now" : "and what it needs first"}</em><span class="rc-go rc-quest" data-qpopen="${escapeHtml(q.name)}">Open quest →</span></span>`));
+  v.other.forEach(o=>{ const t = String(o).replace(/ \(the app can't tick this for you\)$/, ""); const manual = t !== String(o); items.push(`<span class="rc-item dim"><b>${escapeHtml(t)}</b>${manual ? `<em>the app can't check this one</em>` : ""}</span>`); });
+  return `<span class="rc-lead">🔒 Can't do yet</span>${items.join("")}<span class="rc-work">${xpText(v.effort)} xp of work in all</span>`;
 }
 // one line saying what's in the way, shortest first
 function reachText(v){
@@ -12293,6 +12293,13 @@ function cofferPrefs(){
   // older answers: a flat list of liked skills becomes Love; the gear question became stage
   if(!pf.skillTiers || typeof pf.skillTiers !== "object") pf.skillTiers = {};
   if(Array.isArray(pf.skills)){ pf.skills.forEach(k=>{ if(!pf.skillTiers[k]) pf.skillTiers[k] = "love"; }); delete pf.skills; }
+  // older ratings on Attack, Strength, Defence or Hitpoints become one on Melee: love wins, then like, then hate
+  if(MELEE_SKILLS.some(k=>pf.skillTiers[k])){
+    const had = MELEE_SKILLS.map(k=>pf.skillTiers[k]).filter(Boolean);
+    if(!pf.skillTiers.melee) pf.skillTiers.melee = had.includes("love") ? "love" : had.includes("like") ? "like" : "hate";
+    MELEE_SKILLS.forEach(k=>delete pf.skillTiers[k]);
+  }
+  if(state.coffer.lens && MELEE_SKILLS.includes(state.coffer.lens)) state.coffer.lens = "melee";
   if(!pf.stage) pf.stage = "auto";
   return pf;
 }
@@ -12308,10 +12315,17 @@ function cofferMatches(m, pf){
   if(pf.style === "skilling" && m.group !== "Skilling") return false;
   if(pf.style === "gather" && !["Collecting","Processing"].includes(m.group)) return false;
   if(pf.iron === "yes" && /^(Buying|Selling|Flipping|Merching)\b/i.test(m.name)) return false;
-  const sk = mmgCatSkill(m);
+  const sk = mmgTierSkill(m);
   if(sk && pf.skillTiers[sk] === "hate") return false;          // you said so
   return true;
 }
+// for the ratings, the four melee skills are one: Melee. Ranged and Magic stay their own.
+const MELEE_SKILLS = ["attack", "strength", "defence", "hitpoints"];
+function cofferSkillKey(k){ return MELEE_SKILLS.includes(k) ? "melee" : k; }
+const COFFER_TIER_SKILLS = ["melee", "ranged", "magic"].concat(SKILL_ORDER.filter(k=>!MELEE_SKILLS.includes(k) && k !== "ranged" && k !== "magic"));
+function cfSkillIcon(k){ return k === "melee" ? WIKI + "Attack_icon.png" : skillIconUrl(k); }
+// the skill a method is filed under for the ratings
+function mmgTierSkill(m){ const k = mmgCatSkill(m); return k ? cofferSkillKey(k) : null; }
 // the skill a method is filed under, from a category like "Skilling/Herblore"
 function mmgCatSkill(m){
   const part = (m.cat || "").split("/")[1];
@@ -12343,7 +12357,7 @@ function cofferWhy(m, pf){
   const why = []; let mult = 1;
   if(pf.style !== "any" && cofferMatches(m, Object.assign({}, COFFER_DEFAULTS, {style: pf.style}))){ /* passed the style filter already */ }
   if(pf.pace !== "any" && m.pace === pf.pace){ why.push(pf.pace === "Low" ? "AFK, like you asked" : "the pace you asked for"); mult *= 1.2; }
-  const sk = mmgCatSkill(m), tier = sk ? pf.skillTiers[sk] : null;
+  const sk = mmgTierSkill(m), tier = sk ? pf.skillTiers[sk] : null;
   if(tier === "love"){ why.push("trains " + nice(sk) + ", which you love"); mult *= 1.6; }
   else if(tier === "like"){ why.push("trains " + nice(sk) + ", which you like"); mult *= 1.25; }
   if(pf.xp === "both" && ["Skilling","Processing"].includes(m.group)){ why.push("XP as well as GP"); mult *= 1.15; }
@@ -12681,7 +12695,7 @@ function renderCoffer(){
           <div class="row small muted" style="justify-content:space-between"><span>Anything</span><span>${cfGp(CF_FLOOR[CF_FLOOR.length-1])}/hr</span></div>
         </div>`;
     } else if(qq.tiers){
-      body = `<div class="cf-tiers">${SKILL_ORDER.map(k=>`<div class="cf-tier"><span class="cf-tiername"><img src="${skillIconUrl(k)}" alt="" class="cf-skico">${nice(k)}</span>
+      body = `<div class="cf-tiers">${COFFER_TIER_SKILLS.map(k=>`<div class="cf-tier"><span class="cf-tiername"><img src="${cfSkillIcon(k)}" alt="" class="cf-skico">${nice(k)}${k === "melee" ? `<small class="muted"> Attack, Strength, Defence, Hitpoints</small>` : ""}</span>
           <span class="cf-tierbtns">${SKILL_TIERS.map(([t,label])=>`<button class="${pf.skillTiers[k]===t?"on "+t:""}" data-cftier="${k}" data-tier="${t}">${label}</button>`).join("")}</span></div>`).join("")}</div>`;
     } else if(qq.number){
       body = `<div class="cf-slide"><input type="text" id="cfGoal" inputmode="numeric" placeholder="e.g. 50m or 50000000" value="${escapeHtml(pf.goal || "")}" style="width:100%; text-align:center; font-size:16px"></div>`;
@@ -12738,7 +12752,7 @@ function renderCoffer(){
   picked.forEach(m=>{ const w = cofferWhy(m, pf); m.score = w.score; m.why = w.why; m.beyond = w.why.some(x=>/beyond/.test(x)); });
   const byScore = (a,b)=> b.score - a.score;
   const lens = state.coffer.lens || "";
-  const inLens = m => !lens || mmgCatSkill(m) === lens || (m.skills || []).some(r=>r.skill === lens);
+  const inLens = m => !lens || mmgTierSkill(m) === lens || (m.skills || []).some(r=>cofferSkillKey(r.skill) === lens);
   const ready = picked.filter(m=>m.gap.ok && !m.recur && inLens(m)).sort(byScore);
   const f2pOnly = /free/i.test((((COFFER_QUIZ.find(q=>q.id==="members") || {}).opts || []).find(o=>o[0]===pf.members) || [])[1] || "");
   const rounds = roundsSorted(roundsAll(db).filter(m=>!hiddenSet.has(m.name) && (!f2pOnly || m.f2p) && inLens(m)));
@@ -12807,7 +12821,7 @@ function renderCoffer(){
       <div class="cf-ltrack"><div class="cf-lbar" style="width:${pct.toFixed(1)}%"></div><span class="cf-lgp">${cofferPayHtml(m)}</span></div>
       <div class="cf-lacts"><button class="qp-pin cf-fav ${cofferFavs().includes(m.name)?"on":""}" data-cffav="${escapeHtml(m.name)}" title="${cofferFavs().includes(m.name)?"A favourite. Tap to take the star off":"Favourite: floats it up the lists"}">${cofferFavs().includes(m.name)?"★":"☆"}</button><button class="qp-pin ${on?"on":""}" data-cfpin="${escapeHtml(m.name)}" title="${on?"On your picks":"Add to your picks"}">${on?"📌":"+"}</button><button class="qp-pin cf-hidebtn" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">⊘</button></div>
       <div class="cf-lsub">${cofferTagsHtml(m)}${m.gap.ok ? `<span>${rec ? `Wiki recommends ${rec}` : "You've got the levels"}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}</span>`
-        : `<span class="rc-row">${reachChipsHtml(m.gap, {short:true})}</span>${m.loc ? `<span>${escapeHtml(m.loc)}</span>` : ""}`}${
+        : `${m.loc ? `<span>${escapeHtml(m.loc)}</span>` : ""}<div class="rc-row">${reachChipsHtml(m.gap, {short:true})}</div>`}${
         why.length ? `<span class="cf-why">${why.map(escapeHtml).join(" · ")}</span>` : ""}</div>
     </div>`;
   };
@@ -12851,13 +12865,13 @@ function renderCoffer(){
   // one section per loved skill, for the methods that skill is the point of; thin ones are skipped
   const shown = new Set(top.concat(more).map(m=>m.name));
   const loveSections = lens ? "" : Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(k=>{
-    const mine = m => mmgCatSkill(m) === k || (m.skills || []).some(r=>r.skill === k && r.lvl >= 30);
+    const mine = m => mmgTierSkill(m) === k || (m.skills || []).some(r=>cofferSkillKey(r.skill) === k && r.lvl >= 30);
     let list = ready.filter(m=>mine(m) && !shown.has(m.name));
     if(list.length < 2) list = list.concat(close.filter(m=>mine(m) && !shown.has(m.name)));
     if(list.length < 2) return "";
     const all = list.length; list = rot(list, "love_" + k);
     list.slice(0, 4).forEach(m=>shown.add(m.name));
-    return ledger(`<img src="${skillIconUrl(k)}" alt="" class="cf-skico"> Because you love ${nice(k)}`, "the ones this skill is the point of", list, 4, "", true, undefined, sref("love_" + k, 4, all));
+    return ledger(`<img src="${cfSkillIcon(k)}" alt="" class="cf-skico"> Because you love ${nice(k)}`, "the ones this skill is the point of", list, 4, "", true, undefined, sref("love_" + k, 4, all));
   }).join("") || "";
 
   el.innerHTML = `
@@ -12866,9 +12880,9 @@ function renderCoffer(){
         <div class="cf-lenstitle">${lens ? `Seeing it through <b>${nice(lens)}</b>` : "See it through a skill"}</div>
         <div class="cf-lens">
           <button class="${lens ? "" : "on"}" data-lens="">Everything</button>
-          ${Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(k=>`<button class="${lens===k ? "on" : ""}" data-lens="${k}"><img src="${skillIconUrl(k)}" alt="">${nice(k)}</button>`).join("")}
-          ${lens && pf.skillTiers[lens] !== "love" ? `<button class="on" data-lens="${lens}"><img src="${skillIconUrl(lens)}" alt="">${nice(lens)}</button>` : ""}
-          <select id="cfLensSel" class="small"><option value="">another skill…</option>${SKILL_ORDER.filter(k=>k!==lens).map(k=>`<option value="${k}">${nice(k)}</option>`).join("")}</select>
+          ${Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k]==="love").map(k=>`<button class="${lens===k ? "on" : ""}" data-lens="${k}"><img src="${cfSkillIcon(k)}" alt="">${nice(k)}</button>`).join("")}
+          ${lens && pf.skillTiers[lens] !== "love" ? `<button class="on" data-lens="${lens}"><img src="${cfSkillIcon(lens)}" alt="">${nice(lens)}</button>` : ""}
+          <select id="cfLensSel" class="small"><option value="">another skill…</option>${COFFER_TIER_SKILLS.filter(k=>k!==lens).map(k=>`<option value="${k}">${nice(k)}</option>`).join("")}</select>
         </div>
         <div class="small muted cf-lenssub">${lens ? `Every section below is ${nice(lens)} only. Tap it again, or Everything, to go back.` : "Tap a skill and every section below measures only that skill's money makers."}</div>
       </div>
