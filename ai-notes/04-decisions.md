@@ -15,6 +15,9 @@ Things that were decided and should not be reopened without Josh. Newest first w
 
 ## Pages
 
+- **2026-11-15, the Size setting is a viewport-meta change on phones, not a CSS zoom.** Zoom on the root scales viewport units with it (a 100dvh sidebar overflowed the screen at 1.3), so the page narrows its layout width instead and the phone draws everything bigger. Desktops ignore the meta; the Look step says so and points at Ctrl and plus.
+- **2026-11-15, the sidebar swipe counts from anywhere on a phone.** Android keeps the screen's edge for its back gesture, so an edge-only swipe would never arrive. Anything that scrolls sideways itself keeps its swipe.
+- **2026-11-15, Quest Hub banners wear the theme's gold only.** The per-goal hues (even theme-mixed) read as washed out; Josh wanted them gone.
 - **2026-11-13, Map is Quest Hub; Coffer's sections are The Bakery, Bank, Exchange, Repeatable runs.** Josh stopped liking Map and wanted the Coffer sections renamed before the push, and wanted plain names ("just normal stuff"). Claude proposed Compass and Ventures first; Josh chose Quest Hub, then The Bakery (his own, half a joke, kept) and Repeatable runs. Internal ids are unchanged.
 - **2026-11-13, the rune themes ship with the painted scenes after all.** First pass left the Canvas renderer out as a phone cost; Josh saw the themes without their scenes and said they looked wrong, which was fair: the scene is the theme. The painter is ported as ChatGPT wrote it, runs once per theme change, and can be turned off in Look. The brand mark is the catalog's cel-shaded Mortimer. The Theme button opens the Look step instead of cycling.
 - **2026-11-11, Flip prices are averages, never a single trade.** The latest high and low are one trade each and showed margins nobody could buy at. Now five-minute averages when at least ten traded each way, else hour averages, and both sides must have traded. Josh's call after trying a bead at 2k each.

@@ -1,6 +1,6 @@
 # Mortimeter, the whole brief
 
-Bundled 2026-11-14 from ai-notes/ in C:\Projects\mortimeter. Read it top to bottom; the rules every AI should know are in the first section of the workflow file at the end. Write back through ai-notes/INBOX.md.
+Bundled 2026-11-15 from ai-notes/ in C:\Projects\mortimeter. Read it top to bottom; the rules every AI should know are in the first section of the workflow file at the end. Write back through ai-notes/INBOX.md.
 
 
 
@@ -170,6 +170,9 @@ Things that were decided and should not be reopened without Josh. Newest first w
 
 ## Pages
 
+- **2026-11-15, the Size setting is a viewport-meta change on phones, not a CSS zoom.** Zoom on the root scales viewport units with it (a 100dvh sidebar overflowed the screen at 1.3), so the page narrows its layout width instead and the phone draws everything bigger. Desktops ignore the meta; the Look step says so and points at Ctrl and plus.
+- **2026-11-15, the sidebar swipe counts from anywhere on a phone.** Android keeps the screen's edge for its back gesture, so an edge-only swipe would never arrive. Anything that scrolls sideways itself keeps its swipe.
+- **2026-11-15, Quest Hub banners wear the theme's gold only.** The per-goal hues (even theme-mixed) read as washed out; Josh wanted them gone.
 - **2026-11-13, Map is Quest Hub; Coffer's sections are The Bakery, Bank, Exchange, Repeatable runs.** Josh stopped liking Map and wanted the Coffer sections renamed before the push, and wanted plain names ("just normal stuff"). Claude proposed Compass and Ventures first; Josh chose Quest Hub, then The Bakery (his own, half a joke, kept) and Repeatable runs. Internal ids are unchanged.
 - **2026-11-13, the rune themes ship with the painted scenes after all.** First pass left the Canvas renderer out as a phone cost; Josh saw the themes without their scenes and said they looked wrong, which was fair: the scene is the theme. The painter is ported as ChatGPT wrote it, runs once per theme change, and can be turned off in Look. The brand mark is the catalog's cel-shaded Mortimer. The Theme button opens the Look step instead of cycling.
 - **2026-11-11, Flip prices are averages, never a single trade.** The latest high and low are one trade each and showed margins nobody could buy at. Now five-minute averages when at least ten traded each way, else hour averages, and both sides must have traded. Josh's call after trying a bead at 2k each.
@@ -270,9 +273,13 @@ The live list is `BOARD.md` (Now, Next, Small fixes, Ideas, Parked). This is the
 
 # Changelog, by day
 
-Updated 2026-11-11 (covers commits through 2026-11-11)
+Updated 2026-11-15 (covers commits through 2026-11-15)
 
 Newest first. Written from the local git history in plain words; "dev" means the dev page and so the Beta, "stable" means the shipped page. The routine appends a block for each new day it finds.
+
+## 2026-11-15
+- dev: phone pass. The page holds still under an open card on touch screens; swipe right opens the sidebar and swipe left closes it; Size in Look (four steps, through the viewport meta on phones); keep-out bands at a phone's top and bottom; the mark instead of the crossed swords in the phone top bar and the favicon; Quest Hub goal banners in the theme's gold only.
+- app: Android debug APK built from the dev page without Developer Mode (app/apk.mjs, npm run apk:dev; the stable page with npm run apk), 15 MB, label Mortimeter, same package id. Single-instance plugin desktop-only.
 
 ## 2026-11-13
 - dev: skill training guides as a card from any requirement (quest card, money maker card), the wiki's page for the level stretch you need.
