@@ -1229,6 +1229,21 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-sub{font-size:12px; color:var(--muted); margin-top:2px}
   .cf-tag{font-size:10px; padding:1px 7px; border-radius:999px; background:var(--panel); border:1px solid var(--border); color:var(--muted)}
   .cf-eff{color:var(--gold); opacity:.85}
+  /* locked: a lock pill with the work left, then a chip per missing thing */
+  .rc-row{display:inline-flex; flex-wrap:wrap; gap:4px 5px; align-items:center}
+  .rc-lock{display:inline-flex; align-items:center; gap:4px; padding:2px 9px 2px 7px; border-radius:999px; font-size:11.5px; font-weight:600; color:var(--gold); background:color-mix(in srgb, var(--gold) 12%, var(--panel)); border:1px solid color-mix(in srgb, var(--gold) 40%, var(--border)); white-space:nowrap}
+  .rc{position:relative; overflow:hidden; display:inline-flex; align-items:center; gap:5px; padding:2px 8px 3px 6px; border-radius:7px; font-size:11.5px; color:var(--text); background:var(--panel); border:1px solid var(--border); white-space:nowrap; line-height:1.3}
+  .rc img{width:14px; height:14px; object-fit:contain; flex:none}
+  .rc b{font-weight:700; color:var(--text)}
+  .rc-have{color:var(--muted); font-size:10.5px}
+  .rc-skill{cursor:pointer} .rc-skill:hover{border-color:var(--gold-dim)}
+  .rc-skill i{position:absolute; left:0; bottom:0; height:2px; background:linear-gradient(90deg, var(--gold3), var(--gold))}
+  .rc-quest{cursor:pointer} .rc-quest:hover{border-color:var(--gold-dim)}
+  .rc-other{color:var(--muted); border-style:dashed}
+  .cf-lrow.short .cf-lname b, .cf-lrow.short .cf-lgp{color:var(--muted)}
+  .cf-lrow.short .cf-lbar{opacity:.55}
+  .cf-lrow.short .cf-lname{position:relative} .cf-lrow.short .cf-lname::after{content:"🔒"; font-size:10px; margin-left:2px; opacity:.7}
+  .cf-hc .rc-row .rc-lock{font-size:12px}
   /* the farewell: Buddy's own gold on black, whatever the theme */
   .fw{position:fixed; inset:0; z-index:9999; background:#050505; display:flex; align-items:center; justify-content:center; text-align:center; color:#e8e0cf; font-family:var(--font-display); overflow:auto; padding:24px}
   body.fw-on{overflow:hidden}
@@ -11261,7 +11276,7 @@ function roundRowHtml(m, pins){
       <button class="rd-tick ${st.up ? "" : "on"}" data-rdtick="${escapeHtml(m.key)}" ${m.gap.ok ? "" : "disabled"} title="${st.up ? "Done it? Tick it" : "Untick"}">${st.up ? "○" : "✓"}</button>
       <div class="rd-b">
         <div class="rd-h">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : `<span class="cf-lgroup">🌱</span>`}<b>${escapeHtml(m.name)}</b><span class="cf-tag">${roundEveryText(m.every)}</span>${m.extra ? "" : cofferTagsHtml(m).replace(/<span class="cf-tag">every [^<]*<\/span>/, "")}</div>
-        <div class="rd-sub">${need ? `<span class="cf-eff">${need}</span>` : `<span class="rd-when ${st.up ? "up" : ""}">${st.text}</span>`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}${m.why && m.why.length && m.extra ? ` · ${escapeHtml(m.why[0])}` : ""}</div>
+        <div class="rd-sub">${need ? `<span class="rc-row">${reachChipsHtml(m.gap, {short:true})}</span>` : `<span class="rd-when ${st.up ? "up" : ""}">${st.text}</span>`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}${m.why && m.why.length && m.extra ? ` · ${escapeHtml(m.why[0])}` : ""}</div>
       </div>
       <div class="rd-pay">${pay}</div>
       <button class="qp-pin ${on ? "on" : ""}" data-cfpin="${escapeHtml(m.name)}" title="${on ? "On your picks" : "Add to your picks"}">${on ? "📌" : "+"}</button>
@@ -11989,6 +12004,19 @@ function reachOf(req){
   v.text = reachText(v);
   return v;
 }
+// the same, as chips: a lock pill with the work left, then a chip per missing thing
+function reachChipsHtml(v, opts){
+  if(v.ok) return "";
+  opts = opts || {};
+  const out = [`<span class="rc-lock" title="You can't do this one yet">🔒 ${opts.short ? "" : "Not yet · "}${xpText(v.effort)} xp of work</span>`];
+  v.skills.slice().sort((a,b)=>a.xp-b.xp).forEach(g=>{
+    const target = xpForLevel(g.lvl), frac = target ? Math.max(0, Math.min(1, 1 - g.xp / target)) : 0;
+    out.push(`<span class="rc rc-skill" data-skguide="${g.skill}" data-need="${g.lvl}" title="${nice(g.skill)}: you're ${g.have}, ${xpText(g.xp)} xp to ${g.lvl}. Tap for the training guide"><img src="${skillIconUrl(g.skill)}" alt=""><b>${g.lvl}</b><span class="rc-have">you're ${g.have}</span><i style="width:${(frac * 100).toFixed(1)}%"></i></span>`);
+  });
+  v.quests.forEach(q=>out.push(`<span class="rc rc-quest" data-qpopen="${escapeHtml(q.name)}" title="${q.ready ? "You could start this quest now" : "This quest and what it needs"}">📜 ${escapeHtml(qpLabel(q.name))}${q.ready ? "" : `<span class="rc-have">+ its chain</span>`}</span>`));
+  v.other.forEach(o=>{ const t = String(o).replace(/ \(the app can't tick this for you\)$/, ""); const manual = t !== String(o); out.push(`<span class="rc rc-other" title="${manual ? "The app can't check this one for you" : escapeHtml(t)}">${escapeHtml(t)}${manual ? `<span class="rc-have">can't check</span>` : ""}</span>`); });
+  return out.join("");
+}
 // one line saying what's in the way, shortest first
 function reachText(v){
   if(v.ok) return "";
@@ -12558,6 +12586,8 @@ function renderSkillsPage(){
     $$("#skLadder [data-skmore]").forEach(m=>m.onclick = ()=>{ m.previousElementSibling.querySelectorAll("li[hidden]").forEach(li=>li.hidden = false); m.remove(); });
   }).catch(err=>{ const m = String(err.message || err); const l = $("#skLadder"); if(l) l.innerHTML = `<div class="empty">${escapeHtml(/failed to fetch|networkerror|load failed/i.test(m) ? "Couldn't reach the wiki. It may be down for a moment." : m)} <button class="ghost small" id="skRetry">Try again</button></div>`; const b = $("#skRetry"); if(b) b.onclick = ()=>renderSkillsPage(); });
 }
+// a quest chip on a locked Bakery row opens that quest's card
+document.addEventListener("click", e=>{ const r = e.target.closest(".rc-quest[data-qpopen]"); if(!r) return; e.stopPropagation(); qpOpen(r.dataset.qpopen); });
 // a tap on a skill requirement, wherever it is, opens the guide for that stretch
 document.addEventListener("click", e=>{
   const r = e.target.closest("[data-skguide]"); if(!r || e.target.closest("[data-boost], button, a")) return;
@@ -12739,8 +12769,8 @@ function renderCoffer(){
       <div class="cf-lname">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : `<span class="cf-lgroup">${groupIcon(m)}</span>`}<b>${escapeHtml(m.name)}</b></div>
       <div class="cf-ltrack"><div class="cf-lbar" style="width:${pct.toFixed(1)}%"></div><span class="cf-lgp">${cofferPayHtml(m)}</span></div>
       <div class="cf-lacts"><button class="qp-pin cf-fav ${cofferFavs().includes(m.name)?"on":""}" data-cffav="${escapeHtml(m.name)}" title="${cofferFavs().includes(m.name)?"A favourite. Tap to take the star off":"Favourite: floats it up the lists"}">${cofferFavs().includes(m.name)?"★":"☆"}</button><button class="qp-pin ${on?"on":""}" data-cfpin="${escapeHtml(m.name)}" title="${on?"On your picks":"Add to your picks"}">${on?"📌":"+"}</button><button class="qp-pin cf-hidebtn" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">⊘</button></div>
-      <div class="cf-lsub">${cofferTagsHtml(m)}<span>${need ? `Needs ${need}` : rec ? `Wiki recommends ${rec}` : "You've got the levels"}${
-        m.gap.ok ? "" : ` <span class="cf-eff">${xpText(m.gap.effort)} away</span>`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}</span>${
+      <div class="cf-lsub">${cofferTagsHtml(m)}${m.gap.ok ? `<span>${rec ? `Wiki recommends ${rec}` : "You've got the levels"}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}</span>`
+        : `<span class="rc-row">${reachChipsHtml(m.gap, {short:true})}</span>${m.loc ? `<span>${escapeHtml(m.loc)}</span>` : ""}`}${
         why.length ? `<span class="cf-why">${why.map(escapeHtml).join(" · ")}</span>` : ""}</div>
     </div>`;
   };
@@ -12762,7 +12792,7 @@ function renderCoffer(){
         <div class="cf-ltrack slim"><div class="cf-lbar" style="width:${pct.toFixed(1)}%"></div></div>
         <div class="cf-h">${cofferTagsHtml(m)}</div>
         ${why.length ? `<div class="cf-why">${why.map(escapeHtml).join(" · ")}</div>` : ""}
-        ${m.gap.ok ? "" : `<div class="small"><span class="cf-eff">Needs ${m.gap.text} · ${xpText(m.gap.effort)} away</span></div>`}
+        ${m.gap.ok ? "" : `<div class="rc-row" style="margin-top:6px">${reachChipsHtml(m.gap)}</div>`}
         ${m.loc ? `<div class="small muted">${escapeHtml(m.loc)}</div>` : ""}
         <div class="row cf-hacts">
           <button class="ghost small" data-cfpin="${escapeHtml(m.name)}">${on ? "📌 On your picks" : "📌 Pick"}</button>
@@ -12899,7 +12929,7 @@ function renderCoffer(){
   // a row or a card opens the detail panel; opening it again closes it
   // a row or a card opens the method's card; the same one again closes it
   $$("#cofferView [data-cfopen]").forEach(x=>x.onclick=e=>{
-    if(e.target.closest("button, a")) return;
+    if(e.target.closest("button, a, [data-skguide], [data-qpopen]")) return;
     const n = x.dataset.cfopen;
     if(cfqOpen() && state.coffer.sel === n){ cofferClose(); return; }
     state.coffer.sel = n; save();
