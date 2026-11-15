@@ -2132,7 +2132,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     .sidebar.open{transform:none}
     .content{padding:0 14px 70px; max-width:none}
     .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:20;
-      background:var(--bg); padding:12px 2px 10px; border-bottom:1px solid var(--border); margin-bottom:6px}
+      background:transparent; padding:12px 2px 10px; border-bottom:1px solid transparent; margin-bottom:6px; transition:background .2s, border-color .2s}
+    /* scrolled: the bar frosts so the title reads over whatever passes under it; at the top it is clear and the scene shows through */
+    .topbar.scrolled{background:color-mix(in srgb, var(--bg) 84%, transparent); border-bottom-color:var(--border); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px)}
     .pagehead{display:none}
     .sb-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:39; touch-action:none}
   }
@@ -16347,6 +16349,8 @@ $$(".navitem").forEach(n=>n.onclick=()=>switchView(n.dataset.view));
 function openSidebar(){ $("#sidebar").classList.add("open"); $("#sbBackdrop").classList.remove("hidden"); }
 function closeSidebar(){ $("#sidebar").classList.remove("open"); $("#sbBackdrop").classList.add("hidden"); }
 $("#hamb").onclick = openSidebar;
+// the phone top bar is clear at the top of the page and frosts once the page has scrolled
+(function(){ const tb = $(".topbar"); if(!tb) return; const sync = ()=>tb.classList.toggle("scrolled", scrollY > 8); addEventListener("scroll", sync, {passive:true}); sync(); })();
 // while a card, sheet or setup is open, body.modal holds the page behind it still (CSS, touch screens only)
 (function(){
   const ids = ["qpq","cfq","skq","suBack","settingsWrap","skillWrap","celebWrap"];
