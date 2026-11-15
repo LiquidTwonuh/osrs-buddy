@@ -13,6 +13,11 @@ import os from "node:os";
 import path from "node:path";
 
 const dev = process.argv.includes("--dev");
+// a debug library carries 130 MB of symbols nobody reads on a phone; strip it and size-optimise,
+// and the APK comes in around 15 MB instead of 140
+process.env.CARGO_PROFILE_DEV_STRIP = "true";
+process.env.CARGO_PROFILE_DEV_DEBUG = "0";
+process.env.CARGO_PROFILE_DEV_OPT_LEVEL = "s";
 const run = (cmd, args, cwd) => spawnSync(cmd, args, { cwd, stdio: "inherit", shell: true }).status;
 const so = "src-tauri/target/aarch64-linux-android/debug/libapp_lib.so";
 const before = fs.existsSync(so) ? fs.statSync(so).mtimeMs : 0;
@@ -34,6 +39,10 @@ fs.mkdirSync(jni, { recursive: true });
 fs.rmSync(jni + "/libapp_lib.so", { force: true });
 fs.copyFileSync(so, jni + "/libapp_lib.so");
 const androidDir = path.resolve("src-tauri/gen/android");
+// the incremental packager rewrites the old APK in place and can leave the old library inside it
+// as dead space, so the previous file goes first
+fs.rmSync(path.join(androidDir, "app/build/outputs/apk/arm64/debug/app-arm64-debug.apk"), { force: true });
+fs.rmSync(path.join(androidDir, "app/build/intermediates/incremental"), { recursive: true, force: true });
 const code = run(`"${path.join(androidDir, "gradlew.bat")}"`, ["assembleArm64Debug", "-x", "rustBuildArm64Debug"], androidDir);
 if (code === 0) console.log(`\nAPK (${dev ? "dev page" : "stable page"}): src-tauri/gen/android/app/build/outputs/apk/arm64/debug/app-arm64-debug.apk`);
 process.exit(code ?? 1);
