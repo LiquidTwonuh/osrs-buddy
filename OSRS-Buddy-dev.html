@@ -397,6 +397,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     body.sb-rail .nav-sec:first-child{border:0; margin:0; padding:0}
     body.sb-rail .navitem{justify-content:center; padding:10px 0; gap:0; font-size:0}
     body.sb-rail .nav-sub{display:none}
+    body.sb-rail .nav-quiet{margin-top:10px} body.sb-rail .nav-quiet::before{left:6px; right:6px}
     body.sb-rail .side-mini{padding:6px; justify-content:center; cursor:pointer}
     body.sb-rail .side-mini .grow, body.sb-rail .side-mini .sm-refresh, body.sb-rail .char-pop{display:none}
     body.sb-rail .side-foot{align-items:center}
@@ -417,6 +418,12 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .navitem:hover{background:var(--panel2); color:var(--text); border-color:transparent}
   .navitem.active{background:var(--active); color:var(--gold); box-shadow:inset 3px 0 0 var(--gold)}
   .navitem .ni-ic{font-size:16px; width:20px; text-align:center; flex:0 0 auto}
+  /* the quiet row: Game corner sits under the list, dimmed, without a heading of its own */
+  .nav-quiet{margin-top:14px; position:relative; color:var(--muted); font-weight:normal; font-size:12.5px; opacity:.55;
+    transition:opacity .22s, color .18s, background .18s}
+  .nav-quiet::before{content:""; position:absolute; left:11px; right:11px; top:-8px; border-top:1px solid var(--border)}
+  .nav-quiet:hover, .nav-quiet.active{opacity:1}
+  .nav-quiet .ni-ic{font-size:14px}
   /* group labels — the list passed the point where a flat run of items reads well */
   /* Scroll sub-nav in the sidebar, only while Scroll is open */
   .nav-sub{display:flex; flex-direction:column; gap:1px; margin:2px 0 4px 10px;
@@ -2070,7 +2077,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .sw i::after{content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:var(--muted); transition:transform .22s cubic-bezier(.2,.7,.2,1), background .2s}
   .sw input:checked + i{background:color-mix(in srgb, var(--gold) 28%, var(--panel2)); border-color:var(--gold-dim)} .sw input:checked + i::after{transform:translateX(18px); background:var(--gold)}
   @media (max-width:560px){ .set-row:not(.col){flex-direction:column; align-items:stretch} .set-row:not(.col) > :last-child{align-self:flex-start} }
-  @media (prefers-reduced-motion:reduce){ #settingsModal, .set-pane{animation:none} .sw i, .sw i::after, .set-font{transition:none} }
+  @media (prefers-reduced-motion:reduce){ #settingsModal, .set-pane{animation:none} .sw i, .sw i::after, .set-font, .nav-quiet{transition:none} }
   .set-sec{margin-top:12px; padding-top:10px; border-top:1px solid var(--border)}
   .set-h{font-size:11px; color:var(--gold-dim); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:7px}
   /* font choices (settings) — garamond is the base --font-display */
@@ -2714,7 +2721,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <div class="nav-sub hidden" id="navSubScroll"></div>
       <button class="navitem" data-view="clog"><span class="ni-ic">🎖️</span>Achievements</button>
       <div class="nav-sub hidden" id="navSubAch"></div>
-      <div class="nav-sec">Planning</div>
+      <div class="nav-sec">Tools</div>
       <button class="navitem" data-view="goals"><span class="ni-ic">✅</span>Goals</button>
       <button class="navitem" data-view="start"><span class="ni-ic">🗺️</span>Roadmap</button>
       <button class="navitem" data-view="quests"><span class="ni-ic">🧭</span>Quest Hub</button>
@@ -2725,10 +2732,8 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <button class="navitem" data-view="notes"><span class="ni-ic">📝</span>Notes</button>
       <button class="navitem hidden" data-view="board" id="navBoard"><span class="ni-ic">📋</span>Board</button>
       <button class="navitem hidden" data-view="mockups" id="navMockups"><span class="ni-ic">🖼️</span>Mockups</button>
-      <div class="nav-sec">Tools</div>
       <button class="navitem hidden" data-view="ask" id="navAsk"><span class="ni-ic">💬</span>Ask Bud</button>
-      <div class="nav-sec">Games</div>
-      <button class="navitem" data-view="arcade"><span class="ni-ic">🕹️</span>Game corner</button>
+      <button class="navitem nav-quiet" data-view="arcade" title="Game corner"><span class="ni-ic">🕹️</span>Game corner</button>
     </nav>
     <div class="side-char" id="sideChar">
       <div class="side-mini">
