@@ -2769,6 +2769,11 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
         <p class="small muted" style="margin:6px 0 0">How skill XP is shown — rounded short form, or the exact figure.</p>
       </div>
       <div class="set-sec">
+        <div class="set-h">Tabs</div>
+        <div class="seg" id="tabSeg"></div>
+        <p class="small muted" style="margin:6px 0 0">What Scroll, Achievements, Quest Hub, Coffer and Skills open on when you come back to them. The app itself always opens on Home.</p>
+      </div>
+      <div class="set-sec">
         <div class="set-h">Stats</div>
         <label class="chk small"><input type="checkbox" id="autoRefresh"> Auto-refresh from the hiscores every 15 minutes</label>
         <label class="chk small"><input type="checkbox" id="autoActivity"> Fill in days from your game stats, so Scroll shows XP you never logged by hand</label>
@@ -4039,7 +4044,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap"];
+const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -14837,6 +14842,25 @@ function renderNumSeg(){
     state.exactNums = b.dataset.numOpt==="exact"; save(); renderSkills(); renderNumSeg();
   });
 }
+// Which tab each section opens on when you come back to it. "home" (the default) puts a section
+// back on its first tab the moment you leave it, and again at launch; "keep" leaves the tab where
+// you had it. The app itself always opens on Home either way.
+const TAB_CHOICES = [["home","Back to the first tab"],["keep","Where you left off"]];
+const SECTION_HOME = {scroll:"scrollSec", clog:"achSec", quests:"mapSec", coffer:"cofferSec", skills:"skillsSel"};
+function tabsKept(){ return state.tabMemory === "keep"; }
+function resetSectionTab(view){
+  const key = SECTION_HOME[view]; if(!key) return;
+  if(key === "skillsSel") state.skillsSel = null; else delete state[key];
+  if(view === "scroll") delete state.scrollSecPrev;
+}
+function renderTabSeg(){
+  const el = $("#tabSeg"); if(!el) return;
+  const cur = tabsKept() ? "keep" : "home";
+  el.innerHTML = TAB_CHOICES.map(([id,label])=>`<button class="${id===cur?"on":""}" data-tab-opt="${id}">${label}</button>`).join("");
+  $$("#tabSeg [data-tab-opt]").forEach(b=>b.onclick=()=>{
+    state.tabMemory = b.dataset.tabOpt; save(); renderTabSeg();
+  });
+}
 function renderUpdSetting(msg){
   const cur=$("#updCur"); if(cur) cur.textContent = APP_LABEL;
   const el=$("#updStatus"); if(!el) return;
@@ -14892,7 +14916,7 @@ function renderStorage(){
     + (r.pct>70?`<br><span style="color:var(--gold)">Songs for the rhythm game are stored separately and don't count toward this.</span>`:"");
 }
 function openSettings(){
-  renderFontSeg(); renderNumSeg(); renderUpdSetting(); renderBackups(); renderStorage(); renderCeSetting(); renderVaultSetting(); renderSyncSetting();
+  renderFontSeg(); renderNumSeg(); renderTabSeg(); renderUpdSetting(); renderBackups(); renderStorage(); renderCeSetting(); renderVaultSetting(); renderSyncSetting();
   renderDevSection(); devWireSettings();
   const bb = $("#bugBtn");
   if(bb){
@@ -16474,6 +16498,7 @@ function switchView(name){
   if(name==="stats") name="home"; // legacy saved view
   if(!VIEW_TITLES[name]) name="home";
   const was = $(".view:not(.hidden)");
+  if(was && was.id !== "view-"+name && !tabsKept()) resetSectionTab(was.id.replace(/^view-/, ""));
   $$(".navitem").forEach(n=>n.classList.toggle("active", n.dataset.view===name));
   $$(".view").forEach(v=>v.classList.toggle("hidden", v.id!=="view-"+name));
   const now = $("#view-"+name); if(now && now !== was) viewIn(now);
@@ -17924,6 +17949,7 @@ if(!state.scroll.barsDefaultSet){
   state.scroll.barsDefaultSet = true; save();
 }
 applyTheme(); applyFont(); applyScale(); startUpdateCheck(); renderHomeHeatControls(); renderFunFact(); renderQuestPlanner(); renderMeta(); renderTodo(); renderClog(); renderQuickAdd(); populateMetricDropdown(); renderStart(); renderScroll(); renderPatchNotes(); renderNotes();
+if(!tabsKept()) Object.keys(SECTION_HOME).forEach(resetSectionTab);
 switchView("home"); // always land on Home
 if(state.username){
   $("#username").value = state.username;
