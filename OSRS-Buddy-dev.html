@@ -14231,6 +14231,21 @@ const COFFER_TIER_SKILLS = ["melee", "ranged", "magic"].concat(SKILL_ORDER.filte
 function cfSkillIcon(k){ return k === "melee" ? WIKI + "Attack_icon.png" : skillIconUrl(k); }
 // the skill a method is filed under for the ratings
 function mmgTierSkill(m){ const k = mmgCatSkill(m); return k ? cofferSkillKey(k) : null; }
+// The skill a row is pictured by. The one its category names if it names one (Skilling/Herblore);
+// else the steepest level it asks for, so a dragon behind 87 Sailing wears the Sailing icon; else
+// Attack for anything that is a fight. Only when none of those apply does the group symbol show.
+function cfRowSkill(m){
+  if(!m) return null;
+  const k = mmgCatSkill(m); if(k) return k;
+  let best = null;
+  (m.skills || []).forEach(r=>{ if(r && SKILL_ORDER.includes(r.skill) && (!best || (r.lvl || 0) > (best.lvl || 0))) best = r; });
+  if(best) return best.skill;
+  return m.group === "Combat" ? "attack" : null;
+}
+function cfRowIcon(m, fallback, cls){
+  const k = cfRowSkill(m);
+  return k ? `<img src="${skillIconUrl(k)}" alt="" title="${nice(k)}"${cls ? ` class="${cls}"` : ""}>` : `<span${cls ? ` class="cf-lgroup"` : ""}>${fallback}</span>`;
+}
 // the skill a method is filed under, from a category like "Skilling/Herblore"
 function mmgCatSkill(m){
   const part = (m.cat || "").split("/")[1];
@@ -14802,7 +14817,7 @@ function renderCoffer(){
     const pct = Math.max(2.5, Math.min(100, 100 * (pay || 0) / (scale || topPay)));
     const sk = mmgCatSkill(m);
     return `<div class="cf-lrow ${m.gap.ok?"":"short"} ${on?"pinned":""} ${sel && sel.name===m.name?"sel":""}" data-cfopen="${escapeHtml(m.name)}">
-      <div class="cf-lname">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : `<span class="cf-lgroup">${groupIcon(m)}</span>`}<b>${escapeHtml(m.name)}</b></div>
+      <div class="cf-lname">${cfRowIcon(m, groupIcon(m), "cf-skico")}<b>${escapeHtml(m.name)}</b></div>
       <div class="cf-ltrack"><div class="cf-lbar" style="width:${pct.toFixed(1)}%"></div><span class="cf-lgp">${cofferPayHtml(m)}</span></div>
       <div class="cf-lacts"><button class="qp-pin cf-fav ${cofferFavs().includes(m.name)?"on":""}" data-cffav="${escapeHtml(m.name)}" title="${cofferFavs().includes(m.name)?"A favourite. Tap to take the star off":"Favourite: floats it up the lists"}">${cofferFavs().includes(m.name)?"★":"☆"}</button><button class="qp-pin ${on?"on":""}" data-cfpin="${escapeHtml(m.name)}" title="${on?"On your picks":"Add to your picks"}">${on?"📌":"+"}</button><button class="qp-pin cf-hidebtn" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">⊘</button></div>
       <div class="cf-lsub">${cofferTagsHtml(m)}${m.gap.ok ? `<span>${rec ? `Wiki recommends ${rec}` : "You've got the levels"}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}</span>`
@@ -14821,7 +14836,7 @@ function renderCoffer(){
     const on = pins.includes(m.name);
     return `<div class="cf-hc ${i ? "" : "first"} ${on?"pinned":""}" data-cfopen="${escapeHtml(m.name)}">
       <div class="cf-hrank">${i+1}</div>
-      <div class="cf-hico">${sk ? `<img src="${skillIconUrl(sk)}" alt="">` : `<span>${groupIcon(m)}</span>`}</div>
+      <div class="cf-hico">${cfRowIcon(m, groupIcon(m), "")}</div>
       <div class="cf-hbody">
         <div class="cf-hname">${escapeHtml(m.name)}</div>
         <div class="cf-hpay">${cofferPayHtml(m)}</div>
@@ -14912,7 +14927,7 @@ function renderCoffer(){
     ${hiddenNames.length ? `<details class="panel cf-hiddenbox" ${state.coffer.hiddenOpen ? "open" : ""}><summary><h3 style="display:inline">⊘ Hidden</h3> <span class="small muted">${hiddenNames.length} method${hiddenNames.length===1?"":"s"} you've put away · out of every section until you bring ${hiddenNames.length===1?"it":"them"} back</span></summary>
       <div class="cf-ledger" style="margin-top:8px">${hiddenNames.map(n=>{
         const m = db.methods.find(x=>x.name===n), sk = m ? mmgCatSkill(m) : null;
-        return `<div class="cf-lrow"><div class="cf-lname">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : m ? `<span class="cf-lgroup">${groupIcon(m)}</span>` : ""}<b>${escapeHtml(n)}</b></div>
+        return `<div class="cf-lrow"><div class="cf-lname">${m ? cfRowIcon(m, groupIcon(m), "cf-skico") : ""}<b>${escapeHtml(n)}</b></div>
           <div class="cf-lsub">${m ? cofferTagsHtml(m) + `<span>${cofferPayHtml(m)}</span>` : `<span>No longer in the wiki's guide</span>`}</div>
           <div class="cf-lacts"><button class="ghost small" data-cfunhide="${escapeHtml(n)}" title="Back into the lists">↩ Bring back</button></div></div>`; }).join("")}</div>
       ${hiddenNames.length > 1 ? `<div class="row" style="margin-top:8px"><span class="grow"></span><button class="ghost small" id="cfUnhideAll">Bring them all back</button></div>` : ""}
