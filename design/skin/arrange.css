@@ -1,0 +1,42 @@
+
+  /* ============ HOME, MOSAIC: COLUMNS YOU CAN REARRANGE ============
+     htArrange (the page's script) puts the panes into columns of rows and marks #homeTerm with
+     data-arr ("w" with 1180 of width or more, "m" from 680). Without the mark the wrappers take
+     no part in layout, so Orderly and the stacked phone place the panes themselves. */
+  body[data-skin="term"] :is(.ht-cols, .ht-colx, .ht-rowx){display:contents}
+  body[data-skin="term"] #homeTerm[data-arr] .ht-cols{display:flex; align-items:stretch; gap:var(--gap); min-width:0; order:0}
+  body[data-skin="term"] #homeTerm[data-arr] .ht-colx{display:flex; flex-direction:column; flex:1 1 0; gap:var(--gap); min-width:0}
+  body[data-skin="term"] #homeTerm[data-arr] .ht-rowx{display:flex; flex:0 0 auto; gap:var(--gap); min-width:0}
+  body[data-skin="term"] #homeTerm[data-arr] .ht-rowx > section{flex:1 1 0; order:0; overflow:hidden}
+  body[data-skin="term"] #homeTerm[data-arr] #homeHeatPanel{order:9}
+  /* the log takes the height its pane is given rather than setting it */
+  body[data-skin="term"] #homeTerm[data-arr] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
+  body[data-skin="term"] #homeTerm[data-arr="m"] .ht-log{min-height:190px}
+  /* the vitals stand in a column in a narrow pane, two by two in a wider one, in a line in a wide one */
+  body[data-skin="term"] #homeTerm[data-arr] .hs-orbs .ht-orbs{display:flex; flex-direction:column; flex-wrap:nowrap; gap:14px; justify-content:center}
+  @container htorbs (min-width:290px){
+    body[data-skin="term"] #homeTerm[data-arr] .hs-orbs .ht-orbs{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px 20px; align-content:center}
+  }
+  @container htorbs (min-width:640px){
+    body[data-skin="term"] #homeTerm[data-arr] .hs-orbs .ht-orbs{grid-template-columns:repeat(4, minmax(0,1fr))}
+  }
+  /* kill counts run in two columns when their pane is wide */
+  body[data-skin="term"] .hs-kc{container:htkc / inline-size}
+  @container htkc (min-width:520px){
+    body[data-skin="term"] #homeTerm[data-arr] .ht-kc{grid-template-columns:1fr 1fr; column-gap:28px}
+  }
+  /* rows of the debrief past a list's usual length, shown only while they fit (htMenuFit) */
+  body[data-skin="term"] .ht-opt.xh{display:none}
+  body[data-skin="term"] .ht-menu i.end{display:block; height:0}
+
+  /* ---- dragging a pane by its header ---- */
+  body[data-skin="term"] #homeTerm[data-arr] :is(.ht-lab, .ht-menu .ttl, .ht-term .top){cursor:grab; -webkit-user-select:none; user-select:none}
+  body[data-skin="term"].ht-dragging, body[data-skin="term"].ht-dragging *{cursor:grabbing !important; -webkit-user-select:none; user-select:none}
+  body[data-skin="term"] #homeTerm section{transition:border-color .2s, box-shadow .2s, opacity .16s}
+  body[data-skin="term"] #homeTerm section.drag-src{opacity:.38; border-style:dashed !important}
+  body[data-skin="term"] .ht-ghost{position:fixed; left:0; top:0; z-index:90; pointer-events:none; padding:6px 11px; background:var(--panel); border:1px solid var(--gold);
+    color:var(--gold); font:500 11px var(--fm); letter-spacing:.14em; text-transform:uppercase; white-space:nowrap; will-change:transform}
+  body[data-skin="term"] .ht-mark{position:fixed; z-index:89; pointer-events:none; opacity:0; background:color-mix(in srgb, var(--gold) 16%, transparent); border:1px solid var(--gold);
+    transition:left .12s ease-out, top .12s ease-out, width .12s ease-out, height .12s ease-out, opacity .12s}
+  body[data-skin="term"] .ht-mark.on{opacity:1}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .ht-mark{transition:none} }

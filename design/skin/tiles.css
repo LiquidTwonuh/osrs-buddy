@@ -19,8 +19,8 @@
       var(--bg);
     background-attachment:fixed;
   }
-  /* square, everywhere; the Wrapped button keeps its pill because he asked for that one */
-  body[data-skin="term"] *:not(.wrap-go), body[data-skin="term"] *::before, body[data-skin="term"] *::after{border-radius:0 !important}
+  /* square, everywhere */
+  body[data-skin="term"] *, body[data-skin="term"] *::before, body[data-skin="term"] *::after{border-radius:0 !important}
 
   /* ---- a pane ---- */
   body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section){
@@ -110,16 +110,7 @@
      all change one without the other. #view-home is the container (set in home2.css). */
   @container home (min-width:1180px){
     body[data-skin="term"] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
-    /* Mosaic: three columns, each split at its own height, the right one split again below */
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:34fr 24fr 27fr 15fr; grid-template-rows:repeat(12, minmax(50px, auto)) auto}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-skills{grid-column:1; grid-row:1 / 7}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-play{grid-column:1; grid-row:7 / 13}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-menu{grid-column:2; grid-row:1 / 10}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-id{grid-column:2; grid-row:10 / 13}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-term{grid-column:3 / 5; grid-row:1 / 8}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-kc{grid-column:3; grid-row:8 / 13}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs{grid-column:4; grid-row:8 / 13}
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1; grid-row:13}
+    /* Mosaic is arranged by the script here: see arrange.css */
     /* Orderly: every edge on one twelve-column grid */
     body[data-skin="term"][data-tiles="orderly"] #homeTerm{grid-template-columns:repeat(12, minmax(0,1fr))}
     body[data-skin="term"][data-tiles="orderly"] .hs-id{grid-column:1 / 5; grid-row:1}

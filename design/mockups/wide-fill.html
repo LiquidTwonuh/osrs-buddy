@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filling a wide window</title>
+<style>
+  /* Filling the dead space on a big monitor (Josh, 2026-11-17: at 2560 wide the Scroll page stops
+     at about two thirds of the window and the rest is empty; fill it by resolution, in tiers, so
+     the more room there is the less essential the things that appear, and nothing essential is
+     ever pushed out). Two directions over the same Scroll page:
+       A  Side rail: the page is untouched; spare width becomes a rail of small panes that is the
+          same on every page.
+       B  The page grows: each page brings its own extra panes, sized like the page's own, and
+          the page itself gets a little wider.
+     Both fill the same way: extras are one list in tier order, poured into columns top to bottom,
+     and whatever does not fit is simply not drawn. The window is drawn at its real size and
+     scaled down to fit this view. */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#000; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden}
+  button{font:inherit}
+  .mk-strip{position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-height:36px; padding:6px 16px; background:#0a0a0a; border-bottom:1px solid #242424; color:#8c8c8c; font:12px/1.35 "Segoe UI",system-ui,sans-serif}
+  .mk-strip b{color:#d8d8d8; font-weight:600; margin-right:8px}
+  .mk-strip span.k{margin:0 2px 0 10px}
+  .mk-strip button{color:#b4b4b4; background:none; border:1px solid #333; padding:3px 9px; cursor:pointer}
+  .mk-strip button.on{color:#000; background:#d8d8d8; border-color:#d8d8d8}
+  .mk-note{padding:9px 16px 10px; background:#0a0a0a; border-bottom:1px solid #242424; color:#9a9a9a; font:12.5px/1.5 "Segoe UI",system-ui,sans-serif}
+  .mk-note b{color:#d8d8d8; font-weight:600}
+  .mk-note .t{display:inline-block; margin:0 3px 0 10px; padding:0 5px; font:600 10.5px Consolas,monospace; border:1px solid}
+  .stage{overflow:hidden}
+
+  .W{
+    --bg:#0b1513; --panel:#11201d; --panel2:#172a26; --border:#2a443f; --gold:#66cbb9; --gold-dim:#4a9c8f; --text:#e0e6d9; --muted:#8fa39c; --inset:#07100e;
+    --faint:color-mix(in srgb, var(--muted) 56%, var(--bg));
+    --hair:color-mix(in srgb, var(--text) 9%, transparent);
+    --line:color-mix(in srgb, var(--border) 58%, var(--bg));
+    --k-c:#62d2d2; --k-y:#f0d264; --k-o:#f39a40; --k-g:#70cf6a; --me:#c79be6;
+    --t1:var(--k-g); --t2:var(--k-c); --t3:var(--me);
+    --fs:"Bahnschrift","DIN Alternate","Roboto Condensed","Segoe UI",system-ui,sans-serif;
+    --fm:"Cascadia Mono","Cascadia Code","JetBrains Mono",Consolas,"Roboto Mono",monospace;
+    --gap:10px;
+    position:relative; display:grid; grid-template-columns:216px minmax(0,1fr); grid-template-rows:minmax(0,1fr); gap:var(--gap); padding:var(--gap);
+    width:var(--w); height:var(--h); zoom:var(--z); overflow:hidden; color:var(--text); font-family:var(--fs); font-size:14.5px; line-height:1.4; isolation:isolate;
+    background:
+      radial-gradient(ellipse 46% 52% at 12% 8%, color-mix(in srgb, #1f6f66 62%, transparent), transparent 70%),
+      radial-gradient(ellipse 40% 50% at 92% 96%, color-mix(in srgb, #5b2a6b 58%, transparent), transparent 70%),
+      radial-gradient(circle, color-mix(in srgb, var(--text) 9%, transparent) 0 1px, transparent 1.4px) 0 0 / 22px 22px,
+      var(--bg);
+  }
+  .pane{position:relative; display:flex; flex-direction:column; min-width:0;
+    background:color-mix(in srgb, var(--panel) 50%, transparent); -webkit-backdrop-filter:blur(18px) saturate(1.2); backdrop-filter:blur(18px) saturate(1.2);
+    border:1px solid var(--hair); box-shadow:inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent); transition:border-color .2s}
+  .pane:hover{border-color:color-mix(in srgb, var(--gold) 60%, transparent)}
+  .pane > header{display:flex; align-items:center; gap:8px; padding:7px 11px 6px; border-bottom:1px solid var(--hair); font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim); white-space:nowrap}
+  .pane > header::before{content:"//"; color:var(--faint); letter-spacing:0}
+  .pane > header small{margin-left:auto; font:11.5px var(--fm); letter-spacing:0; text-transform:none; color:var(--faint)}
+  .pane > .body{padding:11px}
+
+  /* sidebar */
+  .side{height:100%; min-height:0}
+  .side .body{display:flex; flex-direction:column; height:100%; padding:14px 10px 10px}
+  .brand{padding:0 4px 8px; font:600 17px var(--fm); letter-spacing:-.4px}
+  .brand small{margin-left:6px; font:11px var(--fm); color:var(--faint)}
+  .nav h3{margin:14px 7px 5px; font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+  .nav a{display:block; padding:6px 8px; color:var(--muted)}
+  .nav a.on{color:var(--text)} .nav a.on::before{content:"> "; font:13px var(--fm); color:var(--gold)}
+  .nav a.sub{padding:3px 8px 3px 24px; font:12px var(--fm)} .nav a.sub.on{color:var(--gold)} .nav a.sub.on::before{content:none}
+  .who{margin-top:auto; padding:9px; border:1px solid var(--hair); font-size:13px} .who small{display:block; color:var(--faint); font:11.5px var(--fm)}
+
+  /* the content: the page, then whatever fills the rest */
+  .C{display:flex; gap:var(--gap); min-width:0; min-height:0; height:100%}
+  .M{flex:0 0 var(--mw); min-width:0; display:flex; flex-direction:column; gap:var(--gap); height:100%; overflow:hidden}
+  .path{padding:8px 12px; font:12.5px var(--fm); color:var(--muted)} .path b{color:var(--text); font-weight:500}
+  .head{padding:2px 2px 0} .head .eb{font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  .head h1{margin:2px 0 3px; font:600 26px var(--fm); letter-spacing:-.5px} .head p{margin:0; color:var(--muted); font-size:13.5px}
+  .stats{display:flex; gap:8px; justify-content:center; flex-wrap:wrap}
+  .stat{min-width:190px; padding:8px 12px; border:1px solid var(--hair); background:color-mix(in srgb, var(--bg) 40%, transparent)}
+  .stat b{display:block; font:600 17px var(--fm); color:var(--gold)} .stat small{font-size:11px; color:var(--faint)}
+  .tabs{display:flex; gap:4px; margin:12px 0 4px; font:12px var(--fm); color:var(--muted)} .tabs span{padding:3px 9px} .tabs span.on{color:var(--gold); border:1px solid var(--hair)}
+  .bars{display:flex; align-items:flex-end; justify-content:center; gap:5px; height:150px; margin:14px 0 8px}
+  .bars i{display:flex; flex-direction:column-reverse; width:var(--bw, 14px); gap:1px}
+  .bars i b{display:block; height:var(--s); background:var(--c)}
+  .bars i:empty{height:2px; background:var(--line)}
+  .legend{display:flex; gap:4px 14px; flex-wrap:wrap; justify-content:center; font-size:11.5px; color:var(--muted)} .legend span::before{content:""; display:inline-block; width:8px; height:8px; margin-right:5px; background:var(--c)}
+  .qe{display:flex; gap:8px} .qe .in{flex:1; padding:8px 11px; background:var(--inset); border:1px solid var(--hair); color:var(--faint); font-size:13px}
+  .qe .btn{padding:8px 13px; background:var(--gold); color:var(--bg); font:600 12.5px var(--fm)} .qe .btn.g{background:none; border:1px solid var(--hair); color:var(--text)}
+  .recap{text-align:center; padding:6px 0 2px} .recap b{font:600 15px var(--fm); color:var(--gold)}
+  .chips{display:flex; gap:6px; justify-content:center; margin-top:9px} .chips span{padding:2px 8px; border:1px solid var(--hair); font-size:11.5px; color:var(--muted)}
+  .hl{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:8px}
+  .hl div{padding:10px 12px; border:1px solid var(--hair); border-left:2px solid var(--c, var(--gold)); background:color-mix(in srgb, var(--bg) 40%, transparent)}
+  .hl b{display:block; font:600 13.5px var(--fm)} .hl small{font-size:11.5px; color:var(--muted)}
+  .wrap{display:flex; justify-content:center; margin-top:12px} .wrap span{padding:9px 15px; border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 9%, transparent); color:var(--gold); font:600 13px var(--fm)}
+  .wrap span::before{content:"$ "; color:var(--faint); font-weight:400} .wrap span::after{content:""; display:inline-block; width:.6ch; height:1.1em; margin-left:.6ch; vertical-align:-.2em; background:currentColor}
+
+  /* the fill: one list in tier order, poured into columns; what does not fit is not drawn */
+  .F{flex:1 1 0; min-width:0; height:100%; column-count:var(--n); column-gap:var(--gap); column-fill:auto; overflow:hidden}
+  .F .pane{break-inside:avoid; margin-bottom:var(--gap); animation:xin .45s cubic-bezier(.2,.7,.2,1) backwards; animation-delay:calc(var(--i) * 40ms)}
+  @keyframes xin{from{opacity:0; transform:translateY(8px)}}
+  @media (prefers-reduced-motion:reduce){ .F .pane{animation:none} }
+  .M > .pane, .M > .head{flex:none}
+  .under{flex:1 1 0; min-height:0; column-count:2; column-gap:var(--gap); column-fill:auto; overflow:hidden}
+  .under .pane{break-inside:avoid; margin-bottom:var(--gap)}
+  .cal{display:grid; grid-template-columns:repeat(7, 1fr); gap:3px} .cal i{aspect-ratio:2.2; background:color-mix(in srgb, var(--gold) calc(var(--v) * 1%), var(--line))}
+  .yr{display:grid; grid-auto-flow:column; grid-template-rows:repeat(7, 1fr); gap:2px} .yr i{aspect-ratio:1; background:color-mix(in srgb, var(--k-g) calc(var(--v) * 1%), var(--line))}
+  .tier{display:none; margin-left:8px; padding:0 5px; font:600 10px var(--fm); letter-spacing:.04em; border:1px solid; color:var(--tc)}
+  .W.tiers .tier{display:inline-block}
+  .W.tiers .x{border-top:2px solid var(--tc)}
+  .x[data-t="1"]{--tc:var(--t1)} .x[data-t="2"]{--tc:var(--t2)} .x[data-t="3"]{--tc:var(--t3)}
+  .x > header small{margin-left:auto}
+  .rows{display:grid; gap:5px} .rows div{display:flex; gap:8px; align-items:baseline; font-size:13px}
+  .rows .a{color:var(--text)} .rows .b{color:var(--k-g)} .rows .y{color:var(--k-y)} .rows .c{color:var(--k-c)}
+  .rows .v{margin-left:auto; font:12px var(--fm); color:var(--muted); white-space:nowrap} .rows .v.g{color:var(--k-g)} .rows .v.o{color:var(--k-o)} .rows .v.r{color:#e0685c}
+  .meter{height:8px; margin-top:6px; background:var(--line); -webkit-mask:repeating-linear-gradient(90deg,#000 0 5px,transparent 5px 7px); mask:repeating-linear-gradient(90deg,#000 0 5px,transparent 5px 7px)} .meter i{display:block; height:100%; width:var(--p); background:var(--c, var(--gold))}
+  .big{font:600 26px var(--fm); color:var(--c, var(--gold)); line-height:1.1} .big small{margin-left:6px; font:12px var(--fm); color:var(--faint)}
+  .say{font-size:13.5px; color:var(--muted)} .say b{color:var(--text); font-weight:600}
+  .mono{font:12.5px/1.5 var(--fm); color:var(--muted); white-space:pre}
+  .empty{display:flex; align-items:center; justify-content:center; height:100%; flex:1; border:1px dashed var(--hair); color:var(--faint); font:12.5px var(--fm); text-align:center; padding:20px}
+</style>
+</head>
+<body>
+<div class="mk-strip">
+  <b>Filling a wide window</b>
+  <span class="k">Direction</span><button data-set="dir" data-v="a" class="on">A · Side rail</button><button data-set="dir" data-v="b">B · The page grows</button>
+  <span class="k">Window</span><button data-set="win" data-v="1920x1080">1920 × 1080</button><button data-set="win" data-v="2560x1440" class="on">2560 × 1440</button><button data-set="win" data-v="3440x1440">3440 × 1440</button>
+  <span class="k">Tier labels</span><button data-set="tiers" data-v="1" class="on">On</button><button data-set="tiers" data-v="0">Off</button>
+</div>
+<div class="mk-note" id="note"></div>
+<div class="stage"><div class="W tiers" id="W"></div></div>
+
+<script>
+// ---- the Scroll page as it is today: this part never changes, at any size ----
+const SK = [["Hitpoints","#f06ea0"],["Strength","#5e6a1c"],["Sailing","#1f8a8a"],["Magic","#c79be6"],["Attack","#c0392b"],["Agility","#2456c9"],["Cooking","#7a4a9a"],["Slayer","#8d1f1f"],["Mining","#9aa7ad"],["Fishing","#3f7fd0"],["Runecraft","#e8c73a"],["Fletching","#19b8a6"]];
+function bars(n){
+  let s = 7, out = ""; const rnd = ()=>{ s = (s * 16807) % 2147483647; return s / 2147483647; };
+  for(let i = 0; i < n; i++){
+    const on = rnd() > .42, k = on ? 1 + Math.floor(rnd() * 5) : 0; let b = "";
+    for(let j = 0; j < k; j++){ const c = SK[Math.floor(rnd() * SK.length)][1]; b += `<b style="--c:${c}; --s:${4 + Math.floor(rnd() * 22)}px"></b>`; }
+    out += `<i>${b}</i>`;
+  }
+  return out;
+}
+function page(days){
+  return `
+  <div class="pane path">twonuh@mortimeter <b>~/scroll/overview</b> _</div>
+  <div class="head"><div class="eb">Overview</div><h1>Scroll</h1><p>Your daily journal. Log what you did each session, and the heatmap builds itself.</p></div>
+  <div class="pane"><header>Activity heatmap <small>108 days logged</small></header><div class="body">
+    <div class="stats"><div class="stat"><b>7</b><small>days running</small></div><div class="stat"><b>18/30</b><small>active days (60%)</small></div><div class="stat"><b>1,182,792</b><small>xp in the last month</small></div><div class="stat"><b>342,152</b><small>best single day</small></div></div>
+    <div class="tabs"><span>Week</span><span class="on">Month</span><span>3 months</span><span>6 months</span><span>1 year</span><span>All time</span></div>
+    <div class="bars">${bars(days)}</div>
+    <div class="legend">${SK.map(([n, c])=>`<span style="--c:${c}">${n}</span>`).join("")}</div>
+  </div></div>
+  <div class="pane"><header>Quick entry <small>Open journal ›</small></header><div class="body"><div class="qe"><div class="in">What did you do today? e.g. questing and a slayer task</div><div class="btn">Log it</div><div class="btn g">Chill day</div></div></div></div>
+  <div class="pane"><div class="body recap"><b>Click for your personalized recap ›</b><div class="chips"><span>1 milestone</span><span>best day 342,152 xp</span><span>7-day streak</span></div></div></div>
+  <div class="pane"><header>Highlights <small>12 things worth knowing</small></header><div class="body">
+    <div class="hl">
+      <div style="--c:#62d2d2"><b>7-day streak</b><small>Your best is 69 days.</small></div>
+      <div style="--c:#70cf6a"><b>5,324 xp from 40 Herblore</b><small>Closest notable level you have got.</small></div>
+      <div style="--c:#3f7fd0"><b>529,618 xp this week</b><small>Up on last week (45,734).</small></div>
+      <div style="--c:#70cf6a"><b>25 levels from 1,550 total</b><small>You are on 1,525.</small></div>
+      <div style="--c:#c79be6"><b>1,182,792 xp in 30 days</b><small>A single 99 takes 13,034,431 xp.</small></div>
+      <div style="--c:#f39a40"><b>Farming has gone quiet</b><small>Trained the month before, not since.</small></div>
+    </div>
+    <div class="wrap"><span>generate your wrapped</span></div>
+  </div></div>`;
+}
+
+// ---- the extras, in tier order. 1 useful, 2 nice to have, 3 for fun ----
+const rows = a=>`<div class="rows">${a.map(r=>`<div><span class="a">${r[0]}</span><span class="${r[3] || "b"}">${r[1]}</span><span class="v ${r[4] || ""}">${r[2]}</span></div>`).join("")}</div>`;
+const meter = (p, c)=>`<div class="meter"><i style="--p:${p}%; --c:${c || "var(--gold)"}"></i></div>`;
+function cells(n, seed){ let s = seed, o = ""; for(let i = 0; i < n; i++){ s = (s * 16807) % 2147483647; const r = s / 2147483647; o += `<i style="--v:${r > .45 ? Math.round(r * 90) : 0}"></i>`; } return o; }
+const SKX = [["Mining", 465], ["Attack", 225], ["Magic", 195], ["Cooking", 143], ["Hitpoints", 117], ["Agility", 46], ["Slayer", 21], ["Strength", 19], ["Fishing", 14], ["Thieving", 12], ["Ranged", 9], ["Crafting", 8], ["Prayer", 6], ["Woodcutting", 5], ["Herblore", 4], ["Runecraft", 3], ["Fletching", 2], ["Hunter", 2], ["Smithing", 1], ["Defence", 1]];
+const skbars = n=>SKX.slice(0, n).map(r=>`<div class="rows" style="margin-top:5px"><div><span class="a">${r[0]}</span><span class="v">${r[1]}K</span></div></div>${meter(Math.max(2, r[1] / 4.65), "var(--k-g)")}`).join("");
+// A: the same rail on every page
+const RAIL = [
+  [1, "Ready now", "2 ready", rows([["Empty", "Bird houses", "ready", "c", "g"], ["Check-health", "Tree patches", "ready", "c", "g"], ["Harvest", "Herb patches", "in 42 min", "c"], ["Collect", "Miscellania", "in 2 days", "c"]])],
+  [1, "Closest level ups", "", rows([["Train", "Runecraft", "185 xp to 48"], ["Train", "Fletching", "237 xp to 34"], ["Train", "Hunter", "461 xp to 52"], ["Train", "Herblore", "1,748 xp to 39"]])],
+  [1, "Goals", "1 tracked", `<div class="rows"><div><span class="a">Reach</span><span class="y">2000 total</span><span class="v">76%</span></div></div>${meter(76, "var(--k-y)")}`],
+  [1, "Gathering dust", "", rows([["Return-to", "Sailing", "52 days", "y", "o"], ["Return-to", "Quest points", "30 days", "y", "o"], ["Return-to", "Slayer", "17 days", "y", "o"]])],
+  [2, "Today", "played today", `<div class="big">+5,638<small>xp</small></div><div class="say">Magic and Hitpoints. Yesterday was +204,205.</div>`],
+  [2, "Exchange watch", "3 items", rows([["", "Ranarr seed", "32,410  +2.1%", "a", "g"], ["", "Dragon bones", "2,188  -0.8%", "a", "r"], ["", "Yew logs", "214  +0.4%", "a", "g"]])],
+  [2, "Journal, latest", "", rows([["mon 16", "Barrows, 7 chests", "", "a"], ["sun 15", "Motherlode Mine", "", "a"], ["sat 14", "Chill day", "", "a"]])],
+  [2, "This week and last", "", `<div class="rows"><div><span class="a">This week</span><span class="v">529,618</span></div></div>${meter(100)}<div class="rows" style="margin-top:8px"><div><span class="a">Last week</span><span class="v">45,734</span></div></div>${meter(9, "var(--gold-dim)")}`],
+  [2, "Quests", "142 of 171", `${meter(83, "var(--k-c)")}<div style="height:8px"></div>${rows([["Start", "Sins of the Father", "ready", "c", "g"], ["Start", "The Fremennik Exiles", "ready", "c", "g"], ["Start", "A Night at the Theatre", "needs 90 combat", "c"]])}`],
+  [2, "Kill counts", "6 bosses", rows([["", "Brutus", "650", "a"], ["", "Mad Angel", "52", "a"], ["", "Tempoross", "19", "a"], ["", "Lunar Chests", "16", "a"], ["", "Barrows Chests", "7", "a"], ["", "TzTok-Jad", "1", "a"]])],
+  [2, "Diaries", "14 of 48 tiers", rows([["", "Lumbridge and Draynor", "3 of 4", "a"], ["", "Varrock", "2 of 4", "a"], ["", "Falador", "2 of 4", "a"], ["", "Ardougne", "2 of 4", "a"], ["", "Kandarin", "1 of 4", "a"]])],
+  [3, "Game clock", "UTC", `<div class="big" style="--c:var(--text)">20:48</div>${rows([["Daily reset", "", "in 3 h 12 min", "a"], ["Weekly reset", "", "Wed, in 1 day", "a"]])}`],
+  [3, "Mortimer says", "", `<div class="say">You have killed <b>Brutus</b> 650 times. No drops from him are logged yet.</div>`],
+  [3, "On this day", "", `<div class="say">One month ago you reached <b>60 Mining</b>. It is 68 now.</div>`],
+  [3, "Capes", "0 of 24", `<div class="mono">[ ][ ][ ][ ][ ][ ][ ][ ]\n[ ][ ][ ][ ][ ][ ][ ][ ]\n[ ][ ][ ][ ][ ][ ][ ][ ]</div><div class="say" style="margin-top:6px">Nearest: <b>Strength</b>, 90.</div>`],
+  [3, "Roll for a task", "", `<div class="say">Not sure what to do? <b>Roll</b> picks one thing from your goals, your dust list and what is ready.</div>`],
+  [3, "Twenty weeks", "xp a day", `<div class="yr">${cells(20 * 7, 3)}</div>`],
+  [3, "Most trained, 30 days", "every skill", skbars(20)],
+  [3, "Tip", "", `<div class="say">Press <b>/</b> on Home to start typing in the terminal.</div>`],
+];
+// B: Scroll's own extras
+const GROW = [
+  [1, "This week in the journal", "5 entries", rows([["mon 16", "Barrows, 7 chests. Magic and Hitpoints.", "+38K", "a"], ["sun 15", "Motherlode Mine, two hours.", "+62K", "a"], ["sat 14", "Chill day.", "", "a"], ["fri 13", "Agility at Seers' rooftops.", "+119K", "a"], ["thu 12", "Mining, 61 to 65.", "+77K", "a"]])],
+  [1, "Trophies nearly earned", "3 close", `<div class="rows"><div><span class="a">Ten-day streak</span><span class="v">7 of 10</span></div></div>${meter(70)}<div class="rows" style="margin-top:8px"><div><span class="a">Two million in a month</span><span class="v">1.18M</span></div></div>${meter(59)}<div class="rows" style="margin-top:8px"><div><span class="a">Every skill in a month</span><span class="v">20 of 24</span></div></div>${meter(83)}`],
+  [1, "Priorities going stale", "", rows([["Return-to", "Sailing", "52 days", "y", "o"], ["Return-to", "Quest points", "30 days", "y", "o"], ["Return-to", "Slayer", "17 days", "y", "o"]])],
+  [2, "Skill split, 30 days", "", [["Mining", 100, "465K"], ["Attack", 48, "225K"], ["Magic", 42, "195K"], ["Cooking", 31, "143K"], ["Hitpoints", 25, "117K"], ["Agility", 10, "46K"]].map(r=>`<div class="rows" style="margin-top:5px"><div><span class="a">${r[0]}</span><span class="v">${r[2]}</span></div></div>${meter(r[1], "var(--k-g)")}`).join("")],
+  [2, "Best days", "all time", rows([["19 Oct", "Mining, Smithing", "342,152", "a"], ["02 Sep", "Slayer task", "281,440", "a"], ["16 Nov", "Magic, Hitpoints", "204,205", "a"], ["11 Aug", "Agility", "188,019", "a"]])],
+  [2, "This month and last", "", `<div class="rows"><div><span class="a">Last 30 days</span><span class="v">1,182,792</span></div></div>${meter(100)}<div class="rows" style="margin-top:8px"><div><span class="a">The 30 before</span><span class="v">366,301</span></div></div>${meter(31, "var(--gold-dim)")}`],
+  [2, "Milestones", "last 30 days", rows([["16 Nov", "73 Magic", "", "b"], ["15 Nov", "68 Mining", "", "b"], ["13 Nov", "58 Agility", "", "b"], ["12 Nov", "65 Mining", "", "b"], ["09 Nov", "1,500 total level", "", "y"], ["04 Nov", "85 Attack", "", "b"], ["28 Oct", "55 Thieving", "", "b"], ["19 Oct", "Best day so far", "", "y"]])],
+  [2, "Earlier this month", "journal", rows([["wed 11", "Slayer task, 140 bloodveld.", "+39K", "a"], ["tue 10", "Cooking sharks.", "+143K", "a"], ["mon 9", "Fishing at Tempoross.", "+14K", "a"], ["sun 8", "Chill day.", "", "a"], ["sat 7", "Quest: Lunar Diplomacy.", "", "a"], ["fri 6", "Thieving, knights.", "+12K", "a"]])],
+  [3, "On this day", "", `<div class="say">One month ago you reached <b>60 Mining</b>. It is 68 now.</div>`],
+  [3, "Every skill, 30 days", "", skbars(20)],
+  [3, "Days logged", "since 1 Aug", `<div class="big">108</div><div class="mono">||||| ||||| ||||| ||||| |||||\n||||| ||||| ||||| ||||| |||||</div>`],
+  [3, "Chill days", "", `<div class="big" style="--c:var(--k-c)">9<small>taken</small></div><div class="say">The last was Saturday.</div>`],
+  [3, "Mortimer's read", "", `<div class="say">Mostly Mining lately. <b>Farming</b> has not seen you in a month.</div>`],
+];
+// B only: wide extras for the space under a short page
+const UNDER = [
+  [2, "The month as a calendar", "November", `<div class="cal">${cells(35, 11)}</div>`],
+  [3, "The year so far", "108 days logged", `<div class="yr">${cells(46 * 7, 5)}</div>`],
+];
+const TN = {1:"T1 useful", 2:"T2 nice", 3:"T3 fun"};
+const extra = (x, i)=>`<div class="pane x" data-t="${x[0]}" style="--i:${i}"><header>${x[1]}<span class="tier">${TN[x[0]]}</span><small>${x[2]}</small></header><div class="body">${x[3]}</div></div>`;
+
+const S = {dir:"a", win:"2560x1440", tiers:"1"};
+function draw(){
+  const [w, h] = S.win.split("x").map(Number), gap = 10, avail = w - 216 - gap * 3, W = document.getElementById("W");
+  let n, mw, html, shown;
+  if(S.dir === "a"){
+    // the page keeps its own width (1400 at most); a rail column needs 290
+    n = Math.max(0, Math.min(4, Math.floor((avail - 1150 + gap) / (290 + gap))));
+    mw = n ? Math.min(1400, avail - n * (290 + gap)) : avail;
+    html = `<div class="M" style="--mw:${mw}px">${page(30)}</div>` + (n ? `<div class="F" style="--n:${n}">${RAIL.map(extra).join("")}</div>` : "");
+  } else {
+    // the page itself may reach 1500; a column of its extras needs 400
+    n = Math.max(0, Math.min(4, Math.floor((avail - 1150 + gap) / (400 + gap))));
+    mw = n ? Math.min(1500, avail - n * (400 + gap)) : avail;
+    html = `<div class="M" style="--mw:${mw}px">${page(mw > 1380 ? 44 : 30)}<div class="under">${UNDER.map(extra).join("")}</div></div>` + (n ? `<div class="F" style="--n:${n}">${GROW.map(extra).join("")}</div>` : "");
+  }
+  W.style.setProperty("--w", w + "px"); W.style.setProperty("--h", h + "px");
+  W.style.setProperty("--z", Math.min(1, document.documentElement.clientWidth / w));
+  W.classList.toggle("tiers", S.tiers === "1");
+  W.innerHTML = `<div class="pane side"><div class="body"><div class="brand">Mortimeter<small>v1.0</small></div>
+    <nav class="nav"><h3>Character</h3><a>Home</a><a class="on">Scroll</a><a class="sub on">Overview</a><a class="sub">Trophies</a><a class="sub">Journal</a><a class="sub">Priorities</a><a>Achievements</a>
+    <h3>Tools</h3><a>Goals</a><a>Roadmap</a><a>Quest Hub</a><a>Coffer</a><a>Skills</a><a>Upgrades</a><a>Notes</a></nav>
+    <div class="who">Twonuh<small>level 107 · 1,525 total</small></div></div></div><div class="C">${html}</div>`;
+  // which extras were drawn: the ones whose column is inside the fill area
+  const got = {1:0, 2:0, 3:0}, all = {1:0, 2:0, 3:0};
+  W.querySelectorAll(".F, .under").forEach(F=>{ const fr = F.getBoundingClientRect(); F.querySelectorAll(".x").forEach(p=>{ const r = p.getBoundingClientRect(), t = p.dataset.t; all[t]++; if(r.left < fr.right - 4 && r.bottom <= fr.bottom + 2) got[t]++; else p.style.visibility = "hidden"; }); });
+  const tl = t=>`<span class="t" style="color:${["", "#70cf6a", "#62d2d2", "#c79be6"][t]}">T${t}</span>${got[t]} of ${all[t]}`, ranOut = [1, 2, 3].every(t=>got[t] === all[t]);
+  document.getElementById("note").innerHTML = (S.dir === "a"
+    ? `<b>A · Side rail.</b> The page is exactly as it is now. Spare width becomes a rail of small panes, the same on every page, filled in tier order. The space under a short page stays empty.`
+    : `<b>B · The page grows.</b> Each page brings its own extras (these are Scroll's), sized like the page's own panes, and the page itself gets wider: the heatmap shows more days. Wide extras go under a short page.`)
+    + ` At ${w} × ${h}: ${n ? n + " column" + (n === 1 ? "" : "s") + " of extras beside the page" : "no room beside the page"}. Drawn:` + tl(1) + tl(2) + tl(3) + (ranOut && n > 1 ? " &nbsp; Everything on the list is drawn. With more room than this, the list has to be longer." : "");
+}
+document.querySelectorAll("[data-set]").forEach(b=>b.onclick = ()=>{
+  S[b.dataset.set] = b.dataset.v;
+  document.querySelectorAll(`[data-set="${b.dataset.set}"]`).forEach(x=>x.classList.toggle("on", x === b));
+  draw();
+});
+addEventListener("resize", draw);
+draw();
+</script>
+</body>
+</html>

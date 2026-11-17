@@ -3430,8 +3430,8 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       var(--bg);
     background-attachment:fixed;
   }
-  /* square, everywhere; the Wrapped button keeps its pill because he asked for that one */
-  body[data-skin="term"] *:not(.wrap-go), body[data-skin="term"] *::before, body[data-skin="term"] *::after{border-radius:0 !important}
+  /* square, everywhere */
+  body[data-skin="term"] *, body[data-skin="term"] *::before, body[data-skin="term"] *::after{border-radius:0 !important}
 
   /* ---- a pane ---- */
   body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section){
@@ -3521,16 +3521,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
      all change one without the other. #view-home is the container (set in home2.css). */
   @container home (min-width:1180px){
     body[data-skin="term"] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
-    /* Mosaic: three columns, each split at its own height, the right one split again below */
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:34fr 24fr 27fr 15fr; grid-template-rows:repeat(12, minmax(50px, auto)) auto}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-skills{grid-column:1; grid-row:1 / 7}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-play{grid-column:1; grid-row:7 / 13}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-menu{grid-column:2; grid-row:1 / 10}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-id{grid-column:2; grid-row:10 / 13}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-term{grid-column:3 / 5; grid-row:1 / 8}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-kc{grid-column:3; grid-row:8 / 13}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs{grid-column:4; grid-row:8 / 13}
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1; grid-row:13}
+    /* Mosaic is arranged by the script here: see arrange.css */
     /* Orderly: every edge on one twelve-column grid */
     body[data-skin="term"][data-tiles="orderly"] #homeTerm{grid-template-columns:repeat(12, minmax(0,1fr))}
     body[data-skin="term"][data-tiles="orderly"] .hs-id{grid-column:1 / 5; grid-row:1}
@@ -3772,19 +3763,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   /* ---- Home with 680 to 1179 of width: the phone opened out, or a mid-sized window ---- */
   @container home (min-width:680px) and (max-width:1179px){
     body[data-skin="term"] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
-    /* Mosaic: Skills wide on the left over Activity, the debrief over the terminal on the right;
-       along the foot, Character over the four vitals (two by two) beside Kill counts */
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:34fr 22fr 44fr; grid-template-rows:repeat(13, minmax(42px, auto)) auto}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-skills{grid-column:1 / 3; grid-row:1 / 8}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-menu{grid-column:3; grid-row:1 / 6}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-term{grid-column:3; grid-row:6 / 11}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-play{grid-column:1 / 3; grid-row:8 / 11}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-id{grid-column:1 / 3; grid-row:11}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs{grid-column:1 / 3; grid-row:12 / 14}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-kc{grid-column:3; grid-row:11 / 14}
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1; grid-row:14}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px 20px; align-content:center}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-id .ht-name em{display:inline; margin:0 0 0 10px}
+    /* Mosaic is arranged by the script here: see arrange.css */
     /* Orderly: pairs of equal height */
     body[data-skin="term"][data-tiles="orderly"] #homeTerm{grid-template-columns:repeat(12, minmax(0,1fr))}
     body[data-skin="term"][data-tiles="orderly"] .hs-id{grid-column:1 / 6; grid-row:1}
@@ -3889,6 +3868,68 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     :is(body[data-skin="term"], body[data-skin="term"].dock) .app{padding-left:var(--kl); padding-right:var(--kr)}
     :is(body[data-skin="term"], body[data-skin="term"].dock) .topbar{margin-left:calc(var(--kl) * -1); margin-right:calc(var(--kr) * -1)}
   }
+
+  /* ============ HOME, MOSAIC: COLUMNS YOU CAN REARRANGE ============
+     htArrange (the page's script) puts the panes into columns of rows and marks #homeTerm with
+     data-arr ("w" with 1180 of width or more, "m" from 680). Without the mark the wrappers take
+     no part in layout, so Orderly and the stacked phone place the panes themselves. */
+  body[data-skin="term"] :is(.ht-cols, .ht-colx, .ht-rowx){display:contents}
+  body[data-skin="term"] #homeTerm[data-arr] .ht-cols{display:flex; align-items:stretch; gap:var(--gap); min-width:0; order:0}
+  body[data-skin="term"] #homeTerm[data-arr] .ht-colx{display:flex; flex-direction:column; flex:1 1 0; gap:var(--gap); min-width:0}
+  body[data-skin="term"] #homeTerm[data-arr] .ht-rowx{display:flex; flex:0 0 auto; gap:var(--gap); min-width:0}
+  body[data-skin="term"] #homeTerm[data-arr] .ht-rowx > section{flex:1 1 0; order:0; overflow:hidden}
+  body[data-skin="term"] #homeTerm[data-arr] #homeHeatPanel{order:9}
+  /* the log takes the height its pane is given rather than setting it */
+  body[data-skin="term"] #homeTerm[data-arr] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
+  body[data-skin="term"] #homeTerm[data-arr="m"] .ht-log{min-height:190px}
+  /* the vitals stand in a column in a narrow pane, two by two in a wider one, in a line in a wide one */
+  body[data-skin="term"] #homeTerm[data-arr] .hs-orbs .ht-orbs{display:flex; flex-direction:column; flex-wrap:nowrap; gap:14px; justify-content:center}
+  @container htorbs (min-width:290px){
+    body[data-skin="term"] #homeTerm[data-arr] .hs-orbs .ht-orbs{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px 20px; align-content:center}
+  }
+  @container htorbs (min-width:640px){
+    body[data-skin="term"] #homeTerm[data-arr] .hs-orbs .ht-orbs{grid-template-columns:repeat(4, minmax(0,1fr))}
+  }
+  /* kill counts run in two columns when their pane is wide */
+  body[data-skin="term"] .hs-kc{container:htkc / inline-size}
+  @container htkc (min-width:520px){
+    body[data-skin="term"] #homeTerm[data-arr] .ht-kc{grid-template-columns:1fr 1fr; column-gap:28px}
+  }
+  /* rows of the debrief past a list's usual length, shown only while they fit (htMenuFit) */
+  body[data-skin="term"] .ht-opt.xh{display:none}
+  body[data-skin="term"] .ht-menu i.end{display:block; height:0}
+
+  /* ---- dragging a pane by its header ---- */
+  body[data-skin="term"] #homeTerm[data-arr] :is(.ht-lab, .ht-menu .ttl, .ht-term .top){cursor:grab; -webkit-user-select:none; user-select:none}
+  body[data-skin="term"].ht-dragging, body[data-skin="term"].ht-dragging *{cursor:grabbing !important; -webkit-user-select:none; user-select:none}
+  body[data-skin="term"] #homeTerm section{transition:border-color .2s, box-shadow .2s, opacity .16s}
+  body[data-skin="term"] #homeTerm section.drag-src{opacity:.38; border-style:dashed !important}
+  body[data-skin="term"] .ht-ghost{position:fixed; left:0; top:0; z-index:90; pointer-events:none; padding:6px 11px; background:var(--panel); border:1px solid var(--gold);
+    color:var(--gold); font:500 11px var(--fm); letter-spacing:.14em; text-transform:uppercase; white-space:nowrap; will-change:transform}
+  body[data-skin="term"] .ht-mark{position:fixed; z-index:89; pointer-events:none; opacity:0; background:color-mix(in srgb, var(--gold) 16%, transparent); border:1px solid var(--gold);
+    transition:left .12s ease-out, top .12s ease-out, width .12s ease-out, height .12s ease-out, opacity .12s}
+  body[data-skin="term"] .ht-mark.on{opacity:1}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .ht-mark{transition:none} }
+
+  /* ============ WRAPPED, IN THE TERMINAL LOOK ============
+     The button was a pink and orange pill, the one round thing left on the page (Josh, 2026-11-17:
+     make it more thematic). Here it is a command waiting to be run: a prompt, the words, a cursor.
+     Under the pointer it inverts, the way a selected line does. Classic keeps the pill. */
+  body[data-skin="term"] .wrap-bar{gap:11px}
+  body[data-skin="term"] .wrap-go{display:inline-flex; align-items:center; gap:.7ch; min-height:40px; padding:0 16px 0 13px;
+    background:color-mix(in srgb, var(--gold) 9%, transparent); border:1px solid var(--gold); box-shadow:none; color:var(--gold);
+    font:600 13.5px var(--fm); letter-spacing:.03em; text-transform:lowercase; transform:none;
+    transition:background .16s, color .16s, border-color .16s}
+  body[data-skin="term"] .wrap-go::before{content:"$"; font-weight:400; color:var(--faint); transition:color .16s}
+  body[data-skin="term"] .wrap-go::after{content:""; width:.62ch; height:1.15em; background:currentColor; animation:termBlink 1.1s steps(1) infinite}
+  body[data-skin="term"] .wrap-go:hover, body[data-skin="term"] .wrap-go:focus-visible{background:var(--gold); color:var(--bg); box-shadow:none; transform:none; outline:0}
+  body[data-skin="term"] .wrap-go:hover::before, body[data-skin="term"] .wrap-go:focus-visible::before{color:color-mix(in srgb, var(--bg) 62%, var(--gold))}
+  body[data-skin="term"] .wrap-go:active{background:var(--gold-dim); border-color:var(--gold-dim); transform:none}
+  body[data-skin="term"] .wrap-go[disabled]{background:none; border-color:var(--line); color:var(--faint); opacity:1}
+  body[data-skin="term"] .wrap-go[disabled]::after{animation:none; opacity:.4}
+  body[data-skin="term"] .wrap-chip{font:12px var(--fm)}
+  body[data-skin="term"] .wrap-chip:hover, body[data-skin="term"] .wrap-chip.on{border-color:var(--gold); color:var(--gold)}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .wrap-go::after{animation:none} }
 
   /* ============ GLYPHS (written by glyphs.py; edit the drawings there) ============ */
   body[data-skin="term"] .gl{display:inline-block; width:18px; height:18px; vertical-align:-4px; overflow:hidden; text-indent:-99em; white-space:nowrap; background:currentColor; -webkit-mask:var(--g) center / contain no-repeat; mask:var(--g) center / contain no-repeat; flex:0 0 auto; text-align:left}
@@ -4122,7 +4163,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
           <div class="set-group">
             <div class="set-h">Look</div>
             <div class="skin-pick" id="skinPick"></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose. Orderly lines every edge up.</small></div><div class="seg" id="tilesSeg"></div></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose, and you can drag a pane by its header to move it. Orderly lines every edge up.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="tilesSeg"></div><button class="ghost small hidden" id="tilesReset" title="Put Home's panes back where they started">Reset panes</button></div></div>
           </div>
           <div class="set-group">
             <div class="set-h">Theme</div>
@@ -8827,7 +8868,7 @@ const TILE_LAYOUTS = [["mosaic", "Mosaic"], ["orderly", "Orderly"]];
 function setTiles(id){
   state.tiles = id === "orderly" ? "orderly" : "mosaic"; save();
   document.body.dataset.tiles = state.tiles;
-  try{ setTimeout(htPlay, 60); }catch(e){}
+  try{ htArrange(); htMenuFit(); setTimeout(htPlay, 60); }catch(e){}
 }
 function setSkin(id){
   if(state.skin === id) return;
@@ -13126,9 +13167,9 @@ function htXpBand(xp){
   const step = xp < 1e7 ? 1e6 : xp < 5e7 ? 5e6 : xp < 2e8 ? 1e7 : 2.5e7, lo = Math.floor(xp / step) * step;
   return {lo, hi:lo + step, frac:(xp - lo) / step};
 }
-function htNear(){
+function htNear(n){
   if(!(live && live.skills)) return [];
-  return SKILL_ORDER.map(k=>({k, p:skillProgress(k)})).filter(x=>x.p.lvl < 99 && x.p.toNext > 0).sort((a, b)=>a.p.toNext - b.p.toNext).slice(0, 3);
+  return SKILL_ORDER.map(k=>({k, p:skillProgress(k)})).filter(x=>x.p.lvl < 99 && x.p.toNext > 0).sort((a, b)=>a.p.toNext - b.p.toNext).slice(0, n || 3);
 }
 function renderHomeTerm(){
   const root = $("#homeTerm"); if(!root || document.body.dataset.skin !== "term") return;
@@ -13180,10 +13221,239 @@ function renderHomeTerm(){
       const e = live.activities && live.activities["clue_scrolls_" + t], n = e && e.score > 0 ? e.score : 0;
       return `<span>${nice(t)}<b class="${n ? "has" : ""}">${fmt(n)}</b></span>`; }).join("");
   }
-  htMenu(); htPlay(); termTop(); termWire(); termHint();
+  htArrange(); htMenu(); htPlay(); termTop(); termWire(); termHint(); htMenuFit(); htArrWatch();
   const cur = $(".view:not(.hidden)"); if(cur) termPathSet(cur.id.replace(/^view-/, ""));
   if(!htDrawn){ htDrawn = true; root.classList.add("intro"); setTimeout(()=>root.classList.remove("intro"), 1700); termBoot(); }
   else termRenderLog();
+}
+// ---- Home's panes in Mosaic: columns you can rearrange ----
+// A column is a stack of rows, and a row holds one pane or two side by side. With 1180 of width
+// or more Home has up to four columns (state.homeArr.w), from 680 up it has two (.m); under that
+// the panes stack in a fixed order. A pane's header is its handle: drag it onto the top or bottom
+// of another pane to sit above or below it, onto a side to share its row, or onto the gap between
+// columns for a column of its own. Orderly is one fixed grid and is not draggable.
+// w: how wide a pane likes its column. g: how readily it takes spare height.
+const HT_PANES = {id:{w:24, g:0, n:"Character"}, orbs:{w:15, g:0, n:"Vitals"}, menu:{w:24, g:1, n:"Debrief"}, skills:{w:34, g:2, n:"Skills"},
+  play:{w:34, g:1, n:"Activity"}, term:{w:42, g:2, n:"Terminal"}, kc:{w:27, g:0, n:"Kill counts"}};
+const HT_ARR = {
+  w:{max:4, lo:18, hi:60, def:[[["id"], ["menu"]], [["skills"], ["play"]], [["term"], ["kc", "orbs"]]]},
+  m:{max:2, lo:34, hi:42, def:[[["id"], ["orbs"], ["menu"], ["kc"]], [["skills"], ["play"], ["term"]]]}
+};
+// a saved arrangement made safe: every pane once, no empty rows or columns, no more columns than fit
+function htArrClean(a, key){
+  if(!Array.isArray(a)) return null;
+  const seen = new Set(), out = [];
+  for(const col of a){
+    if(!Array.isArray(col)) continue; const c = [];
+    for(const row of col){
+      const r = []; for(const p of (Array.isArray(row) ? row : [row])) if(HT_PANES[p] && !seen.has(p) && r.length < 2){ seen.add(p); r.push(p); }
+      if(r.length) c.push(r);
+    }
+    if(c.length) out.push(c);
+  }
+  if(!out.length) return null;
+  for(const p in HT_PANES) if(!seen.has(p)) out[out.length - 1].push([p]);
+  while(out.length > HT_ARR[key].max){ const x = out.pop(); out[out.length - 1].push(...x); }
+  return out;
+}
+function htArrGet(key){ return htArrClean(state.homeArr && state.homeArr[key], key) || JSON.parse(JSON.stringify(HT_ARR[key].def)); }
+// which arrangement applies: "w", "m", "" for none (stacked, Orderly), null when Home is not on screen
+function htArrKey(){
+  const b = document.body.dataset, v = $("#view-home"), w = v ? v.clientWidth : 0;
+  if(!w) return null;
+  if(b.skin !== "term" || b.tiles !== "mosaic") return "";
+  return w >= 1180 ? "w" : w >= 680 ? "m" : "";
+}
+function htArrRects(){ const m = {}; for(const s of document.querySelectorAll("#homeTerm section[data-pane]")) m[s.dataset.pane] = s.getBoundingClientRect(); return m; }
+// Puts the panes into their columns and rows. The wrappers it makes are invisible to layout
+// (display:contents) whenever no arrangement applies, so the other layouts place the panes as before.
+function htArrange(anim){
+  const root = $("#homeTerm"); if(!root) return;
+  const key = htArrKey(); if(key == null) return;
+  if(!key){ if(root.dataset.arr){ delete root.dataset.arr; htArrange.sig = ""; } return; }
+  const arr = htArrGet(key), sig = key + JSON.stringify(arr);
+  if(root.dataset.arr === key && htArrange.sig === sig) return;
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const was = anim && !calm ? htArrRects() : null, focus = document.activeElement;
+  let cols = root.querySelector(":scope > .ht-cols");
+  if(!cols){ cols = document.createElement("div"); cols.className = "ht-cols"; root.insertBefore(cols, root.firstChild); }
+  const lim = HT_ARR[key], made = [];
+  for(const col of arr){
+    const c = document.createElement("div"); c.className = "ht-colx"; let cw = 0, grows = 0;
+    for(const row of col){
+      const r = document.createElement("div"); r.className = "ht-rowx"; let g = 0, w = 0;
+      for(const p of row){
+        const sec = root.querySelector("section.hs-" + p); if(!sec) continue;
+        sec.dataset.pane = p; sec.style.flexGrow = HT_PANES[p].w; g = Math.max(g, HT_PANES[p].g); w += HT_PANES[p].w; r.appendChild(sec);
+      }
+      r.style.flexGrow = g; grows += g; cw = Math.max(cw, w); c.appendChild(r);
+    }
+    if(!grows && c.lastChild) c.lastChild.style.flexGrow = 1;
+    c.style.flexGrow = Math.max(lim.lo, Math.min(lim.hi, cw)); made.push(c);
+  }
+  cols.replaceChildren(...made);
+  root.dataset.arr = key; htArrange.sig = sig;
+  if(focus && focus !== document.activeElement && root.contains(focus)) try{ focus.focus({preventScroll:true}); }catch(e){}
+  // each pane glides from where it was to where it is now
+  if(was) for(const sec of root.querySelectorAll("section[data-pane]")){
+    const a = was[sec.dataset.pane], b = sec.getBoundingClientRect(); if(!a || !sec.animate) continue;
+    const dx = a.left - b.left, dy = a.top - b.top;
+    if(Math.abs(dx) > 1 || Math.abs(dy) > 1) sec.animate([{transform:`translate(${dx}px, ${dy}px)`}, {transform:"none"}], {duration:320, easing:"cubic-bezier(.2,.7,.2,1)"});
+  }
+}
+function htArrReset(){ delete state.homeArr; save(); htArrange(true); try{ htPlay(); }catch(e){} htMenuFit(); }
+// Home re-arranges when the width it has crosses a line, and the debrief refits when heights change
+function htArrWatch(){
+  const v = $("#view-home"); if(htArrWatch.on || !v || typeof ResizeObserver !== "function") return;
+  htArrWatch.on = true; let q = 0;
+  new ResizeObserver(()=>{
+    if(q) return;
+    q = requestAnimationFrame(()=>{
+      q = 0; const root = $("#homeTerm"); if(!root || document.body.dataset.skin !== "term") return;
+      const k0 = root.dataset.arr || ""; htArrange();
+      if((root.dataset.arr || "") !== k0) try{ htPlay(); }catch(e){}
+      htMenuFit();
+    });
+  }).observe(v);
+}
+// Where pane src goes for a drop: {pane, edge:"top"|"bottom"|"left"|"right"} beside another pane,
+// or {newcol:i} for a column of its own before column i. Null when it cannot go there.
+function htArrMove(arr, src, drop, max){
+  const a = arr.map(c=>c.map(r=>r.filter(p=>p !== src)));
+  if(drop.newcol != null) a.splice(drop.newcol, 0, [[src]]);
+  else {
+    let ci = -1, ri = -1; a.forEach((c, i)=>c.forEach((r, j)=>{ if(r.includes(drop.pane)){ ci = i; ri = j; } }));
+    if(ci < 0) return null;
+    const row = a[ci][ri];
+    if(drop.edge === "left" || drop.edge === "right"){ if(row.length >= 2) return null; if(drop.edge === "left") row.unshift(src); else row.push(src); }
+    else a[ci].splice(drop.edge === "top" ? ri : ri + 1, 0, [src]);
+  }
+  const out = a.map(c=>c.filter(r=>r.length)).filter(c=>c.length);
+  return out.length > max ? null : out;
+}
+var htDrag = null;
+function htDragBegin(pane, x, y){
+  const root = $("#homeTerm"), key = root && root.dataset.arr; if(!key || htDrag || !HT_PANES[pane]) return;
+  const src = root.querySelector(`section[data-pane="${pane}"]`); if(!src) return;
+  const ghost = document.createElement("div"); ghost.className = "ht-ghost"; ghost.textContent = "// " + HT_PANES[pane].n;
+  const mark = document.createElement("div"); mark.className = "ht-mark";
+  document.body.append(mark, ghost);
+  src.classList.add("drag-src"); document.body.classList.add("ht-dragging");
+  htDrag = {key, pane, src, ghost, mark, arr:htArrGet(key), drop:null, x, y, scroll:0};
+  htDragMove(x, y);
+}
+// what a drop at this point would do: the arrangement it gives and the box to light up, or null
+function htDropAt(x, y){
+  const d = htDrag, root = $("#homeTerm"), cols = root && root.querySelector(".ht-cols"); if(!d || !cols || !cols.children.length) return null;
+  const cur = JSON.stringify(d.arr), max = HT_ARR[d.key].max;
+  const ok = drop=>{ const res = htArrMove(d.arr, d.pane, drop, max); return res && JSON.stringify(res) !== cur ? res : null; };
+  const box = cols.getBoundingClientRect(); if(y < box.top - 30 || y > box.bottom + 30) return null;
+  // the gaps between columns and the two outer edges: a column of its own
+  const cs = [...cols.children].map(c=>c.getBoundingClientRect());
+  for(let i = 0; i <= cs.length; i++){
+    const gx = i === 0 ? cs[0].left - 5 : i === cs.length ? cs[i - 1].right + 5 : (cs[i - 1].right + cs[i].left) / 2;
+    if(Math.abs(x - gx) > 16) continue;
+    const res = ok({newcol:i}); if(res) return {res, rect:{left:gx - 4, top:box.top, width:8, height:box.height}};
+  }
+  for(const sec of root.querySelectorAll("section[data-pane]")){
+    const p = sec.dataset.pane; if(p === d.pane) continue;
+    const r = sec.getBoundingClientRect(); if(x < r.left || x > r.right || y < r.top || y > r.bottom) continue;
+    const fx = (x - r.left) / r.width, fy = (y - r.top) / r.height, side = Math.min(.26, 90 / r.width);
+    const tries = fx < side ? ["left"] : fx > 1 - side ? ["right"] : []; tries.push(fy < .5 ? "top" : "bottom");
+    for(const edge of tries){
+      const res = ok({pane:p, edge}); if(!res) continue;
+      const rr = sec.parentElement.getBoundingClientRect(), h = Math.min(rr.height / 2, 120), w = r.width / 2;
+      return {res, rect:edge === "top" ? {left:rr.left, top:rr.top, width:rr.width, height:h} : edge === "bottom" ? {left:rr.left, top:rr.bottom - h, width:rr.width, height:h}
+        : edge === "left" ? {left:r.left, top:r.top, width:w, height:r.height} : {left:r.left + w, top:r.top, width:w, height:r.height}};
+    }
+    return null;
+  }
+  return null;
+}
+function htDragMove(x, y){
+  const d = htDrag; if(!d) return; d.x = x; d.y = y;
+  d.ghost.style.transform = `translate(${Math.round(x + 14)}px, ${Math.round(y + 12)}px)`;
+  const drop = d.drop = htDropAt(x, y);
+  if(drop){ const r = drop.rect, st = d.mark.style; st.left = r.left + "px"; st.top = r.top + "px"; st.width = r.width + "px"; st.height = r.height + "px"; }
+  d.mark.classList.toggle("on", !!drop);
+  // held near the top or bottom of the window, the page scrolls under the drag
+  const pull = ()=>{ const dd = htDrag; return !dd ? 0 : dd.y < 64 ? -1 : dd.y > innerHeight - 64 ? 1 : 0; };
+  if(pull() && !d.scroll) d.scroll = setInterval(()=>{
+    const dd = htDrag, v = pull(); if(!dd || !v){ clearInterval(d.scroll); d.scroll = 0; return; }
+    (document.scrollingElement || document.documentElement).scrollBy(0, v * 14); htDragMove(dd.x, dd.y);
+  }, 16);
+}
+function htDragEnd(commit){
+  const d = htDrag; if(!d) return; htDrag = null;
+  if(d.scroll) clearInterval(d.scroll);
+  d.ghost.remove(); d.mark.remove(); d.src.classList.remove("drag-src"); document.body.classList.remove("ht-dragging");
+  if(!commit || !d.drop) return;
+  (state.homeArr || (state.homeArr = {}))[d.key] = d.drop.res; save();
+  htArrange(true); try{ htPlay(); }catch(e){} htMenuFit();
+  if(!state.homeArrTold){ state.homeArrTold = 1; save(); toast("Pane moved. Settings, Look has a reset if you want the usual arrangement back."); }
+}
+(function htDragWire(){
+  const HANDLE = "#homeTerm[data-arr] :is(.ht-lab, .ht-menu .ttl, .ht-term .top)";
+  const grab = t=>{
+    if(!t || !t.closest || t.closest("button, a, input, select, kbd, [contenteditable]")) return null;
+    const h = t.closest(HANDLE), sec = h && h.closest("section[data-pane]"); return sec ? sec.dataset.pane : null;
+  };
+  // mouse and pen: a press on a header that travels a little becomes a drag
+  let press = null;
+  document.addEventListener("pointerdown", e=>{ if(e.pointerType === "touch" || e.button !== 0) return; const p = grab(e.target); press = p ? {p, x:e.clientX, y:e.clientY} : null; });
+  document.addEventListener("pointermove", e=>{
+    if(e.pointerType === "touch") return;
+    if(htDrag){ htDragMove(e.clientX, e.clientY); return; }
+    if(press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 6){ const p = press.p; press = null; htDragBegin(p, e.clientX, e.clientY); }
+  });
+  const swallow = e=>{ e.stopPropagation(); e.preventDefault(); };
+  document.addEventListener("pointerup", e=>{
+    if(e.pointerType === "touch") return; press = null; if(!htDrag) return;
+    // the click that ends a drag is not a click on whatever is under it
+    document.addEventListener("click", swallow, {capture:true, once:true}); setTimeout(()=>document.removeEventListener("click", swallow, true), 0);
+    htDragMove(e.clientX, e.clientY); htDragEnd(true);
+  });
+  document.addEventListener("pointercancel", e=>{ if(e.pointerType !== "touch"){ press = null; htDragEnd(false); } });
+  // touch: hold a header for a moment, then drag. Moving before the hold is up is a scroll.
+  let hold = null;
+  const tmove = e=>{
+    const t = e.touches[0]; if(!t) return;
+    if(htDrag){ e.preventDefault(); htDragMove(t.clientX, t.clientY); return; }
+    if(hold && Math.hypot(t.clientX - hold.x, t.clientY - hold.y) > 10) tdone(false);
+  };
+  const tdone = commit=>{
+    if(hold){ clearTimeout(hold.timer); hold = null; document.removeEventListener("touchmove", tmove); }
+    if(htDrag) htDragEnd(commit);
+  };
+  document.addEventListener("touchstart", e=>{
+    tdone(false); if(e.touches.length !== 1) return;
+    const p = grab(e.target); if(!p) return; const t = e.touches[0];
+    document.addEventListener("touchmove", tmove, {passive:false});
+    hold = {x:t.clientX, y:t.clientY, timer:setTimeout(()=>{ if(hold) htDragBegin(p, hold.x, hold.y); }, 380)};
+  }, {passive:true});
+  document.addEventListener("touchend", ()=>tdone(true));
+  document.addEventListener("touchcancel", ()=>tdone(false));
+  document.addEventListener("keydown", e=>{ if(e.key === "Escape" && htDrag){ e.preventDefault(); e.stopPropagation(); htDragEnd(false); } }, true);
+  document.addEventListener("contextmenu", e=>{ if(htDrag || hold) e.preventDefault(); });
+})();
+// The debrief shows more of each list when its pane has height to spare. Rows past a list's usual
+// length are written hidden; this shows them one at a time, a list at a time, for as long as they fit.
+function htMenuFit(){
+  const el = $("#htMenu"); if(!el) return;
+  const xs = [...el.querySelectorAll(".ht-opt[data-x]")], end = el.querySelector("i.end");
+  xs.forEach(b=>b.classList.add("xh"));
+  if(!end || !xs.length) return;
+  const room = el.getBoundingClientRect().height; if(!room) return;
+  const fits = ()=>end.getBoundingClientRect().top - el.getBoundingClientRect().top <= room - 8;
+  const lists = []; let cur = null;
+  for(const n of el.children){ if(n.classList.contains("grp")){ cur = []; lists.push(cur); } else if(cur && n.dataset.x) cur.push(n); }
+  for(let i = 0, more = true; more; i++){
+    more = false;
+    for(const l of lists){
+      const b = l[i]; if(!b) continue; more = true;
+      b.classList.remove("xh"); if(!fits()){ b.classList.add("xh"); return; }
+    }
+  }
 }
 // ---- the debrief: what you want to know on sitting back down ----
 // It reads the same daily amounts as the play grid, and what it leads with depends on how long
@@ -13207,7 +13477,7 @@ function htRecent(){
 function htMenu(){
   const el = $("#htMenu"); if(!el) return;
   const rows = termRounds(), up = rows.filter(m=>m.st.up), wait = rows.filter(m=>!m.st.up);
-  const opt = (attrs, act, tgt, kind, st, cls)=>`<button class="ht-opt" ${attrs}><span class="act">${escapeHtml(act)}</span><span class="t ${kind}">${escapeHtml(tgt)}</span><span class="st ${cls || ""}">${escapeHtml(st)}</span></button>`;
+  const opt = (attrs, act, tgt, kind, st, cls, x)=>`<button class="ht-opt${x ? " xh" : ""}"${x ? ' data-x="1"' : ""} ${attrs}><span class="act">${escapeHtml(act)}</span><span class="t ${kind}">${escapeHtml(tgt)}</span><span class="st ${cls || ""}">${escapeHtml(st)}</span></button>`;
   const R = htRecent(), has = !!(live && live.skills);
   const names = ks=>{ const n = ks.map(frSkName); return n.length <= 1 ? (n[0] || "") : n.length <= 3 ? n.slice(0, -1).join(", ") + " and " + n[n.length - 1] : `${n[0]}, ${n[1]} and ${n.length - 2} more`; };
   const whenDay = iso=>parseISO(iso).toLocaleDateString([], {weekday:"short", day:"numeric", month:"short"});
@@ -13227,24 +13497,25 @@ function htMenu(){
   // what the last week of play added: levels first, then the most experience, then kills
   if(has){
     const g = Object.keys(R.sk).map(k=>{ const cur = liveSkillXp(k), now = levelFromXp(cur), was = levelFromXp(Math.max(0, cur - R.sk[k])); return {k, xp:R.sk[k], now, up:Math.max(0, now - was)}; })
-      .sort((a, b)=>b.up - a.up || b.xp - a.xp).slice(0, 4);
-    const kills = Object.entries(R.boss).sort((a, b)=>b[1] - a[1]).slice(0, 2);
+      .sort((a, b)=>b.up - a.up || b.xp - a.xp).slice(0, 8);
+    const kills = Object.entries(R.boss).sort((a, b)=>b[1] - a[1]).slice(0, 4);
     if(g.length || kills.length) sec.gain = `<div class="grp">${R.idle != null && R.idle <= 1 ? "Gained, last 7 days" : "Where you left off"}</div>`
-      + g.map(x=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Gained", frSkName(x.k), "g", x.up ? `+${x.up} level${x.up === 1 ? "" : "s"}, now ${x.now}` : `+${htShort(x.xp)} xp`, x.up ? "ready" : "")).join("")
-      + kills.map(([b, n])=>opt(`data-bossinfo="${escapeHtml(b)}" title="Open ${escapeHtml(nice(b))}"`, "Killed", nice(b), "y", `${fmt(n)} kill${n === 1 ? "" : "s"}`)).join("");
+      + g.map((x, i)=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Gained", frSkName(x.k), "g", x.up ? `+${x.up} level${x.up === 1 ? "" : "s"}, now ${x.now}` : `+${htShort(x.xp)} xp`, x.up ? "ready" : "", i >= 4)).join("")
+      + kills.map(([b, n], i)=>opt(`data-bossinfo="${escapeHtml(b)}" title="Open ${escapeHtml(nice(b))}"`, "Killed", nice(b), "y", `${fmt(n)} kill${n === 1 ? "" : "s"}`, "", i >= 2)).join("");
   }
-  const near = htNear();
-  if(near.length) sec.near = `<div class="grp">Closest level ups</div>` + near.map(x=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Train", frSkName(x.k), "g", `${fmt(x.p.toNext)} xp to ${x.p.next}`)).join("");
-  const goals = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct).slice(0, 4);
-  if(goals.length) sec.goals = `<div class="grp">Goals you are tracking</div>` + goals.map(({g, p})=>opt(`data-hgoal="1" title="Open Goals"`, p.custom ? "Finish" : "Reach", g.label, "y", p.custom ? (p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : "to-do") : Math.round(p.pct) + "%")).join("");
-  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 4);
-  if(al.length) sec.dust = `<div class="grp">Gathering dust</div>` + al.map(x=>{ const d = prioDays(x); return opt(`data-hprio="${escapeHtml(x.id)}" title="Worked on it today? Click to say so"`, "Return-to", x.label, "y", d == null ? "no record" : d + (d === 1 ? " day" : " days"), "warn"); }).join("");
-  if(wait.length) sec.soon = `<div class="grp">Ready soon</div>` + wait.slice(0, 4).map(m=>{ const v = termVerb(m); return opt(`data-hgo="${escapeHtml(m.key)}" title="Open it in Coffer"`, v.act, v.tgt, v.kind, roundWhen(m.st.next)); }).join("");
+  const near = htNear(8);
+  if(near.length) sec.near = `<div class="grp">Closest level ups</div>` + near.map((x, i)=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Train", frSkName(x.k), "g", `${fmt(x.p.toNext)} xp to ${x.p.next}`, "", i >= 3)).join("");
+  const goals = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct).slice(0, 8);
+  if(goals.length) sec.goals = `<div class="grp">Goals you are tracking</div>` + goals.map(({g, p}, i)=>opt(`data-hgoal="1" title="Open Goals"`, p.custom ? "Finish" : "Reach", g.label, "y", p.custom ? (p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : "to-do") : Math.round(p.pct) + "%", "", i >= 4)).join("");
+  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 8);
+  if(al.length) sec.dust = `<div class="grp">Gathering dust</div>` + al.map((x, i)=>{ const d = prioDays(x); return opt(`data-hprio="${escapeHtml(x.id)}" title="Worked on it today? Click to say so"`, "Return-to", x.label, "y", d == null ? "no record" : d + (d === 1 ? " day" : " days"), "warn", i >= 4); }).join("");
+  if(wait.length) sec.soon = `<div class="grp">Ready soon</div>` + wait.slice(0, 8).map((m, i)=>{ const v = termVerb(m); return opt(`data-hgo="${escapeHtml(m.key)}" title="Open it in Coffer"`, v.act, v.tgt, v.kind, roundWhen(m.st.next), "", i >= 4); }).join("");
   // back after a while, what went stale comes before what was gained
   const order = R.idle != null && R.idle >= 3 ? ["now", "dust", "gain", "near", "goals", "soon"] : ["now", "gain", "near", "goals", "dust", "soon"];
   const body = order.map(k=>sec[k] || "").join("");
   el.innerHTML = `<div class="ttl">Debrief<small class="${R.idle === 0 ? "" : "none"}">${escapeHtml(tag)}</small></div><p class="lead">${lead}</p>`
-    + (body || `<div class="nil">Nothing is waiting on you. Pick a routine in Coffer or set a goal, and it shows up here.</div>`);
+    + (body ? body + `<i class="end"></i>` : `<div class="nil">Nothing is waiting on you. Pick a routine in Coffer or set a goal, and it shows up here.</div>`);
+  htMenuFit();
   el.onclick = e=>{
     const b = e.target.closest(".ht-opt"); if(!b) return; const d = b.dataset;
     if(d.htick) roundTick(d.htick);
@@ -17502,6 +17773,8 @@ function renderLookSettings(){
     ts.innerHTML = TILE_LAYOUTS.map(([id,label])=>`<button class="${id===tcur?"on":""}" data-settiles="${id}">${label}</button>`).join("");
     ts.querySelectorAll("[data-settiles]").forEach(b=>b.onclick=()=>{ setTiles(b.dataset.settiles); renderLookSettings(); });
   }
+  const trs = $("#tilesReset");
+  if(trs){ trs.classList.toggle("hidden", !(state.homeArr && tcur === "mosaic")); trs.onclick = ()=>{ htArrReset(); renderLookSettings(); }; }
   const cur = state.theme || DEFAULT_THEME;
   tp.innerHTML = THEMES.map(([id,label,ic])=>`<button class="su-theme ${id===cur?"on":""}" data-settheme="${id}"><img src="${WIKI+ic}" alt=""><span>${label}</span></button>`).join("");
   tp.querySelectorAll("[data-settheme]").forEach(b=>b.onclick=()=>{ if(state.theme !== b.dataset.settheme){ state.theme = b.dataset.settheme; save(); applyTheme(); } renderLookSettings(); });

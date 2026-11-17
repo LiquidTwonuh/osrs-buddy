@@ -1,5 +1,11 @@
 [
   {
+    "file": "wide-fill.html",
+    "title": "Filling a wide window",
+    "desc": "What goes in the empty part of a big monitor. Extras come in three tiers (useful, nice, fun) and fill in that order, so more room only ever adds less essential things. Two directions on the Scroll page: a side rail that is the same on every page, or each page growing its own extra panes. Window size and tier labels in the top strip.",
+    "date": "2026-11-17"
+  },
+  {
     "file": "home-tiles.html",
     "title": "Home, glass tiles",
     "desc": "Home as glass tiles (Josh's sketch): square panes with a small gap, the whole window tiled like terminals. Two layouts of the same panes: Mosaic follows the sketch, Orderly puts every edge on one grid. Gap, glass or flat, and theme switches in the top strip.",
