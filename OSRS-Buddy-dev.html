@@ -3434,16 +3434,16 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] *, body[data-skin="term"] *::before, body[data-skin="term"] *::after{border-radius:0 !important}
 
   /* ---- a pane ---- */
-  body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section){
+  body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section, .wf){
     background:var(--glass); -webkit-backdrop-filter:blur(18px) saturate(1.2); backdrop-filter:blur(18px) saturate(1.2);
     border:1px solid var(--hair) !important; box-shadow:inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent) !important;
     transition:border-color .2s, box-shadow .2s}
-  body[data-skin="term"] :is(.panel, .term-path, .ht section):hover{
+  body[data-skin="term"] :is(.panel, .term-path, .ht section, .wf):hover{
     border-color:color-mix(in srgb, var(--gold) 60%, transparent) !important;
     box-shadow:inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent), 0 0 0 1px color-mix(in srgb, var(--gold) 14%, transparent) !important}
   body[data-skin="term"] .panel .panel{-webkit-backdrop-filter:none; backdrop-filter:none; background:color-mix(in srgb, var(--bg) 40%, transparent)}
   /* a phone draws flat glass: the blur is the costly part */
-  @media (pointer:coarse){ body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section){-webkit-backdrop-filter:none; backdrop-filter:none; background:color-mix(in srgb, var(--panel) 72%, var(--bg))} }
+  @media (pointer:coarse){ body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section, .wf){-webkit-backdrop-filter:none; backdrop-filter:none; background:color-mix(in srgb, var(--panel) 72%, var(--bg))} }
 
   /* ---- the window ---- */
   body[data-skin="term"] .panel{margin-top:var(--gap); padding:16px}
@@ -3931,6 +3931,67 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .wrap-chip:hover, body[data-skin="term"] .wrap-chip.on{border-color:var(--gold); color:var(--gold)}
   @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .wrap-go::after{animation:none} }
 
+  /* ============ FILLING A WIDE WINDOW ============
+     wfDraw (the page's script) decides how many columns of extra panes fit beside the page and
+     marks .content with wf-on. The columns are one list poured top to bottom; a pane that does
+     not fit whole is hidden. Under a short page, #wideUnder takes the wide ones. */
+  body[data-skin="term"] .content.wf-on{display:flex; align-items:flex-start; gap:var(--gap); padding-bottom:0}
+  body[data-skin="term"] .content.wf-on .content-inner{flex:0 0 auto; width:var(--wf-mw); max-width:none; padding-bottom:70px}
+  body[data-skin="term"] .content.wf-on .content-inner.wf-has-under{padding-bottom:0}
+  body[data-skin="term"] .wf-side{flex:1 1 0; min-width:0; position:sticky; top:var(--gap); height:calc(100vh - var(--gap) * 2);
+    column-count:var(--wf-n, 1); column-gap:var(--gap); column-fill:auto; overflow:hidden}
+  body[data-skin="term"] .wf-under{margin-top:var(--gap); column-count:var(--wf-n, 1); column-gap:var(--gap); column-fill:auto; overflow:hidden}
+
+  /* a pane */
+  body[data-skin="term"] .wf{display:block; break-inside:avoid; margin:0 0 var(--gap); min-width:0;
+    animation:wfIn .42s cubic-bezier(.2,.7,.2,1) backwards; animation-delay:calc(var(--i, 0) * 35ms)}
+  body[data-skin="term"] .wf.off{visibility:hidden}
+  @keyframes wfIn{from{opacity:0; transform:translateY(8px)}}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .wf{animation:none} }
+  body[data-skin="term"] .wf-h{display:flex; align-items:center; gap:8px; margin:0; padding:7px 9px 6px 11px; border-bottom:1px solid var(--hair);
+    font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim); white-space:nowrap}
+  body[data-skin="term"] .wf-h::before{content:"//"; color:var(--faint); letter-spacing:0; font-weight:400}
+  body[data-skin="term"] .wf-h small{margin-left:auto; min-width:0; overflow:hidden; text-overflow:ellipsis; font:11.5px var(--fm); letter-spacing:0; text-transform:none; color:var(--faint)}
+  body[data-skin="term"] .wf-x{flex:none; width:18px; height:18px; min-height:0; margin:-2px 0; padding:0; background:none; border:0; box-shadow:none; color:var(--faint); font:12px var(--fm); line-height:1; cursor:pointer; opacity:0; transition:opacity .15s, color .15s}
+  body[data-skin="term"] .wf:hover .wf-x, body[data-skin="term"] .wf-x:focus-visible{opacity:1}
+  body[data-skin="term"] .wf-x:hover, body[data-skin="term"] .wf-x:focus-visible{color:var(--text); outline:0}
+  body[data-skin="term"] .wf-b{padding:8px 11px 11px}
+
+  /* what goes in one: rows, a meter, a big figure, a line of words, grids of days */
+  body[data-skin="term"] .wf-r{display:flex; align-items:baseline; gap:8px; width:100%; min-height:0; margin:0; padding:3px 0; background:none; border:0; box-shadow:none;
+    color:var(--text); font:13.5px/1.4 var(--fs); font-weight:400; text-align:left; transition:background .14s}
+  body[data-skin="term"] button.wf-r{cursor:pointer}
+  body[data-skin="term"] button.wf-r:hover, body[data-skin="term"] button.wf-r:focus-visible{background:color-mix(in srgb, var(--text) 6%, transparent); outline:0}
+  body[data-skin="term"] .wf-r .a{flex:none; white-space:nowrap}
+  body[data-skin="term"] .wf-r .a.d{min-width:5.2ch; font:12px var(--fm); color:var(--faint)}
+  body[data-skin="term"] .wf-r .b{flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--k-c)}
+  body[data-skin="term"] .wf-r .b.g{color:var(--k-g)} body[data-skin="term"] .wf-r .b.y{color:var(--k-y)} body[data-skin="term"] .wf-r .b.t{color:var(--text)}
+  body[data-skin="term"] .wf-r .a:empty{display:none}
+  body[data-skin="term"] .wf-r .v{flex:none; margin-left:auto; white-space:nowrap; font:12px var(--fm); color:var(--muted); font-variant-numeric:tabular-nums}
+  body[data-skin="term"] .wf-r .v.g{color:var(--k-g)} body[data-skin="term"] .wf-r .v.o{color:var(--k-o)}
+  body[data-skin="term"] .wf-m{height:7px; margin:3px 0 8px; background:var(--line);
+    -webkit-mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px); mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px)}
+  body[data-skin="term"] .wf-m:last-child{margin-bottom:0}
+  body[data-skin="term"] .wf-m i{display:block; width:var(--p); height:100%; background:var(--c, var(--gold))}
+  body[data-skin="term"] .wf-big{font:600 26px/1.15 var(--fm); color:var(--c, var(--gold)); font-variant-numeric:tabular-nums}
+  body[data-skin="term"] .wf-big small{margin-left:6px; font:12px var(--fm); color:var(--faint)}
+  body[data-skin="term"] .wf-p{margin:5px 0 0; font-size:13px; line-height:1.5; color:var(--muted)}
+  body[data-skin="term"] .wf-p b{font-weight:600; color:var(--text)}
+  body[data-skin="term"] .wf-grid{display:grid; grid-auto-flow:column; grid-template-rows:repeat(7, auto); grid-auto-columns:minmax(0, 1fr); gap:2px}
+  body[data-skin="term"] .wf-grid i{aspect-ratio:1; background:color-mix(in srgb, var(--k-g) calc(var(--v, 0) * 1%), var(--line))}
+  body[data-skin="term"] .wf-grid i.f{background:none}
+  body[data-skin="term"] .wf-cal{display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:3px}
+  body[data-skin="term"] .wf-cal b{padding-bottom:2px; font:400 10.5px var(--fm); letter-spacing:.1em; text-transform:uppercase; color:var(--faint)}
+  body[data-skin="term"] .wf-cal i{position:relative; min-height:30px; background:color-mix(in srgb, var(--gold) calc(var(--v, 0) * 1%), var(--line))}
+  body[data-skin="term"] .wf-cal i.f{opacity:.4}
+  body[data-skin="term"] .wf-cal i.f:empty{background:none}
+  body[data-skin="term"] .wf-cal i.now{outline:1px solid var(--text); outline-offset:-1px}
+  body[data-skin="term"] .wf-cal em{position:absolute; left:4px; top:2px; font:10.5px var(--fm); font-style:normal; color:var(--text); opacity:.8}
+  body[data-skin="term"] .wf-capes{display:grid; grid-template-columns:repeat(8, minmax(0, 1fr)); gap:3px}
+  body[data-skin="term"] .wf-capes i{position:relative; aspect-ratio:1.7; background:var(--line); overflow:hidden}
+  body[data-skin="term"] .wf-capes i::after{content:""; position:absolute; left:0; right:0; bottom:0; height:calc(var(--v, 0) * 1%); background:color-mix(in srgb, var(--k-y) 50%, transparent)}
+  body[data-skin="term"] .wf-capes i.got::after{background:var(--k-y)}
+
   /* ============ GLYPHS (written by glyphs.py; edit the drawings there) ============ */
   body[data-skin="term"] .gl{display:inline-block; width:18px; height:18px; vertical-align:-4px; overflow:hidden; text-indent:-99em; white-space:nowrap; background:currentColor; -webkit-mask:var(--g) center / contain no-repeat; mask:var(--g) center / contain no-repeat; flex:0 0 auto; text-align:left}
   body[data-skin="term"] .gl.x1{width:9px; height:9px; vertical-align:-1px} body[data-skin="term"] .gl.x3{width:27px; height:27px; vertical-align:-7px} body[data-skin="term"] .gl.x4{width:36px; height:36px; vertical-align:-9px}
@@ -4164,6 +4225,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="set-h">Look</div>
             <div class="skin-pick" id="skinPick"></div>
             <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose, and you can drag a pane by its header to move it. Orderly lines every edge up.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="tilesSeg"></div><button class="ghost small hidden" id="tilesReset" title="Put Home's panes back where they started">Reset panes</button></div></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Wide window</b><small>On a wide monitor, the room beside and under a page fills with extra panes. The most useful come first, so more room only ever adds less essential ones. A pane's x hides it.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="wfSeg"></div><button class="ghost small hidden" id="wfShowAll" title="Bring back the panes you hid"></button></div></div>
           </div>
           <div class="set-group">
             <div class="set-h">Theme</div>
@@ -4917,7 +4979,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     </div>
   </div>
 
+    <div class="wf-under term-only hidden" id="wideUnder"></div>
    </div>
+   <aside class="wf-side term-only hidden" id="wideFill" aria-label="More, while there is room"></aside>
   </main>
 </div>
 <div class="sb-backdrop hidden" id="sbBackdrop"></div>
@@ -5734,6 +5798,7 @@ function renderAll(){
   renderStart();
   renderScroll();
   renderMeta();
+  try{ wfLater(); }catch(e){}
 }
 function relTime(d){
   const s = Math.max(0, (Date.now()-d.getTime())/1000);
@@ -13221,7 +13286,7 @@ function renderHomeTerm(){
       const e = live.activities && live.activities["clue_scrolls_" + t], n = e && e.score > 0 ? e.score : 0;
       return `<span>${nice(t)}<b class="${n ? "has" : ""}">${fmt(n)}</b></span>`; }).join("");
   }
-  htArrange(); htMenu(); htPlay(); termTop(); termWire(); termHint(); htMenuFit(); htArrWatch();
+  htArrange(); htMenu(); htPlay(); termTop(); termWire(); termHint(); htMenuFit(); htArrWatch(); try{ wfLater(); }catch(e){}
   const cur = $(".view:not(.hidden)"); if(cur) termPathSet(cur.id.replace(/^view-/, ""));
   if(!htDrawn){ htDrawn = true; root.classList.add("intro"); setTimeout(()=>root.classList.remove("intro"), 1700); termBoot(); }
   else termRenderLog();
@@ -13455,6 +13520,236 @@ function htMenuFit(){
     }
   }
 }
+// ---- FILLING A WIDE WINDOW ----
+// On a wide monitor a page stops at about 1400 and the rest of the window was empty (Josh,
+// 2026-11-17). Now the room beside a page, and under a short one, holds extra panes. An extra has
+// a tier: 1 useful, 2 nice to have, 3 for fun. They are drawn in tier order, a page's own before
+// the shared ones, poured into columns top to bottom, and whatever does not fit is not drawn. So
+// a bigger window only ever adds less essential things, and nothing a page needs lives here.
+// To add one: wfAdd({id, tier, title, pages?, not?, wide?, draw}). pages limits it to those views,
+// not keeps it off views that already show the same thing, wide marks one made for the room
+// under a page. draw returns {sub, html} or null when it has nothing to show.
+const WF = [], WF_SKIP = new Set(["quests", "mockups", "board", "start", "ask", "arcade", "survivors", "rhythm", "patch", "museum"]);
+const WF_COL = 400, WF_PAGE_MIN = 1150;
+function wfAdd(def){ WF.push(def); }
+const wfEsc = t=>escapeHtml(String(t == null ? "" : t));
+// a row: what, which, and a figure at the right. attrs makes it a button that does something
+function wfRow(a, b, v, o){
+  o = o || {};
+  const inner = `<span class="a ${o.ka || ""}">${wfEsc(a)}</span><span class="b ${o.kb || ""}">${wfEsc(b)}</span><span class="v ${o.kv || ""}">${wfEsc(v)}</span>`;
+  return o.attrs ? `<button class="wf-r" ${o.attrs}>${inner}</button>` : `<div class="wf-r">${inner}</div>`;
+}
+const wfMeter = (pct, col)=>`<div class="wf-m"><i style="--p:${Math.max(0, Math.min(100, pct)).toFixed(1)}%${col ? `; --c:${col}` : ""}"></i></div>`;
+const wfBig = (n, unit, col)=>`<div class="wf-big"${col ? ` style="--c:${col}"` : ""}>${wfEsc(n)}${unit ? `<small>${wfEsc(unit)}</small>` : ""}</div>`;
+// experience gained on a day, from the same daily amounts as the play grid
+function wfDays(){
+  const auto = (state.scroll && state.scroll.autoOn !== false && state.scroll.auto) || {}, out = {};
+  for(const iso in auto){
+    const sk = (auto[iso] || {}).skills || {}; let xp = 0; const list = [];
+    for(const k in sk) if(sk[k] > 0 && SKILL_ORDER.includes(k)){ xp += sk[k]; list.push([k, sk[k]]); }
+    if(xp > 0) out[iso] = {xp, skills:list.sort((a, b)=>b[1] - a[1])};
+  }
+  return out;
+}
+const wfIsoBack = n=>isoDate(new Date(parseISO(todayISO()).getTime() - n * 864e5));
+function wfSpan(days, from, len){ let t = 0; for(let i = from; i < from + len; i++){ const d = days[wfIsoBack(i)]; if(d) t += d.xp; } return t; }
+function wfSkillNames(list, n){ return list.slice(0, n || 2).map(e=>frSkName(e[0])).join(", "); }
+// cells for a run of days ending today, a column a week, brighter for more experience
+function wfCells(days, weeks){
+  const today = parseISO(todayISO()), start = new Date(today); start.setDate(start.getDate() - ((today.getDay() + 6) % 7) - (weeks - 1) * 7);
+  let max = 0; const cs = [];
+  for(let i = 0; i < weeks * 7; i++){ const d = new Date(start); d.setDate(start.getDate() + i); const iso = isoDate(d), x = d > today ? -1 : ((days[iso] || {}).xp || 0); if(x > max) max = x; cs.push([iso, x, d]); }
+  return {max, html:cs.map(([iso, x, d])=>x < 0 ? `<i class="f"></i>` : `<i style="--v:${max ? Math.round(18 + 82 * Math.sqrt(x / max)) * (x > 0 ? 1 : 0) : 0}" title="${wfEsc(fmtDay(iso))}: ${x ? "+" + fmt(x) + " xp" : "nothing"}"></i>`).join("")};
+}
+
+// ---- tier 1: useful ----
+wfAdd({id:"journal", tier:1, title:"Latest in the journal", pages:["scroll", "home"], draw(){
+  const es = ((state.scroll && state.scroll.log) || []).filter(e=>e && e.date).sort((a, b)=>a.date < b.date ? 1 : a.date > b.date ? -1 : (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 6);
+  if(!es.length) return null;
+  const day = iso=>parseISO(iso).toLocaleDateString([], {weekday:"short", day:"numeric"}).toLowerCase();
+  return {sub:`${(state.scroll.log || []).length} entries`, html:es.map(e=>wfRow(day(e.date), e.text || "(no note)", "", {ka:"d", kb:"t", attrs:'data-wfgo="scroll:journal" title="Open the journal"'})).join("")};
+}});
+wfAdd({id:"trophies", tier:1, title:"Trophies nearly earned", pages:["scroll", "home"], draw(){
+  if(!(live && live.skills)) return null;
+  const rows = PRESTIGE.filter(p=>!p.hideUntil || p.hideUntil()).map(p=>({p, st:prestigeState(p)})).filter(r=>!r.st.done && !r.st.binary && r.st.pct > 0).sort((a, b)=>b.st.pct - a.st.pct).slice(0, 4);
+  if(!rows.length) return null;
+  return {sub:"closest first", html:rows.map(r=>wfRow("", r.p.name, r.st.pct + "%", {kb:"t", attrs:'data-wfgo="scroll:trophies" title="Open Trophies"'}) + wfMeter(r.st.pct)).join("")};
+}});
+wfAdd({id:"ready", tier:1, title:"Ready now", not:["home", "coffer"], draw(){
+  const rows = termRounds(); if(!rows.length) return null;
+  const up = rows.filter(m=>m.st.up), wait = rows.filter(m=>!m.st.up);
+  return {sub:up.length ? `${up.length} ready` : "nothing yet", html:
+    up.slice(0, 5).map(m=>{ const v = termVerb(m); return wfRow(v.act, v.tgt, "ready", {kb:"c", kv:"g", attrs:`data-wftick="${wfEsc(m.key)}" title="Done it? Click to tick it"`}); }).join("")
+    + wait.slice(0, Math.max(1, 4 - up.length)).map(m=>{ const v = termVerb(m); return wfRow(v.act, v.tgt, roundWhen(m.st.next), {kb:"c", attrs:`data-wfround="${wfEsc(m.key)}" title="Open it in Coffer"`}); }).join("")};
+}});
+wfAdd({id:"near", tier:1, title:"Closest level ups", not:["home", "skills"], draw(){
+  const near = htNear(5); if(!near.length) return null;
+  return {sub:"", html:near.map(x=>wfRow("Train", frSkName(x.k), `${fmt(x.p.toNext)} xp to ${x.p.next}`, {kb:"g", attrs:`data-skillinfo="${x.k}" title="Open ${wfEsc(frSkName(x.k))}"`})).join("")};
+}});
+wfAdd({id:"goals", tier:1, title:"Goals", not:["home", "goals"], draw(){
+  const gs = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct);
+  if(!gs.length) return null;
+  return {sub:`${gs.length} open`, html:gs.slice(0, 4).map(({g, p})=>wfRow(p.custom ? "Finish" : "Reach", g.label, p.custom && p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : Math.round(p.pct) + "%", {kb:"y", attrs:'data-wfgo="goals" title="Open Goals"'}) + wfMeter(p.pct, "var(--k-y)")).join("")};
+}});
+wfAdd({id:"dust", tier:1, title:"Gathering dust", not:["home"], draw(){
+  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 4);
+  if(!al.length) return null;
+  return {sub:"", html:al.map(x=>{ const d = prioDays(x); return wfRow("Return-to", x.label, d == null ? "no record" : d + (d === 1 ? " day" : " days"), {kb:"y", kv:"o", attrs:'data-wfgo="scroll:prio" title="Open Priorities"'}); }).join("")};
+}});
+
+// ---- tier 2: nice to have ----
+wfAdd({id:"bestdays", tier:2, title:"Best days", draw(){
+  const days = wfDays(), top = Object.keys(days).sort((a, b)=>days[b].xp - days[a].xp).slice(0, 5);
+  if(top.length < 2) return null;
+  return {sub:"by experience", html:top.map(iso=>wfRow(parseISO(iso).toLocaleDateString([], {day:"numeric", month:"short"}), wfSkillNames(days[iso].skills), "+" + fmt(days[iso].xp), {ka:"d", kb:"t"})).join("")};
+}});
+wfAdd({id:"months", tier:2, title:"This month and last", draw(){
+  const days = wfDays(), a = wfSpan(days, 0, 30), b = wfSpan(days, 30, 30); if(!a && !b) return null;
+  const top = Math.max(a, b, 1);
+  return {sub:"experience", html:wfRow("Last 30 days", "", fmt(a)) + wfMeter(a / top * 100) + wfRow("The 30 before", "", b ? fmt(b) : "no record") + wfMeter(b / top * 100, "var(--gold-dim)")};
+}});
+wfAdd({id:"today", tier:2, title:"Today", not:["home"], draw(){
+  const days = wfDays(), t = days[todayISO()], y = days[wfIsoBack(1)]; if(!t && !y) return null;
+  return {sub:t ? "played today" : "nothing yet", html:wfBig(t ? "+" + fmt(t.xp) : "0", "xp")
+    + `<p class="wf-p">${t ? wfEsc(wfSkillNames(t.skills, 3)) + ". " : ""}${y ? `Yesterday was <b>+${fmt(y.xp)}</b>.` : "Nothing recorded yesterday."}</p>`};
+}});
+wfAdd({id:"weeks2", tier:2, title:"This week and last", draw(){
+  const days = wfDays(), a = wfSpan(days, 0, 7), b = wfSpan(days, 7, 7); if(!a && !b) return null;
+  const top = Math.max(a, b, 1);
+  return {sub:"experience", html:wfRow("Last 7 days", "", fmt(a)) + wfMeter(a / top * 100) + wfRow("The 7 before", "", b ? fmt(b) : "no record") + wfMeter(b / top * 100, "var(--gold-dim)")};
+}});
+wfAdd({id:"kc", tier:2, title:"Kill counts", not:["home"], draw(){
+  const bs = Object.entries((live && live.bosses) || {}).filter(([k, e])=>e && e.kills > 0).sort((a, b)=>b[1].kills - a[1].kills);
+  if(!bs.length) return null;
+  return {sub:`${bs.length} boss${bs.length === 1 ? "" : "es"}`, html:bs.slice(0, 6).map(([k, e])=>wfRow("", nice(k), fmt(e.kills), {kb:"t", attrs:`data-bossinfo="${wfEsc(k)}" title="Open ${wfEsc(nice(k))}"`})).join("")};
+}});
+wfAdd({id:"cal", tier:2, title:"The month as a calendar", pages:["scroll"], wide:true, draw(){
+  const days = wfDays(), now = parseISO(todayISO()), y = now.getFullYear(), m = now.getMonth(), n = new Date(y, m + 1, 0).getDate(), lead = (new Date(y, m, 1).getDay() + 6) % 7;
+  let max = 0; for(let d = 1; d <= n; d++){ const x = (days[isoDate(new Date(y, m, d, 12))] || {}).xp || 0; if(x > max) max = x; }
+  if(!max) return null;
+  let h = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(d=>`<b>${d}</b>`).join("") + "<i class=\"f\"></i>".repeat(lead);
+  for(let d = 1; d <= n; d++){
+    const iso = isoDate(new Date(y, m, d, 12)), x = (days[iso] || {}).xp || 0, fut = iso > todayISO();
+    h += `<i class="${fut ? "f" : ""}${iso === todayISO() ? " now" : ""}" style="--v:${x ? Math.round(18 + 82 * Math.sqrt(x / max)) : 0}" title="${wfEsc(fmtDay(iso))}: ${x ? "+" + fmt(x) + " xp" : "nothing"}"><em>${d}</em></i>`;
+  }
+  return {sub:now.toLocaleDateString([], {month:"long"}), html:`<div class="wf-cal">${h}</div>`};
+}});
+
+// ---- tier 3: for fun ----
+wfAdd({id:"logged", tier:3, title:"Days logged", draw(){
+  const set = new Set(Object.keys(wfDays())), log = (state.scroll && state.scroll.log) || []; log.forEach(e=>{ if(e && e.date) set.add(e.date); });
+  if(!set.size) return null;
+  const first = [...set].sort()[0], chill = log.filter(e=>e && e.chill).sort((a, b)=>a.date < b.date ? 1 : -1);
+  return {sub:"since " + parseISO(first).toLocaleDateString([], {day:"numeric", month:"short"}), html:wfBig(fmt(set.size), "days")
+    + `<p class="wf-p">${chill.length ? `<b>${chill.length}</b> chill day${chill.length === 1 ? "" : "s"}, the last on ${wfEsc(fmtDay(chill[0].date))}.` : "No chill days taken yet."}</p>`};
+}});
+wfAdd({id:"year", tier:3, title:"The year so far", pages:["scroll"], wide:true, draw(){
+  const c = wfCells(wfDays(), 52); if(!c.max) return null;
+  return {sub:"a square a day", html:`<div class="wf-grid" style="--wk:52">${c.html}</div>`};
+}});
+wfAdd({id:"clock", tier:3, title:"Game clock", draw(){
+  const now = new Date(), day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+  const wk = new Date(day); while(wk.getUTCDay() !== ROUND_WEEK_RESET_DOW) wk.setUTCDate(wk.getUTCDate() + 1);
+  const left = ms=>{ const m = Math.max(1, Math.round(ms / 6e4)); return m >= 2880 ? `in ${Math.round(m / 1440)} days` : m >= 120 ? `in ${Math.floor(m / 60)} h ${m % 60} min` : `in ${m} min`; };
+  const p2 = n=>String(n).padStart(2, "0");
+  return {sub:"UTC, the game's time", html:wfBig(p2(now.getUTCHours()) + ":" + p2(now.getUTCMinutes()), "", "var(--text)") + wfRow("Daily reset", "", left(day - now)) + wfRow("Weekly reset", "", left(wk - now))};
+}});
+wfAdd({id:"onthisday", tier:3, title:"On this day", draw(){
+  const days = wfDays(), t = parseISO(todayISO());
+  const tries = [["A year ago today", new Date(t.getFullYear() - 1, t.getMonth(), t.getDate(), 12)], ["A month ago today", new Date(t.getFullYear(), t.getMonth() - 1, t.getDate(), 12)], ["A week ago today", new Date(t.getTime() - 7 * 864e5)]];
+  for(const [label, d] of tries){ const day = days[isoDate(d)]; if(day) return {sub:fmtDay(isoDate(d)), html:`<p class="wf-p">${label}: <b>+${fmt(day.xp)}</b> xp in ${wfEsc(wfSkillNames(day.skills, 3))}.</p>`}; }
+  return null;
+}});
+wfAdd({id:"capes", tier:3, title:"Capes", not:["skills"], draw(){
+  if(!(live && live.skills)) return null;
+  const lv = SKILL_ORDER.map(k=>[k, Math.min(99, levelFromXp(liveSkillXp(k)))]), n99 = lv.filter(x=>x[1] >= 99).length, next = lv.filter(x=>x[1] < 99).sort((a, b)=>b[1] - a[1])[0];
+  return {sub:`${n99} of ${lv.length}`, html:`<div class="wf-capes">${lv.map(([k, l])=>`<i class="${l >= 99 ? "got" : ""}" style="--v:${Math.round(l / 99 * 100)}" title="${wfEsc(frSkName(k))} ${l}"></i>`).join("")}</div>`
+    + (next ? `<p class="wf-p">Nearest: <b>${wfEsc(frSkName(next[0]))}</b>, ${next[1]}. A square per skill, fuller the closer it is to 99.</p>` : `<p class="wf-p">Every skill at 99.</p>`)};
+}});
+wfAdd({id:"trained", tier:3, title:"Most trained, 30 days", not:["home"], draw(){
+  const days = wfDays(), tot = {}; for(let i = 0; i < 30; i++){ const d = days[wfIsoBack(i)]; if(d) d.skills.forEach(([k, x])=>tot[k] = (tot[k] || 0) + x); }
+  const list = Object.entries(tot).sort((a, b)=>b[1] - a[1]).slice(0, 12); if(list.length < 3) return null;
+  return {sub:"every skill", html:list.map(([k, x])=>wfRow("", frSkName(k), "+" + htShort(x), {kb:"t", attrs:`data-skillinfo="${k}" title="Open ${wfEsc(frSkName(k))}"`}) + wfMeter(x / list[0][1] * 100, "var(--k-g)")).join("")};
+}});
+wfAdd({id:"weeks20", tier:3, title:"Twenty weeks", not:["home", "scroll"], draw(){
+  const c = wfCells(wfDays(), 20); if(!c.max) return null;
+  return {sub:"a square a day", html:`<div class="wf-grid" style="--wk:20">${c.html}</div>`};
+}});
+
+// what there is to show on a page, in the order it is poured
+function wfList(view){
+  const hide = state.wfHide || {}, out = [];
+  WF.forEach((d, i)=>{
+    if(hide[d.id] || (d.pages && !d.pages.includes(view)) || (d.not && d.not.includes(view))) return;
+    let r = null; try{ r = d.draw(view); }catch(e){ console.error("extra", d.id, e); }
+    if(r && r.html) out.push({d, i, own:d.pages ? 0 : 1, sub:r.sub || "", html:r.html});
+  });
+  return out.sort((a, b)=>a.d.tier - b.d.tier || a.own - b.own || a.i - b.i);
+}
+// writes a list of extras into a container, touching only what changed so nothing flickers
+function wfFillInto(el, list){
+  const ids = list.map(x=>x.d.id).join(",");
+  if(el.dataset.ids !== ids){
+    el.dataset.ids = ids;
+    el.innerHTML = list.map((x, i)=>`<section class="wf" data-wf="${x.d.id}" data-tier="${x.d.tier}" style="--i:${i}"><h2 class="wf-h">${wfEsc(x.d.title)} <small></small><button class="wf-x" data-wfhide="${x.d.id}" title="Hide this pane. Settings, Look brings it back." aria-label="Hide ${wfEsc(x.d.title)}">x</button></h2><div class="wf-b"></div></section>`).join("");
+  }
+  list.forEach((x, i)=>{
+    const sec = el.children[i]; if(!sec) return;
+    const sm = sec.querySelector("h2 small"), body = sec.querySelector(".wf-b");
+    if(sm.textContent !== x.sub) sm.textContent = x.sub;
+    if(sec._html !== x.html){ sec._html = x.html; body.innerHTML = x.html; }
+  });
+  // a pane that does not fit whole is not shown at all
+  const box = el.getBoundingClientRect();
+  [...el.children].forEach(sec=>{ const r = sec.getBoundingClientRect(), fits = r.left < box.right - 4 && r.bottom <= box.bottom + 1 && r.height > 0; sec.classList.toggle("off", !fits); sec.inert = !fits; });
+}
+function wfDraw(){
+  const content = $(".content"), inner = $(".content-inner"), side = $("#wideFill"), under = $("#wideUnder");
+  if(!content || !inner || !side || !under) return;
+  const cur = $(".view:not(.hidden)"), view = cur ? cur.id.replace(/^view-/, "") : "";
+  const gap = 10, avail = content.clientWidth;
+  let n = 0;
+  if(document.body.dataset.skin === "term" && state.wideFill !== false && view && !WF_SKIP.has(view) && !document.body.classList.contains("dock"))
+    n = Math.max(0, Math.min(4, Math.floor((avail - WF_PAGE_MIN + gap) / (WF_COL + gap))));
+  const list = n ? wfList(view) : [];
+  if(!n || !list.length){
+    if(content.classList.contains("wf-on")){ content.classList.remove("wf-on"); side.classList.add("hidden"); under.classList.add("hidden"); inner.classList.remove("wf-has-under"); side.dataset.ids = under.dataset.ids = ""; side.innerHTML = under.innerHTML = ""; }
+    return;
+  }
+  // the page may grow a little too: up to 1500, or what the columns leave it
+  const mw = Math.min(document.body.hasAttribute("data-wide") ? 1640 : 1500, avail - n * (WF_COL + gap));
+  content.style.setProperty("--wf-mw", mw + "px"); side.style.setProperty("--wf-n", n);
+  content.classList.add("wf-on"); side.classList.remove("hidden");
+  // under a page shorter than the window: the wide ones, when there is height for them
+  under.classList.add("hidden"); inner.classList.remove("wf-has-under");
+  const wide = list.filter(x=>x.d.wide);
+  const free = innerHeight - gap * 2 - (cur.getBoundingClientRect().bottom + scrollY);
+  const useUnder = wide.length && free >= 170;
+  if(useUnder){
+    under.style.height = Math.floor(free) + "px"; under.style.setProperty("--wf-n", Math.max(1, Math.min(wide.length, Math.floor(mw / 520))));
+    under.classList.remove("hidden"); inner.classList.add("wf-has-under");
+    wfFillInto(under, wide);
+  } else { under.dataset.ids = ""; under.innerHTML = ""; }
+  wfFillInto(side, useUnder ? list.filter(x=>!x.d.wide) : list);
+}
+function wfLater(){ if(wfLater.q) return; wfLater.q = setTimeout(()=>{ wfLater.q = 0; try{ wfDraw(); }catch(e){ console.error(e); } }, 60); }
+(function wfWire(){
+  const act = e=>{
+    const hide = e.target.closest("[data-wfhide]");
+    if(hide){ (state.wfHide || (state.wfHide = {}))[hide.dataset.wfhide] = 1; save(); wfDraw(); if(!state.wfHideTold){ state.wfHideTold = 1; save(); toast("Hidden. Settings, Look brings hidden panes back."); } return; }
+    const b = e.target.closest(".wf-r"); if(!b) return; const d = b.dataset;
+    if(d.wftick){ roundTick(d.wftick); wfLater(); }
+    else if(d.wfround) cofferGoRound(d.wfround);
+    else if(d.skillinfo) openSkillModal(d.skillinfo);
+    else if(d.bossinfo) openBossModal(d.bossinfo);
+    else if(d.wfgo){ const [v, sec] = d.wfgo.split(":"); if(v === "scroll" && sec){ if($(".view:not(.hidden)").id !== "view-scroll") switchView("scroll"); setScrollSec(sec); } else switchView(v); }
+  };
+  ["wideFill", "wideUnder"].forEach(id=>{ const el = document.getElementById(id); if(el) el.addEventListener("click", act); });
+  addEventListener("resize", wfLater);
+  if(typeof ResizeObserver === "function"){ const ro = new ResizeObserver(wfLater); const c = $(".content"); if(c) ro.observe(c); $$(".view").forEach(v=>ro.observe(v)); }
+  setInterval(()=>{ if(!document.hidden && $(".content.wf-on")) wfLater(); }, 30000);   // the clock, and what has become ready
+  wfLater();
+})();
 // ---- the debrief: what you want to know on sitting back down ----
 // It reads the same daily amounts as the play grid, and what it leads with depends on how long
 // it has been since experience was last gained. Mid-session it is today's gains; back after a
@@ -17773,6 +18068,14 @@ function renderLookSettings(){
     ts.innerHTML = TILE_LAYOUTS.map(([id,label])=>`<button class="${id===tcur?"on":""}" data-settiles="${id}">${label}</button>`).join("");
     ts.querySelectorAll("[data-settiles]").forEach(b=>b.onclick=()=>{ setTiles(b.dataset.settiles); renderLookSettings(); });
   }
+  const wseg = $("#wfSeg");
+  if(wseg){
+    const on = state.wideFill !== false;
+    wseg.innerHTML = `<button class="${on ? "on" : ""}" data-wf="1">Fill it</button><button class="${on ? "" : "on"}" data-wf="0">Leave it empty</button>`;
+    wseg.querySelectorAll("[data-wf]").forEach(b=>b.onclick = ()=>{ state.wideFill = b.dataset.wf === "1"; save(); wfDraw(); renderLookSettings(); });
+    const hid = Object.keys(state.wfHide || {}).length, sa = $("#wfShowAll");
+    if(sa){ sa.classList.toggle("hidden", !hid); sa.textContent = `Show ${hid} hidden`; sa.onclick = ()=>{ delete state.wfHide; save(); wfDraw(); renderLookSettings(); }; }
+  }
   const trs = $("#tilesReset");
   if(trs){ trs.classList.toggle("hidden", !(state.homeArr && tcur === "mosaic")); trs.onclick = ()=>{ htArrReset(); renderLookSettings(); }; }
   const cur = state.theme || DEFAULT_THEME;
@@ -19523,6 +19826,7 @@ function switchView(name){
   } else if(RG.playing) rgQuit();   // navigating away stops the music
   if(name==="survivors"){ if(!VS.on) renderVsSetup(); }
   else if(VS.on) vsQuit();          // and it stops the horde
+  try{ wfLater(); }catch(e){}
 }
 $$(".navitem").forEach(n=>n.onclick=()=>switchView(n.dataset.view));
   const hro = $("#homeRoundsOpen"); if(hro) hro.onclick = ()=>{ state.cofferSec = "earn"; switchView("coffer"); };

@@ -23,16 +23,16 @@
   body[data-skin="term"] *, body[data-skin="term"] *::before, body[data-skin="term"] *::after{border-radius:0 !important}
 
   /* ---- a pane ---- */
-  body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section){
+  body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section, .wf){
     background:var(--glass); -webkit-backdrop-filter:blur(18px) saturate(1.2); backdrop-filter:blur(18px) saturate(1.2);
     border:1px solid var(--hair) !important; box-shadow:inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent) !important;
     transition:border-color .2s, box-shadow .2s}
-  body[data-skin="term"] :is(.panel, .term-path, .ht section):hover{
+  body[data-skin="term"] :is(.panel, .term-path, .ht section, .wf):hover{
     border-color:color-mix(in srgb, var(--gold) 60%, transparent) !important;
     box-shadow:inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent), 0 0 0 1px color-mix(in srgb, var(--gold) 14%, transparent) !important}
   body[data-skin="term"] .panel .panel{-webkit-backdrop-filter:none; backdrop-filter:none; background:color-mix(in srgb, var(--bg) 40%, transparent)}
   /* a phone draws flat glass: the blur is the costly part */
-  @media (pointer:coarse){ body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section){-webkit-backdrop-filter:none; backdrop-filter:none; background:color-mix(in srgb, var(--panel) 72%, var(--bg))} }
+  @media (pointer:coarse){ body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section, .wf){-webkit-backdrop-filter:none; backdrop-filter:none; background:color-mix(in srgb, var(--panel) 72%, var(--bg))} }
 
   /* ---- the window ---- */
   body[data-skin="term"] .panel{margin-top:var(--gap); padding:16px}
