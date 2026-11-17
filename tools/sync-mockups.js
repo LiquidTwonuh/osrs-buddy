@@ -7,6 +7,7 @@ const src = path.join(root, "design", "mockups"), dst = path.join(root, "data", 
 // One line per mockup, in the order the page shows them. A file not listed here still copies,
 // with its <title> as the name and no description.
 const DESC = {
+  "home-tiles.html": "Home as glass tiles (Josh's sketch): square panes with a small gap, the whole window tiled like terminals. Two layouts of the same panes: Mosaic follows the sketch, Orderly puts every edge on one grid. Gap, glass or flat, and theme switches in the top strip.",
   "home-terminal.html": "Home, second pass on the Interface direction (Josh picked it): modern mono type instead of the pixel face, the app's own themes, a sidebar with the Mortimer icon, and the chat line as a command line that runs an action when you type the start of one. Type and Theme switches in the top strip.",
   "home-runescape.html": "Home, rebuilt from RuneScape's own conventions instead of a dashboard kit. Two directions: the game interface (bitmap numerals, right-click menu, orbs, a chat line) or the quest journal (ink on paper, done lines struck through, skills as a ledger). Swap ground shows each in light and dark.",
   "coffer-runs.html": "A Runs section in Coffer, tree and herb runs first. Two directions: a board of your patches, or a log of runs tallied over the week.",

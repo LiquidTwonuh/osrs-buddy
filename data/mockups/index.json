@@ -1,5 +1,11 @@
 [
   {
+    "file": "home-tiles.html",
+    "title": "Home, glass tiles",
+    "desc": "Home as glass tiles (Josh's sketch): square panes with a small gap, the whole window tiled like terminals. Two layouts of the same panes: Mosaic follows the sketch, Orderly puts every edge on one grid. Gap, glass or flat, and theme switches in the top strip.",
+    "date": "2026-11-17"
+  },
+  {
     "file": "home-terminal.html",
     "title": "Home, terminal",
     "desc": "Home, second pass on the Interface direction (Josh picked it): modern mono type instead of the pixel face, the app's own themes, a sidebar with the Mortimer icon, and the chat line as a command line that runs an action when you type the start of one. Type and Theme switches in the top strip.",
