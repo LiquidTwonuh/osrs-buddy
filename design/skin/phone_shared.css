@@ -1,0 +1,45 @@
+    /* ---- written twice by inject.py: once for any screen under 700 wide, once for a touch screen
+       up to 1000 wide (the phone opened out). "&" stands for the body selector of each. ---- */
+    /* keep clear of the phone's own bars: the system inset where it is reported, a band otherwise */
+    &{--kt:max(env(safe-area-inset-top, 0px), 18px); --kb:max(env(safe-area-inset-bottom, 0px), 26px); --dh:46px}
+    & .term-dock{display:flex; padding-bottom:var(--kb)}
+    & .toast{bottom:calc(var(--dh) + 14px + var(--kb))}
+    & .sidebar{padding-top:calc(16px + var(--kt)); padding-bottom:calc(18px + var(--kb))}
+
+    /* the top bar is a status line, edge to edge: menu, the mark, where you are */
+    & .topbar{display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-start; gap:0 8px; position:sticky; top:0; z-index:20;
+      margin:calc(var(--gap) * -1) calc(var(--gap) * -1) var(--gap); padding:calc(3px + var(--kt)) 6px 3px;
+      background:color-mix(in srgb, var(--bg) 90%, transparent); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+      border:0; border-bottom:1px solid var(--hair)}
+    & .topbar.scrolled{background:color-mix(in srgb, var(--bg) 90%, transparent); border-color:var(--hair)}
+    & .hamb{min-width:40px; min-height:36px; padding:0 10px; border:0; background:none; color:var(--muted); font-size:16px}
+    & .tb-title{flex:0 0 auto; font-size:14px; gap:6px}
+    & .tb-title .mortimeter-mark{font-size:22px}
+    & .tb-pad{display:none}
+    & .tb-path{display:flex; align-items:baseline; flex:1 1 0; min-width:0; font:12px var(--fm); color:var(--muted); white-space:nowrap; overflow:hidden}
+    & .tb-path u{min-width:0; overflow:hidden; text-overflow:ellipsis; text-decoration:none}
+    & .tb-path .cur{flex:0 0 auto; margin-left:3px; color:var(--gold-dim); animation:termBlink 1.1s steps(1) infinite}
+    & .tb-prev{margin-left:auto}
+    & .term-path{display:none}
+    /* the tabs and the path already name the section, so the small line over a page's title goes */
+    & .sh-eyebrow{display:none}
+
+    /* the page's sections, as tabs under the status line; the open one sits in brackets */
+    & .term-tabs:not(.hidden){display:flex; order:9; flex:0 0 calc(100% + 12px); min-width:0; margin:3px -6px -3px; padding:0 2px; border-top:1px solid var(--hair);
+      overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; white-space:nowrap}
+    & .term-tabs::-webkit-scrollbar{display:none}
+    & .term-tabs button{flex:0 0 auto; min-height:36px; margin:0; padding:0 9px; background:none; border:0; border-bottom:2px solid transparent; box-shadow:none;
+      color:var(--muted); font:12.5px var(--fm); cursor:pointer; transition:color .15s, border-color .15s}
+    & .term-tabs button::before{content:"["; margin-right:2px; color:transparent; transition:color .15s}
+    & .term-tabs button::after{content:"]"; margin-left:2px; color:transparent; transition:color .15s}
+    & .term-tabs button.on{color:var(--text); border-bottom-color:var(--gold)}
+    & .term-tabs button.on::before, & .term-tabs button.on::after{color:var(--gold)}
+    & .term-tabs button:active{background:color-mix(in srgb, var(--text) 8%, transparent)}
+
+    /* the command line, opened from the dock */
+    & .term-line:not(.hidden){display:block; position:fixed; left:0; right:0; bottom:calc(var(--dh) + 1px + var(--kb)); z-index:36;
+      background:var(--bg); border-top:1px solid var(--gold-dim); box-shadow:0 -22px 44px rgba(0,0,0,.5); font-family:var(--fm); font-size:13px; line-height:1.45;
+      animation:tlUp .2s cubic-bezier(.2,.7,.2,1)}
+    & .term-line.kbd:not(.hidden){bottom:var(--vk, 0px)}
+    & .term-dock button.cmd{display:inline-flex}
+    &.tl-open .term-dock button.cmd{color:var(--bg); background:var(--gold)}

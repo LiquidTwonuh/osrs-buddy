@@ -5,6 +5,10 @@
 import io, os, json, urllib.parse
 HERE = os.path.dirname(os.path.abspath(__file__))
 G = {
+"dragon": "#.......#/##.....##/.###.###./.#######./.#.###.#./.#######./..#####../..#.#.#../...###...",
+"monkey": "...###.../.#######./###.#.###/###.#.###/.#######./.#.....#./.#..#..#./..#...#../...###...",
+"cutlery": "#.#.#..##/#.#.#..##/#.#.#..##/#####..##/.###...##/..#....##/..#.....#/..#.....#/..#.....#",
+"bat": "........./#.......#/##.#.#.##/#########/#########/.#######./.#.###.#./....#..../.........",
 "pin": "...###.../...###.../...###.../..#####../.#######./....#..../....#..../....#..../....+....",
 "trophy": "#########/#.#####.#/#.#####.#/.#.###.#./...###.../....#..../....#..../..#####../..#####..",
 "check": "###...###/#.......#/#.#...#.#/#..#.#..#/#...#...#/#..#.#..#/#.#...#.#/#.......#/###...###",
@@ -81,7 +85,7 @@ E = {
  "⚙":"gear", "💬":"chat", "☕":"cup", "📅":"cal", "📆":"cal", "🗓":"cal", "🧾":"receipt", "⚡":"bolt:a", "🔒":"lock", "🔓":"unlock", "🪙":"coin:a", "💰":"coin:a",
  "🛡":"shield", "📋":"clip", "⏸":"pause", "🎵":"music", "📥":"inbox", "📱":"phone", "❤":"heart:r", "👑":"crown:a", "✍":"pen", "📚":"books", "📖":"book",
  "🕹":"joy", "🛠":"wrench", "➕":"plus", "⚠":"warn:o", "❗":"bang:r", "❓":"quest", "❔":"quest", "⛏":"pick", "👁":"eye", "🧗":"peak", "👍":"up:g", "👎":"down:r",
- "💡":"bulb:a", "🏠":"home", "🖼":"pic", "🏛":"bank", "🏦":"bank", "🗝":"key", "🏷":"tag", "🥖":"loaf:a", "🔨":"hammer",
+ "🐉":"dragon", "🐒":"monkey", "🍴":"cutlery", "🦇":"bat", "💡":"bulb:a", "🏠":"home", "🖼":"pic", "🏛":"bank", "🏦":"bank", "🗝":"key", "🏷":"tag", "🥖":"loaf:a", "🔨":"hammer",
 }
 for k, v in E.items(): assert v.split(":")[0] in G, v
 
@@ -105,6 +109,8 @@ css.append("  %s .gl{display:inline-block; width:18px; height:18px; vertical-ali
 css.append("  %s .gl.x1{width:9px; height:9px; vertical-align:-1px} %s .gl.x3{width:27px; height:27px; vertical-align:-7px} %s .gl.x4{width:36px; height:36px; vertical-align:-9px}" % (S, S, S))
 css.append("  %s .gl.t-g{color:var(--k-g)} %s .gl.t-o{color:var(--k-o)} %s .gl.t-r{color:var(--red)} %s .gl.t-a{color:var(--gold)} %s .gl.t-c{color:var(--k-c)}" % (S, S, S, S, S))
 css.append("  %s .gl-raw{filter:grayscale(1) brightness(1.15); opacity:.75}" % S)
+# the faint figure behind a quest goal is as big as its letter was
+css.append("  %s .sig .gl{width:.82em; height:.82em; vertical-align:-.1em}" % S)
 for name in G:
     u = uri(name)
     css.append("  %s .gl[data-g=\"%s\"]{--g:%s}" % (S, name, u))

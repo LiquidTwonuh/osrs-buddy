@@ -2,17 +2,22 @@
   /* ============ THE PHONE, FOLDED AND UNFOLDED ============
      Not the desktop squeezed. Sized against the Galaxy Z Fold 8 Ultra to start: the cover screen
      (1080 by 2520, about 380 page pixels wide) and the inner screen (2504 by 2256, about 750 to
-     810 wide and nearly square). Both get the dock: a status line along the bottom that lists the
-     pages the way tmux lists windows, in reach of a thumb, in the same place whether the phone is
-     shut or open. The sidebar is a drawer behind the menu button and the dock's "more".
-     body.dock is set on touch screens (and in the Beta's phone preview); under 700 wide the dock
-     shows whatever the pointer is. Home has its own arrangement at each size, in both layouts. */
-  .term-dock{display:none}
-  body[data-skin="term"] .term-dock{position:fixed; left:0; right:0; bottom:0; z-index:35; align-items:stretch; gap:0; padding:0 0 env(safe-area-inset-bottom, 0px);
+     810 wide and nearly square). Both get three things the desktop does not have:
+       the dock         a line along the bottom that lists the pages the way tmux lists windows,
+                        in reach of a thumb, in the same place whether the phone is shut or open
+       the status line  the top bar, edge to edge: menu, the mark, the path of where you are, and
+                        under it the page's sections as tabs
+       the command line the Home terminal's line, opened from the dock on any page
+     The sidebar is a drawer behind the menu button, the dock's "more" and a swipe.
+     body.dock is set on touch screens (and in the Beta's phone preview); under 700 wide all of
+     this shows whatever the pointer is. The rules both sizes share are in phone_shared.css, which
+     inject.py writes out once for each. Home has its own arrangement at each size, in both layouts. */
+  .term-dock, .term-line, .term-tabs, .tb-path{display:none}
+  body[data-skin="term"] .term-dock{position:fixed; left:0; right:0; bottom:0; z-index:35; align-items:stretch; gap:0; padding:0;
     overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; white-space:nowrap;
     background:color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border-top:1px solid var(--hair)}
   body[data-skin="term"] .term-dock::-webkit-scrollbar{display:none}
-  body[data-skin="term"] .term-dock button{flex:0 0 auto; display:inline-flex; align-items:baseline; gap:2px; min-height:46px; padding:0 13px; margin:0; background:none; border:0; border-top:2px solid transparent;
+  body[data-skin="term"] .term-dock button{flex:0 0 auto; display:inline-flex; align-items:center; gap:2px; min-height:var(--dh, 46px); padding:0 13px; margin:0; background:none; border:0; border-top:2px solid transparent;
     color:var(--muted); font:12.5px var(--fm); cursor:pointer; box-shadow:none; transition:color .15s, background .15s, border-color .15s}
   body[data-skin="term"] .term-dock button i{font-style:normal; color:var(--faint)}
   body[data-skin="term"] .term-dock button i::after{content:":"}
@@ -20,19 +25,29 @@
   body[data-skin="term"] .term-dock button.on i{color:var(--gold)}
   body[data-skin="term"] .term-dock button.on::after{content:"*"; color:var(--gold)}
   body[data-skin="term"] .term-dock button.more{position:sticky; right:0; margin-left:auto; color:var(--muted); background:var(--bg); border-left:1px solid var(--hair)}
+  body[data-skin="term"] .term-dock button.cmd{position:sticky; left:0; z-index:1; padding:0 13px; color:var(--gold); background:var(--bg); border-right:1px solid var(--hair); font-weight:600}
   body[data-skin="term"] .term-dock button:active{background:color-mix(in srgb, var(--text) 8%, transparent)}
 
-  /* the top bar is a pane too */
-  body[data-skin="term"] .topbar{padding:8px 10px; margin-bottom:var(--gap); background:var(--glass); border:1px solid var(--hair); border-bottom:1px solid var(--hair)}
-  body[data-skin="term"] .topbar.scrolled{background:color-mix(in srgb, var(--bg) 88%, transparent); border-color:var(--hair)}
+  /* the command line's parts */
+  @keyframes tlUp{ from{transform:translateY(10px); opacity:0} }
+  body[data-skin="term"] .tl-out{min-height:0; max-height:38vh; padding:10px 12px 9px; border-bottom:1px solid var(--hair)}
+  body[data-skin="term"] .tl-out.hidden{display:none}
+  body[data-skin="term"] .tl-hint{display:block; width:100%; margin:0; padding:8px 12px 0; background:none; border:0; box-shadow:none; text-align:left;
+    color:var(--faint); font:12px var(--fm); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer}
+  body[data-skin="term"] .tl-hint u{text-decoration:none; color:var(--muted)}
+  body[data-skin="term"] .tl-hint .c{color:var(--k-c)} body[data-skin="term"] .tl-hint .y{color:var(--k-y)} body[data-skin="term"] .tl-hint .o{color:var(--k-o)} body[data-skin="term"] .tl-hint .g{color:var(--k-g)}
+  body[data-skin="term"] .tl-hint .fill{margin-left:8px; color:var(--gold-dim)}
+  body[data-skin="term"] .tl-row{display:flex; align-items:center; gap:8px; margin:0; padding:2px 8px 6px 12px}
+  body[data-skin="term"] .tl-who{color:var(--gold); font-weight:600}
+  body[data-skin="term"] .tl-row input{flex:1 1 auto; min-width:0; width:auto; margin:0; padding:9px 0; background:none; border:0; outline:0; box-shadow:none; color:var(--me); caret-color:var(--me); font:16px var(--fm)}
+  body[data-skin="term"] .tl-x{flex:0 0 auto; min-height:32px; margin:0; padding:0 10px; background:none; border:1px solid var(--hair); box-shadow:none; color:var(--faint); font:11.5px var(--fm)}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .term-line{animation:none !important} }
 
   /* ---- under 700 wide: the folded phone ---- */
   @media (max-width:700px){
+/*PHONE_SHARED:body[data-skin="term"]*/
     body[data-skin="term"]{--gap:8px}
-    body[data-skin="term"] .term-dock{display:flex}
-    body[data-skin="term"] .content{padding:var(--gap) var(--gap) calc(64px + env(safe-area-inset-bottom, 0px))}
-    body[data-skin="term"] .topbar{top:0}
-    body[data-skin="term"] .toast{bottom:calc(60px + env(safe-area-inset-bottom, 0px))}
+    body[data-skin="term"] .content{padding:var(--gap) var(--gap) calc(var(--dh) + 18px + var(--kb))}
     body[data-skin="term"] .panel{padding:13px 12px}
     body[data-skin="term"] .ht-opt{padding:9px 11px}
     body[data-skin="term"] .ht-menu .grp{padding-top:12px}
@@ -49,6 +64,30 @@
     body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .num{font-size:17px}
     body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .lab{display:none}
     body[data-skin="term"] .hs-id .ht-name{font-size:22px}
+
+    /* the other pages. A page's heading is shorter here: the status line already says where you are */
+    body[data-skin="term"] .goals-head{gap:5px; padding:0 0 2px}
+    body[data-skin="term"] .goals-head h2, body[data-skin="term"] .sh-word{font-size:21px}
+    body[data-skin="term"] .goals-blurb, body[data-skin="term"] .sh-blurb{font-size:12.5px; line-height:1.45}
+    body[data-skin="term"] :is(.goals-head, .scroll-hero){margin-bottom:var(--gap)}
+    /* a row of choices scrolls sideways under the thumb rather than wrapping to a second row */
+    body[data-skin="term"] :is(#heatRange, #heatStyle, #homeHeatRange){flex-wrap:nowrap; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; max-width:100%}
+    body[data-skin="term"] :is(#heatRange, #heatStyle, #homeHeatRange)::-webkit-scrollbar{display:none}
+    body[data-skin="term"] :is(#heatRange, #heatStyle, #homeHeatRange) button{flex:0 0 auto; white-space:nowrap}
+    /* the Bakery's top three: what it pays goes under the name, so the name keeps its line */
+    body[data-skin="term"] .cf-hc, body[data-skin="term"] .cf-hc.first{grid-template-columns:24px 28px minmax(0,1fr); gap:0 8px; padding:14px 2px}
+    body[data-skin="term"] .cf-hpay, body[data-skin="term"] .cf-hc.first .cf-hpay{grid-column:1 / -1; grid-row:2; text-align:left; font-size:21px}
+    body[data-skin="term"] .cf-hbody .cf-ltrack{grid-row:3}
+    body[data-skin="term"] .cf-hc.first .cf-hname{font-size:16px}
+    /* the Exchange: the item keeps its name, the two figures sit to its right */
+    body[data-skin="term"] .fl-row{gap:8px; padding:8px}
+    body[data-skin="term"] .fl-name{min-width:0}
+    body[data-skin="term"] .fl-name b{overflow-wrap:anywhere}
+  }
+
+  /* summary tiles in an odd number: the last one takes the whole row rather than leaving a hole */
+  @media (max-width:900px){
+    body[data-skin="term"] .cl-stats > :last-child:nth-child(odd){grid-column:1 / -1}
   }
 
   /* ---- 701 to 1100 wide: the phone opened out, and a narrow window ---- */
@@ -82,19 +121,17 @@
 
   /* ---- a touch screen up to 1000 wide (the phone opened out): dock and drawer, no sidebar ---- */
   @media (min-width:701px) and (max-width:1000px){
+/*PHONE_SHARED:body[data-skin="term"].dock*/
     body[data-skin="term"].dock{--sbw:0px}
-    body[data-skin="term"].dock .term-dock{display:flex}
     body[data-skin="term"].dock .term-dock button{padding:0 15px; font-size:13px}
+    body[data-skin="term"].dock .term-tabs button{padding:0 12px; font-size:13px}
     body[data-skin="term"].dock .app{display:block; padding:var(--gap)}
-    body[data-skin="term"].dock .sidebar{position:fixed; left:0; top:0; bottom:0; height:100dvh; z-index:40; width:250px; padding:16px 12px; gap:12px;
+    body[data-skin="term"].dock .sidebar{position:fixed; left:0; top:0; bottom:0; height:100dvh; z-index:40; width:250px; padding-left:12px; padding-right:12px; gap:12px;
       transform:translateX(-100%); transition:transform .2s ease; background:var(--bg); -webkit-backdrop-filter:none; backdrop-filter:none}
     body[data-skin="term"].dock .sidebar.open{transform:none}
     body[data-skin="term"].dock .sb-toggle{display:none}
     body[data-skin="term"].dock .sb-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:39; touch-action:none}
-    body[data-skin="term"].dock .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:20}
-    body[data-skin="term"].dock .term-path{display:none}
-    body[data-skin="term"].dock .content{padding:0 0 calc(64px + env(safe-area-inset-bottom, 0px))}
-    body[data-skin="term"].dock .toast{bottom:calc(60px + env(safe-area-inset-bottom, 0px))}
+    body[data-skin="term"].dock .content{padding:0 0 calc(var(--dh) + 18px + var(--kb))}
     /* the drawer always shows the full list, whatever the rail setting was */
     body[data-skin="term"].dock.sb-rail .brand{font-size:17px; gap:10px; justify-content:flex-start}
     body[data-skin="term"].dock.sb-rail .navitem{justify-content:flex-start; padding:6px 9px; gap:7px; font-size:14px}
@@ -105,3 +142,27 @@
     body[data-skin="term"].dock .ht-term kbd{display:none}
   }
   @media (prefers-reduced-motion:reduce){ body[data-skin="term"].dock .sidebar{transition:none} }
+
+  /* ---- held sideways: little height, so nothing stays stuck to the top, the dock is a thinner
+     line, and the keep-clear bands move to the sides where the camera now is ---- */
+  @media (orientation:landscape) and (max-height:520px){
+    :is(body[data-skin="term"], body[data-skin="term"].dock){--kt:env(safe-area-inset-top, 0px); --kb:max(env(safe-area-inset-bottom, 0px), 8px); --dh:36px;
+      --kl:max(env(safe-area-inset-left, 0px), var(--gap)); --kr:max(env(safe-area-inset-right, 0px), var(--gap))}
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .topbar{position:static; padding-left:var(--kl); padding-right:var(--kr)}
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .term-dock{padding-left:calc(var(--kl) - var(--gap)); padding-right:calc(var(--kr) - var(--gap))}
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .term-dock button{font-size:12px}
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .term-line:not(.hidden){padding-left:calc(var(--kl) - var(--gap)); padding-right:calc(var(--kr) - var(--gap))}
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .tl-out{max-height:30vh}
+    /* a page's heading is one line: there is no height to spare for the paragraph under it */
+    :is(body[data-skin="term"], body[data-skin="term"].dock) :is(.goals-blurb, .sh-blurb){display:none}
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .goals-head h2, :is(body[data-skin="term"], body[data-skin="term"].dock) .sh-word{font-size:19px}
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .sidebar{padding-left:max(12px, env(safe-area-inset-left, 0px))}
+  }
+  @media (orientation:landscape) and (max-height:520px) and (max-width:700px){
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .content{padding-left:var(--kl); padding-right:var(--kr)}
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .topbar{margin-left:calc(var(--kl) * -1); margin-right:calc(var(--kr) * -1)}
+  }
+  @media (orientation:landscape) and (max-height:520px) and (min-width:701px) and (max-width:1000px){
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .app{padding-left:var(--kl); padding-right:var(--kr)}
+    :is(body[data-skin="term"], body[data-skin="term"].dock) .topbar{margin-left:calc(var(--kl) * -1); margin-right:calc(var(--kr) * -1)}
+  }
