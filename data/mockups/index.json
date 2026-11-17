@@ -1,5 +1,11 @@
 [
   {
+    "file": "home-runescape.html",
+    "title": "Home, RuneScape",
+    "desc": "Home, rebuilt from RuneScape's own conventions instead of a dashboard kit. Two directions: the game interface (bitmap numerals, right-click menu, orbs, a chat line) or the quest journal (ink on paper, done lines struck through, skills as a ledger). Swap ground shows each in light and dark.",
+    "date": "2026-11-17"
+  },
+  {
     "file": "coffer-runs.html",
     "title": "Coffer runs",
     "desc": "A Runs section in Coffer, tree and herb runs first. Two directions: a board of your patches, or a log of runs tallied over the week.",
