@@ -3392,6 +3392,24 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .cf-tierbtns button.on.hate{background:var(--panel); border-color:var(--red); color:var(--red)}
   body[data-skin="term"] .cf-foot{border-top-color:var(--line)}
 
+  /* ============ NOTES, AS FILES IN A TERMINAL ============
+     Each note is a small buffer: a title bar with a path (~/notes/01.txt), the date and the
+     delete, then the text in the monospace on the terminal's ground. The note's own colour
+     survives as the mark beside its path. */
+  body[data-skin="term"] .notes-grid{counter-reset:nt; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px; margin-top:14px}
+  body[data-skin="term"] .note{counter-increment:nt; display:flex; flex-direction:column; min-height:196px; padding:0; overflow:hidden;
+    background:var(--inset) !important; border:1px solid var(--line); border-radius:10px; box-shadow:none; transition:border-color .2s, box-shadow .2s}
+  body[data-skin="term"] .note:focus-within{border-color:var(--border); box-shadow:0 0 0 3px color-mix(in srgb, var(--gold) 9%, transparent)}
+  body[data-skin="term"] .note .n-foot{order:-1; justify-content:flex-start; gap:10px; padding:6px 6px 6px 12px; border-bottom:1px solid var(--line); font:11.5px var(--fm); color:var(--faint)}
+  body[data-skin="term"] .note .n-foot::before{content:"~/notes/" counter(nt, decimal-leading-zero) ".txt"; margin-right:auto; padding-left:9px; border-left:2px solid var(--nc, var(--gold-dim)); color:var(--muted)}
+  body[data-skin="term"] .note textarea{flex:1; min-height:148px; padding:11px 13px; resize:vertical; background:transparent !important; border:0 !important; border-radius:0 !important; box-shadow:none !important;
+    color:var(--text); font:13px/1.6 var(--fm); caret-color:var(--gold)}
+  body[data-skin="term"] .note textarea::placeholder{color:var(--faint)}
+  body[data-skin="term"] .note .n-del{padding:2px 7px; border-radius:5px; color:var(--faint); font:12px var(--fm)}
+  body[data-skin="term"] .note .n-del:hover{color:var(--red); background:none}
+  body[data-skin="term"] .note{animation:htLine .3s cubic-bezier(.2,.7,.2,1) backwards}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .note{animation:none} }
+
   /* ============ GLYPHS (written by glyphs.py; edit the drawings there) ============ */
   body[data-skin="term"] .gl{display:inline-block; width:18px; height:18px; vertical-align:-4px; overflow:hidden; text-indent:-99em; white-space:nowrap; background:currentColor; -webkit-mask:var(--g) center / contain no-repeat; mask:var(--g) center / contain no-repeat; flex:0 0 auto; text-align:left}
   body[data-skin="term"] .gl.x1{width:9px; height:9px; vertical-align:-1px} body[data-skin="term"] .gl.x3{width:27px; height:27px; vertical-align:-7px} body[data-skin="term"] .gl.x4{width:36px; height:36px; vertical-align:-9px}
@@ -4238,7 +4256,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
         <span class="small muted" id="notesSub"></span>
         <button class="primary right" id="addNoteBtn">+ New note</button>
       </div>
-      <p class="muted small" style="margin:0 2px 4px">Your glorified notebook. Write anything — it saves as you type.</p>
+      <p class="muted small" style="margin:0 2px 4px">Your glorified notebook. Write anything — it saves as you type.<span class="term-only"> A note typed on Home's terminal lands here too.</span></p>
       <div class="notes-grid" id="notesGrid"></div>
     </div>
   </div>
@@ -7928,7 +7946,7 @@ function renderNotes(){
     return;
   }
   el.innerHTML = state.notes.map(n=>`
-    <div class="note" style="background:${n.color}">
+    <div class="note" style="background:${n.color}; --nc:${n.color}">
       <textarea data-note="${n.id}" placeholder="Write anything…">${escapeHtml(n.text)}</textarea>
       <div class="n-foot">
         <span>${new Date(n.updatedAt).toLocaleDateString()}</span>
