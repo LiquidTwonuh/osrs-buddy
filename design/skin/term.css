@@ -1,0 +1,134 @@
+  /* ============ THE TERMINAL LOOK ============
+     One block, at the end of the sheet so it wins ties. Everything here sits under
+     body[data-skin="term"], so the Classic look (Settings, Look) is the page exactly as it was.
+     The idea: RuneScape's own conventions on a modern terminal. A monospace for names, numbers
+     and labels, a plain sans for sentences, hairlines instead of filled panels, soft corners,
+     no gradients, no shadows. Colour still comes from the theme tokens, so every theme works.
+     The right-click grammar (--k-*) is the same in every theme: cyan a place, yellow a person,
+     orange an item, green a skill. */
+  :root{--mort-art:url("/*MORT_ART*/")}
+  body[data-theme="mortimer"]{
+    --bg:#0b1513; --bg2:#10201c; --panel:#11201d; --panel2:#172a26; --border:#2a443f;
+    --gold:#66cbb9; --gold-dim:#4a9c8f; --gold2:#57b5a5; --gold3:#2f655d;
+    --text:#e0e6d9; --muted:#8fa39c;
+    --inset:#07100e; --active:#1c332f; --btnlo:#12211e; --btnhov1:#22403a; --btnhov2:#182d29;
+    --cellbg:#0d1917; --code:#b9d8cf; --ph:#64776f; --xp:#7d918a; --catbd:#1f3531;
+    --dotdim:#35554f; --swempty:#1f3430; --glow:rgba(102,203,185,.16);
+    --green:#7fd18a; --green-bg:#1f3a2a; --red:#e07a6c; --blue:#7fb4e6;
+    --shadow:0 2px 0 #050b0a, 0 6px 14px rgba(0,0,0,.4);
+  }
+  body[data-theme="night"]{
+    --bg:#060707; --bg2:#090a0a; --panel:#0c0e0e; --panel2:#131616; --border:#242a29;
+    --gold:#66cbb9; --gold-dim:#45948a; --gold2:#57b5a5; --gold3:#2b5d56;
+    --text:#e7e9e4; --muted:#8b918e;
+    --inset:#000000; --active:#1a2120; --btnlo:#0d0f0f; --btnhov1:#232b2a; --btnhov2:#171c1b;
+    --cellbg:#090a0a; --code:#b9d8cf; --ph:#5a605d; --xp:#767c79; --catbd:#1a1f1e;
+    --dotdim:#39403e; --swempty:#1f2423; --glow:rgba(102,203,185,.11);
+    --green:#7fd18a; --green-bg:#1b2f22; --red:#e07a6c; --blue:#7fb4e6;
+    --shadow:none;
+  }
+
+  body[data-skin="term"]{
+    --fs:"Bahnschrift","DIN Alternate","Inter","Segoe UI",system-ui,sans-serif;
+    --fm:"Cascadia Mono","Cascadia Code","SF Mono",Menlo,Consolas,"Roboto Mono","Droid Sans Mono",monospace;
+    --font-display:var(--fm); --font-body:var(--fs);
+    --line:color-mix(in srgb, var(--border) 58%, var(--bg));
+    --faint:color-mix(in srgb, var(--muted) 56%, var(--bg));
+    --k-c:#62d2d2; --k-y:#f0d264; --k-o:#f39a40; --k-g:#70cf6a; --me:#c79be6;
+    --shadow:none;
+    background-image:none; font-family:var(--fs);
+  }
+  body[data-skin="term"][data-theme="black"]{--line:#1c1c1c}
+
+  /* ---- type ---- */
+  body[data-skin="term"] :is(h1,h2,h3){font-family:var(--fm); font-weight:600; letter-spacing:-.3px; text-shadow:none}
+  body[data-skin="term"] .section-title h3{font:500 11px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  body[data-skin="term"] .section-title .small.muted{font-size:12.5px}
+  body[data-skin="term"] .set-h, body[data-skin="term"] .nav-sec{font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+  body[data-skin="term"] .set-h{color:var(--gold-dim)}
+  body[data-skin="term"] .empty{font-style:normal; color:var(--faint)}
+  body[data-skin="term"] :is(code,kbd){font-family:var(--fm)}
+  body[data-skin="term"] ::selection{background:color-mix(in srgb, var(--gold) 30%, transparent)}
+
+  /* ---- the theme scenery steps aside: no washes, no painted scene, no dust ---- */
+  body[data-skin="term"] :is(.sidebar,.brand,.panel,.navitem.active,.content,.ghost){background-image:none !important}
+  body[data-skin="term"] .content::before, body[data-skin="term"] .brand::after{display:none !important}
+  body[data-skin="term"] .view:not(.hidden) > .panel:first-child{margin-top:0 !important}
+  body[data-skin="term"] .panel{border-top-color:var(--line) !important; box-shadow:none !important}
+
+  /* ---- shell ---- */
+  body[data-skin="term"] .sidebar{background:var(--bg); border-right:1px solid var(--line); gap:12px}
+  body[data-skin="term"] .brand{font-family:var(--fm); font-size:17px; font-weight:600; letter-spacing:-.4px; color:var(--text); text-shadow:none; gap:10px; padding:2px 2px 6px}
+  body[data-skin="term"] .mortimeter-mark{background:var(--mort-art) center / contain no-repeat; width:1.05em; height:1.05em}
+  body[data-skin="term"] .mortimeter-mark::before, body[data-skin="term"] .mortimeter-mark::after, body[data-skin="term"] .mortimeter-mark > *{display:none}
+  body[data-skin="term"] .brand .mortimeter-mark{font-size:42px; margin:0 0 0 -3px; transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+  body[data-skin="term"] .brand:hover .mortimeter-mark{transform:rotate(-6deg) scale(1.06)}
+  body[data-skin="term"].sb-rail .brand .mortimeter-mark{font-size:34px; margin:0}
+  body[data-skin="term"] .tb-title{font-family:var(--fm); font-weight:600; letter-spacing:-.3px; color:var(--text)}
+  body[data-skin="term"] .tb-title .mortimeter-mark{font-size:30px}
+  body[data-skin="term"] .ver{font-family:var(--fm); color:var(--faint); margin-bottom:3px}
+  body[data-skin="term"] .nav{gap:1px}
+  body[data-skin="term"] .navitem{gap:7px; padding:6px 9px; border-radius:7px; color:var(--muted); font-weight:normal; font-size:14px; transition:background .15s, color .15s}
+  body[data-skin="term"] .navitem:hover{background:var(--panel); color:var(--text)}
+  body[data-skin="term"] .navitem.active{background:transparent; color:var(--text); box-shadow:none}
+  body[data-skin="term"]:not(.sb-rail) .navitem .ni-ic{display:none}
+  body[data-skin="term"]:not(.sb-rail) .navitem::before{content:">"; font-family:var(--fm); font-size:13px; color:var(--gold); opacity:0; margin-left:-14px; transition:opacity .18s, margin .18s cubic-bezier(.2,.7,.2,1)}
+  body[data-skin="term"]:not(.sb-rail) .navitem:is(.active,:hover)::before{opacity:1; margin-left:0}
+  body[data-skin="term"].sb-rail .navitem.active{background:var(--panel); box-shadow:inset 2px 0 0 var(--gold)}
+  body[data-skin="term"] .nav-sec{padding-left:9px}
+  body[data-skin="term"] .nav-quiet{font-size:12.5px}
+  body[data-skin="term"] .nav-quiet::before{border-top-color:var(--line)}
+  body[data-skin="term"]:not(.sb-rail) .nav-quiet::before{content:""; opacity:1; margin:0}
+  body[data-skin="term"] .nav-sub{border-left-color:var(--line); margin-left:12px}
+  body[data-skin="term"] .navsub{font-family:var(--fm); font-size:12px; border-radius:6px}
+  body[data-skin="term"] .navsub:hover{background:var(--panel)}
+  body[data-skin="term"] .navsub.active{background:transparent; color:var(--gold); font-weight:normal}
+  body[data-skin="term"] .side-mini{background:transparent; border-color:var(--line); border-radius:9px}
+  body[data-skin="term"] .side-mini .cb{background:transparent; border:1px solid var(--border); font-family:var(--fm)}
+  body[data-skin="term"] .sm-name{font-family:var(--fm); font-weight:500}
+  body[data-skin="term"] .side-foot{border-top-color:var(--line)}
+  body[data-skin="term"] .char-pop{background:var(--panel); border-color:var(--line)}
+  body[data-skin="term"] .topbar.scrolled{border-bottom-color:var(--line)}
+  body[data-skin="term"] .hamb{background:transparent; border-color:var(--line); color:var(--text)}
+
+  /* ---- surfaces: a hairline and a soft corner, nothing filled ---- */
+  body[data-skin="term"] .panel{background:transparent; border-color:var(--line); border-radius:11px; box-shadow:none}
+  body[data-skin="term"] :is(.stat,.skill,.sub-details,.su-theme){background:transparent; border-color:var(--line)}
+  body[data-skin="term"] ::-webkit-scrollbar-thumb{background:var(--border); border:2px solid transparent; background-clip:padding-box}
+  body[data-skin="term"] ::-webkit-scrollbar-thumb:hover{background:var(--gold3); border:2px solid transparent; background-clip:padding-box}
+
+  /* ---- controls ---- */
+  /* :where keeps these as light as the plain button rule they replace, so a button with a class of
+     its own (a nav row, a tab, a tick) still wins and only the ordinary ones change */
+  :where(body[data-skin="term"]) button{background:transparent; color:var(--text); border-color:var(--border); border-radius:8px; font-weight:500; box-shadow:none; text-shadow:none; transition:background .15s, border-color .15s, color .15s}
+  :where(body[data-skin="term"]) button:hover{background:var(--panel); border-color:var(--gold-dim)}
+  :where(body[data-skin="term"]) button.primary{background:var(--gold); color:var(--bg); border-color:var(--gold); font-weight:600}
+  :where(body[data-skin="term"]) button.primary:hover{background:color-mix(in srgb, var(--gold) 86%, #fff); border-color:transparent}
+  :where(body[data-skin="term"]) button.ghost{background:transparent; color:var(--muted); border-color:var(--line)}
+  :where(body[data-skin="term"]) button.ghost:hover{color:var(--text)}
+  :where(body[data-skin="term"]) button.small{font-size:12px}
+  body[data-skin="term"] :is(input[type=text],input[type=number],input[type=date],input[type=search],input[type=password],select,textarea){background:var(--inset); border-color:var(--line); border-radius:8px; transition:border-color .15s, box-shadow .15s}
+  body[data-skin="term"] :is(input[type=text],input[type=number],input[type=date],input[type=search],input[type=password],select,textarea):focus{border-color:var(--border); box-shadow:0 0 0 3px color-mix(in srgb, var(--gold) 10%, transparent)}
+  body[data-skin="term"] .seg{gap:2px}
+  body[data-skin="term"] .seg button{background:transparent; border:1px solid transparent; border-radius:7px; color:var(--muted); font:12px var(--fm); padding:5px 11px}
+  body[data-skin="term"] .seg button:hover{background:var(--panel); color:var(--text)}
+  body[data-skin="term"] .seg button.on{background:var(--panel); border-color:var(--line); color:var(--gold); font-weight:normal}
+  body[data-skin="term"] :is(.pill,.tag,.rd-chip,.streak-pill){border-radius:6px; background:transparent; border-color:var(--line); font-family:var(--fm)}
+  body[data-skin="term"] .set-tabs{border-bottom-color:var(--line)}
+  body[data-skin="term"] .set-tabs button{font:12.5px var(--fm); background:none; border:0; border-bottom:2px solid transparent; border-radius:0}
+  body[data-skin="term"] .set-tabs button:hover{background:none}
+  body[data-skin="term"] .set-row{border-bottom-color:var(--line)}
+  body[data-skin="term"] .su-theme{border-radius:9px}
+  body[data-skin="term"] .su-theme.on{box-shadow:none; border-color:var(--gold)}
+  body[data-skin="term"] details summary{color:var(--muted); font-weight:500}
+
+  /* ---- numbers wear the monospace ---- */
+  body[data-skin="term"] :is(.stat .v,.skill .slvl){font-family:var(--fm); font-weight:600; letter-spacing:-.4px}
+
+  /* ---- the look picker in Settings ---- */
+  .skin-pick{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
+  .skin-opt{display:flex; flex-direction:column; align-items:flex-start; gap:3px; padding:12px 14px; text-align:left; border-radius:10px}
+  .skin-opt b{font-size:14px} .skin-opt small{font-size:12px; color:var(--muted); font-weight:normal; line-height:1.4}
+  .skin-opt.on{border-color:var(--gold); color:var(--gold)}
+  body:not([data-skin="term"]) .term-only{display:none !important}
+  body[data-skin="term"] .classic-only{display:none !important}

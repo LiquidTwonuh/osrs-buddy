@@ -1,0 +1,64 @@
+
+  /* ============ THE LOADING SCREEN, AS A TERMINAL STARTING UP ============ */
+  .mt-boot-log{display:none}
+  body[data-skin="term"] #mtBoot{cursor:default}
+  body[data-skin="term"] #mtBoot::before{display:none}
+  body[data-skin="term"] .mt-boot-in{max-width:440px; text-align:left; font-family:var(--fm)}
+  body[data-skin="term"] .mt-boot-img{display:none}
+  body[data-skin="term"] .mt-boot-mark{font-size:76px; margin:0 0 14px -6px}
+  body[data-skin="term"] .mt-boot-mark .mortimeter-mark{display:inline-block !important}
+  body[data-skin="term"] .mt-boot-t{font:600 30px var(--fm); letter-spacing:-.6px; color:var(--text); text-shadow:none}
+  body[data-skin="term"] .mt-boot-s{font:13.5px var(--fs); letter-spacing:0; color:var(--muted); margin-top:5px}
+  body[data-skin="term"] .mt-boot-q{font:12.5px/1.5 var(--fm); font-style:normal; color:var(--faint); margin:22px 0 0; min-height:40px; max-width:none}
+  body[data-skin="term"] .mt-boot-q::before{content:"# "; color:var(--gold-dim)}
+  body[data-skin="term"] :is(.mt-boot-bar,.mt-boot-st){display:none}
+  body[data-skin="term"] .mt-boot-log{display:flex; flex-direction:column; gap:3px; margin-top:12px; min-height:92px; font:13px/1.6 var(--fm); color:var(--muted)}
+  .mt-boot-log div{display:flex; align-items:baseline; gap:8px; animation:htLine .3s cubic-bezier(.2,.7,.2,1) backwards}
+  .mt-boot-log div::before{content:">"; color:var(--gold)}
+  .mt-boot-log i{flex:1; min-width:20px; border-bottom:1px dotted var(--border); transform:translateY(-4px)}
+  .mt-boot-log b{font-weight:400; color:var(--k-g); min-width:2ch; text-align:right}
+  .mt-boot-log .now span::after{content:"_"; margin-left:2px; color:var(--gold); animation:termBlink 1.1s steps(1) infinite}
+  .mt-boot-log .fin{color:var(--text)} .mt-boot-log .fin i{border:0}
+  body[data-skin="term"] #mtBootGo{margin-top:16px; font:500 13px var(--fm); padding:7px 14px; border-radius:8px}
+  body[data-skin="term"] #mtBootGo::after{content:"  enter"; opacity:.55; font-weight:400}
+
+  /* ============ SETUP, AS A TERMINAL SESSION ============ */
+  body[data-skin="term"] .su{background:var(--bg); border-color:var(--border); border-radius:13px; box-shadow:0 24px 70px rgba(0,0,0,.6)}
+  body[data-skin="term"] .su-top{border-bottom-color:var(--line)}
+  body[data-skin="term"] .su-foot{border-top-color:var(--line)}
+  body[data-skin="term"] .su-dot::before{height:2px; border-radius:2px; background:var(--line)}
+  body[data-skin="term"] .su-dot.past::before{background:var(--gold-dim)} body[data-skin="term"] .su-dot.on::before{background:var(--gold)}
+  body[data-skin="term"] .su-dot span{font:500 10.5px var(--fm); letter-spacing:.1em}
+  body[data-skin="term"] .su-dot.on span::before{content:"> "}
+  body[data-skin="term"] .su-hero{text-align:left; padding:22px 0 6px}
+  body[data-skin="term"] .su-eyebrow{font:500 10.5px var(--fm); letter-spacing:.14em}
+  body[data-skin="term"] :is(.su-title,.su-h){font-family:var(--fm); font-weight:600; letter-spacing:-.5px; color:var(--text)}
+  body[data-skin="term"] .su-title{font-size:27px; margin:9px 0 12px}
+  body[data-skin="term"] .su-h{font-size:20px}
+  /* a heading types itself in, with the cursor after it */
+  body[data-skin="term"] .su-title, body[data-skin="term"] .su-h{width:fit-content; max-width:100%; animation:suType .55s steps(26) both}
+  @keyframes suType{from{clip-path:inset(0 100% 0 0)} to{clip-path:inset(0 -2ch 0 0)}}
+  body[data-skin="term"] .su-title::after{content:"_"; margin-left:3px; color:var(--gold); animation:termBlink 1.1s steps(1) infinite}
+  /* and what follows prints a line at a time */
+  body[data-skin="term"] .su-body > *{animation:htLine .34s cubic-bezier(.2,.7,.2,1) backwards}
+  body[data-skin="term"] .su-body > :nth-child(2){animation-delay:.12s} body[data-skin="term"] .su-body > :nth-child(3){animation-delay:.18s}
+  body[data-skin="term"] .su-body > :nth-child(4){animation-delay:.24s} body[data-skin="term"] .su-body > :nth-child(5){animation-delay:.3s}
+  body[data-skin="term"] .su-body > :nth-child(n+6){animation-delay:.36s}
+  body[data-skin="term"] .su-lead{margin:0; max-width:560px}
+  body[data-skin="term"] .su-safe{margin:22px 0 6px; border-radius:9px; background:transparent; border-color:var(--line)}
+  body[data-skin="term"] .su-card{border-radius:9px; background:transparent; border-color:var(--line)}
+  body[data-skin="term"] :is(.su-chip,.su-file){border-radius:6px; background:transparent; border-color:var(--line); font-family:var(--fm)}
+  body[data-skin="term"] :is(.su-lbl,.su-card-h){font:500 10.5px var(--fm); letter-spacing:.14em; color:var(--gold-dim)}
+  body[data-skin="term"] .su-did{margin-left:0} body[data-skin="term"] .su-did li{font-family:var(--fm); font-size:13px}
+  body[data-skin="term"] .su-g{border-radius:12px; background:var(--bg)}
+  body[data-skin="term"] .su-opt{font-family:var(--fm)}
+  @media (prefers-reduced-motion:reduce){
+    body[data-skin="term"] :is(.su-title,.su-h,.su-body > *), .mt-boot-log div{animation:none !important}
+  }
+
+  /* ---- the Claude key row (Settings and setup), both looks ---- */
+  .cl-row{gap:6px; margin-top:8px; flex-wrap:wrap}
+  .cl-row input, #suAiKey{flex:1; min-width:190px; background:var(--inset); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:8px 10px; outline:none; font:inherit}
+  .cl-row input:focus, #suAiKey:focus{border-color:var(--gold-dim)}
+  .cl-note.ok{color:var(--green)} .cl-note.bad{color:var(--red)}
+  #claudeSetting .seg{justify-content:flex-start; margin:10px 0 0}

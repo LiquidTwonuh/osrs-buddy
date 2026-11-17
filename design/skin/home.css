@@ -1,0 +1,140 @@
+
+  /* ---- the path line that stands where the banner did ---- */
+  .term-path{display:flex; align-items:baseline; gap:0; margin:0 0 20px; font:12px var(--fm); color:var(--faint); white-space:nowrap; overflow:hidden}
+  .term-path b{font-weight:400; color:var(--muted)}
+  .term-path i{font-style:normal; color:var(--gold-dim)}
+  .term-path u{text-decoration:none; color:var(--text)}
+  .term-path .cur{margin-left:6px; color:var(--gold-dim); animation:termBlink 1.1s steps(1) infinite}
+  @keyframes termBlink{50%{opacity:0}}
+  @media (max-width:700px){ .term-path{display:none} }
+
+  /* ============ HOME ============ */
+  .ht-head{display:flex; align-items:flex-end; justify-content:space-between; gap:22px 40px; flex-wrap:wrap; position:relative}
+  .ht-name{margin:0; display:flex; align-items:baseline; flex-wrap:wrap; font-family:var(--fm); font-size:30px; font-weight:600; letter-spacing:-.6px; line-height:1.05; color:var(--text)}
+  .ht-name em{font-style:normal; font-weight:400; font-size:.6em; letter-spacing:0; color:var(--gold); margin-left:10px; white-space:nowrap}
+  .ht-name button{margin-left:10px; padding:2px 7px; border:1px solid transparent; background:none; color:var(--faint); font:14px var(--fm); border-radius:6px; cursor:pointer; align-self:center}
+  .ht-name button:hover{color:var(--gold); border-color:var(--line); background:none}
+  .ht-sub{margin:9px 0 0; color:var(--muted); font-size:14px; font-variant-numeric:tabular-nums}
+  .ht-sub button{padding:0; border:0; background:none; color:var(--gold-dim); font:inherit; cursor:pointer; text-decoration:underline; text-decoration-color:var(--line); text-underline-offset:3px}
+  .ht-sub button:hover{color:var(--gold); background:none}
+  .ht-orbs{display:flex; gap:30px; flex-wrap:wrap}
+  .ht-orb{display:flex; align-items:center; gap:11px}
+  .ht-orb svg{width:46px; height:46px; flex:0 0 auto}
+  .ht-orb circle.rim{fill:none; stroke:var(--border); stroke-width:1}
+  .ht.intro .ht-orb .lvl{animation:htOrb 1.2s cubic-bezier(.2,.7,.2,1) backwards}
+  @keyframes htOrb{from{transform:translateY(var(--dy))}}
+  .ht-orb .num{font-family:var(--fm); font-size:22px; font-weight:600; letter-spacing:-.4px; line-height:1; color:var(--gold); font-variant-numeric:tabular-nums}
+  .ht-orb .lab{margin-top:5px; color:var(--muted); font-size:12.5px}
+  .ht-drops{position:absolute; right:0; top:-26px; pointer-events:none}
+  .ht-drop{position:absolute; right:0; top:0; display:flex; align-items:center; gap:6px; white-space:nowrap; font:600 17px var(--fm); color:var(--text); animation:htDrop 1.9s linear forwards}
+  .ht-drop img{width:19px; height:19px}
+  @keyframes htDrop{0%{transform:translateY(14px); opacity:0} 10%{opacity:1} 75%{opacity:1} 100%{transform:translateY(-30px); opacity:0}}
+
+  .ht-grid{display:grid; grid-template-columns:minmax(0,1.14fr) minmax(0,1fr); gap:0 40px; margin-top:34px; align-items:start}
+  .ht-col{display:flex; flex-direction:column; gap:32px; min-width:0}
+  .ht-lab{display:flex; align-items:baseline; gap:10px; margin:0 0 10px; font:500 11px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  .ht-lab small{margin-left:auto; font:12.5px var(--fs); letter-spacing:0; text-transform:none; color:var(--muted)}
+
+  .ht-skills{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:11px}
+  .ht-sk{position:relative; background:var(--bg); padding:11px 13px 10px; display:grid; grid-template-columns:20px minmax(0,1fr) auto; align-items:center; column-gap:9px; row-gap:9px; outline:0; cursor:pointer; transition:background .18s}
+  .ht-sk:nth-child(1){border-top-left-radius:10px} .ht-sk:nth-child(3){border-top-right-radius:10px}
+  .ht-sk:nth-last-child(3){border-bottom-left-radius:10px} .ht-sk:nth-last-child(1){border-bottom-right-radius:10px}
+  .ht-sk img{width:20px; height:20px; object-fit:contain}
+  .ht-sk .nm{color:var(--muted); font-size:13px; font-stretch:88%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:color .18s}
+  .ht-sk .lv{font-family:var(--fm); font-size:20px; font-weight:600; letter-spacing:-.4px; line-height:1; color:var(--gold); font-variant-numeric:tabular-nums}
+  .ht-sk .bar{grid-column:1/-1; height:2px; border-radius:2px; background:var(--line); overflow:hidden; margin:0}
+  .ht-sk .bar i{display:block; height:100%; width:var(--p); border-radius:2px; background:var(--gold); transform-origin:0 50%}
+  .ht.intro .ht-sk .bar i{animation:htGrow .8s cubic-bezier(.2,.7,.2,1) backwards; animation-delay:calc(var(--n) * 18ms + 120ms)}
+  @keyframes htGrow{from{transform:scaleX(0)}}
+  .ht-sk.near .lv{color:var(--k-g)} .ht-sk.near .bar i{background:var(--k-g)}
+  .ht-sk.maxed .lv{color:var(--text)}
+  .ht-sk:hover,.ht-sk:focus-visible{background:var(--panel)}
+  .ht-sk:hover .nm,.ht-sk:focus-visible .nm{color:var(--text)}
+  .ht-tip{display:none; position:absolute; left:42px; top:calc(100% - 8px); z-index:6; grid-template-columns:auto auto; gap:1px 18px; padding:8px 11px; background:var(--panel2); border:1px solid var(--border); border-radius:8px; box-shadow:0 10px 28px rgba(0,0,0,.5); font:12px/1.5 var(--fm); color:var(--muted); white-space:nowrap; pointer-events:none}
+  .ht-tip b{font-weight:400; color:var(--text); text-align:right}
+  @media (hover:hover){ .ht-sk:hover .ht-tip,.ht-sk:focus-visible .ht-tip{display:grid; animation:htTip .16s cubic-bezier(.2,.7,.2,1)} }
+  @keyframes htTip{from{opacity:0; transform:translateY(-3px)}}
+  .ht-sk:nth-child(3n) .ht-tip{left:auto; right:10px}
+
+  .ht-menu{border:1px solid var(--line); border-radius:11px; padding-bottom:7px}
+  .ht-menu .ttl{display:flex; align-items:baseline; padding:9px 14px 8px; border-bottom:1px solid var(--line); color:var(--muted); font-size:13.5px}
+  .ht-menu .ttl small{margin-left:auto; font:12px var(--fm); color:var(--k-g)}
+  .ht-menu .ttl small.none{color:var(--faint)}
+  .ht-menu .grp{padding:11px 14px 3px; font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+  .ht-menu .nil{padding:8px 14px 4px; color:var(--faint); font-size:13.5px}
+  .ht-opt{display:flex; align-items:baseline; gap:6px; width:100%; padding:6px 14px; background:none; border:0; border-radius:0; color:var(--text); font:inherit; font-weight:normal; text-align:left; cursor:pointer; transition:background .14s}
+  .ht-opt .act{white-space:nowrap}
+  .ht-opt .act,.ht-opt .t,.ht-opt .st{transition:color .25s}
+  .ht-opt .t{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .ht-opt .t.c{color:var(--k-c)} .ht-opt .t.y{color:var(--k-y)} .ht-opt .t.o{color:var(--k-o)} .ht-opt .t.g{color:var(--k-g)}
+  .ht-opt .st{margin-left:auto; padding-left:14px; color:var(--muted); font:12.5px var(--fm); white-space:nowrap}
+  .ht-opt .st.ready{color:var(--k-g)} .ht-opt .st.warn{color:var(--k-o)}
+  .ht-opt:hover,.ht-opt:focus-visible{background:var(--panel); outline:0}
+  .ht-opt:hover .act,.ht-opt:focus-visible .act{color:var(--k-y)}
+
+  .ht-term{border:1px solid var(--line); border-radius:11px; background:var(--inset); font-family:var(--fm); font-size:13px; line-height:1.45; overflow:hidden; transition:border-color .25s, box-shadow .25s}
+  .ht-term:focus-within{border-color:var(--border); box-shadow:0 0 0 3px color-mix(in srgb, var(--gold) 9%, transparent)}
+  .ht-term .top{display:flex; align-items:center; gap:8px; padding:7px 12px; border-bottom:1px solid var(--line); color:var(--faint); font-size:12px}
+  .ht-term .top .art{width:18px; height:18px; background:var(--mort-art) center / contain no-repeat; flex:0 0 auto}
+  .ht-term .top span{color:var(--muted)}
+  .ht-term .top i{font-style:normal}
+  .ht-term .top .ai{margin-left:auto; padding:0; border:0; background:none; font:inherit; color:var(--faint); cursor:pointer}
+  .ht-term .top .ai.on{color:var(--k-g)}
+  .ht-term .top .ai:hover{background:none; color:var(--text)}
+  .ht-term kbd{padding:0 6px; border:1px solid var(--line); border-radius:4px; font:inherit; color:var(--faint)}
+  .ht-log{display:flex; flex-direction:column; gap:4px; min-height:74px; max-height:236px; overflow:auto; padding:10px 12px 9px; scrollbar-width:thin; scrollbar-color:var(--border) transparent}
+  .ht-log > div{display:flex; gap:10px; align-items:baseline}
+  .ht-log > div.new{animation:htLine .3s cubic-bezier(.2,.7,.2,1) backwards}
+  @keyframes htLine{from{opacity:0; transform:translateY(4px)}}
+  .ht-log time{flex:0 0 40px; color:var(--faint)}
+  .ht-log span{min-width:0; overflow-wrap:anywhere}
+  .ht-log em{margin-left:auto; padding-left:10px; font-style:normal; color:var(--k-g); white-space:nowrap}
+  .ht-log :is(.m,.q) span{color:var(--me)} .ht-log :is(.m,.q) b{font-weight:400; color:var(--text)}
+  .ht-log :is(.s,.a) span{color:var(--muted)} .ht-log :is(.s,.a) b{font-weight:400; color:var(--gold)}
+  .ht-log .a span{color:var(--text)}
+  .ht-log .a a{color:var(--k-c)}
+  .ht-log .a :is(ul,ol){margin:4px 0 0; padding-left:18px}
+  .ht-log .wait span::after{content:" ..."; animation:termBlink 1.1s steps(1) infinite}
+  .ht-say{display:flex; align-items:baseline; gap:8px; padding:9px 12px 10px; border-top:1px solid var(--line); cursor:text; margin:0}
+  .ht-say .who{color:var(--text); white-space:nowrap}
+  .ht-say .ln{min-width:0}
+  .ht-say .in{color:var(--me); outline:0; white-space:pre-wrap; word-break:break-word; caret-color:transparent}
+  .ht-say .star{color:var(--me); animation:termBlink 1.1s steps(1) infinite}
+  .ht-say .hint{margin-left:auto; padding-left:12px; color:var(--faint); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:0 1 auto}
+  .ht-say .hint .c{color:var(--k-c)} .ht-say .hint .y{color:var(--k-y)} .ht-say .hint .o{color:var(--k-o)} .ht-say .hint .g{color:var(--k-g)}
+  .ht-say .hint u{text-decoration:none; color:var(--muted)}
+
+  .ht-kc{display:grid; grid-template-columns:1fr 1fr; column-gap:32px}
+  .ht-kc button{display:flex; align-items:baseline; gap:8px; padding:6px 0; border:0; border-bottom:1px solid var(--line); border-radius:0; background:none; color:var(--text); font:inherit; font-weight:normal; text-align:left; cursor:pointer; min-width:0}
+  .ht-kc button:hover{background:none; color:var(--gold)}
+  .ht-kc button span{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .ht-kc small{color:var(--faint); font-size:12.5px; white-space:nowrap}
+  .ht-kc b{margin-left:auto; font:500 14px var(--fm); color:var(--gold); font-variant-numeric:tabular-nums}
+  .ht-clues{display:flex; gap:6px 18px; flex-wrap:wrap; margin-top:10px; color:var(--faint); font-size:13px}
+  .ht-clues b{margin-left:5px; font:13px var(--fm); color:var(--muted)} .ht-clues b.has{color:var(--gold)}
+  .ht-none{color:var(--faint); font-size:13.5px}
+  /* the Activity panel moves in under the skills and loses its box */
+  body[data-skin="term"] #homeHeatPanel{border:0; padding:0; margin:0; border-radius:0}
+  body[data-skin="term"] #homeHeatPanel .section-title{margin:0 0 10px}
+  body[data-skin="term"] #homeHeatPanel .seg{justify-content:flex-start; margin:0 0 8px}
+  body[data-skin="term"] #homeHeatPanel .heatgrid{margin:0}
+
+  @media (max-width:1100px){
+    .ht-grid{grid-template-columns:minmax(0,1fr)}
+    .ht-col{display:contents}
+    .ht-grid section, .ht-grid #homeHeatPanel{margin-bottom:28px !important}
+    .hs-menu{order:1} .hs-term{order:2} .hs-skills{order:3} .hs-kc{order:4} .ht-grid #homeHeatPanel{order:5}
+    .ht-orbs{gap:20px}
+  }
+  @media (max-width:560px){
+    .ht-name{font-size:26px}
+    .ht-sk{padding:10px 9px 9px}
+    .ht-sk .nm{visibility:hidden}
+    .ht-kc{grid-template-columns:1fr}
+    .ht-term kbd,.ht-term .top i{display:none}
+    .ht-say{flex-wrap:wrap}
+    .ht-say .hint{flex-basis:100%; padding-left:0; margin-top:2px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .ht *, .term-path .cur{animation-duration:.01ms !important; animation-delay:0ms !important; transition-duration:.01ms !important}
+  }

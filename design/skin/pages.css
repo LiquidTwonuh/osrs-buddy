@@ -1,0 +1,37 @@
+
+  /* ============ EVERY OTHER PAGE ============
+     Order and structure are the Classic page's. What changes is the dress: page heads read from
+     the left like a prompt, tabs are plain words, chips are square-cornered and quiet. */
+  body[data-skin="term"] .ht-term .top kbd{margin-left:auto}
+  body[data-skin="term"] .ht-term .top .ai:not(.hidden) + kbd{margin-left:0}
+  body[data-skin="term"] .ns-ic{display:none}
+
+  /* ---- page heads ---- */
+  body[data-skin="term"] .scroll-hero{background:none; border:0; border-radius:0; padding:0; margin:0 0 20px; overflow:visible}
+  body[data-skin="term"] :is(.sh-rod,.sh-rule){display:none}
+  body[data-skin="term"] .sh-inner{align-items:flex-start; text-align:left; gap:7px}
+  body[data-skin="term"] .sh-eyebrow{font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim); padding:0}
+  body[data-skin="term"] .sh-word{font-size:27px; font-weight:600; letter-spacing:-.6px; text-transform:none; padding:0; color:var(--text)}
+  body[data-skin="term"] .sh-blurb{max-width:660px; font-size:14px; line-height:1.5; color:var(--muted); text-align:left; margin:0}
+  body[data-skin="term"] .goals-head{align-items:flex-start; text-align:left; gap:7px; padding:0 0 6px}
+  body[data-skin="term"] .goals-head h2{font-size:27px; letter-spacing:-.6px; color:var(--text)}
+  body[data-skin="term"] .goals-blurb{font-style:normal; max-width:660px; font-size:14px; line-height:1.5}
+  body[data-skin="term"] .streak-pill{color:var(--k-o); padding:2px 9px}
+
+  /* ---- things the Classic page centres read from the left here ---- */
+  body[data-skin="term"] .seg{justify-content:flex-start}
+  body[data-skin="term"] .section-title.center{justify-content:flex-start; text-align:left}
+  body[data-skin="term"] :is(.act-picker,.sub-row,.composer .row){justify-content:flex-start}
+  body[data-skin="term"] .composer{margin-left:0}
+  body[data-skin="term"] .sub-details > summary{text-align:left}
+
+  /* ---- chips, tags and small badges: square-cornered, monospace, no fill ---- */
+  body[data-skin="term"] :is(.rcta-chip,.qp-chip,.rk-chip,.cf-tag,.gu-lv,.gu-bchip,.tg,.wiki-link,.rd-chip2,.prof-chip){border-radius:6px}
+  body[data-skin="term"] :is(.qp-chip,.rk-chip,.gu-bchip,.prof-chip){background:transparent; border-color:var(--line)}
+  body[data-skin="term"] :is(.qp-chip,.rk-chip,.gu-bchip):hover{border-color:var(--gold-dim); background:var(--panel)}
+  body[data-skin="term"] .wiki-link{font-family:var(--fm); border-color:var(--line)}
+
+  /* ---- alerts, toasts, cards over the page ---- */
+  body[data-skin="term"] .toast{border-radius:9px; font-family:var(--fm); font-size:12.5px; box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  body[data-skin="term"] .alert{border-radius:8px}
+  body[data-skin="term"] .alert .abtn{border-radius:6px}
