@@ -1,0 +1,132 @@
+
+  /* ============ TERMINAL PARTS ============
+     The small things every page shares, said the way a terminal says them. A bar is a row of
+     cells. A list is numbered lines, not a stack of cards. A tag is a flag (--auto). A tick box is
+     a pair of brackets. A section label opens like a comment. */
+
+  /* ---- bars: cells ---- */
+  body[data-skin="term"] .bar{height:9px; border:0; border-radius:0; background:var(--line); overflow:hidden;
+    -webkit-mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px); mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px)}
+  body[data-skin="term"] .bar > i{background:var(--gold); border-radius:0}
+  body[data-skin="term"] .bar.full > i, body[data-skin="term"] .bar.ready > i{background:var(--k-g)}
+  body[data-skin="term"] .ht-sk .bar{height:3px; background:var(--line);
+    -webkit-mask:repeating-linear-gradient(90deg, #000 0 4px, transparent 4px 6px); mask:repeating-linear-gradient(90deg, #000 0 4px, transparent 4px 6px)}
+
+  /* ---- section labels open like a comment ---- */
+  body[data-skin="term"] .section-title h3::before, body[data-skin="term"] .ht-lab::before{content:"//"; margin-right:7px; color:var(--faint); letter-spacing:0; font-weight:400}
+  body[data-skin="term"] .ht-lab{gap:0} body[data-skin="term"] .ht-lab small{padding-left:10px}
+
+  /* ---- lists: numbered lines ---- */
+  body[data-skin="term"] :has(> .item){counter-reset:trow}
+  body[data-skin="term"] .item{counter-increment:trow; background:transparent; border:0; border-bottom:1px solid var(--line); border-radius:0; margin:0; padding:13px 6px 13px 4px; gap:12px; transition:background .15s}
+  body[data-skin="term"] .item::before{content:counter(trow, decimal-leading-zero); flex:0 0 22px; align-self:flex-start; padding-top:3px; font:11px var(--fm); color:var(--faint); text-align:right}
+  body[data-skin="term"] .item:hover{background:color-mix(in srgb, var(--panel) 55%, transparent)}
+  body[data-skin="term"] .item:hover::before{content:">"; color:var(--gold)}
+  body[data-skin="term"] .item .name{font-family:var(--fm); font-weight:500; font-size:14px; letter-spacing:-.2px}
+  body[data-skin="term"] .item .micon{width:22px; height:22px}
+  body[data-skin="term"] .item .micon img{max-width:22px; max-height:22px}
+  body[data-skin="term"] .item :is(.meta,.small){font-family:var(--fm)}
+  body[data-skin="term"] .check-badge{font-size:18px; line-height:1}
+  body[data-skin="term"] .item button.ghost.small{border-color:transparent; color:var(--faint)}
+  body[data-skin="term"] .item button.ghost.small:hover{color:var(--text); border-color:var(--line)}
+  body[data-skin="term"] .item button.ghost.small.danger:hover{color:var(--red); border-color:var(--red)}
+
+  /* ---- tags are flags ---- */
+  body[data-skin="term"] .pill{border:0; padding:0; background:none; border-radius:0; font:11.5px var(--fm); color:var(--faint)}
+  body[data-skin="term"] .pill::before{content:"--"; opacity:.7}
+  body[data-skin="term"] .pill.auto{color:var(--k-c)} body[data-skin="term"] .pill.manual{color:var(--gold-dim)}
+
+  /* ============ THE PLAY GRID ON HOME ============ */
+  .ht-play{display:grid; grid-auto-flow:column; grid-template-rows:repeat(7,11px); grid-auto-columns:11px; gap:2px}
+  .ht-play i{border-radius:2px; background:var(--panel); cursor:pointer; transition:background .25s, box-shadow .15s}
+  .ht-play i.l1{background:color-mix(in srgb, var(--gold) 20%, var(--bg))}
+  .ht-play i.l2{background:color-mix(in srgb, var(--gold) 42%, var(--bg))}
+  .ht-play i.l3{background:color-mix(in srgb, var(--gold) 68%, var(--bg))}
+  .ht-play i.l4{background:var(--gold)}
+  .ht-play i.fut{visibility:hidden}
+  .ht-play i.now{box-shadow:0 0 0 1px var(--text)}
+  .ht-play i:hover{box-shadow:0 0 0 1px var(--muted)}
+  .ht.intro .ht-play i{animation:htCell .5s cubic-bezier(.2,.7,.2,1) backwards; animation-delay:calc(var(--c) * 9ms + 200ms)}
+  @keyframes htCell{from{opacity:0; transform:scale(.4)}}
+  .ht-playfoot{display:flex; align-items:center; gap:10px; margin-top:9px; font:11.5px var(--fm); color:var(--faint)}
+  .ht-playfoot .key{display:inline-flex; align-items:center; gap:3px; margin-left:auto}
+  .ht-playfoot .key i{width:9px; height:9px; border-radius:2px; background:var(--panel)}
+  .ht-playfoot .key i:nth-of-type(2){background:color-mix(in srgb, var(--gold) 20%, var(--bg))}
+  .ht-playfoot .key i:nth-of-type(3){background:color-mix(in srgb, var(--gold) 42%, var(--bg))}
+  .ht-playfoot .key i:nth-of-type(4){background:color-mix(in srgb, var(--gold) 68%, var(--bg))}
+  .ht-playfoot .key i:nth-of-type(5){background:var(--gold)}
+  .ht-playfoot b{font-weight:400; color:var(--muted)}
+  @media (max-width:1100px){ .hs-play{order:4} .hs-kc{order:5} .ht-grid #homeHeatPanel{order:6} }
+
+  /* ============ THE BAKERY ============
+     Same sections in the same order. The podium is a ranked table, a ledger line is a name, a
+     row of cells and a figure, tags are #words, and nothing is a pill. */
+  body[data-skin="term"] .cf-strip::before{display:none}
+  body[data-skin="term"] .cf-strip{padding:14px 16px}
+  body[data-skin="term"] .cf-lenshead{align-items:flex-start; text-align:left}
+  body[data-skin="term"] .cf-lenstitle{font:500 11px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  body[data-skin="term"] .cf-lenstitle::before{content:"//"; margin-right:7px; color:var(--faint); letter-spacing:0}
+  body[data-skin="term"] .cf-lens{justify-content:flex-start; gap:4px}
+  body[data-skin="term"] .cf-lens button{border-radius:7px; background:transparent; border:1px solid var(--line); color:var(--muted); font:12.5px var(--fm); padding:5px 10px; box-shadow:none}
+  body[data-skin="term"] .cf-lens button:hover{background:var(--panel); color:var(--text)}
+  body[data-skin="term"] .cf-lens button.on{border-color:var(--gold); color:var(--gold); background:var(--panel)}
+  body[data-skin="term"] .cf-lenssub{text-align:left}
+  body[data-skin="term"] .cf-word{border:0; background:none; padding:0; border-radius:0; font-family:var(--fm); color:var(--gold); text-decoration:underline; text-decoration-color:var(--line); text-underline-offset:3px}
+  body[data-skin="term"] .cf-chip{border-radius:7px; background:transparent; border-color:var(--line); font-family:var(--fm)}
+  body[data-skin="term"] .cf-chip button{border-radius:5px}
+  body[data-skin="term"] .cf-chip button.on{background:var(--panel); color:var(--gold)}
+  body[data-skin="term"] .cf-tag{border:0; background:none; padding:0; border-radius:0; font:11px var(--fm); color:var(--faint); text-transform:lowercase}
+  body[data-skin="term"] .cf-tag::before{content:"#"; opacity:.7}
+  body[data-skin="term"] .cf-tag.wild{color:var(--red)}
+  body[data-skin="term"] .cf-why{font-family:var(--fm); font-size:11.5px; color:var(--gold-dim)}
+
+  /* the podium: three ranked lines */
+  body[data-skin="term"] .cf-podium{display:flex; flex-direction:column; gap:0}
+  body[data-skin="term"] .cf-hc, body[data-skin="term"] .cf-hc.first{display:grid; grid-template-columns:34px 34px minmax(0,1fr); gap:0 12px; align-items:start; padding:16px 6px; border:0; border-bottom:1px solid var(--line); border-radius:0; background:none; box-shadow:none; text-align:left; grid-row:auto; transition:background .15s}
+  body[data-skin="term"] .cf-hc:last-child{border-bottom:0}
+  body[data-skin="term"] .cf-hc:hover{background:color-mix(in srgb, var(--panel) 55%, transparent)}
+  body[data-skin="term"] .cf-hc.pinned{box-shadow:inset 2px 0 0 var(--gold)}
+  body[data-skin="term"] .cf-hrank, body[data-skin="term"] .cf-hc.first .cf-hrank{position:static; transform:none; width:auto; height:auto; border:0; border-radius:0; background:none; display:block; padding-top:3px; font:600 15px var(--fm); color:var(--faint); text-align:right}
+  body[data-skin="term"] .cf-hrank::before{content:"#"; font-weight:400}
+  body[data-skin="term"] .cf-hc.first .cf-hrank{color:var(--gold)}
+  body[data-skin="term"] .cf-hico, body[data-skin="term"] .cf-hc.first .cf-hico{width:34px; height:28px; font-size:27px; justify-content:flex-start}
+  body[data-skin="term"] .cf-hico img, body[data-skin="term"] .cf-hc.first .cf-hico img{width:26px; height:26px}
+  body[data-skin="term"] .cf-hbody, body[data-skin="term"] .cf-hc.first .cf-hbody{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:5px 18px; align-items:baseline}
+  body[data-skin="term"] .cf-hbody > *{grid-column:1 / -1; justify-content:flex-start}
+  body[data-skin="term"] .cf-hname, body[data-skin="term"] .cf-hc.first .cf-hname{grid-column:1; font:600 15px var(--fm); letter-spacing:-.3px}
+  body[data-skin="term"] .cf-hpay, body[data-skin="term"] .cf-hc.first .cf-hpay{grid-column:2; grid-row:1; margin:0; font:600 20px var(--fm); letter-spacing:-.5px; color:var(--gold); text-align:right; white-space:nowrap}
+  body[data-skin="term"] .cf-hc.first .cf-hname{font-size:17px}
+  body[data-skin="term"] .cf-hc.first .cf-hpay{font-size:26px}
+  body[data-skin="term"] .cf-hacts{margin-top:4px}
+  body[data-skin="term"] .cf-hacts :is(button,a).ghost.small{border-color:transparent; padding:3px 7px; font:12px var(--fm); color:var(--muted); text-decoration:none}
+  body[data-skin="term"] .cf-hacts :is(button,a).ghost.small:hover{border-color:var(--line); color:var(--text)}
+
+  /* tracks: cells, with the figure set to the right of them */
+  body[data-skin="term"] .cf-ltrack{height:22px; border:0; border-radius:0; background:none; overflow:visible}
+  body[data-skin="term"] .cf-ltrack::before{content:""; position:absolute; left:0; right:0; top:50%; height:9px; margin-top:-4.5px; background:var(--line);
+    -webkit-mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px); mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px)}
+  body[data-skin="term"] .cf-lbar{position:relative; height:9px; border-radius:0; background:var(--gold);
+    -webkit-mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px); mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px)}
+  body[data-skin="term"] .cf-lrow.short .cf-lbar{background:var(--gold-dim); opacity:.6}
+  body[data-skin="term"] .cf-ltrack.slim, body[data-skin="term"] .cf-hc.first .cf-ltrack.slim{height:9px; max-width:none; margin:3px 0 2px; background:none}
+  body[data-skin="term"] .cf-ltrack.slim::before{top:0; margin-top:0}
+  body[data-skin="term"] .cf-lgp{right:0; padding-left:10px; background:var(--bg); font:600 12.5px var(--fm); text-shadow:none}
+  body[data-skin="term"] .cf-lrow{border-radius:0; border:0; border-bottom:1px solid var(--line); padding:9px 6px}
+  body[data-skin="term"] .cf-lrow:hover{background:color-mix(in srgb, var(--panel) 55%, transparent); border-color:var(--line)}
+  body[data-skin="term"] .cf-lrow:hover .cf-lgp{background:color-mix(in srgb, var(--panel) 55%, var(--bg))}
+  body[data-skin="term"] .cf-lrow.sel{box-shadow:inset 2px 0 0 var(--gold); background:color-mix(in srgb, var(--panel) 55%, transparent)}
+  body[data-skin="term"] .cf-lname b{font-family:var(--fm); font-weight:500; font-size:13px}
+  body[data-skin="term"] .cf-ledger{gap:0}
+  body[data-skin="term"] .cf-lsub{font-size:12px}
+  body[data-skin="term"] .qp-pin{border-radius:6px; background:transparent; border-color:var(--line)}
+
+  /* the questions */
+  body[data-skin="term"] .cf-quiz{text-align:left; margin-left:0; padding:22px 20px}
+  body[data-skin="term"] .cf-step{font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  body[data-skin="term"] .cf-q{font-size:20px; letter-spacing:-.4px; color:var(--text)}
+  body[data-skin="term"] .cf-tiers{margin:0}
+  body[data-skin="term"] .cf-tier{border-bottom-color:var(--line); padding:5px 0}
+  body[data-skin="term"] .cf-tierbtns button{border-radius:6px; background:transparent; border-color:var(--line); font:11.5px var(--fm)}
+  body[data-skin="term"] .cf-tierbtns button.on.love, body[data-skin="term"] .cf-tierbtns button.on.like{background:var(--panel); border-color:var(--gold); color:var(--gold)}
+  body[data-skin="term"] .cf-tierbtns button.on.hate{background:var(--panel); border-color:var(--red); color:var(--red)}
+  body[data-skin="term"] .cf-foot{border-top-color:var(--line)}
