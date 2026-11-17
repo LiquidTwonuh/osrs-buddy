@@ -1,0 +1,80 @@
+
+  /* ============ HOME: THE DEBRIEF, FOUR VITALS, A FULL ACTIVITY PANE ============
+     After Josh's notes of 2026-11-17. Two panes size their insides by their own width rather
+     than the window's (container queries), since a pane can be narrow in a wide window. */
+  body[data-skin="term"] #view-home{container:home / inline-size}
+  body[data-skin="term"] .hs-menu{container:htmenu / inline-size}
+  body[data-skin="term"] .hs-orbs{container:htorbs / inline-size}
+
+  /* a pane's header never runs its two halves together: a gap between, and the right half gives way */
+  body[data-skin="term"] .ht-menu .ttl{flex-wrap:wrap; gap:2px 10px}
+  body[data-skin="term"] .ht-menu .ttl small{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  body[data-skin="term"] .ht .ht-lab small{min-width:0}
+
+  /* the debrief */
+  body[data-skin="term"] .ht-menu .lead{margin:0; padding:10px 11px 2px; font-size:13px; line-height:1.5; color:var(--muted)}
+  body[data-skin="term"] .ht-menu .lead b{font-weight:600; color:var(--text)}
+  /* a row is three columns: what to do, to what, and how it stands. The middle one wraps inside
+     its own column, so nothing lands on top of anything as the pane narrows */
+  body[data-skin="term"] .ht-opt{display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:first baseline; gap:0 7px; padding:5px 11px}
+  body[data-skin="term"] .ht-opt .t{white-space:normal; overflow:visible; overflow-wrap:break-word}
+  body[data-skin="term"] .ht-opt .st{margin-left:0; padding-left:8px; text-align:right}
+  @container htmenu (max-width:300px){
+    body[data-skin="term"] .ht-opt{grid-template-columns:auto minmax(0,1fr)}
+    body[data-skin="term"] .ht-opt .st{grid-column:2; padding-left:0; text-align:left; white-space:normal}
+  }
+  @container htmenu (max-width:210px){
+    body[data-skin="term"] .ht-opt{display:block}
+    body[data-skin="term"] .ht-opt .act{margin-right:6px}
+    body[data-skin="term"] .ht-opt .st{display:block}
+  }
+
+  /* the vitals: each orb's figure takes the orb's colour */
+  body[data-skin="term"] .ht-orb .num{color:var(--oc, var(--gold)); white-space:nowrap}
+  body[data-skin="term"] .ht-orb .num small{margin-left:2px; font-size:.6em; font-weight:400; letter-spacing:0; color:var(--faint)}
+  body[data-skin="term"] .ht-orb .lab-s{display:none; margin-top:4px; font:10.5px var(--fm); line-height:1.25; color:var(--muted); overflow-wrap:anywhere}
+  body[data-skin="term"] .ht-orb, body[data-skin="term"] .ht-orb > div{min-width:0}
+  body[data-skin="term"] .hs-orbs .ht-orb .lab{white-space:normal; line-height:1.3}
+  body[data-skin="term"] .ht-orb[data-skillinfo]{cursor:pointer}
+  body[data-skin="term"] .ht-orb[data-skillinfo]:hover .lab, body[data-skin="term"] .ht-orb[data-skillinfo]:focus-visible .lab{color:var(--text)}
+  body[data-skin="term"] .ht-orb[data-skillinfo]:focus-visible{outline:1px solid var(--gold-dim); outline-offset:4px}
+  /* in a narrow pane an orb keeps its figure and a two-word label */
+  @container htorbs (max-width:170px){
+    body[data-skin="term"] .hs-orbs .ht-orbs{padding:10px 8px; gap:10px}
+    body[data-skin="term"] .hs-orbs .ht-orb{gap:8px}
+    body[data-skin="term"] .hs-orbs .ht-orb svg{width:32px; height:32px}
+    body[data-skin="term"] .hs-orbs .ht-orb .num{font-size:16px}
+  }
+  @container htorbs (max-width:215px){
+    body[data-skin="term"] .hs-orbs .ht-orb .num small, body[data-skin="term"] .hs-orbs .ht-orb .lab{display:none}
+    body[data-skin="term"] .hs-orbs .ht-orb .lab-s{display:block}
+  }
+
+  /* the activity pane: under the grid, the last seven days and the month's most trained skills,
+     their rows spread over whatever height the pane has */
+  body[data-skin="term"] .ht-more{flex:1 1 auto; min-height:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:12px 28px; margin:0 12px 12px; padding-top:11px; border-top:1px solid var(--hair)}
+  body[data-skin="term"] .ht-more.hidden{display:none}
+  body[data-skin="term"] .ht-more .blk{display:flex; flex-direction:column; min-width:0}
+  body[data-skin="term"] .ht-more h3{margin:0 0 3px; font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+  body[data-skin="term"] .ht-more .row{flex:1 1 0; min-height:22px; max-height:36px; display:grid; grid-template-columns:82px minmax(30px,1fr) 54px; align-items:center; gap:10px; width:100%; margin:0; padding:0 4px;
+    background:none; border:0; box-shadow:none; color:var(--muted); font:12.5px var(--fm); font-weight:400; text-align:left; cursor:pointer; transition:background .14s, color .14s}
+  body[data-skin="term"] .ht-more .wk .row{grid-template-columns:50px minmax(30px,1fr) 54px minmax(0, 32%)}
+  body[data-skin="term"] .ht-more .row:hover, body[data-skin="term"] .ht-more .row:focus-visible{background:color-mix(in srgb, var(--panel) 60%, transparent); color:var(--text); outline:0}
+  body[data-skin="term"] .ht-more .row .k{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  body[data-skin="term"] .ht-more .row .v{text-align:right; color:var(--text); font-variant-numeric:tabular-nums}
+  body[data-skin="term"] .ht-more .row .n{font:12px var(--fs); color:var(--faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  body[data-skin="term"] .ht-more .row.zero .v{color:var(--faint)}
+  body[data-skin="term"] .ht-more .row.now .k{color:var(--text)}
+  body[data-skin="term"] .ht-more .bar{display:block; height:9px; background:var(--line);
+    -webkit-mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px); mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px)}
+  body[data-skin="term"] .ht-more .bar i{display:block; width:var(--p); height:100%; background:var(--gold); transition:width .5s cubic-bezier(.2,.7,.2,1)}
+  body[data-skin="term"] .ht-more .blk:not(.wk) .bar i{background:var(--k-g)}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .ht-more .bar i{transition:none} }
+
+  /* a system notice in the log, and the y/n it can end on */
+  body[data-skin="term"] .ht-log .w span{color:var(--muted)}
+  body[data-skin="term"] .ht-log .w b{font-weight:600; color:var(--k-y)}
+  body[data-skin="term"] .ht-log .yn{display:block; margin-top:5px; color:var(--text)}
+  body[data-skin="term"] .ht-log .yn button{min-height:22px; margin:0 4px; padding:0 9px; background:none; border:1px solid var(--line); box-shadow:none; color:var(--text); font:inherit; cursor:pointer; transition:color .14s, border-color .14s}
+  body[data-skin="term"] .ht-log .yn button:hover, body[data-skin="term"] .ht-log .yn button:focus-visible{border-color:var(--gold); color:var(--gold); outline:0}
+  @media (pointer:coarse){ body[data-skin="term"] .ht-log .yn button{min-height:34px; padding:0 14px} }

@@ -106,10 +106,12 @@
   body[data-skin="term"] .ht-kc button{border-bottom-color:var(--hair)}
   body[data-skin="term"] .ht-clues{margin:9px 12px 12px; font-size:12px}
 
-  @media (min-width:1101px){
+  /* Home is laid out by the width it has, not the window's: the sidebar, the rail and a phone
+     all change one without the other. #view-home is the container (set in home2.css). */
+  @container home (min-width:1180px){
     body[data-skin="term"] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
     /* Mosaic: three columns, each split at its own height, the right one split again below */
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:37fr 20fr 29fr 14fr; grid-template-rows:repeat(12, minmax(50px, auto)) auto}
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:34fr 24fr 27fr 15fr; grid-template-rows:repeat(12, minmax(50px, auto)) auto}
     body[data-skin="term"][data-tiles="mosaic"] .hs-skills{grid-column:1; grid-row:1 / 7}
     body[data-skin="term"][data-tiles="mosaic"] .hs-play{grid-column:1; grid-row:7 / 13}
     body[data-skin="term"][data-tiles="mosaic"] .hs-menu{grid-column:2; grid-row:1 / 10}
@@ -132,7 +134,7 @@
     body[data-skin="term"][data-tiles="orderly"] .hs-orbs .ht-orbs{flex-direction:row; flex-wrap:wrap; gap:14px 34px; justify-content:flex-start; align-items:center}
     body[data-skin="term"][data-tiles="orderly"] .ht-kc{grid-template-columns:1fr 1fr; column-gap:28px}
   }
-  @media (max-width:1100px){
+  @container home (max-width:1179px){
     body[data-skin="term"] .hs-id{order:1} body[data-skin="term"] .hs-orbs{order:2} body[data-skin="term"] .hs-menu{order:3} body[data-skin="term"] .hs-term{order:4}
     body[data-skin="term"] .hs-skills{order:5} body[data-skin="term"] .hs-play{order:6} body[data-skin="term"] .hs-kc{order:7} body[data-skin="term"] #homeTerm #homeHeatPanel{order:8}
     body[data-skin="term"] .hs-orbs .ht-orbs{flex-direction:row; flex-wrap:wrap; gap:14px 22px; justify-content:flex-start}

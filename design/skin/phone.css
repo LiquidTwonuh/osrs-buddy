@@ -54,15 +54,6 @@
     body[data-skin="term"] .ht-term kbd{display:none}
     body[data-skin="term"] .ht-say{padding:11px 11px 12px}
     body[data-skin="term"] .hs-orbs .ht-orb .lab{white-space:normal}
-    /* Mosaic: Character and Vitals share the first row, uneven; the rest run full width */
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:58fr 42fr}
-    body[data-skin="term"][data-tiles="mosaic"] :is(.hs-menu, .hs-term, .hs-skills, .hs-play, .hs-kc), body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1}
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm .hs-id{grid-column:1; grid-row:1}
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm .hs-orbs{grid-column:2; grid-row:1}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{flex-direction:column; flex-wrap:nowrap; gap:11px; justify-content:center; padding:11px}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb svg{width:34px; height:34px}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .num{font-size:17px}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .lab{display:none}
     body[data-skin="term"] .hs-id .ht-name{font-size:22px}
 
     /* the other pages. A page's heading is shorter here: the status line already says where you are */
@@ -90,22 +81,33 @@
     body[data-skin="term"] .cl-stats > :last-child:nth-child(odd){grid-column:1 / -1}
   }
 
-  /* ---- 701 to 1100 wide: the phone opened out, and a narrow window ---- */
-  @media (min-width:701px) and (max-width:1100px){
+  /* ---- Home with under 680 of width: the folded phone, or a small window beside the sidebar ---- */
+  @container home (max-width:679px){
+    /* Mosaic: Character and Vitals share the first row, uneven; the rest run full width */
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:58fr 42fr}
+    body[data-skin="term"][data-tiles="mosaic"] :is(.hs-menu, .hs-term, .hs-skills, .hs-play, .hs-kc), body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1}
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm .hs-id{grid-column:1; grid-row:1}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-idb{flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:10px}
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm .hs-orbs{grid-column:2; grid-row:1}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{flex-direction:column; flex-wrap:nowrap; gap:9px; justify-content:center; padding:10px 11px}
+  }
+
+  /* ---- Home with 680 to 1179 of width: the phone opened out, or a mid-sized window ---- */
+  @container home (min-width:680px) and (max-width:1179px){
     body[data-skin="term"] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
-    /* Mosaic: Skills wide on the left over Activity, the menu over the terminal on the right,
-       and three small panes along the foot at three widths */
+    /* Mosaic: Skills wide on the left over Activity, the debrief over the terminal on the right;
+       along the foot, Character over the four vitals (two by two) beside Kill counts */
     body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:34fr 22fr 44fr; grid-template-rows:repeat(13, minmax(42px, auto)) auto}
     body[data-skin="term"][data-tiles="mosaic"] .hs-skills{grid-column:1 / 3; grid-row:1 / 8}
     body[data-skin="term"][data-tiles="mosaic"] .hs-menu{grid-column:3; grid-row:1 / 6}
     body[data-skin="term"][data-tiles="mosaic"] .hs-term{grid-column:3; grid-row:6 / 11}
     body[data-skin="term"][data-tiles="mosaic"] .hs-play{grid-column:1 / 3; grid-row:8 / 11}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-id{grid-column:1; grid-row:11 / 14}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs{grid-column:2; grid-row:11 / 14}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-id{grid-column:1 / 3; grid-row:11}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs{grid-column:1 / 3; grid-row:12 / 14}
     body[data-skin="term"][data-tiles="mosaic"] .hs-kc{grid-column:3; grid-row:11 / 14}
     body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1; grid-row:14}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{flex-direction:column; flex-wrap:nowrap; gap:12px; justify-content:center}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .lab{white-space:normal}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px 20px; align-content:center}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-id .ht-name em{display:inline; margin:0 0 0 10px}
     /* Orderly: pairs of equal height */
     body[data-skin="term"][data-tiles="orderly"] #homeTerm{grid-template-columns:repeat(12, minmax(0,1fr))}
     body[data-skin="term"][data-tiles="orderly"] .hs-id{grid-column:1 / 6; grid-row:1}

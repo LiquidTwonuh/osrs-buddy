@@ -3517,10 +3517,12 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .ht-kc button{border-bottom-color:var(--hair)}
   body[data-skin="term"] .ht-clues{margin:9px 12px 12px; font-size:12px}
 
-  @media (min-width:1101px){
+  /* Home is laid out by the width it has, not the window's: the sidebar, the rail and a phone
+     all change one without the other. #view-home is the container (set in home2.css). */
+  @container home (min-width:1180px){
     body[data-skin="term"] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
     /* Mosaic: three columns, each split at its own height, the right one split again below */
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:37fr 20fr 29fr 14fr; grid-template-rows:repeat(12, minmax(50px, auto)) auto}
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:34fr 24fr 27fr 15fr; grid-template-rows:repeat(12, minmax(50px, auto)) auto}
     body[data-skin="term"][data-tiles="mosaic"] .hs-skills{grid-column:1; grid-row:1 / 7}
     body[data-skin="term"][data-tiles="mosaic"] .hs-play{grid-column:1; grid-row:7 / 13}
     body[data-skin="term"][data-tiles="mosaic"] .hs-menu{grid-column:2; grid-row:1 / 10}
@@ -3543,12 +3545,92 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     body[data-skin="term"][data-tiles="orderly"] .hs-orbs .ht-orbs{flex-direction:row; flex-wrap:wrap; gap:14px 34px; justify-content:flex-start; align-items:center}
     body[data-skin="term"][data-tiles="orderly"] .ht-kc{grid-template-columns:1fr 1fr; column-gap:28px}
   }
-  @media (max-width:1100px){
+  @container home (max-width:1179px){
     body[data-skin="term"] .hs-id{order:1} body[data-skin="term"] .hs-orbs{order:2} body[data-skin="term"] .hs-menu{order:3} body[data-skin="term"] .hs-term{order:4}
     body[data-skin="term"] .hs-skills{order:5} body[data-skin="term"] .hs-play{order:6} body[data-skin="term"] .hs-kc{order:7} body[data-skin="term"] #homeTerm #homeHeatPanel{order:8}
     body[data-skin="term"] .hs-orbs .ht-orbs{flex-direction:row; flex-wrap:wrap; gap:14px 22px; justify-content:flex-start}
   }
   @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .ht.intro section{animation:none} }
+
+  /* ============ HOME: THE DEBRIEF, FOUR VITALS, A FULL ACTIVITY PANE ============
+     After Josh's notes of 2026-11-17. Two panes size their insides by their own width rather
+     than the window's (container queries), since a pane can be narrow in a wide window. */
+  body[data-skin="term"] #view-home{container:home / inline-size}
+  body[data-skin="term"] .hs-menu{container:htmenu / inline-size}
+  body[data-skin="term"] .hs-orbs{container:htorbs / inline-size}
+
+  /* a pane's header never runs its two halves together: a gap between, and the right half gives way */
+  body[data-skin="term"] .ht-menu .ttl{flex-wrap:wrap; gap:2px 10px}
+  body[data-skin="term"] .ht-menu .ttl small{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  body[data-skin="term"] .ht .ht-lab small{min-width:0}
+
+  /* the debrief */
+  body[data-skin="term"] .ht-menu .lead{margin:0; padding:10px 11px 2px; font-size:13px; line-height:1.5; color:var(--muted)}
+  body[data-skin="term"] .ht-menu .lead b{font-weight:600; color:var(--text)}
+  /* a row is three columns: what to do, to what, and how it stands. The middle one wraps inside
+     its own column, so nothing lands on top of anything as the pane narrows */
+  body[data-skin="term"] .ht-opt{display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:first baseline; gap:0 7px; padding:5px 11px}
+  body[data-skin="term"] .ht-opt .t{white-space:normal; overflow:visible; overflow-wrap:break-word}
+  body[data-skin="term"] .ht-opt .st{margin-left:0; padding-left:8px; text-align:right}
+  @container htmenu (max-width:300px){
+    body[data-skin="term"] .ht-opt{grid-template-columns:auto minmax(0,1fr)}
+    body[data-skin="term"] .ht-opt .st{grid-column:2; padding-left:0; text-align:left; white-space:normal}
+  }
+  @container htmenu (max-width:210px){
+    body[data-skin="term"] .ht-opt{display:block}
+    body[data-skin="term"] .ht-opt .act{margin-right:6px}
+    body[data-skin="term"] .ht-opt .st{display:block}
+  }
+
+  /* the vitals: each orb's figure takes the orb's colour */
+  body[data-skin="term"] .ht-orb .num{color:var(--oc, var(--gold)); white-space:nowrap}
+  body[data-skin="term"] .ht-orb .num small{margin-left:2px; font-size:.6em; font-weight:400; letter-spacing:0; color:var(--faint)}
+  body[data-skin="term"] .ht-orb .lab-s{display:none; margin-top:4px; font:10.5px var(--fm); line-height:1.25; color:var(--muted); overflow-wrap:anywhere}
+  body[data-skin="term"] .ht-orb, body[data-skin="term"] .ht-orb > div{min-width:0}
+  body[data-skin="term"] .hs-orbs .ht-orb .lab{white-space:normal; line-height:1.3}
+  body[data-skin="term"] .ht-orb[data-skillinfo]{cursor:pointer}
+  body[data-skin="term"] .ht-orb[data-skillinfo]:hover .lab, body[data-skin="term"] .ht-orb[data-skillinfo]:focus-visible .lab{color:var(--text)}
+  body[data-skin="term"] .ht-orb[data-skillinfo]:focus-visible{outline:1px solid var(--gold-dim); outline-offset:4px}
+  /* in a narrow pane an orb keeps its figure and a two-word label */
+  @container htorbs (max-width:170px){
+    body[data-skin="term"] .hs-orbs .ht-orbs{padding:10px 8px; gap:10px}
+    body[data-skin="term"] .hs-orbs .ht-orb{gap:8px}
+    body[data-skin="term"] .hs-orbs .ht-orb svg{width:32px; height:32px}
+    body[data-skin="term"] .hs-orbs .ht-orb .num{font-size:16px}
+  }
+  @container htorbs (max-width:215px){
+    body[data-skin="term"] .hs-orbs .ht-orb .num small, body[data-skin="term"] .hs-orbs .ht-orb .lab{display:none}
+    body[data-skin="term"] .hs-orbs .ht-orb .lab-s{display:block}
+  }
+
+  /* the activity pane: under the grid, the last seven days and the month's most trained skills,
+     their rows spread over whatever height the pane has */
+  body[data-skin="term"] .ht-more{flex:1 1 auto; min-height:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:12px 28px; margin:0 12px 12px; padding-top:11px; border-top:1px solid var(--hair)}
+  body[data-skin="term"] .ht-more.hidden{display:none}
+  body[data-skin="term"] .ht-more .blk{display:flex; flex-direction:column; min-width:0}
+  body[data-skin="term"] .ht-more h3{margin:0 0 3px; font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+  body[data-skin="term"] .ht-more .row{flex:1 1 0; min-height:22px; max-height:36px; display:grid; grid-template-columns:82px minmax(30px,1fr) 54px; align-items:center; gap:10px; width:100%; margin:0; padding:0 4px;
+    background:none; border:0; box-shadow:none; color:var(--muted); font:12.5px var(--fm); font-weight:400; text-align:left; cursor:pointer; transition:background .14s, color .14s}
+  body[data-skin="term"] .ht-more .wk .row{grid-template-columns:50px minmax(30px,1fr) 54px minmax(0, 32%)}
+  body[data-skin="term"] .ht-more .row:hover, body[data-skin="term"] .ht-more .row:focus-visible{background:color-mix(in srgb, var(--panel) 60%, transparent); color:var(--text); outline:0}
+  body[data-skin="term"] .ht-more .row .k{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  body[data-skin="term"] .ht-more .row .v{text-align:right; color:var(--text); font-variant-numeric:tabular-nums}
+  body[data-skin="term"] .ht-more .row .n{font:12px var(--fs); color:var(--faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  body[data-skin="term"] .ht-more .row.zero .v{color:var(--faint)}
+  body[data-skin="term"] .ht-more .row.now .k{color:var(--text)}
+  body[data-skin="term"] .ht-more .bar{display:block; height:9px; background:var(--line);
+    -webkit-mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px); mask:repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px)}
+  body[data-skin="term"] .ht-more .bar i{display:block; width:var(--p); height:100%; background:var(--gold); transition:width .5s cubic-bezier(.2,.7,.2,1)}
+  body[data-skin="term"] .ht-more .blk:not(.wk) .bar i{background:var(--k-g)}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .ht-more .bar i{transition:none} }
+
+  /* a system notice in the log, and the y/n it can end on */
+  body[data-skin="term"] .ht-log .w span{color:var(--muted)}
+  body[data-skin="term"] .ht-log .w b{font-weight:600; color:var(--k-y)}
+  body[data-skin="term"] .ht-log .yn{display:block; margin-top:5px; color:var(--text)}
+  body[data-skin="term"] .ht-log .yn button{min-height:22px; margin:0 4px; padding:0 9px; background:none; border:1px solid var(--line); box-shadow:none; color:var(--text); font:inherit; cursor:pointer; transition:color .14s, border-color .14s}
+  body[data-skin="term"] .ht-log .yn button:hover, body[data-skin="term"] .ht-log .yn button:focus-visible{border-color:var(--gold); color:var(--gold); outline:0}
+  @media (pointer:coarse){ body[data-skin="term"] .ht-log .yn button{min-height:34px; padding:0 14px} }
 
   /* ============ THE PHONE, FOLDED AND UNFOLDED ============
      Not the desktop squeezed. Sized against the Galaxy Z Fold 8 Ultra to start: the cover screen
@@ -3649,15 +3731,6 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     body[data-skin="term"] .ht-term kbd{display:none}
     body[data-skin="term"] .ht-say{padding:11px 11px 12px}
     body[data-skin="term"] .hs-orbs .ht-orb .lab{white-space:normal}
-    /* Mosaic: Character and Vitals share the first row, uneven; the rest run full width */
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:58fr 42fr}
-    body[data-skin="term"][data-tiles="mosaic"] :is(.hs-menu, .hs-term, .hs-skills, .hs-play, .hs-kc), body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1}
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm .hs-id{grid-column:1; grid-row:1}
-    body[data-skin="term"][data-tiles="mosaic"] #homeTerm .hs-orbs{grid-column:2; grid-row:1}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{flex-direction:column; flex-wrap:nowrap; gap:11px; justify-content:center; padding:11px}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb svg{width:34px; height:34px}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .num{font-size:17px}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .lab{display:none}
     body[data-skin="term"] .hs-id .ht-name{font-size:22px}
 
     /* the other pages. A page's heading is shorter here: the status line already says where you are */
@@ -3685,22 +3758,33 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     body[data-skin="term"] .cl-stats > :last-child:nth-child(odd){grid-column:1 / -1}
   }
 
-  /* ---- 701 to 1100 wide: the phone opened out, and a narrow window ---- */
-  @media (min-width:701px) and (max-width:1100px){
+  /* ---- Home with under 680 of width: the folded phone, or a small window beside the sidebar ---- */
+  @container home (max-width:679px){
+    /* Mosaic: Character and Vitals share the first row, uneven; the rest run full width */
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:58fr 42fr}
+    body[data-skin="term"][data-tiles="mosaic"] :is(.hs-menu, .hs-term, .hs-skills, .hs-play, .hs-kc), body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1}
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm .hs-id{grid-column:1; grid-row:1}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-idb{flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:10px}
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm .hs-orbs{grid-column:2; grid-row:1}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{flex-direction:column; flex-wrap:nowrap; gap:9px; justify-content:center; padding:10px 11px}
+  }
+
+  /* ---- Home with 680 to 1179 of width: the phone opened out, or a mid-sized window ---- */
+  @container home (min-width:680px) and (max-width:1179px){
     body[data-skin="term"] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
-    /* Mosaic: Skills wide on the left over Activity, the menu over the terminal on the right,
-       and three small panes along the foot at three widths */
+    /* Mosaic: Skills wide on the left over Activity, the debrief over the terminal on the right;
+       along the foot, Character over the four vitals (two by two) beside Kill counts */
     body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:34fr 22fr 44fr; grid-template-rows:repeat(13, minmax(42px, auto)) auto}
     body[data-skin="term"][data-tiles="mosaic"] .hs-skills{grid-column:1 / 3; grid-row:1 / 8}
     body[data-skin="term"][data-tiles="mosaic"] .hs-menu{grid-column:3; grid-row:1 / 6}
     body[data-skin="term"][data-tiles="mosaic"] .hs-term{grid-column:3; grid-row:6 / 11}
     body[data-skin="term"][data-tiles="mosaic"] .hs-play{grid-column:1 / 3; grid-row:8 / 11}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-id{grid-column:1; grid-row:11 / 14}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs{grid-column:2; grid-row:11 / 14}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-id{grid-column:1 / 3; grid-row:11}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs{grid-column:1 / 3; grid-row:12 / 14}
     body[data-skin="term"][data-tiles="mosaic"] .hs-kc{grid-column:3; grid-row:11 / 14}
     body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1; grid-row:14}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{flex-direction:column; flex-wrap:nowrap; gap:12px; justify-content:center}
-    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .lab{white-space:normal}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px 20px; align-content:center}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-id .ht-name em{display:inline; margin:0 0 0 10px}
     /* Orderly: pairs of equal height */
     body[data-skin="term"][data-tiles="orderly"] #homeTerm{grid-template-columns:repeat(12, minmax(0,1fr))}
     body[data-skin="term"][data-tiles="orderly"] .hs-id{grid-column:1 / 6; grid-row:1}
@@ -4163,6 +4247,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
               <h2 class="ht-lab">Activity <small id="htPlaySub"></small></h2>
               <div class="ht-play" id="htPlay"></div>
               <div class="ht-playfoot"><span id="htPlayFoot"></span><span class="key">less <i></i><i></i><i></i><i></i><i></i> more</span></div>
+              <div class="ht-more hidden" id="htPlayMore"></div>
             </section>
           </div>
           <div class="ht-col">
@@ -12885,10 +12970,30 @@ function termRenderLog(fresh){
 function termBoot(){
   const t = termState(), n = termRounds().filter(m=>m.st.up).length;
   const line = (live && live.skills ? `Loaded ${termWho()}. ` : "") + (n ? `${n} thing${n === 1 ? " is" : "s are"} ready.` : "Nothing is waiting on you.");
+  // the question about Claude always follows the launch line, so it comes off first; and launch lines never sit in a row
+  t.log = t.log.filter(e=>!e.p).filter((e, i, a)=>!(e.b && a[i + 1] && a[i + 1].b));
   if(t.log.length && t.log[t.log.length - 1].b) t.log.pop();
   t.log.push({t:Date.now(), k:"s", s:line, b:1}); if(t.log.length > 150) t.log.splice(0, t.log.length - 150);
+  termAiNotice();
   termRenderLog(true);
 }
+// k "w" is a system notice. The one about Claude carries p, a question waiting on y or n: asked
+// at each launch until it is answered, never twice in the log, and not at all once a key is in
+// or the answer was no (state.term.ai). The header's "claude off" goes with a no.
+const TERM_AI_NOTICE = "Questions here are answered on this device. Claude can answer them instead, using your own Anthropic API key. The key is kept on this device and sent only to api.anthropic.com, and what you ask is billed to your Anthropic account.";
+function termAiNotice(){
+  const t = termState(); t.log = t.log.filter(e=>!e.p);
+  if(typeof claudeOn !== "function" || termAi() || t.ai === "no") return;
+  t.log.push({t:Date.now(), k:"w", s:TERM_AI_NOTICE, p:1});
+}
+function termAiPending(){ return termState().log.some(e=>e.p); }
+function termAiAnswer(yes){
+  const t = termState(); t.log = t.log.filter(e=>!e.p);
+  if(yes){ t.ai = "yes"; termLog("w", "Opening Settings, Advanced. The key goes in the Claude section there."); try{ claudeOpen(); }catch(e){} }
+  else { t.ai = "no"; termLog("w", "Claude stays off and this will not be asked again. Type claude if you change your mind."); }
+  try{ termTop(); termHint(); }catch(e){}
+}
+document.addEventListener("click", e=>{ const b = e.target.closest && e.target.closest("[data-termyn]"); if(b){ e.preventDefault(); termAiAnswer(b.dataset.termyn === "y"); } });
 function termTicked(m, xp){
   const x = xp ? Object.entries(xp).map(([k, n])=>`+${fmt(n)} ${frSkName(k)}`).join(", ") : "";
   termLog("g", termVerb(m).say, x);
@@ -12951,7 +13056,8 @@ function tabsRender(){
 // ---- the command line on the dock: the Home terminal's line, within reach on every page of a phone ----
 var tlSince = 0;
 function termLineHtml(e, who, fresh){
-  const body = e.k === "m" || e.k === "q" ? `<b>${who}:</b> ${escapeHtml(e.s)}` : e.k === "s" ? `<b>Mortimer:</b> ${escapeHtml(e.s)}` : e.k === "a" ? `<b>Mortimer:</b> ${e.s}` : escapeHtml(e.s);
+  const body = e.k === "m" || e.k === "q" ? `<b>${who}:</b> ${escapeHtml(e.s)}` : e.k === "s" ? `<b>Mortimer:</b> ${escapeHtml(e.s)}` : e.k === "a" ? `<b>Mortimer:</b> ${e.s}`
+    : e.k === "w" ? `<b>SYSTEM:</b> ${escapeHtml(e.s)}` + (e.p ? ` <span class="yn">Connect Claude? <button type="button" data-termyn="y" title="Yes, set it up">y</button>/<button type="button" data-termyn="n" title="No, and do not ask again">n</button></span>` : "") : escapeHtml(e.s);
   return `<div class="${e.k}${e.w ? " wait" : ""}${fresh ? " new" : ""}"><time>${termWhen(e.t)}</time><span>${body}</span>${e.x ? `<em>${escapeHtml(e.x)}</em>` : ""}</div>`;
 }
 function tlIsOpen(){ const el = $("#termLine"); return !!el && !el.classList.contains("hidden"); }
@@ -13006,12 +13112,19 @@ function tlKeys(){
   if(window.visualViewport){ visualViewport.addEventListener("resize", tlKeys); visualViewport.addEventListener("scroll", tlKeys); }
 })();
 function htShort(n){ return n >= 1e6 ? (n / 1e6).toFixed(n >= 1e8 ? 0 : 1) + "M" : n >= 1e4 ? Math.round(n / 1e3) + "K" : fmt(n); }
-function htOrb(label, text, frac, col, id){
+function htOrb(label, text, frac, col, id, short, attrs){
   frac = Math.max(0, Math.min(1, frac || 0));
   const top = 4 + 38 * (1 - frac);
-  return `<div class="ht-orb"><svg viewBox="0 0 46 46" aria-hidden="true"><defs><clipPath id="htoc${id}"><circle cx="23" cy="23" r="19"/></clipPath></defs>
+  return `<div class="ht-orb" style="--oc:${col}"${attrs || ""}><svg viewBox="0 0 46 46" aria-hidden="true"><defs><clipPath id="htoc${id}"><circle cx="23" cy="23" r="19"/></clipPath></defs>
     <g clip-path="url(#htoc${id})"><g class="lvl" style="--dy:${(38 * frac).toFixed(1)}px"><rect x="0" y="${top.toFixed(1)}" width="46" height="46" fill="${col}" opacity=".26"/><rect x="0" y="${top.toFixed(1)}" width="46" height="1.5" fill="${col}"/></g></g>
-    <circle class="rim" cx="23" cy="23" r="22.5"/></svg><div><div class="num">${text}</div><div class="lab">${label}</div></div></div>`;
+    <circle class="rim" cx="23" cy="23" r="22.5"/></svg><div><div class="num">${text}</div><div class="lab">${label}</div><div class="lab-s">${short || ""}</div></div></div>`;
+}
+// Total experience fills toward the next round figure rather than toward every skill at 99, which
+// took tens of millions before the orb showed anything: each million under 10M, then each 5M,
+// each 10M from 50M, each 25M from 200M.
+function htXpBand(xp){
+  const step = xp < 1e7 ? 1e6 : xp < 5e7 ? 5e6 : xp < 2e8 ? 1e7 : 2.5e7, lo = Math.floor(xp / step) * step;
+  return {lo, hi:lo + step, frac:(xp - lo) / step};
 }
 function htNear(){
   if(!(live && live.skills)) return [];
@@ -13035,11 +13148,16 @@ function renderHomeTerm(){
   $("#htSub").innerHTML = sub;
   const rl = $("#htReload"); if(rl) rl.onclick = ()=>loadCharacter({live:true});
   const ad = $("#htAdd"); if(ad) ad.onclick = ()=>{ if(innerWidth <= 700) openSidebar(); const pop = $("#charPop"); if(pop) pop.classList.remove("hidden"); const i = $("#username"); if(i) i.focus(); };
-  $("#htOrbs").innerHTML = overall
-    ? htOrb("Combat, of 126", m.combat != null ? escapeHtml(String(m.combat)) : "?", (m.combat || 0) / 126, "#e0685c", 1)
-      + htOrb(`Total, of ${fmt(MAX_TOTAL_LEVEL)}`, fmt(overall.level), overall.level / MAX_TOTAL_LEVEL, "var(--k-c)", 2)
-      + htOrb("Experience", htShort(overall.experience), maxCapeXp() / XP_MAX_TOTAL, "var(--gold)", 3)
-    : "";
+  if(overall){
+    const band = htXpBand(overall.experience), near = htNear()[0];
+    $("#htOrbs").innerHTML =
+        htOrb("Combat level", `${m.combat != null ? escapeHtml(String(m.combat)) : "?"}<small>/126</small>`, (m.combat || 0) / 126, "#e0685c", 1, "combat")
+      + htOrb("Total skill level", `${fmt(overall.level)}<small>/${fmt(MAX_TOTAL_LEVEL)}</small>`, overall.level / MAX_TOTAL_LEVEL, "var(--k-c)", 2, "total level", ` title="Every skill level added together, of ${fmt(MAX_TOTAL_LEVEL)}"`)
+      + htOrb(`Total experience, next ${band.hi / 1e6}M`, htShort(overall.experience), band.frac, "var(--k-y)", 3, "total xp", ` title="${fmt(overall.experience)} experience. The orb fills toward ${band.hi / 1e6}M."`)
+      + (near ? htOrb(`Closest level, ${frSkName(near.k)} ${near.p.next}`, `${fmt(near.p.toNext)}<small>xp</small>`, near.p.frac, "var(--k-g)", 4, `to ${frSkName(near.k).toLowerCase()} ${near.p.next}`, ` data-skillinfo="${near.k}" role="button" tabindex="0" title="Open ${frSkName(near.k)}"`) : "");
+    $("#htOrbs").onclick = e=>{ const t = e.target.closest("[data-skillinfo]"); if(t) openSkillModal(t.dataset.skillinfo); };
+  }
+  else $("#htOrbs").innerHTML = "";
   root.querySelector(".hs-orbs").classList.toggle("hidden", !overall);
   root.querySelector(".hs-skills").classList.toggle("hidden", !has);
   root.querySelector(".hs-kc").classList.toggle("hidden", !has);
@@ -13067,21 +13185,66 @@ function renderHomeTerm(){
   if(!htDrawn){ htDrawn = true; root.classList.add("intro"); setTimeout(()=>root.classList.remove("intro"), 1700); termBoot(); }
   else termRenderLog();
 }
+// ---- the debrief: what you want to know on sitting back down ----
+// It reads the same daily amounts as the play grid, and what it leads with depends on how long
+// it has been since experience was last gained. Mid-session it is today's gains; back after a
+// month it is where you left off and what has gone stale. htRecent gathers that once.
+function htRecent(){
+  const auto = (state.scroll && state.scroll.autoOn !== false && state.scroll.auto) || {};
+  const pos = o=>Object.values(o || {}).some(n=>n > 0);
+  const days = Object.keys(auto).filter(iso=>auto[iso] && (pos(auto[iso].skills) || pos(auto[iso].bosses))).sort();
+  const last = days.length ? days[days.length - 1] : null, idle = last ? Math.max(0, dayDiff(last, todayISO())) : null;
+  // "recent" is the seven days up to the last day played
+  const from = last ? isoDate(new Date(parseISO(last).getTime() - 6 * 864e5)) : null, sk = {}, boss = {};
+  for(const iso of days){
+    if(iso < from) continue; const d = auto[iso];
+    for(const k in (d.skills || {})) if(d.skills[k] > 0 && SKILL_ORDER.includes(k)) sk[k] = (sk[k] || 0) + d.skills[k];
+    for(const b in (d.bosses || {})) if(d.bosses[b] > 0) boss[b] = (boss[b] || 0) + d.bosses[b];
+  }
+  const day = iso=>{ const x = Object.entries((auto[iso] || {}).skills || {}).filter(e=>e[1] > 0 && SKILL_ORDER.includes(e[0])).sort((a, b)=>b[1] - a[1]); return {xp:x.reduce((a, e)=>a + e[1], 0), skills:x.map(e=>e[0])}; };
+  return {auto, last, idle, sk, boss, day};
+}
 function htMenu(){
   const el = $("#htMenu"); if(!el) return;
   const rows = termRounds(), up = rows.filter(m=>m.st.up), wait = rows.filter(m=>!m.st.up);
   const opt = (attrs, act, tgt, kind, st, cls)=>`<button class="ht-opt" ${attrs}><span class="act">${escapeHtml(act)}</span><span class="t ${kind}">${escapeHtml(tgt)}</span><span class="st ${cls || ""}">${escapeHtml(st)}</span></button>`;
-  let h = "", n = up.length;
-  if(up.length) h += `<div class="grp">Now</div>` + up.slice(0, 8).map(m=>{ const v = termVerb(m); return opt(`data-htick="${escapeHtml(m.key)}" title="Done it? Click to tick it"`, v.act, v.tgt, v.kind, "ready", "ready"); }).join("");
-  if(wait.length) h += `<div class="grp">Soon</div>` + wait.slice(0, 4).map(m=>{ const v = termVerb(m); return opt(`data-hgo="${escapeHtml(m.key)}" title="Open it in Coffer"`, v.act, v.tgt, v.kind, roundWhen(m.st.next)); }).join("");
-  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 4);
-  if(al.length){ n += al.length; h += `<div class="grp">Gathering dust</div>` + al.map(x=>{ const d = prioDays(x); return opt(`data-hprio="${escapeHtml(x.id)}" title="Worked on it today? Click to say so"`, "Return-to", x.label, "y", d == null ? "no record" : d + (d === 1 ? " day" : " days"), "warn"); }).join(""); }
-  const goals = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct).slice(0, 4);
-  if(goals.length) h += `<div class="grp">Goals</div>` + goals.map(({g, p})=>opt(`data-hgoal="1" title="Open Goals"`, p.custom ? "Finish" : "Reach", g.label, "y", p.custom ? (p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : "to-do") : Math.round(p.pct) + "%")).join("");
+  const R = htRecent(), has = !!(live && live.skills);
+  const names = ks=>{ const n = ks.map(frSkName); return n.length <= 1 ? (n[0] || "") : n.length <= 3 ? n.slice(0, -1).join(", ") + " and " + n[n.length - 1] : `${n[0]}, ${n[1]} and ${n.length - 2} more`; };
+  const whenDay = iso=>parseISO(iso).toLocaleDateString([], {weekday:"short", day:"numeric", month:"short"});
+  let tag, lead;
+  if(R.idle == null){
+    tag = "no play recorded";
+    lead = has ? "No play recorded yet. Once your stats have been read on two different days, what you gained shows here." : "Load a character and this fills in: what is ready, what you gained and what is close.";
+  } else {
+    const d = R.day(R.last), what = d.xp ? `<b>+${fmt(d.xp)}</b> xp in ${escapeHtml(names(d.skills))}` : "boss kills, no experience";
+    if(R.idle === 0){ tag = "played today"; lead = `Today so far: ${what}.`; }
+    else if(R.idle === 1){ tag = "last played yesterday"; lead = `Yesterday: ${what}. Nothing yet today.`; }
+    else if(R.idle < 7){ tag = `${R.idle} days away`; lead = `Last played ${whenDay(R.last)}, ${R.idle} days ago: ${what}.`; }
+    else { tag = `${R.idle} days away`; lead = `<b>${R.idle} days</b> since you last gained experience. You left off on ${whenDay(R.last)}: ${what}.`; }
+  }
+  const sec = {};
+  if(up.length) sec.now = `<div class="grp">Ready now</div>` + up.slice(0, 8).map(m=>{ const v = termVerb(m); return opt(`data-htick="${escapeHtml(m.key)}" title="Done it? Click to tick it"`, v.act, v.tgt, v.kind, "ready", "ready"); }).join("");
+  // what the last week of play added: levels first, then the most experience, then kills
+  if(has){
+    const g = Object.keys(R.sk).map(k=>{ const cur = liveSkillXp(k), now = levelFromXp(cur), was = levelFromXp(Math.max(0, cur - R.sk[k])); return {k, xp:R.sk[k], now, up:Math.max(0, now - was)}; })
+      .sort((a, b)=>b.up - a.up || b.xp - a.xp).slice(0, 4);
+    const kills = Object.entries(R.boss).sort((a, b)=>b[1] - a[1]).slice(0, 2);
+    if(g.length || kills.length) sec.gain = `<div class="grp">${R.idle != null && R.idle <= 1 ? "Gained, last 7 days" : "Where you left off"}</div>`
+      + g.map(x=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Gained", frSkName(x.k), "g", x.up ? `+${x.up} level${x.up === 1 ? "" : "s"}, now ${x.now}` : `+${htShort(x.xp)} xp`, x.up ? "ready" : "")).join("")
+      + kills.map(([b, n])=>opt(`data-bossinfo="${escapeHtml(b)}" title="Open ${escapeHtml(nice(b))}"`, "Killed", nice(b), "y", `${fmt(n)} kill${n === 1 ? "" : "s"}`)).join("");
+  }
   const near = htNear();
-  if(near.length) h += `<div class="grp">One push from a level</div>` + near.map(x=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Train", frSkName(x.k), "g", `${fmt(x.p.toNext)} xp to ${x.p.next}`)).join("");
-  if(!h) h = `<div class="nil">Nothing is waiting on you. Pick a routine in Coffer, set a goal or load a character, and it shows up here.</div>`;
-  el.innerHTML = `<div class="ttl">Choose Option<small class="${n ? "" : "none"}">${n ? n + " ready" : "nothing waiting"}</small></div>` + h;
+  if(near.length) sec.near = `<div class="grp">Close to a level</div>` + near.map(x=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Train", frSkName(x.k), "g", `${fmt(x.p.toNext)} xp to ${x.p.next}`)).join("");
+  const goals = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct).slice(0, 4);
+  if(goals.length) sec.goals = `<div class="grp">Goals you are tracking</div>` + goals.map(({g, p})=>opt(`data-hgoal="1" title="Open Goals"`, p.custom ? "Finish" : "Reach", g.label, "y", p.custom ? (p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : "to-do") : Math.round(p.pct) + "%")).join("");
+  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 4);
+  if(al.length) sec.dust = `<div class="grp">Gathering dust</div>` + al.map(x=>{ const d = prioDays(x); return opt(`data-hprio="${escapeHtml(x.id)}" title="Worked on it today? Click to say so"`, "Return-to", x.label, "y", d == null ? "no record" : d + (d === 1 ? " day" : " days"), "warn"); }).join("");
+  if(wait.length) sec.soon = `<div class="grp">Ready soon</div>` + wait.slice(0, 4).map(m=>{ const v = termVerb(m); return opt(`data-hgo="${escapeHtml(m.key)}" title="Open it in Coffer"`, v.act, v.tgt, v.kind, roundWhen(m.st.next)); }).join("");
+  // back after a while, what went stale comes before what was gained
+  const order = R.idle != null && R.idle >= 3 ? ["now", "dust", "gain", "near", "goals", "soon"] : ["now", "gain", "near", "goals", "dust", "soon"];
+  const body = order.map(k=>sec[k] || "").join("");
+  el.innerHTML = `<div class="ttl">Debrief<small class="${R.idle === 0 ? "" : "none"}">${escapeHtml(tag)}</small></div><p class="lead">${lead}</p>`
+    + (body || `<div class="nil">Nothing is waiting on you. Pick a routine in Coffer or set a goal, and it shows up here.</div>`);
   el.onclick = e=>{
     const b = e.target.closest(".ht-opt"); if(!b) return; const d = b.dataset;
     if(d.htick) roundTick(d.htick);
@@ -13089,6 +13252,7 @@ function htMenu(){
     else if(d.hprio){ const x = (state.priorities || []).find(y=>String(y.id) === d.hprio); if(x){ touchPriority(x); save(); renderPriorities(); renderGlance(); termLog("g", `You return to ${x.label}.`); } }
     else if(d.hgoal) switchView("goals");
     else if(d.skillinfo) openSkillModal(d.skillinfo);
+    else if(d.bossinfo) openBossModal(d.bossinfo);
   };
 }
 // ---- the play grid: a square a day, brighter for more experience gained that day ----
@@ -13119,6 +13283,25 @@ function htPlay(){
   $("#htPlaySub").textContent = t ? `today +${fmt(t)} xp` : "nothing yet today";
   $("#htPlayFoot").innerHTML = days ? `<b>${days}</b> day${days === 1 ? "" : "s"} played, <b>${htShort(total)}</b> xp in ${weeks} weeks` : "a square lights up on a day you gain experience";
   el.onclick = e=>{ if(e.target.closest("[data-day]")) switchView("scroll"); };
+  const more = $("#htPlayMore");
+  if(more){
+    const auto = (state.scroll && state.scroll.autoOn !== false && state.scroll.auto) || {}, wk = [], tot = {};
+    for(let i = 6; i >= 0; i--){
+      const d = new Date(today); d.setDate(today.getDate() - i);
+      const iso = isoDate(d), x = Object.entries((auto[iso] || {}).skills || {}).filter(e=>e[1] > 0 && SKILL_ORDER.includes(e[0])).sort((a, b)=>b[1] - a[1]);
+      wk.push({d, iso, xp:x.reduce((a, e)=>a + e[1], 0), top:x.slice(0, 2).map(e=>frSkName(e[0]))});
+    }
+    const cut = isoDate(new Date(today.getTime() - 29 * 864e5));
+    for(const iso in auto){ if(iso < cut || iso > tISO) continue; const x = auto[iso].skills || {}; for(const k in x) if(x[k] > 0 && SKILL_ORDER.includes(k)) tot[k] = (tot[k] || 0) + x[k]; }
+    const top = Object.entries(tot).sort((a, b)=>b[1] - a[1]).slice(0, 7);
+    const wmax = Math.max(1, ...wk.map(x=>x.xp)), tmax = top.length ? top[0][1] : 1;
+    const bar = f=>`<span class="bar"><i style="--p:${(Math.max(0, Math.min(1, f)) * 100).toFixed(1)}%"></i></span>`;
+    more.classList.toggle("hidden", !days);
+    more.innerHTML = !days ? "" :
+      `<div class="blk wk"><h3>Last 7 days</h3>` + wk.map(x=>`<button class="row${x.iso === tISO ? " now" : ""}${x.xp ? "" : " zero"}" data-day="${x.iso}" title="Open Scroll"><span class="k">${x.d.toLocaleDateString([], {weekday:"short"}).toLowerCase()} ${x.d.getDate()}</span>${bar(x.xp / wmax)}<span class="v">${x.xp ? "+" + htShort(x.xp) : "0"}</span><span class="n">${escapeHtml(x.top.join(", "))}</span></button>`).join("") + `</div>`
+      + (top.length ? `<div class="blk"><h3>Most trained, 30 days</h3>` + top.map(([k, n])=>`<button class="row" data-skillinfo="${k}" title="Open ${frSkName(k)}"><span class="k">${frSkName(k)}</span>${bar(n / tmax)}<span class="v">+${htShort(n)}</span></button>`).join("") + `</div>` : "");
+    more.onclick = e=>{ const k = e.target.closest("[data-skillinfo]"); if(k){ openSkillModal(k.dataset.skillinfo); return; } if(e.target.closest("[data-day]")) switchView("scroll"); };
+  }
 }
 
 // ============ GLYPHS ============
@@ -13181,7 +13364,7 @@ function termTop(){
   const ai = $("#htAi");
   if(ai){
     const can = typeof claudeOn === "function";
-    ai.classList.toggle("hidden", !can);
+    ai.classList.toggle("hidden", !can || (!termAi() && termState().ai === "no"));
     ai.classList.toggle("on", termAi());
     ai.textContent = termAi() ? "claude on" : "claude off";
     ai.title = termAi() ? "Questions go to Claude with your stats. Click to change it." : "Questions are answered on this device. Click to connect Claude.";
@@ -13208,6 +13391,8 @@ function termAskCmd(q){ return {hint:`<u>enter</u> asks ${termAi() ? "Claude" : 
 function termResolve(raw){
   const v = String(raw || "").trim(), low = v.toLowerCase(); if(!v) return null;
   if(low === "help") return {hint:`<u>enter</u> shows what you can type`, run:termHelp};
+  if(termAiPending() && /^(y|yes|n|no)$/.test(low)){ const yes = low[0] === "y"; return {hint:`<u>enter</u> ${yes ? "opens the Claude setup" : "leaves Claude off"}`, run:()=>termAiAnswer(yes)}; }
+  if(low === "claude") return {hint:`<u>enter</u> opens the Claude setup`, run:()=>{ const t = termState(); if(t.ai === "no"){ delete t.ai; save(); } termTop(); claudeOpen(); }};
   if(low === "clear") return {hint:`<u>enter</u> clears the log`, run:()=>{ termState().log = []; save(); termRenderLog(); }};
   if(low.startsWith("note ") && v.length > 5) return termNote(v.slice(5).trim());
   if(low.startsWith("ask ") && v.length > 4) return termAskCmd(v.slice(4).trim());
@@ -13242,7 +13427,7 @@ function termHint(){
 }
 function termHelp(){
   const acts = [...new Set(termRounds().filter(m=>m.st.up).map(m=>termVerb(m).act.toLowerCase()))];
-  termLog("s", "Type a note and press Enter to keep it in Notes. " + (acts.length ? `Type the start of an action to tick it: ${acts.join(", ")}. ` : "") + "A page or a skill opens it. A question gets an answer. Also: theme and a name, layout mosaic or orderly, clear. Tab completes, the up arrow brings back the last line.");
+  termLog("s", "Type a note and press Enter to keep it in Notes. " + (acts.length ? `Type the start of an action to tick it: ${acts.join(", ")}. ` : "") + "A page or a skill opens it. A question gets an answer. Also: theme and a name, layout mosaic or orderly, claude, clear. Tab completes, the up arrow brings back the last line.");
 }
 function termAsk(q){
   termLog("q", q);
