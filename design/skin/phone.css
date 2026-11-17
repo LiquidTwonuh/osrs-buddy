@@ -1,0 +1,107 @@
+
+  /* ============ THE PHONE, FOLDED AND UNFOLDED ============
+     Not the desktop squeezed. Sized against the Galaxy Z Fold 8 Ultra to start: the cover screen
+     (1080 by 2520, about 380 page pixels wide) and the inner screen (2504 by 2256, about 750 to
+     810 wide and nearly square). Both get the dock: a status line along the bottom that lists the
+     pages the way tmux lists windows, in reach of a thumb, in the same place whether the phone is
+     shut or open. The sidebar is a drawer behind the menu button and the dock's "more".
+     body.dock is set on touch screens (and in the Beta's phone preview); under 700 wide the dock
+     shows whatever the pointer is. Home has its own arrangement at each size, in both layouts. */
+  .term-dock{display:none}
+  body[data-skin="term"] .term-dock{position:fixed; left:0; right:0; bottom:0; z-index:35; align-items:stretch; gap:0; padding:0 0 env(safe-area-inset-bottom, 0px);
+    overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; white-space:nowrap;
+    background:color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border-top:1px solid var(--hair)}
+  body[data-skin="term"] .term-dock::-webkit-scrollbar{display:none}
+  body[data-skin="term"] .term-dock button{flex:0 0 auto; display:inline-flex; align-items:baseline; gap:2px; min-height:46px; padding:0 13px; margin:0; background:none; border:0; border-top:2px solid transparent;
+    color:var(--muted); font:12.5px var(--fm); cursor:pointer; box-shadow:none; transition:color .15s, background .15s, border-color .15s}
+  body[data-skin="term"] .term-dock button i{font-style:normal; color:var(--faint)}
+  body[data-skin="term"] .term-dock button i::after{content:":"}
+  body[data-skin="term"] .term-dock button.on{color:var(--text); border-top-color:var(--gold); background:color-mix(in srgb, var(--gold) 9%, transparent)}
+  body[data-skin="term"] .term-dock button.on i{color:var(--gold)}
+  body[data-skin="term"] .term-dock button.on::after{content:"*"; color:var(--gold)}
+  body[data-skin="term"] .term-dock button.more{position:sticky; right:0; margin-left:auto; color:var(--muted); background:var(--bg); border-left:1px solid var(--hair)}
+  body[data-skin="term"] .term-dock button:active{background:color-mix(in srgb, var(--text) 8%, transparent)}
+
+  /* the top bar is a pane too */
+  body[data-skin="term"] .topbar{padding:8px 10px; margin-bottom:var(--gap); background:var(--glass); border:1px solid var(--hair); border-bottom:1px solid var(--hair)}
+  body[data-skin="term"] .topbar.scrolled{background:color-mix(in srgb, var(--bg) 88%, transparent); border-color:var(--hair)}
+
+  /* ---- under 700 wide: the folded phone ---- */
+  @media (max-width:700px){
+    body[data-skin="term"]{--gap:8px}
+    body[data-skin="term"] .term-dock{display:flex}
+    body[data-skin="term"] .content{padding:var(--gap) var(--gap) calc(64px + env(safe-area-inset-bottom, 0px))}
+    body[data-skin="term"] .topbar{top:0}
+    body[data-skin="term"] .toast{bottom:calc(60px + env(safe-area-inset-bottom, 0px))}
+    body[data-skin="term"] .panel{padding:13px 12px}
+    body[data-skin="term"] .ht-opt{padding:9px 11px}
+    body[data-skin="term"] .ht-menu .grp{padding-top:12px}
+    body[data-skin="term"] .ht-term kbd{display:none}
+    body[data-skin="term"] .ht-say{padding:11px 11px 12px}
+    body[data-skin="term"] .hs-orbs .ht-orb .lab{white-space:normal}
+    /* Mosaic: Character and Vitals share the first row, uneven; the rest run full width */
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:58fr 42fr}
+    body[data-skin="term"][data-tiles="mosaic"] :is(.hs-menu, .hs-term, .hs-skills, .hs-play, .hs-kc), body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1}
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm .hs-id{grid-column:1; grid-row:1}
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm .hs-orbs{grid-column:2; grid-row:1}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{flex-direction:column; flex-wrap:nowrap; gap:11px; justify-content:center; padding:11px}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb svg{width:34px; height:34px}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .num{font-size:17px}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .lab{display:none}
+    body[data-skin="term"] .hs-id .ht-name{font-size:22px}
+  }
+
+  /* ---- 701 to 1100 wide: the phone opened out, and a narrow window ---- */
+  @media (min-width:701px) and (max-width:1100px){
+    body[data-skin="term"] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
+    /* Mosaic: Skills wide on the left over Activity, the menu over the terminal on the right,
+       and three small panes along the foot at three widths */
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:34fr 22fr 44fr; grid-template-rows:repeat(13, minmax(42px, auto)) auto}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-skills{grid-column:1 / 3; grid-row:1 / 8}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-menu{grid-column:3; grid-row:1 / 6}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-term{grid-column:3; grid-row:6 / 11}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-play{grid-column:1 / 3; grid-row:8 / 11}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-id{grid-column:1; grid-row:11 / 14}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs{grid-column:2; grid-row:11 / 14}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-kc{grid-column:3; grid-row:11 / 14}
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1; grid-row:14}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orbs{flex-direction:column; flex-wrap:nowrap; gap:12px; justify-content:center}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs .ht-orb .lab{white-space:normal}
+    /* Orderly: pairs of equal height */
+    body[data-skin="term"][data-tiles="orderly"] #homeTerm{grid-template-columns:repeat(12, minmax(0,1fr))}
+    body[data-skin="term"][data-tiles="orderly"] .hs-id{grid-column:1 / 6; grid-row:1}
+    body[data-skin="term"][data-tiles="orderly"] .hs-orbs{grid-column:6 / 13; grid-row:1}
+    body[data-skin="term"][data-tiles="orderly"] .hs-skills{grid-column:1 / 8; grid-row:2}
+    body[data-skin="term"][data-tiles="orderly"] .hs-menu{grid-column:8 / 13; grid-row:2}
+    body[data-skin="term"][data-tiles="orderly"] .hs-term{grid-column:1 / 8; grid-row:3}
+    body[data-skin="term"][data-tiles="orderly"] .hs-kc{grid-column:8 / 13; grid-row:3}
+    body[data-skin="term"][data-tiles="orderly"] .hs-play{grid-column:1 / -1; grid-row:4}
+    body[data-skin="term"][data-tiles="orderly"] #homeTerm #homeHeatPanel{grid-column:1 / -1; grid-row:5}
+    body[data-skin="term"][data-tiles="orderly"] .hs-id .ht-name em{display:inline; margin:0 0 0 10px}
+  }
+
+  /* ---- a touch screen up to 1000 wide (the phone opened out): dock and drawer, no sidebar ---- */
+  @media (min-width:701px) and (max-width:1000px){
+    body[data-skin="term"].dock{--sbw:0px}
+    body[data-skin="term"].dock .term-dock{display:flex}
+    body[data-skin="term"].dock .term-dock button{padding:0 15px; font-size:13px}
+    body[data-skin="term"].dock .app{display:block; padding:var(--gap)}
+    body[data-skin="term"].dock .sidebar{position:fixed; left:0; top:0; bottom:0; height:100dvh; z-index:40; width:250px; padding:16px 12px; gap:12px;
+      transform:translateX(-100%); transition:transform .2s ease; background:var(--bg); -webkit-backdrop-filter:none; backdrop-filter:none}
+    body[data-skin="term"].dock .sidebar.open{transform:none}
+    body[data-skin="term"].dock .sb-toggle{display:none}
+    body[data-skin="term"].dock .sb-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:39; touch-action:none}
+    body[data-skin="term"].dock .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; position:sticky; top:0; z-index:20}
+    body[data-skin="term"].dock .term-path{display:none}
+    body[data-skin="term"].dock .content{padding:0 0 calc(64px + env(safe-area-inset-bottom, 0px))}
+    body[data-skin="term"].dock .toast{bottom:calc(60px + env(safe-area-inset-bottom, 0px))}
+    /* the drawer always shows the full list, whatever the rail setting was */
+    body[data-skin="term"].dock.sb-rail .brand{font-size:17px; gap:10px; justify-content:flex-start}
+    body[data-skin="term"].dock.sb-rail .navitem{justify-content:flex-start; padding:6px 9px; gap:7px; font-size:14px}
+    body[data-skin="term"].dock.sb-rail .navitem .ni-ic{display:none}
+    body[data-skin="term"].dock.sb-rail .nav-sec{font-size:10.5px; padding:8px 9px 0; margin:0; border:0}
+    body[data-skin="term"].dock.sb-rail .nav-sub:not(.hidden){display:flex}
+    body[data-skin="term"].dock .ht-opt{padding:8px 11px}
+    body[data-skin="term"].dock .ht-term kbd{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"].dock .sidebar{transition:none} }
