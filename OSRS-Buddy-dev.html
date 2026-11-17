@@ -13234,7 +13234,7 @@ function htMenu(){
       + kills.map(([b, n])=>opt(`data-bossinfo="${escapeHtml(b)}" title="Open ${escapeHtml(nice(b))}"`, "Killed", nice(b), "y", `${fmt(n)} kill${n === 1 ? "" : "s"}`)).join("");
   }
   const near = htNear();
-  if(near.length) sec.near = `<div class="grp">Close to a level</div>` + near.map(x=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Train", frSkName(x.k), "g", `${fmt(x.p.toNext)} xp to ${x.p.next}`)).join("");
+  if(near.length) sec.near = `<div class="grp">Closest level ups</div>` + near.map(x=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Train", frSkName(x.k), "g", `${fmt(x.p.toNext)} xp to ${x.p.next}`)).join("");
   const goals = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct).slice(0, 4);
   if(goals.length) sec.goals = `<div class="grp">Goals you are tracking</div>` + goals.map(({g, p})=>opt(`data-hgoal="1" title="Open Goals"`, p.custom ? "Finish" : "Reach", g.label, "y", p.custom ? (p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : "to-do") : Math.round(p.pct) + "%")).join("");
   const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 4);
