@@ -3931,13 +3931,58 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .wrap-chip:hover, body[data-skin="term"] .wrap-chip.on{border-color:var(--gold); color:var(--gold)}
   @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .wrap-go::after{animation:none} }
 
+  /* ============ THE WRAPPED DECK, IN THE TERMINAL LOOK ============
+     Josh, 2026-11-17: a complete restyle, thematic. The deck was five rounded cards in pink,
+     purple and orange gradients with white text. Here it is a readout: five square panes, each
+     numbered, each in one colour of the theme (the accent, then the four colours the app uses for
+     a place, a person, an item and a skill), the figure large in that colour, a dot grid in the
+     corner where the gradient was. Every colour is a theme token, so a new palette restyles the
+     deck with everything else. The cards print one after the other. Classic keeps the old deck. */
+  body[data-skin="term"] .wrap-deck{margin-top:16px}
+  body[data-skin="term"] .wrap-head{align-items:center; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--hair)}
+  body[data-skin="term"] .wrap-title{font:500 11px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  body[data-skin="term"] .wrap-title::before{content:"// "; color:var(--faint); letter-spacing:0}
+  body[data-skin="term"] .wrap-head .small.muted{margin-top:3px; font:12px var(--fm); color:var(--faint)}
+  body[data-skin="term"] .wrap-cards{grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:var(--gap); counter-reset:wc}
+  body[data-skin="term"] .wc{--wk:var(--gold); counter-increment:wc; min-height:158px; padding:34px 14px 14px; color:var(--text);
+    background:
+      radial-gradient(circle, color-mix(in srgb, var(--wk) 34%, transparent) 0 1px, transparent 1.4px) 100% 0 / 11px 11px,
+      color-mix(in srgb, var(--panel) 55%, transparent);
+    background-repeat:repeat, no-repeat;
+    -webkit-mask:none; border:1px solid var(--hair); border-top:2px solid var(--wk); box-shadow:none;
+    animation:wcPrint .5s cubic-bezier(.2,.7,.2,1) both}
+  body[data-skin="term"] .wc:nth-child(5n+2){--wk:var(--k-c)}
+  body[data-skin="term"] .wc:nth-child(5n+3){--wk:var(--k-y)}
+  body[data-skin="term"] .wc:nth-child(5n+4){--wk:var(--k-g)}
+  body[data-skin="term"] .wc:nth-child(5n+5){--wk:var(--k-o)}
+  /* the dot grid fades out toward the words, so it sits in the top right corner only */
+  body[data-skin="term"] .wc::after{content:""; position:absolute; inset:0; width:auto; height:auto; right:0; top:0; border-radius:0; pointer-events:none;
+    background:linear-gradient(200deg, transparent 0 22%, color-mix(in srgb, var(--panel) 55%, var(--bg)) 46%)}
+  body[data-skin="term"] .wc > *{position:relative; z-index:1}
+  body[data-skin="term"] .wc::before{content:"// " counter(wc, decimal-leading-zero); position:absolute; z-index:1; left:14px; top:10px; font:500 10.5px var(--fm); letter-spacing:.14em; color:var(--faint)}
+  body[data-skin="term"] .wc-ic{position:absolute; left:auto; right:12px; top:9px; font-size:17px; color:var(--wk)}
+  body[data-skin="term"] .wc-big{font:600 clamp(30px, 4.2vw, 44px)/1 var(--fm); letter-spacing:-.03em; color:var(--wk); text-shadow:none; font-variant-numeric:tabular-nums}
+  body[data-skin="term"] .wc.hero{min-height:190px}
+  body[data-skin="term"] .wc.hero .wc-big{font-size:clamp(42px, 6vw, 64px)}
+  body[data-skin="term"] .wc.hero .wc-big::after{content:""; display:inline-block; width:.5em; height:.82em; margin-left:.12em; vertical-align:-.04em; background:currentColor; animation:termBlink 1.1s steps(1) infinite}
+  body[data-skin="term"] .wc-head{margin-top:7px; font:500 13.5px/1.35 var(--fm); text-shadow:none; color:var(--text)}
+  body[data-skin="term"] .wc:not(.has-big) .wc-head{margin-top:0; font-size:14.5px}
+  body[data-skin="term"] .wc:not(.has-big) .wc-head::before{content:"> "; color:var(--wk)}
+  body[data-skin="term"] .wc-sub{margin-top:5px; font:12.5px/1.45 var(--fs); color:var(--muted); opacity:1}
+  body[data-skin="term"] .wc:hover{border-color:color-mix(in srgb, var(--wk) 60%, transparent); border-top-color:var(--wk)}
+  @keyframes wcPrint{from{opacity:0; clip-path:inset(0 100% 0 0)} to{opacity:1; clip-path:inset(0 0 0 0)}}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .wc{animation:none} body[data-skin="term"] .wc.hero .wc-big::after{animation:none} }
+
   /* ============ FILLING A WIDE WINDOW ============
      wfDraw (the page's script) decides how many columns of extra panes fit beside the page and
      marks .content with wf-on. The columns are one list poured top to bottom; a pane that does
      not fit whole is hidden. Under a short page, #wideUnder takes the wide ones. */
   body[data-skin="term"] .content.wf-on{display:flex; align-items:flex-start; gap:var(--gap); padding-bottom:0}
   body[data-skin="term"] .content.wf-on .content-inner{flex:0 0 auto; width:var(--wf-mw); max-width:none; padding-bottom:70px}
-  body[data-skin="term"] .content.wf-on .content-inner.wf-has-under{padding-bottom:0}
+  /* with no room for a column, the page takes the whole width instead of stopping at 1400 */
+  body[data-skin="term"] .content.wf-stretch .content-inner{max-width:none}
+  /* extras under a short page reach the bottom of the window, so the page's foot room goes */
+  body[data-skin="term"] .content.wf-u, body[data-skin="term"] .content.wf-u .content-inner{padding-bottom:0}
   body[data-skin="term"] .wf-side{flex:1 1 0; min-width:0; position:sticky; top:var(--gap); height:calc(100vh - var(--gap) * 2);
     column-count:var(--wf-n, 1); column-gap:var(--gap); column-fill:auto; overflow:hidden}
   body[data-skin="term"] .wf-under{margin-top:var(--gap); column-count:var(--wf-n, 1); column-gap:var(--gap); column-fill:auto; overflow:hidden}
@@ -13751,29 +13796,34 @@ function wfDraw(){
   if(!content || !inner || !side || !under) return;
   const cur = $(".view:not(.hidden)"), view = cur ? cur.id.replace(/^view-/, "") : "";
   const gap = 10, avail = content.clientWidth;
-  let n = 0;
-  if(document.body.dataset.skin === "term" && state.wideFill !== false && view && !WF_SKIP.has(view) && !document.body.classList.contains("dock"))
-    n = Math.max(0, Math.min(4, Math.floor((avail - WF_PAGE_MIN + gap) / (WF_COL + gap))));
-  const list = n ? wfList(view) : [];
-  if(!n || !list.length){
-    if(content.classList.contains("wf-on")){ content.classList.remove("wf-on"); side.classList.add("hidden"); under.classList.add("hidden"); inner.classList.remove("wf-has-under"); side.dataset.ids = under.dataset.ids = ""; side.innerHTML = under.innerHTML = ""; }
-    return;
-  }
+  const active = document.body.dataset.skin === "term" && state.wideFill !== false && !!view && !WF_SKIP.has(view) && !document.body.classList.contains("dock");
+  const n = active ? Math.max(0, Math.min(4, Math.floor((avail - WF_PAGE_MIN + gap) / (WF_COL + gap)))) : 0;
+  const list = active ? wfList(view) : [];
+  // no room for a column beside the page: the page itself takes the whole width
+  content.classList.toggle("wf-stretch", active && !n);
+  const cols = n && list.length;
+  content.classList.toggle("wf-on", !!cols); side.classList.toggle("hidden", !cols);
+  if(!cols){ side.dataset.ids = ""; side.innerHTML = ""; }
+  under.classList.add("hidden"); content.classList.remove("wf-u");
+  if(!list.length){ under.dataset.ids = ""; under.innerHTML = ""; return; }
   // the page may grow a little too: up to 1500, or what the columns leave it
-  const mw = Math.min(document.body.hasAttribute("data-wide") ? 1640 : 1500, avail - n * (WF_COL + gap));
-  content.style.setProperty("--wf-mw", mw + "px"); side.style.setProperty("--wf-n", n);
-  content.classList.add("wf-on"); side.classList.remove("hidden");
-  // under a page shorter than the window: the wide ones, when there is height for them
-  under.classList.add("hidden"); inner.classList.remove("wf-has-under");
-  const wide = list.filter(x=>x.d.wide);
+  let mw = inner.clientWidth;
+  if(cols){
+    mw = Math.min(document.body.hasAttribute("data-wide") ? 1640 : 1500, avail - n * (WF_COL + gap));
+    content.style.setProperty("--wf-mw", mw + "px"); side.style.setProperty("--wf-n", n);
+  }
+  // Under a page shorter than the window. With columns beside the page these are the wide ones;
+  // with none, everything goes here, in as many columns as the page is wide.
+  const pool = cols ? list.filter(x=>x.d.wide) : list;
   const free = innerHeight - gap * 2 - (cur.getBoundingClientRect().bottom + scrollY);
-  const useUnder = wide.length && free >= 170;
+  const useUnder = pool.length && free >= 170;
   if(useUnder){
-    under.style.height = Math.floor(free) + "px"; under.style.setProperty("--wf-n", Math.max(1, Math.min(wide.length, Math.floor(mw / 520))));
-    under.classList.remove("hidden"); inner.classList.add("wf-has-under");
-    wfFillInto(under, wide);
+    under.style.height = Math.floor(free) + "px";
+    under.style.setProperty("--wf-n", Math.max(1, Math.min(pool.length, Math.floor(mw / (cols ? 520 : 380)))));
+    under.classList.remove("hidden"); content.classList.add("wf-u");
+    wfFillInto(under, pool);
   } else { under.dataset.ids = ""; under.innerHTML = ""; }
-  wfFillInto(side, useUnder ? list.filter(x=>!x.d.wide) : list);
+  if(cols) wfFillInto(side, useUnder ? list.filter(x=>!x.d.wide) : list);
 }
 function wfLater(){ if(wfLater.q) return; wfLater.q = setTimeout(()=>{ wfLater.q = 0; try{ wfDraw(); }catch(e){ console.error(e); } }, 60); }
 (function wfWire(){

@@ -5,7 +5,10 @@
      not fit whole is hidden. Under a short page, #wideUnder takes the wide ones. */
   body[data-skin="term"] .content.wf-on{display:flex; align-items:flex-start; gap:var(--gap); padding-bottom:0}
   body[data-skin="term"] .content.wf-on .content-inner{flex:0 0 auto; width:var(--wf-mw); max-width:none; padding-bottom:70px}
-  body[data-skin="term"] .content.wf-on .content-inner.wf-has-under{padding-bottom:0}
+  /* with no room for a column, the page takes the whole width instead of stopping at 1400 */
+  body[data-skin="term"] .content.wf-stretch .content-inner{max-width:none}
+  /* extras under a short page reach the bottom of the window, so the page's foot room goes */
+  body[data-skin="term"] .content.wf-u, body[data-skin="term"] .content.wf-u .content-inner{padding-bottom:0}
   body[data-skin="term"] .wf-side{flex:1 1 0; min-width:0; position:sticky; top:var(--gap); height:calc(100vh - var(--gap) * 2);
     column-count:var(--wf-n, 1); column-gap:var(--gap); column-fill:auto; overflow:hidden}
   body[data-skin="term"] .wf-under{margin-top:var(--gap); column-count:var(--wf-n, 1); column-gap:var(--gap); column-fill:auto; overflow:hidden}

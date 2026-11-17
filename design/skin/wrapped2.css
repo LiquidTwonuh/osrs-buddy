@@ -1,0 +1,42 @@
+
+  /* ============ THE WRAPPED DECK, IN THE TERMINAL LOOK ============
+     Josh, 2026-11-17: a complete restyle, thematic. The deck was five rounded cards in pink,
+     purple and orange gradients with white text. Here it is a readout: five square panes, each
+     numbered, each in one colour of the theme (the accent, then the four colours the app uses for
+     a place, a person, an item and a skill), the figure large in that colour, a dot grid in the
+     corner where the gradient was. Every colour is a theme token, so a new palette restyles the
+     deck with everything else. The cards print one after the other. Classic keeps the old deck. */
+  body[data-skin="term"] .wrap-deck{margin-top:16px}
+  body[data-skin="term"] .wrap-head{align-items:center; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--hair)}
+  body[data-skin="term"] .wrap-title{font:500 11px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  body[data-skin="term"] .wrap-title::before{content:"// "; color:var(--faint); letter-spacing:0}
+  body[data-skin="term"] .wrap-head .small.muted{margin-top:3px; font:12px var(--fm); color:var(--faint)}
+  body[data-skin="term"] .wrap-cards{grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:var(--gap); counter-reset:wc}
+  body[data-skin="term"] .wc{--wk:var(--gold); counter-increment:wc; min-height:158px; padding:34px 14px 14px; color:var(--text);
+    background:
+      radial-gradient(circle, color-mix(in srgb, var(--wk) 34%, transparent) 0 1px, transparent 1.4px) 100% 0 / 11px 11px,
+      color-mix(in srgb, var(--panel) 55%, transparent);
+    background-repeat:repeat, no-repeat;
+    -webkit-mask:none; border:1px solid var(--hair); border-top:2px solid var(--wk); box-shadow:none;
+    animation:wcPrint .5s cubic-bezier(.2,.7,.2,1) both}
+  body[data-skin="term"] .wc:nth-child(5n+2){--wk:var(--k-c)}
+  body[data-skin="term"] .wc:nth-child(5n+3){--wk:var(--k-y)}
+  body[data-skin="term"] .wc:nth-child(5n+4){--wk:var(--k-g)}
+  body[data-skin="term"] .wc:nth-child(5n+5){--wk:var(--k-o)}
+  /* the dot grid fades out toward the words, so it sits in the top right corner only */
+  body[data-skin="term"] .wc::after{content:""; position:absolute; inset:0; width:auto; height:auto; right:0; top:0; border-radius:0; pointer-events:none;
+    background:linear-gradient(200deg, transparent 0 22%, color-mix(in srgb, var(--panel) 55%, var(--bg)) 46%)}
+  body[data-skin="term"] .wc > *{position:relative; z-index:1}
+  body[data-skin="term"] .wc::before{content:"// " counter(wc, decimal-leading-zero); position:absolute; z-index:1; left:14px; top:10px; font:500 10.5px var(--fm); letter-spacing:.14em; color:var(--faint)}
+  body[data-skin="term"] .wc-ic{position:absolute; left:auto; right:12px; top:9px; font-size:17px; color:var(--wk)}
+  body[data-skin="term"] .wc-big{font:600 clamp(30px, 4.2vw, 44px)/1 var(--fm); letter-spacing:-.03em; color:var(--wk); text-shadow:none; font-variant-numeric:tabular-nums}
+  body[data-skin="term"] .wc.hero{min-height:190px}
+  body[data-skin="term"] .wc.hero .wc-big{font-size:clamp(42px, 6vw, 64px)}
+  body[data-skin="term"] .wc.hero .wc-big::after{content:""; display:inline-block; width:.5em; height:.82em; margin-left:.12em; vertical-align:-.04em; background:currentColor; animation:termBlink 1.1s steps(1) infinite}
+  body[data-skin="term"] .wc-head{margin-top:7px; font:500 13.5px/1.35 var(--fm); text-shadow:none; color:var(--text)}
+  body[data-skin="term"] .wc:not(.has-big) .wc-head{margin-top:0; font-size:14.5px}
+  body[data-skin="term"] .wc:not(.has-big) .wc-head::before{content:"> "; color:var(--wk)}
+  body[data-skin="term"] .wc-sub{margin-top:5px; font:12.5px/1.45 var(--fs); color:var(--muted); opacity:1}
+  body[data-skin="term"] .wc:hover{border-color:color-mix(in srgb, var(--wk) 60%, transparent); border-top-color:var(--wk)}
+  @keyframes wcPrint{from{opacity:0; clip-path:inset(0 100% 0 0)} to{opacity:1; clip-path:inset(0 0 0 0)}}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .wc{animation:none} body[data-skin="term"] .wc.hero .wc-big::after{animation:none} }
