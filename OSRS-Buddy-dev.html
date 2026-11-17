@@ -1411,7 +1411,66 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .fr-mini{display:flex; align-items:center; justify-content:center; gap:12px; padding:12px 16px; cursor:pointer; color:var(--muted); font-size:13.5px}
   .fr-mini b{color:var(--text); font-weight:600} .fr-mini:hover{color:var(--text)}
   .fr-seg{display:flex; justify-content:center; width:max-content; margin:0 auto 14px}
-  .fr-head{position:relative} .fr-chg{position:absolute; right:14px; top:14px; z-index:1}
+  /* the tracker at the head of Repeatable runs */
+  .rk{position:relative; overflow:hidden}
+  .rk::before{content:""; position:absolute; inset:0 0 auto 0; height:150px; background:radial-gradient(90% 100% at 0% 0%, color-mix(in oklab, var(--gold) 10%, transparent), transparent 72%); pointer-events:none}
+  .rk > *{position:relative}
+  .rk-top{display:grid; grid-template-columns:1fr auto auto; grid-template-areas:"t w c"; align-items:center; gap:14px 20px}
+  .rk-ttl{grid-area:t; min-width:0} .rk-ttl .eb{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+  .rk-ttl h3{margin:2px 0 0; font-size:27px; line-height:1.1} .rk-ttl .sub{font-size:12.5px; color:var(--muted); margin-top:4px}
+  .rk-chg{grid-area:c; align-self:start}
+  .rk-week{grid-area:w; display:flex; gap:6px}
+  .rk-day{width:42px; display:flex; flex-direction:column; align-items:center; gap:4px}
+  .rk-day span{font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); white-space:nowrap}
+  .rk-day b{width:100%; aspect-ratio:1; display:grid; place-items:center; border-radius:11px; border:1px solid var(--border); background:var(--inset); color:var(--text); font-size:13.5px; font-weight:600; font-variant-numeric:tabular-nums; transition:background .3s, border-color .3s}
+  .rk-day.l1 b{background:color-mix(in oklab, var(--gold) 14%, var(--inset)); border-color:color-mix(in oklab, var(--gold) 32%, var(--border))}
+  .rk-day.l2 b{background:color-mix(in oklab, var(--gold) 26%, var(--inset)); border-color:color-mix(in oklab, var(--gold) 55%, var(--border))}
+  .rk-day.l3 b{background:color-mix(in oklab, var(--gold) 40%, var(--inset)); border-color:var(--gold)}
+  .rk-day.now span{color:var(--gold)} .rk-day.now b{box-shadow:0 0 0 2px color-mix(in oklab, var(--gold) 38%, transparent)}
+  .rk-figs{display:grid; grid-template-columns:repeat(4, 1fr); margin-top:18px; border:1px solid var(--border); border-radius:14px; background:var(--inset); overflow:hidden}
+  .rk-fig{padding:12px 14px; border-left:1px solid var(--border); min-width:0} .rk-fig:first-child{border-left:0}
+  .rk-fig .l{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+  .rk-fig .v{font-family:var(--font-display); font-size:25px; color:var(--gold); font-weight:600; line-height:1.15; margin-top:2px; font-variant-numeric:tabular-nums}
+  .rk-fig .s{font-size:11.5px; color:var(--muted); margin-top:2px}
+  .rk-now{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:14px}
+  .rk-now .k{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-right:2px}
+  .rk-chip{display:inline-flex; align-items:center; gap:7px; padding:5px 12px; border-radius:999px; border:1px solid color-mix(in oklab, var(--green) 45%, var(--border)); background:color-mix(in oklab, var(--green) 10%, var(--inset)); color:var(--text); font:inherit; font-size:12.5px; font-weight:600; cursor:pointer; box-shadow:none; transition:transform .18s, border-color .18s}
+  .rk-chip::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--green); flex:none}
+  .rk-chip:hover{transform:translateY(-1px); border-color:var(--green); background:color-mix(in oklab, var(--green) 10%, var(--inset))}
+  .rk-now .nx{font-size:12.5px; color:var(--muted); margin-left:auto}
+  .rk-skh{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:20px 0 8px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+  .rk-skh .muted{letter-spacing:0; text-transform:none; font-size:12px}
+  .rk-skills{display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:10px}
+  .rk-sk{display:grid; grid-template-columns:54px 1fr; gap:2px 13px; align-items:center; align-content:start; text-align:left; padding:13px 14px; border-radius:14px; border:1px solid var(--border); background:var(--inset); color:var(--text); font:inherit; cursor:pointer; box-shadow:none; transition:border-color .18s, transform .18s}
+  .rk-sk:hover{border-color:var(--gold-dim); transform:translateY(-1px); background:var(--inset)}
+  .rk-sk.hot{border-color:color-mix(in oklab, var(--gold) 42%, var(--border)); background:linear-gradient(135deg, color-mix(in oklab, var(--gold) 10%, var(--inset)), var(--inset) 62%)}
+  .rk-sk .ring{width:54px; height:54px; position:relative; display:block}
+  .rk-sk .ring svg{position:absolute; inset:0; width:100%; height:100%}
+  .rk-sk .ring circle{fill:none; stroke-width:3.5} .rk-sk .ring .t{stroke:var(--border)} .rk-sk .ring .v{stroke:var(--gold); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%}
+  .rk-sk .ring img{position:absolute; left:50%; top:50%; width:24px; height:24px; transform:translate(-50%,-50%); object-fit:contain}
+  .rk-sk .b{display:flex; flex-direction:column; gap:1px; min-width:0}
+  .rk-sk .h{display:flex; align-items:baseline; justify-content:space-between; gap:8px} .rk-sk .h b{font-size:14.5px; font-weight:600}
+  .rk-sk .lv{font-style:normal; font-family:var(--font-display); font-size:25px; color:var(--gold); font-weight:600; line-height:1; font-variant-numeric:tabular-nums}
+  .rk-sk .l{font-size:12px; color:var(--muted)} .rk-sk .l .g{color:var(--gold); font-weight:600} .rk-sk .l.dim{font-size:11.5px}
+  .rk-sk .src{grid-column:1 / -1; display:flex; flex-direction:column; gap:3px; margin-top:9px; padding-top:9px; border-top:1px solid var(--border); font-size:11.5px; color:var(--muted)}
+  .rk-sk .src em{font-style:normal; color:var(--text); font-weight:600; margin-right:6px}
+  .rk-sups{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:12px}
+  .rk-sups .k{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-right:2px}
+  .rk-sup{display:inline-flex; align-items:center; gap:8px; max-width:100%; text-align:left; padding:6px 12px 6px 9px; border-radius:11px; border:1px solid var(--border); background:var(--inset); color:var(--text); font:inherit; font-size:12.5px; cursor:pointer; box-shadow:none; transition:border-color .18s, transform .18s}
+  .rk-sup:hover{border-color:var(--gold-dim); transform:translateY(-1px); background:var(--inset)}
+  .rk-sup img{width:18px; height:18px; object-fit:contain; flex:none} .rk-sup b{font-weight:600}
+  .rk-sup i{font-style:normal; font-family:var(--font-display); color:var(--gold); font-weight:600; font-size:15px; line-height:1}
+  .rk-sup span{color:var(--muted); font-size:12px; min-width:0}
+  .rk .rk-seg{margin:18px auto 0}
+  .rk-day.in, .rk-sk.in{animation:rkUp .42s cubic-bezier(.2,.7,.2,1) backwards; animation-delay:var(--d, 0ms)}
+  @keyframes rkUp{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+  .rk-sk.in .ring .v{animation:rkDraw .9s cubic-bezier(.2,.7,.2,1) backwards; animation-delay:calc(var(--d, 0ms) + 80ms)}
+  @keyframes rkDraw{from{stroke-dasharray:0 120}}
+  .rk-flash{animation:rkFlash 1.4s ease-out}
+  @keyframes rkFlash{0%{box-shadow:0 0 0 0 color-mix(in oklab, var(--gold) 60%, transparent)} 100%{box-shadow:0 0 0 14px transparent}}
+  @media (max-width:900px){ .rk-top{grid-template-columns:1fr auto; grid-template-areas:"t c" "w w"} .rk-week{justify-content:space-between} .rk-day{width:auto; flex:1; max-width:56px} }
+  @media (max-width:700px){ .rk-figs{grid-template-columns:1fr 1fr} .rk-fig:nth-child(3){border-left:0} .rk-fig:nth-child(n+3){border-top:1px solid var(--border)} .rk-now .nx{margin-left:0; flex-basis:100%} .rk-ttl h3{font-size:23px} }
+  @media (prefers-reduced-motion:reduce){ .rk-day.in, .rk-sk.in, .rk-sk.in .ring .v, .rk-flash{animation:none} .rk-chip, .rk-sk, .rk-sup, .rk-day b{transition:none} }
   /* a round in the list: tick, name, clock, pay */
   .fr-round{justify-content:flex-start; cursor:default; text-align:left; gap:11px; transition:opacity .25s}
   .fr-round.wait{opacity:.62} .fr-round.short{opacity:.7}
@@ -1430,7 +1489,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .fr-ptile.on .tk{border-color:var(--gold); background:color-mix(in oklab, var(--gold) 20%, transparent)}
   .fr-pfoot{display:flex; align-items:center; gap:8px; margin-top:18px; flex-wrap:wrap}
   .fr-pmore{margin-top:18px; border-top:1px solid var(--border); padding-top:10px} .fr-pmore summary{cursor:pointer; font-size:13px; color:var(--text)} .fr-pmore summary:hover{color:var(--gold)}
-  @media (max-width:700px){ .fr-chg{position:static; display:block; margin:0 auto 10px} .fr-round .pay{display:none} }
+  @media (max-width:700px){ .fr-round .pay{display:none} }
   @media (prefers-reduced-motion:reduce){ .fr-round, .fr-ptile, .fr-ptile .tk{transition:none} }
   .fr-week{display:flex; gap:4px; margin-top:4px}
   .fr-week i{flex:1; height:32px; border-radius:7px; background:var(--inset); border:1px solid var(--border); display:grid; place-items:center; font-size:11.5px; color:var(--muted); font-style:normal}
@@ -11350,13 +11409,13 @@ function roundsAll(db){
     }
     if(twin){
       // the wiki has it; add the gate it forgot, and count it among the routines worth leading with
-      twin.curated = true;
+      twin.curated = true; twin.xid = x.id; twin.pays = twin.pays || x.pays;
       if(other.length){ twin.gap = reachOf({skills:twin.skills, quests:twin.quests, other:(twin.needs || []).concat(other)}); }
       if(!twin.loc && x.loc) twin.loc = x.loc;
       twin.every = twin.every || x.every;
       return;
     }
-    out.push({name:x.name, key:"x:" + x.id, recur:true, every:x.every, perRun:0, pays:x.pays, why:[x.why], loc:x.loc, wiki:x.wiki,
+    out.push({name:x.name, key:"x:" + x.id, xid:x.id, recur:true, every:x.every, perRun:0, pays:x.pays, why:[x.why], loc:x.loc, wiki:x.wiki,
       cat:"Routine", group:"Routine", skills:x.skills || [], quests:x.quests || [], needs:[], extra:true,
       gap: reachOf({skills:x.skills || [], quests:x.quests || [], other})});
   });
@@ -11369,9 +11428,20 @@ function roundStatus(m){
   const up = !next || next <= Date.now();
   return {doneAt, next, up, text: up ? (doneAt ? "up again" : "up now") : roundWhen(next)};
 }
+function roundTickXp(m){ if(!m || m.xid !== "birdhouses") return null; const b = birdHouseFor(); return b ? {hunter: b[3] * 4, crafting: b[4] * 4} : null; }
 function roundTick(key){
   state.rounds = state.rounds || {};
-  if(state.rounds[key]) delete state.rounds[key]; else state.rounds[key] = Date.now();
+  const r = runsState(), m = roundsAll(mmgDB()).find(x=>x.key === key), at = state.rounds[key] || 0;
+  r.ticks = r.ticks || [];
+  // waiting means it was ticked and has not come back yet: a click takes the tick off again.
+  // Anything else is up (never done, or done and back), and a click ticks it.
+  const waiting = at && (m ? !roundStatus(m).up : true);
+  if(waiting){ const i = r.ticks.findIndex(x=>x.key === key && x.t === at); if(i > -1) r.ticks.splice(i, 1); delete state.rounds[key]; }
+  else {
+    const now = Date.now(), xp = roundTickXp(m); state.rounds[key] = now;
+    r.ticks.push(xp ? {t: now, key, xp} : {t: now, key}); if(r.ticks.length > 600) r.ticks.splice(0, r.ticks.length - 600);
+    if(xp) toast(`${m.name}: +${fmt(xp.hunter)} Hunter XP, +${fmt(xp.crafting)} Crafting XP.`);
+  }
   save(); renderCoffer(); renderRoundsHome(); if($("#runsView .fr-round")) renderRuns();
 }
 // the rows: up first by pay, then the waiting ones by how soon, then the ones you can't do yet
@@ -11424,7 +11494,7 @@ function cofferGoRound(key){
   setTimeout(go, 300);
 }
 // countdowns move: while the page is open, keep them honest
-setInterval(()=>{ if(document.hidden) return; const v = $("#view-home"); if(v && !v.classList.contains("hidden")) renderRoundsHome(); const c = $("#view-coffer"); if(c && !c.classList.contains("hidden")){ if($("#cofferView .rd-row")) renderCoffer(); if($("#runsView .fr-round")) renderRuns(); } }, 60000);
+setInterval(()=>{ if(document.hidden) return; const v = $("#view-home"); if(v && !v.classList.contains("hidden")) renderRoundsHome(); const c = $("#view-coffer"); if(c && !c.classList.contains("hidden")){ if($("#cofferView .rd-row")) renderCoffer(); if($("#runsView .rk")) renderRuns(); } }, 60000);
 
 // ============ COFFER SECTIONS ============
 // Earn is what you can do for GP. Vault is what you've got, valued live from your bank. Flip is
@@ -11450,7 +11520,7 @@ function applyCofferSec(){
   const bl = $("#cofferBlurb"); if(bl) bl.textContent = COFFER_BLURB[cur];
   if(cur==="vault"){ renderVault(); vaultData(true); }
   else if(cur==="flip"){ renderFlip(); flipData(true); }
-  else if(cur==="runs"){ renderRuns(); runsData(); }
+  else if(cur==="runs"){ frIntroAt = Date.now(); renderRuns(); runsData(); }
   else { renderCoffer(); mmgDbEnsure(); }
 }
 function renderNavSubCoffer(){
@@ -11766,6 +11836,24 @@ function frRounds(){ return roundsAll(mmgDB()).filter(m=>!frCovered(m)); }
 function frRoundGroup(m){ const rl = roundRule(m.every); return rl.kind === "interval" ? "timed" : rl.kind; }
 // Home and the clock follow the routine once there is one; the farm cards stand in for their rounds
 function frRoundShown(m){ const rt = (state.runs || {}).routine; if(!Array.isArray(rt)) return true; if(rt.includes(m.key)) return true; return FARM_KINDS.some(k=>rt.includes(k.id) && frCoveredBy(m, k)); }
+// Bird houses: name, Hunter to place, Crafting to build, Hunter XP and Crafting XP a house (the wiki's table)
+const BIRD_HOUSES = [["Regular",5,5,112,15],["Oak",14,15,168,20],["Willow",24,25,224,25],["Teak",34,35,280,30],["Maple",44,45,369,35],["Mahogany",49,50,480,40],["Yew",59,60,612,45],["Magic",74,75,969,50],["Redwood",89,90,1200,55]];
+function birdHouseFor(){ if(!live || !live.skills) return null; const h = lvlOf("hunter"), c = lvlOf("crafting"); const can = BIRD_HOUSES.filter(b=>b[1] <= h && b[2] <= c); return can.length ? can[can.length - 1] : null; }
+// Tears of Guthix pays into the skill with the least XP; ties go to the first in the game's order,
+// and four skills sit out until the thing that opens them is done (the wiki, Tears of Guthix minigame)
+const TEARS_ORDER = ["attack","strength","ranged","magic","defence","hitpoints","prayer","agility","herblore","thieving","crafting","runecrafting","mining","smithing","fishing","cooking","firemaking","woodcutting","fletching","slayer","farming","construction","hunter","sailing"];
+const TEARS_NEEDS = {runecrafting:"Rune Mysteries", herblore:"Druidic Ritual", sailing:"Pandemonium"};
+function tearsSkill(){
+  if(!live || !live.skills) return null;
+  let best = null, bx = Infinity;
+  TEARS_ORDER.forEach(sk=>{ if(!live.skills[sk]) return; if(TEARS_NEEDS[sk] && state.questsDone && !questDone(TEARS_NEEDS[sk])) return; const x = liveSkillXp(sk); if(x < bx){ bx = x; best = sk; } });
+  return best;
+}
+// the dailies that hand you supplies, and the skill those supplies train
+const FR_SUPPLY = {bert:"crafting", flax:"crafting", zaff:"crafting", cromperty:"runecrafting", "nmz-herbs":"herblore", bonemeal:"prayer"};
+function frSkName(k){ return k === "runecrafting" ? "Runecraft" : k.charAt(0).toUpperCase() + k.slice(1); }
+function frXp(n){ n = Math.round(+n || 0); return n >= 1e6 ? (n / 1e6).toFixed(2).replace(/\.?0+$/, "") + "m" : n >= 1e5 ? Math.round(n / 1e3) + "k" : n >= 1e4 ? (n / 1e3).toFixed(1).replace(/\.0$/, "") + "k" : fmt(n); }
+let frIntroAt = 0; // when the page was opened, so the tracker draws in once and not on every redraw
 // a requirement line without the wiki's asides, for a small tile
 function frGateShort(html){ return String(html || "").replace(/<span class="muted">[\s\S]*?<\/span>/g, "").replace(/\s+,/g, ",").replace(/\s{2,}/g, " ").trim(); }
 function frCurated(m){ return !!(m.extra || m.curated); }
@@ -11855,12 +11943,8 @@ function frWhen(ms){ const m = Math.round(ms / 6e4); if(m < 60) return m + " min
 function renderRuns(){
   const el = $("#runsView"); if(!el) return;
   const r = runsState(), L = live ? lvlOf("farming") : null, now = Date.now();
-  const week = now - 7 * 864e5, wk = r.log.filter(e=>e.t >= week);
-  const days = new Set(wk.map(e=>isoDate(new Date(e.t)))).size;
-  const tally = [["This week", `${wk.length} run${wk.length===1?"":"s"}`, FARM_KINDS.map(k=>{ const n = wk.filter(e=>e.kind===k.id).length; return n ? `${n} ${k.label.toLowerCase().replace(" run","")}` : ""; }).filter(Boolean).join(", ") || "none logged yet"],
-    ["Farming XP", "+" + fmt(Math.round(wk.reduce((a,e)=>a+e.xp,0))), "from what you logged"],
-    ["Worth", (wk.reduce((a,e)=>a+e.net,0) >= 0 ? "+" : "") + gpShort(wk.reduce((a,e)=>a+e.net,0)), (()=>{ const h = wk.filter(e=>e.kind==="herb"), sold = h.filter(e=>e.sold).length; return h.length ? `${sold} of ${h.length} herb run${h.length===1?"":"s"} sold, the rest at today's prices` : "seeds and payments spent"; })()],
-    ["Days", `${days} of 7`, days >= 7 ? "every day this week" : days ? "with a run" : "no runs yet"]];
+  const DAY = 864e5, d0 = new Date(now); d0.setHours(0, 0, 0, 0);
+  const week = d0.getTime() - 6 * DAY, wk = r.log.filter(e=>e.t >= week), wkT = (r.ticks || []).filter(e=>e.t >= week);
   const kindCard = (k, ki, order)=>{
     const c = frCropFor(k.id), e = frEcon(k.id, c), list = FARM_CROPS[k.id];
     const patches = FARM_PATCHES[k.id], have = patches.filter(frHave);
@@ -11939,13 +12023,75 @@ function renderRuns(){
   // two ways in: the patch board, or a log you write yourself
   const view = r.view === "log" ? "log" : "board";
   const seg = `<div class="seg fr-seg"><button class="${view==="board"?"on":""}" data-frview="board">Patch board</button><button class="${view==="log"?"on":""}" data-frview="log">Run log</button></div>`;
-  const head = `<div class="panel fr-head"><button class="ghost small fr-chg" data-frsetup title="Pick which runs and dailies show here">Change routine</button><div class="fr-top" style="margin-bottom:12px"><div class="eb">Repeatable runs</div><h3 style="font-size:22px">${L==null ? "This week" : `${L} Farming · this week`}</h3></div>${seg}<div class="fr-tally">${tally.map(([l,v,s])=>`<div class="fr-stat"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("")}</div>
-      ${L==null ? `<p class="small muted" style="margin:10px 0 0">Load your character and each run picks its crop for your Farming level. Until then it shows the lowest.</p>` : ""}</div>`;
-  // the week as seven squares, lit on the days you ran
-  const dayNames = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"], today = new Date(), dow = (today.getDay() + 6) % 7;
-  const monday = new Date(today); monday.setHours(0,0,0,0); monday.setDate(today.getDate() - dow);
-  const ranDays = new Set(r.log.filter(e=>e.t >= monday.getTime()).map(e=>(new Date(e.t).getDay() + 6) % 7));
-  const strip = `<div class="fr-week">${dayNames.map((d, i)=>`<i class="${ranDays.has(i) ? "d" : ""} ${i===dow ? "now" : ""}">${d}</i>`).join("")}</div>`;
+  // ---- the tracker: seven days, the figures, what is up now, and every skill the routine feeds
+  const intro = now - frIntroAt < 900 ? now - frIntroAt : -1;   // the first second after opening, things draw in
+  const inAt = ms => intro >= 0 ? `style="--d:${Math.round(ms - intro)}ms"` : "";
+  const dayCells = Array.from({length:7}, (_, i)=>{ const a = week + i * DAY, b = a + DAY; return {d: new Date(a), n: wk.filter(e=>e.t >= a && e.t < b).length + wkT.filter(e=>e.t >= a && e.t < b).length, today: i === 6}; });
+  const daysOn = dayCells.filter(c=>c.n).length;
+  const weekStrip = `<div class="rk-week">${dayCells.map((c, i)=>`<div class="rk-day ${c.n ? (c.n >= 4 ? "l3" : c.n >= 2 ? "l2" : "l1") : ""} ${c.today ? "now" : ""} ${intro >= 0 ? "in" : ""}" ${inAt(i * 45)} title="${c.d.toLocaleDateString([], {weekday:"long", day:"numeric", month:"short"})}: ${c.n ? c.n + " done" : "nothing logged"}"><span>${c.today ? "Today" : c.d.toLocaleDateString([], {weekday:"short"})}</span><b>${c.n || ""}</b></div>`).join("")}</div>`;
+  const xpWk = {}, addXp = (sk, n) => { if(n) xpWk[sk] = (xpWk[sk] || 0) + n; };
+  wk.forEach(e=>addXp("farming", e.xp)); wkT.forEach(e=>{ if(e.xp) for(const sk in e.xp) addXp(sk, e.xp[sk]); });
+  const xpAll = Object.values(xpWk).reduce((a, b)=>a + b, 0);
+  const farmBits = FARM_KINDS.map(k=>{ const n = wk.filter(e=>e.kind === k.id).length; return n ? `${n} ${k.label.toLowerCase().replace(" run", "")}` : ""; }).filter(Boolean).join(", ");
+  const worth = wk.reduce((a, e)=>a + e.net, 0), herbRuns = wk.filter(e=>e.kind === "herb"), soldN = herbRuns.filter(e=>e.sold).length;
+  const figs = [
+    ["Farm runs", String(wk.length), farmBits || "none logged yet"],
+    ["Ticked", String(wkT.length), wkT.length ? "dailies and timed rounds" : "tick a round when it's done"],
+    ["XP gained", "+" + fmt(Math.round(xpAll)), Object.keys(xpWk).sort((a, b)=>xpWk[b] - xpWk[a]).slice(0, 3).map(sk=>`${frSkName(sk)} ${frXp(xpWk[sk])}`).join(" · ") || "from what you log"],
+    ["Worth", (worth >= 0 ? "+" : "") + gpShort(worth), herbRuns.length ? `${soldN} of ${herbRuns.length} herb run${herbRuns.length === 1 ? "" : "s"} sold, the rest at today's prices` : "seeds and payments spent"],
+  ];
+  // what is up now, and the next thing back
+  const nowBits = [], waits = [];
+  items.forEach(id=>{
+    const k = FARM_KINDS.find(x=>x.id === id);
+    if(k){
+      const list = FARM_CROPS[k.id], c = frCropFor(k.id), left = frPlots(k.id).map(({pl})=>((list.find(x=>x.n === pl.crop) || c).grow) * 6e4 - (now - pl.at));
+      const rd = left.filter(x=>x <= 0).length; if(rd) nowBits.push({id, text:`${k.icon} ${k.label} · ${rd} ready`});
+      left.filter(x=>x > 0).forEach(x=>waits.push({ms: x, name: k.label})); return;
+    }
+    const m = roundsBy[id]; if(!m.gap.ok) return; const st = roundStatus(m);
+    if(st.up) nowBits.push({id, text: m.name}); else waits.push({ms: st.next - now, name: m.name});
+  });
+  waits.sort((a, b)=>a.ms - b.ms);
+  const nowRow = items.length ? `<div class="rk-now"><span class="k">${nowBits.length ? "Up now" : "Nothing up right now"}</span>${nowBits.map(b=>`<button class="rk-chip" data-rkgo="${escapeHtml(b.id)}" title="Show it below">${escapeHtml(b.text)}</button>`).join("")}${waits.length ? `<span class="nx">next back: ${escapeHtml(waits[0].name)} in ${frWhen(waits[0].ms)}</span>` : ""}</div>` : "";
+  // every skill the routine feeds: trained by doing it, or supplied by what it hands you
+  const skl = {}, feed = (sk, trains, label, detail, per) => { const o = skl[sk] = skl[sk] || {src: [], trains: false, per: 0, nper: 0}; o.src.push({label, detail}); if(per){ o.per += per; o.nper++; } if(trains) o.trains = true; };
+  const bh = birdHouseFor(), tsk = tearsSkill();
+  items.forEach(id=>{
+    const k = FARM_KINDS.find(x=>x.id === id);
+    if(k){ const n = FARM_PATCHES[k.id].filter(frHave).length, per = frEcon(k.id, frCropFor(k.id)).xp * n; feed("farming", true, k.label, n ? `${frXp(per)} XP a run` : "no patches ticked yet", per); return; }
+    const m = roundsBy[id], x = m.xid;
+    if(x === "birdhouses"){
+      feed("hunter", true, m.name, bh ? `${frXp(bh[3] * 4)} XP a run with ${bh[0].toLowerCase()} houses` : "Hunter XP from four houses", bh ? bh[3] * 4 : 0);
+      feed("crafting", true, m.name, bh ? `${frXp(bh[4] * 4)} XP a run, building the houses` : "building the houses", bh ? bh[4] * 4 : 0);
+    }
+    else if(x === "tears"){ if(tsk) feed(tsk, true, m.name, "your skill with the least XP, so the tears land here"); }
+    else if(FR_SUPPLY[x]) feed(FR_SUPPLY[x], false, m.name, m.pays || "");
+    else { const sk = mmgCatSkill(m); if(sk) feed(sk, false, m.name, m.perRun ? `${gpShort(m.perRun)} a run` : ""); }
+  });
+  const skCards = Object.keys(skl).filter(sk=>skl[sk].trains).sort((a, b)=>(xpWk[b] || 0) - (xpWk[a] || 0) || (skl[b].trains - skl[a].trains) || skl[b].per - skl[a].per || SKILL_ORDER.indexOf(a) - SKILL_ORDER.indexOf(b)).map((sk, i)=>{
+    const o = skl[sk], pg = live ? skillProgress(sk) : null, wkx = Math.round(xpWk[sk] || 0);
+    const line = wkx ? `<span class="g">+${fmt(wkx)} XP</span> in seven days` : o.trains ? "no XP logged in seven days" : "supplies, the XP comes when you use them";
+    const laps = pg && pg.toNext && o.per ? Math.ceil(pg.toNext / o.per) : 0;
+    const to = !pg ? "load your character for the level" : pg.lvl >= 99 ? "99" : `${frXp(pg.toNext)} XP to ${pg.next}${laps && laps <= 60 ? (o.nper === 1 ? `, about ${laps} more run${laps === 1 ? "" : "s"}` : `, about ${laps} more of each run`) : ""}`;
+    return `<button class="rk-sk ${wkx ? "hot" : ""} ${intro >= 0 ? "in" : ""}" data-rkskill="${sk}" title="Open ${frSkName(sk)} in Skills" ${inAt(140 + i * 55)}>
+        <span class="ring">${skillRing(pg ? pg.frac : 0)}<img src="${skillIconUrl(sk)}" alt=""></span>
+        <span class="b"><span class="h"><b>${frSkName(sk)}</b><i class="lv">${pg ? pg.lvl : "?"}</i></span><span class="l">${line}</span><span class="l dim">${to}</span></span>
+        <span class="src">${o.src.map(x=>`<span><em>${escapeHtml(x.label)}</em>${escapeHtml(x.detail || "")}</span>`).join("")}</span>
+      </button>`; }).join("");
+  const skSups = Object.keys(skl).filter(sk=>!skl[sk].trains).sort((a, b)=>SKILL_ORDER.indexOf(a) - SKILL_ORDER.indexOf(b)).map(sk=>`<button class="rk-sup" data-rkskill="${sk}" title="Open ${frSkName(sk)} in Skills"><img src="${skillIconUrl(sk)}" alt=""><b>${frSkName(sk)}</b>${live ? `<i>${lvlOf(sk)}</i>` : ""}<span>${skl[sk].src.map(x=>escapeHtml(x.detail || x.label)).join(" · ")}</span></button>`).join("");
+  const head = `<div class="panel rk">
+      <div class="rk-top">
+        <div class="rk-ttl"><div class="eb">Repeatable runs</div><h3>Your week</h3><div class="sub">${daysOn ? `Something done on ${daysOn} of the last 7 days` : "Nothing logged in the last 7 days yet"}</div></div>
+        ${weekStrip}
+        <button class="ghost small rk-chg" data-frsetup title="Pick which runs and dailies show here">Change routine</button>
+      </div>
+      <div class="rk-figs">${figs.map(([l, v, sub])=>`<div class="rk-fig"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${sub}</div></div>`).join("")}</div>
+      ${nowRow}
+      ${skCards ? `<div class="rk-skh"><span>Skills your routine trains</span>${live ? "" : `<span class="muted">load your character and each card shows its level</span>`}</div><div class="rk-skills">${skCards}</div>` : ""}
+      ${skSups ? `<div class="rk-sups"><span class="k">And supplies for</span>${skSups}</div>` : ""}
+      ${seg.replace("fr-seg", "fr-seg rk-seg")}
+    </div>`;
   // the composer: what you ran, with what, how many patches, and for herbs how many you picked
   const d = r.draft || (r.draft = {kind:"herb", crop:"", n:0, herbs:0});
   const dk = FARM_KINDS.find(k=>k.id===d.kind) ? d.kind : "herb";
@@ -11958,13 +12104,18 @@ function renderRuns(){
       ${dk==="herb" ? `<label class="small muted">herbs picked <input type="number" id="frHerbs" min="0" max="200" value="${dherbs}"></label>` : ""}
       <span class="grow"></span><button class="primary small" id="frAdd">Add run</button></div>`;
   el.innerHTML = (!r.routine || r.setup) ? frSetupHtml(r, L) : head + (view === "log"
-    ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>Log a run</h3><span class="small muted">five seconds, and the app values it at today's prices</span></div>${compose}
-        <div class="section-title"><h3>This week</h3><span class="small muted">a square per day, lit when you ran</span></div>${strip}</div>
+    ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>Log a run</h3><span class="small muted">five seconds, and the app values it at today's prices</span></div>${compose}</div>
       <div class="panel"><div class="section-title" style="margin-top:0"><h3>Runs</h3><span class="small muted">newest first · worth is the day's prices, minus seeds and payments</span></div>
         <div class="fr-log">${log || `<div class="empty">Nothing yet. Add a run above, or press Planted and then Picked on the patch board.</div>`}</div>
         <p class="small muted" style="margin:10px 0 0">Crop levels, payments and XP are the wiki's (CC BY-NC-SA). Herb yield is taken as eight a patch unless you say otherwise. A run is worth today's Grand Exchange middle until you press Sold, which fixes it at that day's price.</p></div>`
     : kinds);
   $$("#runsView [data-frview]").forEach(b=>b.onclick = ()=>{ runsState().view = b.dataset.frview; save(); renderRuns(); });
+  $$("#runsView [data-rkskill]").forEach(b=>b.onclick = ()=>{ state.skillsSel = b.dataset.rkskill; save(); switchView("skills"); });
+  $$("#runsView [data-rkgo]").forEach(b=>b.onclick = ()=>{
+    const id = b.dataset.rkgo, r = runsState(); if(r.view === "log"){ r.view = "board"; save(); renderRuns(); }
+    const t = $$("#runsView [data-frkind]").find(e=>e.dataset.frkind === id); if(!t) return;
+    t.scrollIntoView({behavior:"smooth", block:"center"}); t.classList.remove("rk-flash"); void t.offsetWidth; t.classList.add("rk-flash");
+  });
   $$("#runsView [data-frsetup]").forEach(b=>b.onclick = ()=>{ runsState().setup = true; frSel = null; renderRuns(); window.scrollTo({top:0, behavior:"smooth"}); });
   $$("#runsView [data-frroutine]").forEach(b=>b.onclick = ()=>{
     const id = b.dataset.frroutine; if(frSel.has(id)) frSel.delete(id); else frSel.add(id);
