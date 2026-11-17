@@ -1411,6 +1411,27 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .fr-mini{display:flex; align-items:center; justify-content:center; gap:12px; padding:12px 16px; cursor:pointer; color:var(--muted); font-size:13.5px}
   .fr-mini b{color:var(--text); font-weight:600} .fr-mini:hover{color:var(--text)}
   .fr-seg{display:flex; justify-content:center; width:max-content; margin:0 auto 14px}
+  .fr-head{position:relative} .fr-chg{position:absolute; right:14px; top:14px; z-index:1}
+  /* a round in the list: tick, name, clock, pay */
+  .fr-round{justify-content:flex-start; cursor:default; text-align:left; gap:11px; transition:opacity .25s}
+  .fr-round.wait{opacity:.62} .fr-round.short{opacity:.7}
+  .fr-round .ic{font-size:18px; width:22px; flex:none; display:grid; place-items:center} .fr-round .ic img{width:18px; height:18px}
+  .fr-round .tx{display:flex; flex-wrap:wrap; align-items:center; gap:3px 8px; min-width:0; flex:1} .fr-round .tx small{flex-basis:100%; font-size:12px; color:var(--muted)}
+  .fr-round .when.up{color:var(--green); font-weight:600}
+  .fr-round .pay{font-size:12.5px; color:var(--gold); text-align:right; flex:none; max-width:32%}
+  /* the picker */
+  .fr-setup .fr-pgroup{margin-top:16px} .fr-pgrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:8px; margin-top:6px}
+  .fr-ptile{display:flex; align-items:center; gap:10px; text-align:left; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:var(--inset); color:var(--text); cursor:pointer; font:inherit; box-shadow:none; transition:border-color .18s, background .18s, transform .18s}
+  .fr-ptile:hover{border-color:var(--gold-dim); transform:translateY(-1px)} .fr-ptile.on{border-color:var(--gold); background:color-mix(in oklab, var(--gold) 12%, var(--inset))}
+  .fr-ptile.short{opacity:.72}
+  .fr-ptile .ic{font-size:18px; width:24px; flex:none; display:grid; place-items:center} .fr-ptile .ic img{width:18px; height:18px}
+  .fr-ptile .tx{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px} .fr-ptile .tx b{font-size:13.5px} .fr-ptile .tx small{font-size:11.5px; color:var(--muted)} .fr-ptile .tx em{font-style:normal; font-size:11.5px; color:var(--muted)}
+  .fr-ptile .tk{width:22px; height:22px; border-radius:50%; border:1px solid var(--border); display:grid; place-items:center; font-size:12px; color:var(--gold); flex:none; transition:border-color .18s, background .18s}
+  .fr-ptile.on .tk{border-color:var(--gold); background:color-mix(in oklab, var(--gold) 20%, transparent)}
+  .fr-pfoot{display:flex; align-items:center; gap:8px; margin-top:18px; flex-wrap:wrap}
+  .fr-pmore{margin-top:18px; border-top:1px solid var(--border); padding-top:10px} .fr-pmore summary{cursor:pointer; font-size:13px; color:var(--text)} .fr-pmore summary:hover{color:var(--gold)}
+  @media (max-width:700px){ .fr-chg{position:static; display:block; margin:0 auto 10px} .fr-round .pay{display:none} }
+  @media (prefers-reduced-motion:reduce){ .fr-round, .fr-ptile, .fr-ptile .tk{transition:none} }
   .fr-week{display:flex; gap:4px; margin-top:4px}
   .fr-week i{flex:1; height:32px; border-radius:7px; background:var(--inset); border:1px solid var(--border); display:grid; place-items:center; font-size:11.5px; color:var(--muted); font-style:normal}
   .fr-week i.d{background:var(--green-bg); border-color:var(--green); color:var(--text)} .fr-week i.now{box-shadow:inset 0 0 0 1px var(--gold-dim)}
@@ -11328,7 +11349,8 @@ function roundsAll(db){
       else if(d === null) other.push(`${x.diary[0]} ${x.diary[1]} diary (not checked yet)`);
     }
     if(twin){
-      // the wiki has it; add the gate it forgot
+      // the wiki has it; add the gate it forgot, and count it among the routines worth leading with
+      twin.curated = true;
       if(other.length){ twin.gap = reachOf({skills:twin.skills, quests:twin.quests, other:(twin.needs || []).concat(other)}); }
       if(!twin.loc && x.loc) twin.loc = x.loc;
       twin.every = twin.every || x.every;
@@ -11350,7 +11372,7 @@ function roundStatus(m){
 function roundTick(key){
   state.rounds = state.rounds || {};
   if(state.rounds[key]) delete state.rounds[key]; else state.rounds[key] = Date.now();
-  save(); renderCoffer(); renderRoundsHome();
+  save(); renderCoffer(); renderRoundsHome(); if($("#runsView .fr-round")) renderRuns();
 }
 // the rows: up first by pay, then the waiting ones by how soon, then the ones you can't do yet
 function roundsSorted(list){
@@ -11381,7 +11403,7 @@ function renderRoundsHome(){
   const el = $("#homeRoundsList"), panel = $("#homeRounds"); if(!el || !panel) return;
   const db = mmgDB();
   const hid = new Set(cofferHidden());
-  const rows = roundsSorted(roundsAll(db).filter(m=>m.gap.ok && !hid.has(m.name)));
+  const rows = roundsSorted(roundsAll(db).filter(m=>m.gap.ok && !hid.has(m.name) && frRoundShown(m)));
   if(!rows.length){ panel.classList.add("hidden"); return; }
   panel.classList.remove("hidden");
   const up = rows.filter(m=>m.st.up), waiting = rows.filter(m=>!m.st.up);
@@ -11402,7 +11424,7 @@ function cofferGoRound(key){
   setTimeout(go, 300);
 }
 // countdowns move: while the page is open, keep them honest
-setInterval(()=>{ if(document.hidden) return; const v = $("#view-home"); if(v && !v.classList.contains("hidden")) renderRoundsHome(); const c = $("#view-coffer"); if(c && !c.classList.contains("hidden") && $("#cofferView .rd-row")) renderCoffer(); }, 60000);
+setInterval(()=>{ if(document.hidden) return; const v = $("#view-home"); if(v && !v.classList.contains("hidden")) renderRoundsHome(); const c = $("#view-coffer"); if(c && !c.classList.contains("hidden")){ if($("#cofferView .rd-row")) renderCoffer(); if($("#runsView .fr-round")) renderRuns(); } }, 60000);
 
 // ============ COFFER SECTIONS ============
 // Earn is what you can do for GP. Vault is what you've got, valued live from your bank. Flip is
@@ -11417,7 +11439,7 @@ const COFFER_BLURB = {
   earn:  "Every money maker the wiki lists, measured against your own levels. Answer a few questions and it shows the ones worth your time.",
   vault: "Your bank, valued at today's prices and tracked over time. It updates whenever you open your bank in game.",
   flip:  "What the Grand Exchange is paying right now: buy and sell prices, the margin after tax, and how much actually trades.",
-  runs:  "Your farm, curated to your Farming level: what to plant, what it costs, what it pays, and which patches you have.",
+  runs:  "Your routine: farm runs by patch, bird houses and the dailies you choose, with what each costs, pays and teaches, on the game's clock.",
 };
 function cofferSec(){ const x = state.cofferSec; return COFFER_SECTIONS.some(c=>c.id===x) ? x : "earn"; }
 function setCofferSec(id){ state.cofferSec = id; save(); applyCofferSec(); renderNavSubCoffer(); window.scrollTo(0,0); }
@@ -11671,10 +11693,10 @@ function renderVault(){
 // the patch pages; read 2026-11-13, CC BY-NC-SA). Prices come from the GE map already in the app.
 // Herb yield assumes eight a patch, the wiki's own working figure with ultracompost.
 const FARM_KINDS = [
-  {id:"herb", label:"Herb run", icon:"🌿", every:80, round:"herbs", yieldN:8},
-  {id:"tree", label:"Tree run", icon:"🌳", round:"trees"},
-  {id:"fruit", label:"Fruit tree run", icon:"🍊"},
-  {id:"hardwood", label:"Hardwood run", icon:"🪵"},
+  {id:"herb", label:"Herb run", icon:"🌿", every:80, round:"herbs", yieldN:8, lvl:9},
+  {id:"tree", label:"Tree run", icon:"🌳", round:"trees", lvl:15},
+  {id:"fruit", label:"Fruit tree run", icon:"🍊", lvl:27},
+  {id:"hardwood", label:"Hardwood run", icon:"🪵", lvl:35, quest:"Bone Voyage"},
 ];
 // name, level, [plant XP, check or harvest-each XP], grow minutes, what you buy, the payment, the pictures
 const FARM_CROPS = {
@@ -11729,11 +11751,51 @@ function runsState(){
   const r = state.runs = state.runs || {}; r.have = r.have || {}; r.pick = r.pick || {}; r.log = r.log || []; r.plots = r.plots || {};
   // a planting used to belong to the whole run; now each patch has its own
   if(r.planted){ for(const k in r.planted){ const pl = r.planted[k]; if(pl && pl.patches) pl.patches.forEach(id=>{ if(!r.plots[id]) r.plots[id] = {at: pl.at, crop: pl.crop}; }); } delete r.planted; }
-  r.order = Array.isArray(r.order) ? r.order.filter(id=>FARM_KINDS.some(k=>k.id===id)) : [];
+  r.order = Array.isArray(r.order) ? r.order.filter(id=>typeof id === "string") : [];
   FARM_KINDS.forEach(k=>{ if(!r.order.includes(k.id)) r.order.push(k.id); });
+  if(!Array.isArray(r.routine)) r.routine = null;
   return r;
 }
-function frKinds(){ return runsState().order.map(id=>FARM_KINDS.find(k=>k.id===id)); }
+// ---- the routine: which runs and dailies are yours. Until it is set, the page asks.
+function frInRoutine(id){ const rt = runsState().routine; return !rt || rt.includes(id); }
+function frKinds(){ return runsState().order.map(id=>FARM_KINDS.find(k=>k.id===id)).filter(k=>k && frInRoutine(k.id)); }
+// a round that a farm card already covers (the herb and tree runs) stays out of the picker
+function frCoveredBy(m, k){ if(!k.round) return false; if(m.key === "x:" + k.round) return true; const x = ROUNDS_EXTRA.find(e=>e.id === k.round); return !!(x && x.match && x.match.test(m.name)); }
+function frCovered(m){ return FARM_KINDS.some(k=>frCoveredBy(m, k)); }
+function frRounds(){ return roundsAll(mmgDB()).filter(m=>!frCovered(m)); }
+function frRoundGroup(m){ const rl = roundRule(m.every); return rl.kind === "interval" ? "timed" : rl.kind; }
+// Home and the clock follow the routine once there is one; the farm cards stand in for their rounds
+function frRoundShown(m){ const rt = (state.runs || {}).routine; if(!Array.isArray(rt)) return true; if(rt.includes(m.key)) return true; return FARM_KINDS.some(k=>rt.includes(k.id) && frCoveredBy(m, k)); }
+// a requirement line without the wiki's asides, for a small tile
+function frGateShort(html){ return String(html || "").replace(/<span class="muted">[\s\S]*?<\/span>/g, "").replace(/\s+,/g, ",").replace(/\s{2,}/g, " ").trim(); }
+function frCurated(m){ return !!(m.extra || m.curated); }
+function frKindGate(k, L){ if(L != null && L < k.lvl) return `${k.lvl} Farming`; if(k.quest && state.questsDone && !questDone(k.quest)) return k.quest; return ""; }
+let frSel = null; // the picker's draft
+function frSetupHtml(r, L){
+  const rounds = frRounds(), db = mmgDB();
+  if(!frSel){
+    frSel = new Set(r.routine || []);
+    if(!r.routine){
+      FARM_KINDS.forEach(k=>{ if(FARM_PATCHES[k.id].some(pt=>r.have[pt.id] || r.plots[pt.id])) frSel.add(k.id); });
+      rounds.forEach(m=>{ if((state.rounds || {})[m.key]) frSel.add(m.key); });
+    }
+  }
+  // gate is HTML already shaped for the page (the farm kinds pass plain text through escapeHtml)
+  const tile = (id, icon, name, sub, gate) => `<button class="fr-ptile ${frSel.has(id) ? "on" : ""} ${gate ? "short" : ""}" data-frroutine="${escapeHtml(id)}"><span class="ic">${icon}</span><span class="tx"><b>${escapeHtml(name)}</b><small>${sub}</small>${gate ? `<em>needs ${gate}</em>` : ""}</span><span class="tk">${frSel.has(id) ? "✓" : ""}</span></button>`;
+  const farm = FARM_KINDS.map(k=>tile(k.id, k.icon, k.label, `${k.every ? "every " + frWhen(k.every * 6e4) + " · " : ""}${FARM_PATCHES[k.id].length} patches`, escapeHtml(frKindGate(k, L)))).join("");
+  const grp = (g, list) => list.filter(m=>frRoundGroup(m) === g).map(m=>{ const sk = mmgCatSkill(m);
+    return tile(m.key, sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : "🌱", m.name, `${roundEveryText(m.every)}${m.pays ? " · " + escapeHtml(m.pays) : m.perRun ? " · " + fmt(m.perRun) + " a run" : ""}`, m.gap.ok ? "" : frGateShort(m.gap.text)); }).join("");
+  const sec = (t, h) => h ? `<div class="fr-pgroup"><div class="set-note">${t}</div><div class="fr-pgrid">${h}</div></div>` : "";
+  const main = rounds.filter(frCurated), more = rounds.filter(m=>!frCurated(m));
+  const n = frSel.size;
+  return `<div class="panel fr-setup">
+    <div class="fr-top"><div class="eb">Repeatable runs</div><h3>${r.routine ? "Your routine" : "Pick your routine"}</h3><div class="line">Tick the runs and dailies you actually do. The rest stay out of the way, and you can change this any time.</div></div>
+    ${sec("Farm runs", farm)}${sec("Timed", grp("timed", main))}${sec("Daily", grp("day", main))}${sec("Weekly", grp("week", main))}
+    ${more.length ? `<details class="fr-pmore" ${more.some(m=>frSel.has(m.key)) ? "open" : ""}><summary>More from the wiki's recurring list <span class="muted">· ${more.length}, mostly single crops and shop runs</span></summary>${sec("Timed", grp("timed", more))}${sec("Daily", grp("day", more))}${sec("Weekly", grp("week", more))}</details>` : ""}
+    ${db ? "" : `<p class="small muted" style="text-align:center; margin:14px 0 0">The wiki's own list of recurring money makers is still loading; it joins this page when it lands.</p>`}
+    <div class="fr-pfoot"><button class="ghost small" data-frcan>Tick everything I can do</button><span class="grow"></span>${r.routine ? `<button class="ghost small" data-frback>Cancel</button>` : ""}<button class="primary small" data-frdone ${n ? "" : "disabled"}>Done${n ? ` · ${n} picked` : ""}</button></div>
+  </div>`;
+}
 function frPlots(kind){ const r = runsState(); return FARM_PATCHES[kind].filter(pt=>r.plots[pt.id]).map(pt=>({pt, pl: r.plots[pt.id]})); }
 let frPop = null; // the patch just planted, so its card can pop once
 // Pick (or check) these patches, log it as one run, and plant them again with the crop for your
@@ -11788,7 +11850,7 @@ function frEcon(kind, c){
   const income = kind === "herb" ? frPrice(c.produce) * k.yieldN : 0;
   return {buy, pay, cost, xp, income, net: income - cost};
 }
-async function runsData(){ await priceMapEnsure(); await priceLatestEnsure(); renderRuns(); }
+async function runsData(){ await priceMapEnsure(); await priceLatestEnsure(); renderRuns(); await mmgDbEnsure(); renderRuns(); }
 function frWhen(ms){ const m = Math.round(ms / 6e4); if(m < 60) return m + " min"; const h = Math.floor(m / 60); return h < 48 ? `${h}h ${m % 60 ? (m % 60) + "m" : ""}`.trim() : Math.round(h / 24) + " days"; }
 function renderRuns(){
   const el = $("#runsView"); if(!el) return;
@@ -11799,7 +11861,7 @@ function renderRuns(){
     ["Farming XP", "+" + fmt(Math.round(wk.reduce((a,e)=>a+e.xp,0))), "from what you logged"],
     ["Worth", (wk.reduce((a,e)=>a+e.net,0) >= 0 ? "+" : "") + gpShort(wk.reduce((a,e)=>a+e.net,0)), (()=>{ const h = wk.filter(e=>e.kind==="herb"), sold = h.filter(e=>e.sold).length; return h.length ? `${sold} of ${h.length} herb run${h.length===1?"":"s"} sold, the rest at today's prices` : "seeds and payments spent"; })()],
     ["Days", `${days} of 7`, days >= 7 ? "every day this week" : days ? "with a run" : "no runs yet"]];
-  const kinds = frKinds().map((k, ki, order)=>{
+  const kindCard = (k, ki, order)=>{
     const c = frCropFor(k.id), e = frEcon(k.id, c), list = FARM_CROPS[k.id];
     const patches = FARM_PATCHES[k.id], have = patches.filter(frHave);
     const plots = frPlots(k.id), growOf = pl => ((list.find(x=>x.n === pl.crop) || c).grow) * 6e4;
@@ -11857,12 +11919,27 @@ function renderRuns(){
       </div>
       <div class="fr-patches">${pcards}</div>
     </div>`;
-  }).join("");
+  };
+  // a daily or a timed round: the tick, the clock, what it pays
+  const roundCard = (m, ki, order)=>{
+    const st = roundStatus(m), ok = m.gap.ok, sk = mmgCatSkill(m), key = escapeHtml(m.key);
+    const ord = `<span class="fr-ord"><button data-frup="${key}" ${ki===0?"disabled":""} title="Move up" aria-label="Move up">▲</button><button data-frdn="${key}" ${ki===order.length-1?"disabled":""} title="Move down" aria-label="Move down">▼</button></span>`;
+    return `<div class="panel fr-mini fr-round ${ok ? (st.up ? "up" : "wait") : "short"}" data-frkind="${key}">
+      <button class="rd-tick ${st.up ? "" : "on"}" data-rdtick="${key}" ${ok ? "" : "disabled"} title="${st.up ? "Done it? Tick it" : "Untick"}">${st.up ? "○" : "✓"}</button>
+      <span class="ic">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : "🌱"}</span>
+      <span class="tx"><b>${escapeHtml(m.name)}</b><span class="cf-tag">${roundEveryText(m.every)}</span><small>${ok ? `<span class="when ${st.up ? "up" : ""}">${escapeHtml(st.text)}</span>` : `needs ${frGateShort(m.gap.text)}`}${m.loc ? ` · ${escapeHtml(m.loc)}` : ""}</small></span>
+      <span class="pay">${m.perRun ? `${fmt(m.perRun)}<span class="muted">/run</span>` : escapeHtml(m.pays || "")}</span>
+      ${ord}</div>`;
+  };
+  const roundsBy = {}; frRounds().forEach(m=>{ roundsBy[m.key] = m; });
+  const items = r.order.filter(id=>frInRoutine(id) && (FARM_KINDS.some(k=>k.id===id) || roundsBy[id]));
+  const kinds = items.map((id, ki)=>{ const k = FARM_KINDS.find(x=>x.id===id); return k ? kindCard(k, ki, items) : roundCard(roundsBy[id], ki, items); }).join("")
+    || `<div class="panel"><div class="empty">Nothing in your routine yet. Change routine, above, picks what shows here.</div></div>`;
   const log = r.log.slice().reverse().slice(0, 30).map((e, i)=>`<div class="fr-lrow ${e.sold ? "sold" : ""}"><span class="t">${new Date(e.t).toLocaleString([], {weekday:"short", hour:"numeric", minute:"2-digit"})}</span><span>${escapeHtml((FARM_KINDS.find(k=>k.id===e.kind)||{}).label || e.kind)} <span class="muted small">${escapeHtml(e.crop)} · ${e.n} patch${e.n===1?"":"es"}</span></span><span class="n small muted">${e.kind==="herb" ? `${e.herbs ? e.herbs : "~" + e.n * 8} herbs` : ""}</span><span class="sl">${e.kind==="herb" ? (e.sold ? `<span class="tag" title="Sold ${new Date(e.soldAt).toLocaleDateString([], {weekday:"short"})} at ${gpShort(e.soldPrice)} each">sold</span>` : `<button class="ghost small" data-frsold="${e.t}" title="Mark the herbs sold at today's price">Sold</button>`) : ""}</span><span class="gp" title="${e.sold ? "What you got, minus the seeds" : "Today's price, minus seeds and payments"}">${e.net >= 0 ? "+" : ""}${gpShort(e.net)}</span><span class="xp">+${fmt(Math.round(e.xp))} xp</span><button class="x" data-frdel="${e.t}" title="Remove">✕</button></div>`).join("");
   // two ways in: the patch board, or a log you write yourself
   const view = r.view === "log" ? "log" : "board";
   const seg = `<div class="seg fr-seg"><button class="${view==="board"?"on":""}" data-frview="board">Patch board</button><button class="${view==="log"?"on":""}" data-frview="log">Run log</button></div>`;
-  const head = `<div class="panel"><div class="fr-top" style="margin-bottom:12px"><div class="eb">Your farm</div><h3 style="font-size:22px">${L==null ? "This week" : `${L} Farming · this week`}</h3></div>${seg}<div class="fr-tally">${tally.map(([l,v,s])=>`<div class="fr-stat"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("")}</div>
+  const head = `<div class="panel fr-head"><button class="ghost small fr-chg" data-frsetup title="Pick which runs and dailies show here">Change routine</button><div class="fr-top" style="margin-bottom:12px"><div class="eb">Repeatable runs</div><h3 style="font-size:22px">${L==null ? "This week" : `${L} Farming · this week`}</h3></div>${seg}<div class="fr-tally">${tally.map(([l,v,s])=>`<div class="fr-stat"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("")}</div>
       ${L==null ? `<p class="small muted" style="margin:10px 0 0">Load your character and each run picks its crop for your Farming level. Until then it shows the lowest.</p>` : ""}</div>`;
   // the week as seven squares, lit on the days you ran
   const dayNames = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"], today = new Date(), dow = (today.getDay() + 6) % 7;
@@ -11880,7 +11957,7 @@ function renderRuns(){
       <label class="small muted">patches <input type="number" id="frN" min="1" max="12" value="${dn}"></label>
       ${dk==="herb" ? `<label class="small muted">herbs picked <input type="number" id="frHerbs" min="0" max="200" value="${dherbs}"></label>` : ""}
       <span class="grow"></span><button class="primary small" id="frAdd">Add run</button></div>`;
-  el.innerHTML = head + (view === "log"
+  el.innerHTML = (!r.routine || r.setup) ? frSetupHtml(r, L) : head + (view === "log"
     ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>Log a run</h3><span class="small muted">five seconds, and the app values it at today's prices</span></div>${compose}
         <div class="section-title"><h3>This week</h3><span class="small muted">a square per day, lit when you ran</span></div>${strip}</div>
       <div class="panel"><div class="section-title" style="margin-top:0"><h3>Runs</h3><span class="small muted">newest first · worth is the day's prices, minus seeds and payments</span></div>
@@ -11888,6 +11965,19 @@ function renderRuns(){
         <p class="small muted" style="margin:10px 0 0">Crop levels, payments and XP are the wiki's (CC BY-NC-SA). Herb yield is taken as eight a patch unless you say otherwise. A run is worth today's Grand Exchange middle until you press Sold, which fixes it at that day's price.</p></div>`
     : kinds);
   $$("#runsView [data-frview]").forEach(b=>b.onclick = ()=>{ runsState().view = b.dataset.frview; save(); renderRuns(); });
+  $$("#runsView [data-frsetup]").forEach(b=>b.onclick = ()=>{ runsState().setup = true; frSel = null; renderRuns(); window.scrollTo({top:0, behavior:"smooth"}); });
+  $$("#runsView [data-frroutine]").forEach(b=>b.onclick = ()=>{
+    const id = b.dataset.frroutine; if(frSel.has(id)) frSel.delete(id); else frSel.add(id);
+    b.classList.toggle("on", frSel.has(id)); b.querySelector(".tk").textContent = frSel.has(id) ? "✓" : "";
+    const d = $("#runsView [data-frdone]"); if(d){ d.disabled = !frSel.size; d.textContent = frSel.size ? `Done · ${frSel.size} picked` : "Done"; }
+  });
+  $$("#runsView [data-frcan]").forEach(b=>b.onclick = ()=>{ FARM_KINDS.forEach(k=>{ if(!frKindGate(k, L)) frSel.add(k.id); }); frRounds().forEach(m=>{ if(frCurated(m) && m.gap.ok) frSel.add(m.key); }); renderRuns(); });
+  $$("#runsView [data-frback]").forEach(b=>b.onclick = ()=>{ runsState().setup = false; frSel = null; renderRuns(); });
+  $$("#runsView [data-frdone]").forEach(b=>b.onclick = ()=>{
+    const r = runsState(); r.routine = [...frSel]; r.routine.forEach(id=>{ if(!r.order.includes(id)) r.order.push(id); }); r.setup = false; frSel = null;
+    save(); renderRuns(); renderRoundsHome(); toast(`${r.routine.length} in your routine.`);
+  });
+  $$("#runsView [data-rdtick]").forEach(b=>b.onclick = ()=>roundTick(b.dataset.rdtick));
   const fk = $("#frKind"); if(fk) fk.onchange = ()=>{ const r = runsState(); r.draft = {kind: fk.value, crop:"", n:0, herbs:0}; save(); renderRuns(); };
   const fc = $("#frCrop"); if(fc) fc.onchange = ()=>{ runsState().draft.crop = fc.value; save(); };
   const fn = $("#frN"); if(fn) fn.onchange = ()=>{ const r = runsState(); r.draft.n = +fn.value || 0; if(r.draft.kind==="herb") r.draft.herbs = 0; save(); renderRuns(); };
@@ -11932,7 +12022,12 @@ function renderRuns(){
     toast(`${herbs} ${c.produce.replace(/^Grimy /, "")} sold at ${gpShort(price)} each: ${e.net >= 0 ? "+" : ""}${gpShort(e.net)} after the seeds.`);
   });
   // the runs slide to their new places rather than jumping
-  const move = (k, d) => { const r = runsState(), i = r.order.indexOf(k), j = i + d; if(i < 0 || j < 0 || j >= r.order.length) return; r.order.splice(i, 1); r.order.splice(j, 0, k); save(); animMove($("#runsView"), "[data-frkind]", "frkind", renderRuns); };
+  const move = (k, d) => {
+    const r = runsState(), vis = $$("#runsView [data-frkind]").map(e=>e.dataset.frkind), i = vis.indexOf(k), j = i + d;
+    if(i < 0 || j < 0 || j >= vis.length) return;
+    const nb = vis[j]; r.order.splice(r.order.indexOf(k), 1); const at = r.order.indexOf(nb); r.order.splice(d < 0 ? at : at + 1, 0, k);
+    save(); animMove($("#runsView"), "[data-frkind]", "frkind", renderRuns);
+  };
   $$("#runsView [data-frup]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); move(b.dataset.frup, -1); });
   $$("#runsView [data-frdn]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); move(b.dataset.frdn, 1); });
   $$("#runsView [data-frdel]").forEach(b=>b.onclick = ()=>{ const r = runsState(); const i = r.log.findIndex(e=>String(e.t)===b.dataset.frdel); if(i > -1) r.log.splice(i, 1); save(); renderRuns(); });
