@@ -1,0 +1,7069 @@
+{
+ "read": "2026-11-16",
+ "licence": "Text and figures are the Old School RuneScape Wiki's, CC BY-NC-SA 3.0.",
+ "src": {
+  "melee": {
+   "title": "Guide:Melee Gear Progression",
+   "rev": 15398651
+  },
+  "ranged": {
+   "title": "Guide:Ranged Gear Progression",
+   "rev": 15392714
+  },
+  "magic": {
+   "title": "Guide:Magic Gear Progression",
+   "rev": 15383796
+  },
+  "skilling": {
+   "title": "Skilling equipment",
+   "rev": 15369770
+  }
+ },
+ "styles": {
+  "melee": {
+   "stages": [
+    {
+     "title": "Early Game / Free-to-play",
+     "rungs": [
+      {
+       "h": "Level 1",
+       "lvl": 1,
+       "load": {
+        "head": "Iron full helm",
+        "cape": "Black cape",
+        "neck": "Amulet of strength",
+        "ammo": "",
+        "weapon": "Iron scimitar",
+        "torso": "Iron platebody",
+        "shield": "Mooleta",
+        "legs": "Iron platelegs",
+        "gloves": "Leather gloves",
+        "boots": "Leather boots",
+        "ring": ""
+       }
+      },
+      {
+       "h": "Level 5",
+       "lvl": 5,
+       "load": {
+        "head": "Steel full helm",
+        "cape": "Black cape",
+        "neck": "Amulet of strength",
+        "ammo": "",
+        "weapon": "Steel scimitar",
+        "torso": "Steel platebody",
+        "shield": "Mooleta",
+        "legs": "Steel platelegs",
+        "gloves": "Leather gloves",
+        "boots": "Fighting boots",
+        "ring": ""
+       }
+      },
+      {
+       "h": "Level 20",
+       "lvl": 20,
+       "load": {
+        "head": "Mithril full helm",
+        "cape": "Black cape",
+        "neck": "Amulet of strength",
+        "ammo": "",
+        "weapon": "Mithril scimitar",
+        "torso": "Mithril platebody",
+        "shield": "Mooleta",
+        "legs": "Mithril platelegs",
+        "gloves": "Leather gloves",
+        "boots": "Fighting boots",
+        "ring": ""
+       }
+      },
+      {
+       "h": "Level 30",
+       "lvl": 30,
+       "load": {
+        "head": "Adamant full helm",
+        "cape": "Black cape",
+        "neck": "Amulet of strength",
+        "ammo": "",
+        "weapon": "Adamant scimitar",
+        "torso": "Adamant platebody",
+        "shield": "Mooleta",
+        "legs": "Adamant platelegs",
+        "gloves": "Leather gloves",
+        "boots": "Fighting boots",
+        "ring": ""
+       }
+      },
+      {
+       "h": "Level 40+",
+       "lvl": 40,
+       "load": {
+        "head": "Rune full helm",
+        "cape": "Black cape",
+        "neck": "Amulet of strength",
+        "ammo": "",
+        "weapon": "Rune scimitar",
+        "torso": "Rune platebody",
+        "shield": "Mooleta",
+        "legs": "Rune platelegs",
+        "gloves": "Leather gloves",
+        "boots": "Fighting boots",
+        "ring": ""
+       }
+      }
+     ],
+     "also": []
+    },
+    {
+     "title": "Mid Game / Members",
+     "rungs": [
+      {
+       "h": "Level 40+",
+       "lvl": 40,
+       "load": {
+        "head": "Rune full helm",
+        "cape": "Ardougne cloak 1",
+        "neck": "Amulet of strength",
+        "ammo": "Peaceful blessing",
+        "weapon": "Rune scimitar",
+        "torso": "Rune platebody",
+        "shield": "Mooleta",
+        "legs": "Rune platelegs",
+        "gloves": "Combat bracelet",
+        "boots": "Rune boots",
+        "ring": "Explorer's ring 1"
+       }
+      },
+      {
+       "h": "Pre-Recipe for Disaster",
+       "lvl": null,
+       "load": {
+        "head": "Berserker helm",
+        "cape": "Ardougne cloak 2",
+        "neck": "Amulet of strength",
+        "ammo": "Peaceful blessing",
+        "weapon": "Dragon scimitar",
+        "torso": "Fighter torso",
+        "shield": "Mooleta",
+        "legs": "Rune platelegs",
+        "gloves": "Combat bracelet",
+        "boots": "Rune boots",
+        "ring": "Explorer's ring 1"
+       }
+      },
+      {
+       "h": "Post-Recipe for Disaster",
+       "lvl": null,
+       "load": {
+        "head": "Helm of Neitiznot",
+        "cape": "Ardougne cloak 2",
+        "neck": "Amulet of strength",
+        "ammo": "Peaceful blessing",
+        "weapon": "Dragon scimitar",
+        "torso": "Fighter torso",
+        "shield": "Antler guard",
+        "legs": "Rune platelegs",
+        "gloves": "Barrows gloves",
+        "boots": "Rune boots",
+        "ring": "Explorer's ring 2"
+       }
+      },
+      {
+       "h": "Level 65+",
+       "lvl": 65,
+       "load": {
+        "head": "Helm of Neitiznot",
+        "cape": "Mixed hide cape",
+        "neck": "Amulet of strength",
+        "ammo": "Peaceful blessing",
+        "weapon": "Dragon scimitar",
+        "torso": "Fighter torso",
+        "shield": "Dragon defender",
+        "legs": "Dragon platelegs",
+        "gloves": "Barrows gloves",
+        "boots": "Dragon boots",
+        "ring": "Berserker ring (i)"
+       }
+      },
+      {
+       "h": "Level 70+",
+       "lvl": 70,
+       "load": {
+        "head": "Helm of Neitiznot",
+        "cape": "Fire cape",
+        "neck": "Amulet of fury",
+        "ammo": "Peaceful blessing",
+        "weapon": "Abyssal whip",
+        "torso": "Fighter torso",
+        "shield": "Dragon defender",
+        "legs": "Torag's platelegs",
+        "gloves": "Barrows gloves",
+        "boots": "Dragon boots",
+        "ring": "Berserker ring (i)"
+       }
+      }
+     ],
+     "also": [
+      {
+       "label": "Arclight",
+       "items": [
+        {
+         "n": "Arclight"
+        }
+       ],
+       "use": "Demonic gorillas, Tormented Demons",
+       "cost": {
+        "t": "3+ Ancient shards"
+       }
+      },
+      {
+       "label": "Abyssal whip",
+       "items": [
+        {
+         "n": "Abyssal whip"
+        }
+       ],
+       "use": "Slayer, combat training",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Abyssal whip"
+        ]
+       }
+      },
+      {
+       "label": "Zombie axe",
+       "items": [
+        {
+         "n": "Zombie axe"
+        }
+       ],
+       "use": "Crush-weak enemies",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Zombie axe"
+        ]
+       }
+      },
+      {
+       "label": "Zamorakian hasta",
+       "items": [
+        {
+         "n": "Zamorakian hasta"
+        }
+       ],
+       "use": "Stab/Crush-weak enemies",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Zamorakian hasta"
+        ]
+       }
+      },
+      {
+       "label": "Barrows armour set",
+       "items": [
+        {
+         "n": "Barrows equipment",
+         "pic": "Torag's platebody"
+        }
+       ],
+       "use": "Moons of Peril, general Defence",
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Torag's helm",
+         "Torag's platebody",
+         "Torag's platelegs"
+        ]
+       }
+      },
+      {
+       "label": "Dharok the Wretched's equipment",
+       "items": [
+        {
+         "n": "Dharok the Wretched's equipment",
+         "pic": "Dharok's helm"
+        }
+       ],
+       "use": "Combat training, Giant Mole",
+       "cost": {
+        "e": "g0+g1+g2+g3",
+        "g": [
+         "Dharok's helm",
+         "Dharok's platebody",
+         "Dharok's platelegs",
+         "Dharok's greataxe"
+        ]
+       }
+      },
+      {
+       "label": "Obsidian armour set + Toktz-xil-ak + Berserker necklace",
+       "items": [
+        {
+         "n": "Obsidian armour set",
+         "pic": "Obsidian helmet"
+        },
+        {
+         "n": "Toktz-xil-ak"
+        },
+        {
+         "n": "Berserker necklace"
+        }
+       ],
+       "use": "Combat training",
+       "cost": {
+        "e": "g0+g1+g2+g3+g4",
+        "g": [
+         "Obsidian helmet",
+         "Obsidian platebody",
+         "Obsidian platelegs",
+         "Toktz-xil-ak",
+         "Berserker necklace"
+        ]
+       }
+      },
+      {
+       "label": "Ursine chainmace",
+       "items": [
+        {
+         "n": "Ursine chainmace"
+        }
+       ],
+       "use": "Wilderness slayer/bosses",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Ursine chainmace (u)"
+        ]
+       }
+      },
+      {
+       "label": "Hallowfell",
+       "items": [
+        {
+         "n": "Hallowfell"
+        }
+       ],
+       "use": "Multi-Slayer / Combat training",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Hallowfell"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "title": "Late Game",
+     "rungs": [
+      {
+       "h": "75+",
+       "lvl": 75,
+       "load": {
+        "head": "Serpentine helm",
+        "cape": "Fire cape",
+        "neck": "Amulet of fury",
+        "ammo": "Peaceful blessing",
+        "weapon": "Abyssal tentacle",
+        "torso": "Fighter torso",
+        "shield": "Dragon defender",
+        "legs": "Torag's platelegs",
+        "gloves": "Barrows gloves",
+        "boots": "Dragon boots",
+        "ring": "Berserker ring (i)"
+       }
+      },
+      {
+       "h": "80+",
+       "lvl": 80,
+       "load": {
+        "head": "Serpentine helm",
+        "cape": "Fire cape",
+        "neck": "Amulet of torture",
+        "ammo": "Peaceful blessing",
+        "weapon": "Abyssal tentacle",
+        "torso": "Fighter torso",
+        "shield": "Dragon defender",
+        "legs": "Blood Moon tassets",
+        "gloves": "Ferocious gloves",
+        "boots": "Dragon boots",
+        "ring": "Berserker ring (i)"
+       }
+      },
+      {
+       "h": "90+",
+       "lvl": 90,
+       "load": {
+        "head": "Neitiznot faceguard",
+        "cape": "Fire cape",
+        "neck": "Amulet of rancour",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Abyssal tentacle",
+        "torso": "Fighter torso",
+        "shield": "Dragon defender",
+        "legs": "Blood Moon tassets",
+        "gloves": "Ferocious gloves",
+        "boots": "Dragon boots",
+        "ring": "Berserker ring (i)"
+       }
+      },
+      {
+       "h": "95+",
+       "lvl": 95,
+       "load": {
+        "head": "Neitiznot faceguard",
+        "cape": "Infernal cape",
+        "neck": "Amulet of rancour",
+        "ammo": "Rada's blessing 4",
+        "weapon": [
+         "Ghrazi rapier",
+         "Blade of Saeldor (inactive)"
+        ],
+        "torso": "Fighter torso",
+        "shield": "Dragon defender",
+        "legs": "Blood Moon tassets",
+        "gloves": "Ferocious gloves",
+        "boots": "Primordial boots",
+        "ring": "Ultor ring"
+       }
+      }
+     ],
+     "also": [
+      {
+       "label": "Abyssal tentacle (Kraken tentacle)",
+       "items": [
+        {
+         "n": "Abyssal tentacle"
+        },
+        {
+         "n": "Kraken tentacle"
+        }
+       ],
+       "use": "General Slayer, Bossing",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Kraken tentacle"
+        ]
+       }
+      },
+      {
+       "label": "Serpentine helm",
+       "items": [
+        {
+         "n": "Serpentine helm"
+        }
+       ],
+       "use": "Venom immunity",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Serpentine helm (uncharged)"
+        ]
+       }
+      },
+      {
+       "label": "Blood Moon set + Dual macuahuitl",
+       "items": [
+        {
+         "n": "Blood Moon armour",
+         "pic": "Blood Moon helm"
+        },
+        {
+         "n": "Dual macuahuitl"
+        }
+       ],
+       "use": "Hueycoatl, Combat training",
+       "cost": {
+        "e": "g0+g1+g2+g3",
+        "g": [
+         "Blood Moon helm",
+         "Blood Moon chestplate",
+         "Blood Moon tassets",
+         "Dual macuahuitl"
+        ]
+       }
+      },
+      {
+       "label": "Burning claws",
+       "items": [
+        {
+         "n": "Burning claws"
+        }
+       ],
+       "use": "Special attack",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Burning claws"
+        ]
+       }
+      },
+      {
+       "label": "Osmumten's fang",
+       "items": [
+        {
+         "n": "Osmumten's fang"
+        }
+       ],
+       "use": "Tombs of Amascut, Nex, Vorkath",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Osmumten's fang"
+        ]
+       }
+      },
+      {
+       "label": "Emberlight",
+       "items": [
+        {
+         "n": "Emberlight"
+        }
+       ],
+       "use": "Yama, Demons",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Tormented synapse"
+        ]
+       }
+      },
+      {
+       "label": "Abyssal bludgeon",
+       "items": [
+        {
+         "n": "Abyssal bludgeon"
+        }
+       ],
+       "use": "The Nightmare, Araxxor",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Abyssal bludgeon"
+        ]
+       }
+      },
+      {
+       "label": "Dragon warhammer",
+       "items": [
+        {
+         "n": "Dragon warhammer"
+        }
+       ],
+       "use": "%-Based Defence reduction",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Dragon warhammer"
+        ]
+       }
+      },
+      {
+       "label": "Bandos godsword",
+       "items": [
+        {
+         "n": "Bandos godsword"
+        }
+       ],
+       "use": "Flat Defence reduction",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Bandos godsword"
+        ]
+       }
+      },
+      {
+       "label": "Dragon hunter lance",
+       "items": [
+        {
+         "n": "Dragon hunter lance"
+        }
+       ],
+       "use": "Vorkath, Chambers of Xeric",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Dragon hunter lance"
+        ]
+       }
+      },
+      {
+       "label": "Voidwaker",
+       "items": [
+        {
+         "n": "Voidwaker"
+        }
+       ],
+       "use": "Special attack, High defence",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Voidwaker"
+        ]
+       }
+      },
+      {
+       "label": "Dragon claws",
+       "items": [
+        {
+         "n": "Dragon claws"
+        }
+       ],
+       "use": "Special attack",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Dragon claws"
+        ]
+       }
+      },
+      {
+       "label": "Bandos equipment",
+       "items": [
+        {
+         "n": "Bandos equipment",
+         "pic": "Bandos chestplate"
+        }
+       ],
+       "use": "Defence",
+       "cost": {
+        "e": "g0+g1",
+        "g": [
+         "Bandos chestplate",
+         "Bandos tassets"
+        ]
+       }
+      },
+      {
+       "label": "Noxious halberd",
+       "items": [
+        {
+         "n": "Noxious halberd"
+        }
+       ],
+       "use": "Zulrah, Extended attack range",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Noxious halberd"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "title": "End Game",
+     "rungs": [
+      {
+       "h": "Endgame Slash",
+       "lvl": null,
+       "load": {
+        "head": "Oathplate helm",
+        "cape": "Infernal cape",
+        "neck": "Amulet of rancour",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Scythe of Vitur",
+        "torso": "Oathplate chest",
+        "shield": "",
+        "legs": "Oathplate legs",
+        "gloves": "Ferocious gloves",
+        "boots": "Avernic treads (pr)",
+        "ring": "Bellator ring"
+       }
+      },
+      {
+       "h": "Endgame Crush",
+       "lvl": null,
+       "load": {
+        "head": "Inquisitor's great helm",
+        "cape": "Infernal cape",
+        "neck": "Amulet of rancour",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Obligator",
+        "torso": "Inquisitor's hauberk",
+        "shield": "",
+        "legs": "Inquisitor's plateskirt",
+        "gloves": "Ferocious gloves",
+        "boots": "Avernic treads (pr)",
+        "ring": "Ultor ring"
+       }
+      },
+      {
+       "h": "Endgame Stab/Strength",
+       "lvl": null,
+       "load": {
+        "head": "Torva full helm",
+        "cape": "Infernal cape",
+        "neck": "Amulet of rancour",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Osmumten's fang",
+        "torso": "Torva platebody",
+        "shield": "Avernic defender",
+        "legs": "Torva platelegs",
+        "gloves": "Ferocious gloves",
+        "boots": "Avernic treads (pr)",
+        "ring": "Ultor ring"
+       }
+      },
+      {
+       "h": "Endgame Defence",
+       "lvl": null,
+       "load": {
+        "head": "Justiciar faceguard",
+        "cape": "Infernal cape",
+        "neck": "Amulet of blood fury",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Dinh's bulwark",
+        "torso": "Justiciar chestguard",
+        "shield": "",
+        "legs": "Justiciar legguards",
+        "gloves": "Barrows gloves",
+        "boots": "Echo boots",
+        "ring": "Ring of suffering (i)"
+       }
+      }
+     ],
+     "also": [
+      {
+       "label": "Justiciar armour",
+       "items": [
+        {
+         "n": "Justiciar armour",
+         "pic": "Justiciar faceguard"
+        }
+       ],
+       "use": "Defence, Tanking",
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Justiciar faceguard",
+         "Justiciar chestguard",
+         "Justiciar legguards"
+        ]
+       }
+      },
+      {
+       "label": "Oathplate armour",
+       "items": [
+        {
+         "n": "Oathplate armour",
+         "pic": "Oathplate helm"
+        }
+       ],
+       "use": "Slash accuracy, Theatre of Blood",
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Oathplate helm",
+         "Oathplate chest",
+         "Oathplate legs"
+        ]
+       }
+      },
+      {
+       "label": "Inquisitor's armour",
+       "items": [
+        {
+         "n": "Inquisitor's armour",
+         "pic": "Inquisitor's great helm"
+        }
+       ],
+       "use": "Crush accuracy, The Nightmare",
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Inquisitor's great helm",
+         "Inquisitor's hauberk",
+         "Inquisitor's plateskirt"
+        ]
+       }
+      },
+      {
+       "label": "Ghrazi rapier",
+       "items": [
+        {
+         "n": "Ghrazi rapier"
+        }
+       ],
+       "use": "Stab",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Ghrazi rapier"
+        ]
+       }
+      },
+      {
+       "label": "Blade of Saeldor",
+       "items": [
+        {
+         "n": "Blade of Saeldor"
+        }
+       ],
+       "use": "Slash",
+       "cost": {
+        "e": "g0+(g1*(1/1.5))",
+        "g": [
+         "Enhanced crystal weapon seed",
+         "Enhanced crystal teleport seed"
+        ]
+       }
+      },
+      {
+       "label": "Inquisitor's mace",
+       "items": [
+        {
+         "n": "Inquisitor's mace"
+        }
+       ],
+       "use": "Crush",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Inquisitor's mace"
+        ]
+       }
+      },
+      {
+       "label": "Soulreaper axe",
+       "items": [
+        {
+         "n": "Soulreaper axe"
+        }
+       ],
+       "use": "Slash/Crush",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Soulreaper axe"
+        ]
+       }
+      },
+      {
+       "label": "Scythe of Vitur",
+       "items": [
+        {
+         "n": "Scythe of Vitur"
+        }
+       ],
+       "use": "Theatre of Blood, Chambers of Xeric, Slash-weak bosses",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Scythe of Vitur (uncharged)"
+        ]
+       }
+      },
+      {
+       "label": "Obligator",
+       "items": [
+        {
+         "n": "Obligator"
+        }
+       ],
+       "use": "The Fractured Archive, Nightmare, Nex, Crush-weak bosses",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Obligator (uncharged)"
+        ]
+       }
+      },
+      {
+       "label": "Amulet of blood fury",
+       "items": [
+        {
+         "n": "Amulet of blood fury"
+        }
+       ],
+       "use": "Vardorvis, Nex, Fortis Colosseum",
+       "cost": {
+        "e": "g0+g1",
+        "g": [
+         "Blood shard",
+         "Amulet of fury"
+        ]
+       }
+      },
+      {
+       "label": "Torva armour",
+       "items": [
+        {
+         "n": "Torva armour",
+         "pic": "Torva full helm"
+        }
+       ],
+       "use": "Defence, Strength",
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Torva full helm",
+         "Torva platebody",
+         "Torva platelegs"
+        ]
+       }
+      }
+     ]
+    }
+   ],
+   "bonus": {
+    "name": "Strength bonus",
+    "rows": [
+     {
+      "n": "Mooleta",
+      "b": "+1",
+      "cost": {
+       "e": "0"
+      },
+      "d": "+1"
+     },
+     {
+      "n": "Amulet of strength",
+      "b": "+10",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Amulet of strength"
+       ]
+      },
+      "d": "+10",
+      "per": {
+       "e": "g0/10",
+       "g": [
+        "Amulet of strength"
+       ]
+      }
+     },
+     {
+      "n": "Combat bracelet",
+      "b": "+6",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Combat bracelet"
+       ]
+      },
+      "d": "+6",
+      "per": {
+       "e": "g0/6",
+       "g": [
+        "Combat bracelet"
+       ]
+      }
+     },
+     {
+      "n": "Rune boots",
+      "b": "+2",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Rune boots"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "g0/2",
+       "g": [
+        "Rune boots"
+       ]
+      }
+     },
+     {
+      "n": "Berserker helm",
+      "b": "+3",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Berserker helm"
+       ]
+      },
+      "d": "+3",
+      "per": {
+       "e": "g0/3",
+       "g": [
+        "Berserker helm"
+       ]
+      }
+     },
+     {
+      "n": "Dragon scimitar",
+      "b": "+66",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Dragon scimitar"
+       ]
+      },
+      "d": "+22",
+      "per": {
+       "e": "(g0-g1)/22",
+       "g": [
+        "Dragon scimitar",
+        "Rune scimitar"
+       ]
+      }
+     },
+     {
+      "n": "Fighter torso",
+      "b": "+4",
+      "cost": {
+       "e": "0"
+      },
+      "d": "+4"
+     },
+     {
+      "n": "Helm of Neitiznot",
+      "b": "+3",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Helm of Neitiznot"
+       ]
+      },
+      "d": "+0",
+      "per": {
+       "e": "g0/3",
+       "g": [
+        "Berserker helm"
+       ]
+      }
+     },
+     {
+      "n": "Barrows gloves",
+      "b": "+12",
+      "cost": {
+       "e": "130000"
+      },
+      "d": "+6",
+      "per": {
+       "e": "130000/6"
+      }
+     },
+     {
+      "n": "Dragon defender",
+      "b": "+6",
+      "cost": {
+       "e": "0"
+      },
+      "d": "+5"
+     },
+     {
+      "n": "Mixed hide cape",
+      "b": "+1",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Mixed hide cape"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "g0",
+       "g": [
+        "Mixed hide cape"
+       ]
+      }
+     },
+     {
+      "n": "Berserker ring (i)",
+      "b": "+8",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Berserker ring"
+       ]
+      },
+      "d": "+8",
+      "per": {
+       "e": "g0/8",
+       "g": [
+        "Berserker ring"
+       ]
+      }
+     },
+     {
+      "n": "Dragon boots",
+      "b": "+4",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Dragon boots"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "(g0-g1)/2",
+       "g": [
+        "Dragon boots",
+        "Rune boots"
+       ]
+      }
+     },
+     {
+      "n": "Fire cape",
+      "b": "+4",
+      "cost": {
+       "e": "0"
+      },
+      "d": "+3"
+     },
+     {
+      "n": "Abyssal whip",
+      "b": "+82",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Abyssal whip"
+       ]
+      },
+      "d": "+16",
+      "per": {
+       "e": "(g0-g1)/16",
+       "g": [
+        "Abyssal whip",
+        "Dragon scimitar"
+       ]
+      }
+     },
+     {
+      "n": "Amulet of fury",
+      "b": "+8",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Amulet of fury"
+       ]
+      },
+      "d": "-2",
+      "per": {
+       "e": "(g0)/-2",
+       "g": [
+        "Amulet of fury"
+       ]
+      }
+     },
+     {
+      "n": "Abyssal tentacle",
+      "b": "+86",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Kraken tentacle"
+       ]
+      },
+      "d": "+4",
+      "per": {
+       "e": "(g0)/4",
+       "g": [
+        "Kraken tentacle"
+       ]
+      }
+     },
+     {
+      "n": "Obsidian platelegs",
+      "b": "+1",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Obsidian platelegs"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "g0",
+       "g": [
+        "Obsidian platelegs"
+       ]
+      }
+     },
+     {
+      "n": "Blood Moon helm",
+      "b": "+4",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Blood Moon helm"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "g0-g1",
+       "g": [
+        "Blood Moon helm",
+        "Helm of Neitiznot"
+       ]
+      }
+     },
+     {
+      "n": "Serpentine helm",
+      "b": "+5",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Serpentine helm (uncharged)"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "(g0-g1)",
+       "g": [
+        "Serpentine helm (uncharged)",
+        "Blood Moon helm"
+       ]
+      }
+     },
+     {
+      "n": "Amulet of torture",
+      "b": "+10",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Amulet of torture"
+       ]
+      },
+      "d": "+2",
+      "dn": "If upgrading from a fury",
+      "per": {
+       "e": "(g0-g1)/2",
+       "g": [
+        "Amulet of torture",
+        "Amulet of fury"
+       ]
+      },
+      "alt": [
+       {
+        "d": "+0",
+        "dn": "If upgrading from an amulet of strength"
+       }
+      ]
+     },
+     {
+      "n": "Ferocious gloves",
+      "b": "+14",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Hydra leather"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "g0/2",
+       "g": [
+        "Hydra leather"
+       ]
+      }
+     },
+     {
+      "n": "Blood Moon tassets",
+      "b": "+2",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Blood Moon tassets"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "(g0-g1)",
+       "g": [
+        "Blood Moon tassets",
+        "Obsidian platelegs"
+       ]
+      }
+     },
+     {
+      "n": "Neitiznot faceguard",
+      "b": "+6",
+      "cost": {
+       "e": "g0+g1",
+       "g": [
+        "Basilisk jaw",
+        "Helm of Neitiznot"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "g0+g1-g2",
+       "g": [
+        "Basilisk jaw",
+        "Helm of Neitiznot",
+        "Serpentine helm (uncharged)"
+       ]
+      }
+     },
+     {
+      "n": "Amulet of rancour",
+      "b": "+12",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Amulet of rancour"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "(g0-g1)/2",
+       "g": [
+        "Amulet of rancour",
+        "Amulet of torture"
+       ]
+      }
+     },
+     {
+      "n": "Ghrazi rapier",
+      "b": "+93",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "(?)"
+       ]
+      },
+      "d": "+7",
+      "per": {
+       "e": "(g0*(1/7))",
+       "g": [
+        "(?)"
+       ]
+      }
+     },
+     {
+      "n": "Infernal cape",
+      "b": "+8",
+      "cost": {
+       "e": "0"
+      },
+      "d": "+4"
+     },
+     {
+      "n": "Ultor ring",
+      "b": "+12",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Ultor ring"
+       ]
+      },
+      "d": "+4",
+      "per": {
+       "e": "(g0-g1)/4",
+       "g": [
+        "Ultor ring",
+        "Berserker ring"
+       ]
+      }
+     },
+     {
+      "n": "Primordial boots",
+      "b": "+5",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Primordial boots"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "g0-g1",
+       "g": [
+        "Primordial boots",
+        "Dragon boots"
+       ]
+      }
+     },
+     {
+      "n": "Avernic defender",
+      "b": "+8",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Avernic defender hilt"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "g0/2",
+       "g": [
+        "Avernic defender hilt"
+       ]
+      }
+     },
+     {
+      "n": "Torva full helm",
+      "b": "+8",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Torva full helm"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "(g0-g1-g2)/2",
+       "g": [
+        "Torva full helm",
+        "Basilisk jaw",
+        "Helm of Neitiznot"
+       ]
+      }
+     },
+     {
+      "n": "Torva platebody",
+      "b": "+6",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Torva platebody"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "g0/2",
+       "g": [
+        "Torva platebody"
+       ]
+      }
+     },
+     {
+      "n": "Torva platelegs",
+      "b": "+4",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Torva platelegs"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "(g0-g1)/2",
+       "g": [
+        "Torva platelegs",
+        "Blood Moon tassets"
+       ]
+      }
+     },
+     {
+      "n": "Zeal",
+      "b": "+28%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Horn of Bran"
+       ]
+      },
+      "d": "+5%",
+      "per": {
+       "e": "g0/5",
+       "g": [
+        "Horn of Bran"
+       ]
+      }
+     },
+     {
+      "n": "Avernic treads (pr)",
+      "b": "+6",
+      "cost": {
+       "e": "g0+(g1*(4000))",
+       "g": [
+        "Avernic treads",
+        "Demon tear"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "g0+(g1*(4000))",
+       "g": [
+        "Avernic treads",
+        "Demon tear"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "ranged": {
+   "stages": [
+    {
+     "title": "Free-to-play",
+     "rungs": [
+      {
+       "h": "Level 1",
+       "lvl": 1,
+       "load": {
+        "head": "Leather cowl",
+        "cape": "Black cape",
+        "neck": "Amulet of power",
+        "ammo": "Iron arrow",
+        "weapon": "Shortbow",
+        "torso": "Leather body",
+        "shield": "",
+        "legs": "Leather chaps",
+        "gloves": "Leather vambraces",
+        "boots": "Leather boots",
+        "ring": ""
+       }
+      },
+      {
+       "h": "Level 20",
+       "lvl": 20,
+       "load": {
+        "head": "Coif",
+        "cape": "Black cape",
+        "neck": "Amulet of power",
+        "ammo": "Mithril arrow",
+        "weapon": "Willow shortbow",
+        "torso": "Studded body",
+        "shield": "",
+        "legs": "Studded chaps",
+        "gloves": "Leather vambraces",
+        "boots": "Leather boots",
+        "ring": ""
+       }
+      },
+      {
+       "h": "Level 40+",
+       "lvl": 40,
+       "load": {
+        "head": "Coif",
+        "cape": "Black cape",
+        "neck": "Amulet of power",
+        "ammo": "Adamant arrow",
+        "weapon": "Maple shortbow",
+        "torso": "Green d'hide body",
+        "shield": "",
+        "legs": "Green d'hide chaps",
+        "gloves": "Green d'hide vambraces",
+        "boots": "Leather boots",
+        "ring": ""
+       }
+      }
+     ],
+     "also": [
+      {
+       "label": "Shortbow + Iron arrow",
+       "items": [
+        {
+         "n": "Shortbow"
+        },
+        {
+         "n": "Iron arrow"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Shortbow"
+        ]
+       }
+      },
+      {
+       "label": "Oak shortbow + Steel arrow",
+       "items": [
+        {
+         "n": "Oak shortbow"
+        },
+        {
+         "n": "Steel arrow"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Oak shortbow"
+        ]
+       }
+      },
+      {
+       "label": "Willow shortbow + Mithril arrow",
+       "items": [
+        {
+         "n": "Willow shortbow"
+        },
+        {
+         "n": "Mithril arrow"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Willow shortbow"
+        ]
+       }
+      },
+      {
+       "label": "Maple shortbow + Adamant arrow",
+       "items": [
+        {
+         "n": "Maple shortbow"
+        },
+        {
+         "n": "Adamant arrow"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Maple shortbow"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "title": "Mid Game / Members",
+     "rungs": [
+      {
+       "h": "Level 40 (Pre-Recipe for Disaster)",
+       "lvl": 40,
+       "load": {
+        "head": "Snakeskin bandana",
+        "cape": "Ava's attractor",
+        "neck": "Amulet of power",
+        "ammo": "Bone bolts",
+        "weapon": "Dorgeshuun crossbow",
+        "torso": "Green d'hide body",
+        "shield": "Green d'hide shield",
+        "legs": "Green d'hide chaps",
+        "gloves": "Green d'hide vambraces",
+        "boots": "Snakeskin boots",
+        "ring": "Explorer's ring 1"
+       }
+      },
+      {
+       "h": "Level 50 (Post-Recipe for Disaster)",
+       "lvl": 50,
+       "load": {
+        "head": "Archer helm",
+        "cape": "Ava's accumulator",
+        "neck": "Amulet of glory",
+        "ammo": "Rune arrow",
+        "weapon": "Magic shortbow",
+        "torso": "Blue d'hide body",
+        "shield": "",
+        "legs": "Blue d'hide chaps",
+        "gloves": "Barrows gloves",
+        "boots": "Snakeskin boots",
+        "ring": "Explorer's ring 2"
+       }
+      },
+      {
+       "h": "Level 60",
+       "lvl": 60,
+       "load": {
+        "head": "Archer helm",
+        "cape": "Ava's accumulator",
+        "neck": "Amulet of glory",
+        "ammo": "Amethyst arrow",
+        "weapon": "Magic shortbow (i)",
+        "torso": "Mixed hide top",
+        "shield": "",
+        "legs": "Mixed hide legs",
+        "gloves": "Barrows gloves",
+        "boots": "Mixed hide boots",
+        "ring": "Explorer's ring 2"
+       }
+      },
+      {
+       "h": "Level 70",
+       "lvl": 70,
+       "load": {
+        "head": "Archer helm",
+        "cape": "Ava's accumulator",
+        "neck": "Necklace of Fangs",
+        "ammo": "Moonlight antler bolts",
+        "weapon": "Hunters' sunlight crossbow",
+        "torso": "Black d'hide body",
+        "shield": "Book of Law",
+        "legs": "Black d'hide chaps",
+        "gloves": "Barrows gloves",
+        "boots": "Mixed hide boots",
+        "ring": "Explorer's ring 3"
+       }
+      }
+     ],
+     "also": [
+      {
+       "label": "Dorgeshuun crossbow + Bone bolts",
+       "items": [
+        {
+         "n": "Dorgeshuun crossbow"
+        },
+        {
+         "n": "Bone bolts"
+        }
+       ],
+       "use": "Training",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Dorgeshuun crossbow"
+        ]
+       }
+      },
+      {
+       "label": "Magic shortbow",
+       "items": [
+        {
+         "n": "Magic shortbow (i)"
+        }
+       ],
+       "use": "i",
+       "cost": {
+        "e": "g0+g1",
+        "g": [
+         "Magic shortbow",
+         "Magic shortbow scroll"
+        ]
+       }
+      },
+      {
+       "label": "Hunters' sunlight crossbow",
+       "items": [
+        {
+         "n": "Hunters' sunlight crossbow"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Hunters' sunlight crossbow"
+        ]
+       }
+      },
+      {
+       "label": "Rune crossbow",
+       "items": [
+        {
+         "n": "Rune crossbow"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Rune crossbow"
+        ]
+       }
+      },
+      {
+       "label": "Dwarf multicannon + Steel cannonball",
+       "items": [
+        {
+         "n": "Dwarf multicannon",
+         "pic": "Cannon barrels"
+        },
+        {
+         "n": "Steel cannonball"
+        }
+       ],
+       "use": "Slayer/Training",
+       "cost": {
+        "e": "g0+g1+g2+g3",
+        "g": [
+         "Cannon barrels",
+         "Cannon base",
+         "Cannon furnace",
+         "Cannon stand"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "title": "Late Game / Bossing & Raiding",
+     "rungs": [
+      {
+       "h": "Level 70 (Elite void)",
+       "lvl": 70,
+       "load": {
+        "head": "Void ranger helm",
+        "cape": "Ava's accumulator",
+        "neck": "Necklace of Fangs",
+        "ammo": "Rada's blessing 3",
+        "weapon": "Red chinchompa",
+        "torso": "Elite void top",
+        "shield": "Antler guard",
+        "legs": "Elite void robe",
+        "gloves": "Void knight gloves",
+        "boots": "Guthix d'hide boots",
+        "ring": "Explorer's ring 3"
+       }
+      },
+      {
+       "h": "Level 70 (Dragonhide)",
+       "lvl": 70,
+       "load": {
+        "head": "Guthix coif",
+        "cape": "Ava's accumulator",
+        "neck": "Necklace of Fangs",
+        "ammo": "Ruby dragon bolts (e)",
+        "weapon": "Dragon crossbow",
+        "torso": "Guthix d'hide body",
+        "shield": "Antler guard",
+        "legs": "Guthix chaps",
+        "gloves": "Barrows gloves",
+        "boots": "Guthix d'hide boots",
+        "ring": "Explorer's ring 3"
+       }
+      },
+      {
+       "h": "Level 75",
+       "lvl": 75,
+       "load": {
+        "head": "Hueycoatl hide coif",
+        "cape": "Ava's assembler",
+        "neck": "Necklace of anguish",
+        "ammo": "Rada's blessing 3",
+        "weapon": "Toxic blowpipe",
+        "torso": "Hueycoatl hide body",
+        "shield": "",
+        "legs": "Hueycoatl hide chaps",
+        "gloves": "Barrows gloves",
+        "boots": "Guthix d'hide boots",
+        "ring": "Explorer's ring 3"
+       }
+      },
+      {
+       "h": "Level 80",
+       "lvl": 80,
+       "load": {
+        "head": "Masori mask",
+        "cape": "Ava's assembler",
+        "neck": "Necklace of anguish",
+        "ammo": "Rada's blessing 3",
+        "weapon": "Toxic blowpipe",
+        "torso": "Masori body",
+        "shield": "",
+        "legs": "Masori chaps",
+        "gloves": "Barrows gloves",
+        "boots": "Guthix d'hide boots",
+        "ring": "Explorer's ring 3"
+       }
+      },
+      {
+       "h": "Level 85+",
+       "lvl": 85,
+       "load": {
+        "head": "Crystal helm",
+        "cape": "Dizana's quiver",
+        "neck": "Necklace of anguish",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Bow of Faerdhinen",
+        "torso": "Crystal body",
+        "shield": "",
+        "legs": "Crystal legs",
+        "gloves": "Barrows gloves",
+        "boots": "Guthix d'hide boots",
+        "ring": "Explorer's ring 4"
+       }
+      }
+     ],
+     "also": [
+      {
+       "label": "Red chinchompa",
+       "items": [
+        {
+         "n": "Red chinchompa"
+        }
+       ],
+       "use": "Training",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Red chinchompa"
+        ]
+       }
+      },
+      {
+       "label": "Black chinchompa",
+       "items": [
+        {
+         "n": "Black chinchompa"
+        }
+       ],
+       "use": "Training",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Black chinchompa"
+        ]
+       }
+      },
+      {
+       "label": "Dragon crossbow + Twisted buckler",
+       "items": [
+        {
+         "n": "Dragon crossbow"
+        },
+        {
+         "n": "Twisted buckler"
+        }
+       ],
+       "cost": {
+        "e": "g0+g1",
+        "g": [
+         "Dragon crossbow",
+         "Twisted buckler"
+        ]
+       }
+      },
+      {
+       "label": "Eclipse atlatl + Atlatl dart +Eclipse Moon armour",
+       "items": [
+        {
+         "n": "Eclipse atlatl"
+        },
+        {
+         "n": "Atlatl dart"
+        },
+        {
+         "n": "Eclipse Moon armour",
+         "pic": "Eclipse Moon helm"
+        }
+       ],
+       "use": "Hybrid Melee",
+       "cost": {
+        "e": "g0+g1+g2+g3",
+        "g": [
+         "Eclipse atlatl",
+         "Eclipse Moon helm",
+         "Eclipse Moon chestplate",
+         "Eclipse Moon tassets"
+        ]
+       }
+      },
+      {
+       "label": "Toxic blowpipe",
+       "items": [
+        {
+         "n": "Toxic blowpipe"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Toxic blowpipe (empty)"
+        ]
+       }
+      },
+      {
+       "label": "Dexterous prayer scroll /Rigour",
+       "items": [
+        {
+         "n": "Dexterous prayer scroll"
+        },
+        {
+         "n": "Rigour"
+        }
+       ],
+       "use": "permanent +5% damage",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Dexterous prayer scroll"
+        ]
+       }
+      },
+      {
+       "label": "Masori mask Masori body Masori armour set",
+       "items": [
+        {
+         "n": "Masori mask"
+        },
+        {
+         "n": "Masori body"
+        },
+        {
+         "n": "Masori armour",
+         "pic": "Masori chaps"
+        }
+       ],
+       "use": "Ranged strength and accuracy",
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Masori mask",
+         "Masori body",
+         "Masori chaps"
+        ]
+       }
+      },
+      {
+       "label": "Webweaver bow + Revenant ether",
+       "items": [
+        {
+         "n": "Webweaver bow"
+        },
+        {
+         "n": "Revenant ether"
+        }
+       ],
+       "use": "Wilderness",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Webweaver bow (u)"
+        ]
+       }
+      },
+      {
+       "label": "Scorching bow + Seeking dragon arrow",
+       "items": [
+        {
+         "n": "Scorching bow"
+        },
+        {
+         "n": "Seeking dragon arrow"
+        }
+       ],
+       "use": "Demons",
+       "cost": {
+        "e": "g0+g1",
+        "g": [
+         "Tormented synapse",
+         "Magic longbow"
+        ]
+       }
+      },
+      {
+       "label": "Dragon hunter crossbow + Ruby dragon bolts",
+       "items": [
+        {
+         "n": "Dragon hunter crossbow"
+        },
+        {
+         "n": "Ruby dragon bolts (e)"
+        }
+       ],
+       "use": "e",
+       "cost": {
+        "e": "g0+g1",
+        "g": [
+         "Dragon hunter crossbow",
+         "Dragonfire ward"
+        ]
+       }
+      },
+      {
+       "label": "Armadyl crossbow + Ruby dragon bolts (e)",
+       "items": [
+        {
+         "n": "Armadyl crossbow"
+        },
+        {
+         "n": "Ruby dragon bolts (e)"
+        }
+       ],
+       "use": "Nex",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Armadyl crossbow"
+        ]
+       }
+      },
+      {
+       "label": "Bow of Faerdhinen + Crystal armour",
+       "items": [
+        {
+         "n": "Bow of Faerdhinen"
+        },
+        {
+         "n": "Crystal equipment",
+         "pic": "Crystal helm"
+        }
+       ],
+       "use": "Inferno, Fortis Colosseum, Raids",
+       "cost": {
+        "e": "g0+(g1*(6))+(g2*(2.5))",
+        "g": [
+         "Enhanced crystal weapon seed",
+         "Crystal armour seed",
+         "Enhanced crystal teleport seed"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "title": "End Game",
+     "rungs": [
+      {
+       "h": "Endgame Light Ranged",
+       "lvl": null,
+       "load": {
+        "head": "Masori mask (f)",
+        "cape": "Dizana's quiver",
+        "neck": "Necklace of rupture",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Toxic blowpipe",
+        "torso": "Masori body (f)",
+        "shield": "",
+        "legs": "Masori chaps (f)",
+        "gloves": "Zaryte vambraces",
+        "boots": "Avernic treads (pe)",
+        "ring": "Venator ring"
+       }
+      },
+      {
+       "h": "Endgame Heavy Ranged",
+       "lvl": null,
+       "load": {
+        "head": "Masori mask (f)",
+        "cape": "Dizana's quiver",
+        "neck": "Necklace of rupture",
+        "ammo": "Diamond ascension bolts (e)",
+        "weapon": "Ascension crossbows",
+        "torso": "Masori body (f)",
+        "shield": "",
+        "legs": "Masori chaps (f)",
+        "gloves": "Zaryte vambraces",
+        "boots": "Avernic treads (pe)",
+        "ring": "Venator ring"
+       }
+      },
+      {
+       "h": "Endgame Bow",
+       "lvl": null,
+       "load": {
+        "head": "Masori mask (f)",
+        "cape": "Dizana's quiver",
+        "neck": "Necklace of rupture",
+        "ammo": "Seeking dragon arrow",
+        "weapon": "Venator bow",
+        "torso": "Masori body (f)",
+        "shield": "",
+        "legs": "Masori chaps (f)",
+        "gloves": "Zaryte vambraces",
+        "boots": "Avernic treads (pe)",
+        "ring": "Venator ring"
+       }
+      },
+      {
+       "h": "Endgame Megarare",
+       "lvl": null,
+       "load": {
+        "head": "Masori mask (f)",
+        "cape": "Dizana's quiver",
+        "neck": "Necklace of rupture",
+        "ammo": "Seeking dragon arrow",
+        "weapon": "Twisted bow",
+        "torso": "Masori body (f)",
+        "shield": "",
+        "legs": "Masori chaps (f)",
+        "gloves": "Zaryte vambraces",
+        "boots": "Avernic treads (pe)",
+        "ring": "Venator ring"
+       }
+      },
+      {
+       "h": "Elite Void",
+       "lvl": null,
+       "load": {
+        "head": "Void ranger helm",
+        "cape": "Dizana's quiver",
+        "neck": "Necklace of rupture",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Toxic blowpipe",
+        "torso": "Elite void top",
+        "shield": "",
+        "legs": "Elite void robe",
+        "gloves": "Void knight gloves",
+        "boots": "Avernic treads (pe)",
+        "ring": "Venator ring"
+       }
+      }
+     ],
+     "also": [
+      {
+       "label": "Toxic blowpipe + Dragon darts",
+       "items": [
+        {
+         "n": "Toxic blowpipe"
+        },
+        {
+         "n": "Dragon dart"
+        }
+       ],
+       "use": "Light ranged, low defence",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Toxic blowpipe (empty)"
+        ]
+       }
+      },
+      {
+       "label": "Venator bow + Seeking dragon arrow",
+       "items": [
+        {
+         "n": "Venator bow"
+        },
+        {
+         "n": "Seeking dragon arrow"
+        }
+       ],
+       "use": "Slayer, Multi-target",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Venator bow (uncharged)"
+        ]
+       }
+      },
+      {
+       "label": "Ascension crossbows + Diamond ascension bolts (e)",
+       "items": [
+        {
+         "n": "Ascension crossbows"
+        },
+        {
+         "n": "Diamond ascension bolts (e)"
+        }
+       ],
+       "use": "Heavy ranged, low defence",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Ascension crossbows"
+        ]
+       }
+      },
+      {
+       "label": "Zaryte crossbow + Ruby dragon bolts (e)",
+       "items": [
+        {
+         "n": "Zaryte crossbow"
+        },
+        {
+         "n": "Ruby dragon bolts (e)"
+        }
+       ],
+       "use": "Nex / Special attacks",
+       "cost": {
+        "e": "g0+g1",
+        "g": [
+         "Zaryte crossbow",
+         "Twisted buckler"
+        ]
+       }
+      },
+      {
+       "label": "Twisted bow + Seeking dragon arrow",
+       "items": [
+        {
+         "n": "Twisted bow"
+        },
+        {
+         "n": "Seeking dragon arrow"
+        }
+       ],
+       "use": "Standard ranged / Raids",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Twisted bow"
+        ]
+       }
+      },
+      {
+       "label": "Necklace of rupture",
+       "items": [
+        {
+         "n": "Necklace of rupture"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Necklace of rupture"
+        ]
+       }
+      },
+      {
+       "label": "Masori mask (f) Masori body (f) Fortified Masori armour set",
+       "items": [
+        {
+         "n": "Masori mask (f)"
+        },
+        {
+         "n": "Masori body (f)"
+        },
+        {
+         "n": "Masori armour",
+         "pic": "Masori chaps (f)"
+        }
+       ],
+       "use": "Defence",
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Masori mask (f)",
+         "Masori body (f)",
+         "Masori chaps (f)"
+        ]
+       }
+      },
+      {
+       "label": "Zaryte vambraces",
+       "items": [
+        {
+         "n": "Zaryte vambraces"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Zaryte vambraces"
+        ]
+       }
+      },
+      {
+       "label": "Venator ring",
+       "items": [
+        {
+         "n": "Venator ring"
+        }
+       ],
+       "use": "Non-spec focused damage",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Venator ring"
+        ]
+       }
+      }
+     ]
+    }
+   ],
+   "bonus": {
+    "name": "Ranged Strength bonus",
+    "rows": [
+     {
+      "n": "Void Knight equipment",
+      "pic": "Void ranger helm",
+      "txt": "Range Void set",
+      "b": "+10%",
+      "d": "+10%"
+     },
+     {
+      "n": "Elite Void Knight equipment",
+      "pic": "Void ranger helm",
+      "txt": "Elite Range Void set",
+      "b": "+12.5%",
+      "d": "+2.5%"
+     },
+     {
+      "n": "Deadeye",
+      "b": "+18%",
+      "d": "+3%"
+     },
+     {
+      "n": "Necklace of Fangs",
+      "b": "+1",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Necklace of Fangs"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "g0",
+       "g": [
+        "Necklace of Fangs"
+       ]
+      }
+     },
+     {
+      "n": "Ava's assembler",
+      "b": "+2",
+      "d": "+2"
+     },
+     {
+      "n": "Antler guard",
+      "b": "+2",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Antler guard"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "g0/2",
+       "g": [
+        "Antler guard"
+       ]
+      }
+     },
+     {
+      "n": "Odium ward",
+      "b": "+4",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Odium ward"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "(g0-g1)/2",
+       "g": [
+        "Odium ward",
+        "Antler guard"
+       ]
+      }
+     },
+     {
+      "n": "Necklace of anguish",
+      "b": "+5",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Necklace of anguish"
+       ]
+      },
+      "d": "+4",
+      "per": {
+       "e": "(g0-g1)/4",
+       "g": [
+        "Necklace of anguish",
+        "Necklace of Fangs"
+       ]
+      }
+     },
+     {
+      "n": "Rigour",
+      "b": "+23%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Dexterous prayer scroll"
+       ]
+      },
+      "d": "+5%",
+      "per": {
+       "e": "g0/5",
+       "g": [
+        "Dexterous prayer scroll"
+       ]
+      }
+     },
+     {
+      "n": "Dragonfire ward",
+      "b": "+8",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Dragonfire ward"
+       ]
+      },
+      "d": "+4",
+      "per": {
+       "e": "(g0-g1)/4",
+       "g": [
+        "Dragonfire ward",
+        "Odium ward"
+       ]
+      }
+     },
+     {
+      "n": "Twisted buckler",
+      "b": "+10",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Twisted buckler"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "(g0-g1)/2",
+       "g": [
+        "Twisted buckler",
+        "Dragonfire ward"
+       ]
+      }
+     },
+     {
+      "n": "Masori mask",
+      "b": "+2",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Masori mask"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "(g0-g1)/2",
+       "g": [
+        "Masori mask",
+        "Hueycoatl hide coif"
+       ]
+      }
+     },
+     {
+      "n": "Masori chaps",
+      "b": "+2",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Masori chaps"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "(g0-g1)/2",
+       "g": [
+        "Masori chaps",
+        "Hueycoatl hide chaps"
+       ]
+      }
+     },
+     {
+      "n": "Masori body",
+      "b": "+4",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Masori body"
+       ]
+      },
+      "d": "+4",
+      "per": {
+       "e": "(g0-g1)/4",
+       "g": [
+        "Masori body",
+        "Hueycoatl hide body"
+       ]
+      }
+     },
+     {
+      "n": "Dizana's quiver",
+      "b": "+3/4",
+      "d": "+1/+2",
+      "dn": "Only if using ammo from the quiver"
+     },
+     {
+      "n": "Venator ring",
+      "b": "+2",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Venator ring"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "g0/2",
+       "g": [
+        "Venator ring"
+       ]
+      }
+     },
+     {
+      "n": "Zaryte vambraces",
+      "b": "+2",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Zaryte vambraces"
+       ]
+      },
+      "d": "+2",
+      "per": {
+       "e": "g0/2",
+       "g": [
+        "Zaryte vambraces"
+       ]
+      }
+     },
+     {
+      "n": "Necklace of rupture",
+      "b": "+8",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Necklace of rupture"
+       ]
+      },
+      "d": "+3",
+      "per": {
+       "e": "(g0-g1)/3",
+       "g": [
+        "Necklace of rupture",
+        "Necklace of anguish"
+       ]
+      }
+     },
+     {
+      "n": "Pegasian boots",
+      "b": "+1",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Pegasian boots"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "g0",
+       "g": [
+        "Pegasian boots"
+       ]
+      }
+     },
+     {
+      "n": "Avernic treads",
+      "b": "+2",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Avernic treads"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "(g0-g1)",
+       "g": [
+        "Avernic treads",
+        "Pegasian boots"
+       ]
+      }
+     },
+     {
+      "n": "Avernic treads (pe)",
+      "b": "+3",
+      "cost": {
+       "e": "g0+g1+(g2*(4000))",
+       "g": [
+        "Avernic treads",
+        "Pegasian boots",
+        "Demon tear"
+       ]
+      },
+      "d": "+1",
+      "per": {
+       "e": "g0+(g1*(4000))",
+       "g": [
+        "Pegasian boots",
+        "Demon tear"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  "magic": {
+   "stages": [
+    {
+     "title": "Early Game / Free-to-play",
+     "rungs": [
+      {
+       "h": "Level 1",
+       "lvl": 1,
+       "load": {
+        "head": "Shaman mask",
+        "cape": "Black cape",
+        "neck": "Amulet of magic",
+        "ammo": "",
+        "weapon": "Staff of air",
+        "torso": "Blue wizard robe",
+        "shield": "Anti-dragon shield",
+        "legs": "Zamorak monk bottom",
+        "gloves": "Leather gloves",
+        "boots": "Leather boots",
+        "ring": ""
+       }
+      }
+     ],
+     "also": []
+    },
+    {
+     "title": "Mid game / Members",
+     "rungs": [
+      {
+       "h": "Level 20",
+       "lvl": 20,
+       "load": {
+        "head": "Xerician hat",
+        "cape": "Ardougne cloak 1",
+        "neck": "Amulet of magic",
+        "ammo": "Peaceful blessing",
+        "weapon": "Staff of air",
+        "torso": "Xerician top",
+        "shield": "",
+        "legs": "Xerician robe",
+        "gloves": "Combat bracelet",
+        "boots": "Leather boots",
+        "ring": "Explorer's ring 1"
+       }
+      },
+      {
+       "h": "Level 40",
+       "lvl": 40,
+       "load": {
+        "head": "Mystic hat",
+        "cape": "Ardougne cloak 1",
+        "neck": "Amulet of magic",
+        "ammo": "Peaceful blessing",
+        "weapon": "Staff of air",
+        "torso": "Mystic robe top",
+        "shield": "Book of Darkness",
+        "legs": "Mystic robe bottom",
+        "gloves": "Combat bracelet",
+        "boots": "Mystic boots",
+        "ring": "Explorer's ring 1"
+       }
+      },
+      {
+       "h": "Level 60 (Post-Recipe for Disaster)",
+       "lvl": 60,
+       "load": {
+        "head": "Bloodbark helm",
+        "cape": "Ardougne cloak 2",
+        "neck": "Amulet of glory",
+        "ammo": "Peaceful blessing",
+        "weapon": "Iban's staff (u)",
+        "torso": "Bloodbark body",
+        "shield": "Book of Darkness",
+        "legs": "Bloodbark legs",
+        "gloves": "Barrows gloves",
+        "boots": "Bloodbark boots",
+        "ring": "Explorer's ring 2"
+       }
+      },
+      {
+       "h": "Level 70+ (Ancient Magicks)",
+       "lvl": 70,
+       "load": {
+        "head": [
+         "Bloodbark helm",
+         "Infinity hat",
+         "Dagon'hai hat",
+         "Blue Moon helm",
+         "Ahrim's hood"
+        ],
+        "cape": "Saradomin cape",
+        "neck": "Occult necklace",
+        "ammo": "Peaceful blessing",
+        "weapon": "Ancient staff",
+        "torso": [
+         "Bloodbark body",
+         "Infinity top",
+         "Dagon'hai robe top",
+         "Blue Moon chestplate",
+         "Ahrim's robetop"
+        ],
+        "shield": [
+         "Mage's book",
+         "Malediction ward",
+         "Ancient wyvern shield"
+        ],
+        "legs": [
+         "Bloodbark legs",
+         "Infinity bottoms",
+         "Dagon'hai robe bottom",
+         "Blue Moon tassets",
+         "Ahrim's robeskirt"
+        ],
+        "gloves": "Barrows gloves",
+        "boots": "Bloodbark boots",
+        "ring": "Explorer's ring 2"
+       }
+      },
+      {
+       "h": "Level 70+ (Elemental spells)",
+       "lvl": 70,
+       "load": {
+        "head": "Bloodbark helm",
+        "cape": "Saradomin cape",
+        "neck": "Elemental amulet",
+        "ammo": "Peaceful blessing",
+        "weapon": "Twinflame staff",
+        "torso": "Bloodbark body",
+        "shield": "Malediction ward",
+        "legs": "Bloodbark legs",
+        "gloves": "Barrows gloves",
+        "boots": "Bloodbark boots",
+        "ring": "Explorer's ring 2"
+       }
+      }
+     ],
+     "also": [
+      {
+       "label": "Elemental spells",
+       "items": [
+        {
+         "n": "Elemental spells",
+         "pic": "Staff of air"
+        }
+       ],
+       "use": "Elemental weakness",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Staff of air"
+        ]
+       }
+      },
+      {
+       "label": "Iban's staff (u)",
+       "items": [
+        {
+         "n": "Iban's staff (u)"
+        }
+       ],
+       "use": "Questing / Bossing",
+       "cost": {
+        "e": "200000"
+       }
+      },
+      {
+       "label": "Ancient Magicks",
+       "items": [
+        {
+         "n": "Ancient Magicks",
+         "pic": "Ancient staff"
+        }
+       ],
+       "use": "Ancient spellbook / Multi-slayer",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Ancient staff"
+        ]
+       }
+      },
+      {
+       "label": "Twinflame staff",
+       "items": [
+        {
+         "n": "Twinflame staff"
+        }
+       ],
+       "use": "Elemental weakness/Bossing",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Twinflame staff"
+        ]
+       }
+      },
+      {
+       "label": "Warped sceptre",
+       "items": [
+        {
+         "n": "Warped sceptre"
+        }
+       ],
+       "use": "Powered staff",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Warped sceptre (uncharged)"
+        ]
+       }
+      },
+      {
+       "label": "Infinity robes",
+       "items": [
+        {
+         "n": "Infinity robes",
+         "pic": "Infinity top"
+        }
+       ],
+       "cost": {
+        "e": "g0+g1+g2+g3",
+        "g": [
+         "Infinity hat",
+         "Infinity top",
+         "Infinity bottoms",
+         "Infinity boots"
+        ]
+       }
+      },
+      {
+       "label": "Bloodbark armour",
+       "items": [
+        {
+         "n": "Bloodbark armour",
+         "pic": "Bloodbark body"
+        }
+       ],
+       "cost": {
+        "e": "g0+g1+g2+g3",
+        "g": [
+         "Bloodbark helm",
+         "Bloodbark body",
+         "Bloodbark legs",
+         "Bloodbark boots"
+        ]
+       }
+      },
+      {
+       "label": "Dagon'hai robes",
+       "items": [
+        {
+         "n": "Dagon'hai robes",
+         "pic": "Dagon'hai robe top"
+        }
+       ],
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Dagon'hai hat",
+         "Dagon'hai robe top",
+         "Dagon'hai robe bottom"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "title": "Late game / Bossing & Raiding",
+     "rungs": [
+      {
+       "h": "Level 75+ (Ancient magicks)",
+       "lvl": 75,
+       "load": {
+        "head": [
+         "Bloodbark helm",
+         "Infinity hat",
+         "Dagon'hai hat",
+         "Blue Moon helm",
+         "Ahrim's hood"
+        ],
+        "cape": "Imbued Saradomin cape",
+        "neck": "Occult necklace",
+        "ammo": "Peaceful blessing",
+        "weapon": "Ancient sceptre",
+        "torso": [
+         "Bloodbark body",
+         "Infinity top",
+         "Dagon'hai robe top",
+         "Blue Moon chestplate",
+         "Ahrim's robetop"
+        ],
+        "shield": "Elidinis' ward",
+        "legs": [
+         "Bloodbark legs",
+         "Infinity bottoms",
+         "Dagon'hai robe bottom",
+         "Blue Moon tassets",
+         "Ahrim's robeskirt"
+        ],
+        "gloves": "Barrows gloves",
+        "boots": "Infinity boots",
+        "ring": "Explorer's ring 3"
+       }
+      },
+      {
+       "h": "Level 78+ (Powered stave)",
+       "lvl": 78,
+       "load": {
+        "head": [
+         "Bloodbark helm",
+         "Infinity hat",
+         "Dagon'hai hat",
+         "Blue Moon helm",
+         "Ahrim's hood"
+        ],
+        "cape": "Imbued Saradomin cape",
+        "neck": "Occult necklace",
+        "ammo": "Peaceful blessing",
+        "weapon": "Trident of the Swamp",
+        "torso": [
+         "Bloodbark body",
+         "Infinity top",
+         "Dagon'hai robe top",
+         "Blue Moon chestplate",
+         "Ahrim's robetop"
+        ],
+        "shield": "Elidinis' ward",
+        "legs": [
+         "Bloodbark legs",
+         "Infinity bottoms",
+         "Dagon'hai robe bottom",
+         "Blue Moon tassets",
+         "Ahrim's robeskirt"
+        ],
+        "gloves": "Barrows gloves",
+        "boots": "Infinity boots",
+        "ring": "Explorer's ring 3"
+       }
+      },
+      {
+       "h": "Level 80+ (Ancient Magicks)",
+       "lvl": 80,
+       "load": {
+        "head": "Ahrim's hood",
+        "cape": "Imbued Saradomin cape",
+        "neck": "Occult necklace",
+        "ammo": "Peaceful blessing",
+        "weapon": "Nightmare staff",
+        "torso": "Ahrim's robetop",
+        "shield": "Elidinis' ward",
+        "legs": "Ahrim's robeskirt",
+        "gloves": "Tormented bracelet",
+        "boots": "Infinity boots",
+        "ring": "Explorer's ring 3"
+       }
+      },
+      {
+       "h": "Level 85+ (Powered stave)",
+       "lvl": 85,
+       "load": {
+        "head": "Ahrim's hood",
+        "cape": "Imbued Saradomin cape",
+        "neck": "Occult necklace",
+        "ammo": "Peaceful blessing",
+        "weapon": "Eye of Ayak",
+        "torso": "Ahrim's robetop",
+        "shield": "Elidinis' ward",
+        "legs": "Ahrim's robeskirt",
+        "gloves": "Confliction gauntlets",
+        "boots": "Eternal boots",
+        "ring": "Seers ring (i)"
+       }
+      }
+     ],
+     "also": [
+      {
+       "label": "Trident of the Seas",
+       "items": [
+        {
+         "n": "Trident of the Seas"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Uncharged trident"
+        ]
+       }
+      },
+      {
+       "label": "Trident of the Swamp",
+       "items": [
+        {
+         "n": "Trident of the Swamp"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Uncharged toxic trident"
+        ]
+       }
+      },
+      {
+       "label": "Ancient sceptre",
+       "items": [
+        {
+         "n": "Ancient sceptre"
+        }
+       ],
+       "use": "Slayer / Ancients",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Ancient staff"
+        ]
+       }
+      },
+      {
+       "label": "Ahrim's robes",
+       "items": [
+        {
+         "n": "Ahrim the Blighted's equipment",
+         "pic": "Ahrim's robetop"
+        }
+       ],
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Ahrim's hood",
+         "Ahrim's robetop",
+         "Ahrim's robeskirt"
+        ]
+       }
+      },
+      {
+       "label": "Blue Moon armour",
+       "items": [
+        {
+         "n": "Blue Moon armour",
+         "pic": "Blue Moon chestplate"
+        }
+       ],
+       "use": "Melee hybrid",
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Blue Moon helm",
+         "Blue Moon chestplate",
+         "Blue Moon tassets"
+        ]
+       }
+      },
+      {
+       "label": "Arcane prayer scroll / Augury",
+       "items": [
+        {
+         "n": "Arcane prayer scroll"
+        },
+        {
+         "n": "Augury"
+        }
+       ],
+       "use": "permanent +1% damage",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Arcane prayer scroll"
+        ]
+       }
+      },
+      {
+       "label": "Purging staff",
+       "items": [
+        {
+         "n": "Purging staff"
+        }
+       ],
+       "use": "Yama / Demons",
+       "cost": {
+        "e": "g0+g1",
+        "g": [
+         "Tormented synapse",
+         "Battlestaff"
+        ]
+       }
+      },
+      {
+       "label": "Dragon hunter wand",
+       "items": [
+        {
+         "n": "Dragon hunter wand"
+        }
+       ],
+       "use": "Dragons / Chambers of Xeric",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Dragon hunter wand"
+        ]
+       }
+      },
+      {
+       "label": "Toxic Staff of the Dead (Inferno / Theatre of Blood)",
+       "items": [
+        {
+         "n": "Toxic Staff of the Dead"
+        }
+       ],
+       "use": "Manual cast Ancients",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Toxic staff (uncharged)"
+        ]
+       }
+      },
+      {
+       "label": "Nightmare staff (Slayer / Inferno / Theatre of Blood )",
+       "items": [
+        {
+         "n": "Nightmare staff"
+        }
+       ],
+       "use": "Autocast Ancients",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Nightmare staff"
+        ]
+       }
+      },
+      {
+       "label": "Sanguinesti staff",
+       "items": [
+        {
+         "n": "Sanguinesti staff"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Sanguinesti staff (uncharged)"
+        ]
+       }
+      },
+      {
+       "label": "Eye of Ayak",
+       "items": [
+        {
+         "n": "Eye of Ayak"
+        }
+       ],
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Eye of Ayak (uncharged)"
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "title": "End Game",
+     "rungs": [
+      {
+       "h": "Endgame Ancient Magicks",
+       "lvl": null,
+       "load": {
+        "head": "Virtus mask",
+        "cape": "Imbued Saradomin cape",
+        "neck": "Occult necklace",
+        "ammo": "Peaceful blessing",
+        "weapon": "Kodai wand",
+        "torso": "Virtus robe top",
+        "shield": "Elidinis' ward (f)",
+        "legs": "Virtus robe bottom",
+        "gloves": "Confliction gauntlets",
+        "boots": "Avernic treads (et)",
+        "ring": "Magus ring"
+       }
+      },
+      {
+       "h": "Endgame Elemental Spells",
+       "lvl": null,
+       "load": {
+        "head": "Ancestral hat",
+        "cape": "Imbued Saradomin cape",
+        "neck": "Elemental amulet",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Harmonised Nightmare staff",
+        "torso": "Ancestral robe top",
+        "shield": "Tome of Fire",
+        "legs": "Ancestral robe bottom",
+        "gloves": "Confliction gauntlets",
+        "boots": "Avernic treads (et)",
+        "ring": "Magus ring"
+       }
+      },
+      {
+       "h": "Endgame Demonbane Spells",
+       "lvl": null,
+       "load": {
+        "head": "Ancestral hat",
+        "cape": "Imbued Saradomin cape",
+        "neck": "Occult necklace",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Purging staff",
+        "torso": "Ancestral robe top",
+        "shield": "Elidinis' ward (f)",
+        "legs": "Ancestral robe bottom",
+        "gloves": "Confliction gauntlets",
+        "boots": "Avernic treads (et)",
+        "ring": "Magus ring"
+       }
+      },
+      {
+       "h": "Endgame Megarare",
+       "lvl": null,
+       "load": {
+        "head": "Ancestral hat",
+        "cape": "Imbued Saradomin cape",
+        "neck": "Occult necklace",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Tumeken's shadow (uncharged)",
+        "torso": "Ancestral robe top",
+        "shield": "",
+        "legs": "Ancestral robe bottom",
+        "gloves": "Confliction gauntlets",
+        "boots": "Avernic treads (et)",
+        "ring": "Magus ring"
+       }
+      },
+      {
+       "h": "Elite void",
+       "lvl": null,
+       "load": {
+        "head": "Void mage helm",
+        "cape": "Imbued Saradomin cape",
+        "neck": "Occult necklace",
+        "ammo": "Rada's blessing 4",
+        "weapon": "Eye of Ayak",
+        "torso": "Elite void top",
+        "shield": "Elidinis' ward (f)",
+        "legs": "Elite void robe",
+        "gloves": "Void knight gloves",
+        "boots": "Avernic treads (et)",
+        "ring": "Magus ring"
+       }
+      }
+     ],
+     "also": [
+      {
+       "label": "Virtus robes",
+       "items": [
+        {
+         "n": "Virtus robes",
+         "pic": "Virtus robe top"
+        }
+       ],
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Virtus mask",
+         "Virtus robe top",
+         "Virtus robe bottom"
+        ]
+       }
+      },
+      {
+       "label": "Kodai wand",
+       "items": [
+        {
+         "n": "Kodai wand"
+        }
+       ],
+       "use": "Slayer",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Kodai wand"
+        ]
+       }
+      },
+      {
+       "label": "Zorya's tome",
+       "items": [
+        {
+         "n": "Zorya's tome"
+        }
+       ],
+       "use": "Special attack",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Zorya's tome (uncharged)"
+        ]
+       }
+      },
+      {
+       "label": "Elidinis' ward",
+       "items": [
+        {
+         "n": "Elidinis' ward (f)"
+        }
+       ],
+       "use": "f",
+       "cost": {
+        "e": "g0+g1+(g2*(10000))",
+        "g": [
+         "Elidinis' ward",
+         "Arcane sigil",
+         "Soul rune"
+        ]
+       }
+      },
+      {
+       "label": "Ancestral robes",
+       "items": [
+        {
+         "n": "Ancestral robes",
+         "pic": "Ancestral robe top"
+        }
+       ],
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Ancestral hat",
+         "Ancestral robe top",
+         "Ancestral robe bottom"
+        ]
+       }
+      },
+      {
+       "label": "Harmonised Nightmare staff",
+       "items": [
+        {
+         "n": "Harmonised Nightmare staff"
+        }
+       ],
+       "cost": {
+        "e": "g0+g1+g2",
+        "g": [
+         "Harmonised orb",
+         "Tome of Fire (empty)",
+         "Nightmare staff"
+        ]
+       }
+      },
+      {
+       "label": "Tumeken's shadow",
+       "items": [
+        {
+         "n": "Tumeken's shadow"
+        }
+       ],
+       "use": "Bossing / Raiding",
+       "cost": {
+        "e": "g0",
+        "g": [
+         "Tumeken's shadow (uncharged)"
+        ]
+       }
+      }
+     ]
+    }
+   ],
+   "bonus": {
+    "name": "Magic Damage bonus",
+    "rows": [
+     {
+      "n": "Void Knight equipment",
+      "pic": "Void mage helm",
+      "txt": "Elite Mage Void set",
+      "b": "+5%",
+      "d": "+5%"
+     },
+     {
+      "n": "God capes",
+      "pic": "Imbued Saradomin cape",
+      "txt": "Imbued god cape",
+      "b": "+2%",
+      "d": "+2%"
+     },
+     {
+      "n": "Tome of Fire",
+      "b": "+10%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Tome of Fire (empty)"
+       ]
+      },
+      "d": "+10%",
+      "dn": "Only for its specific elemental spells",
+      "per": {
+       "e": "g0/10",
+       "g": [
+        "Tome of Fire (empty)"
+       ]
+      }
+     },
+     {
+      "n": "Tome of Earth",
+      "b": "+10%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Tome of Earth (empty)"
+       ]
+      },
+      "d": "+10%",
+      "dn": "Only for its specific elemental spells",
+      "per": {
+       "e": "g0/10",
+       "g": [
+        "Tome of Earth (empty)"
+       ]
+      }
+     },
+     {
+      "n": "Tome of Water",
+      "b": "+10%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Tome of Water (empty)"
+       ]
+      },
+      "d": "+10%",
+      "dn": "Only for its specific elemental spells",
+      "per": {
+       "e": "g0/10",
+       "g": [
+        "Tome of Water (empty)"
+       ]
+      }
+     },
+     {
+      "n": "Occult necklace",
+      "b": "+5%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Occult necklace"
+       ]
+      },
+      "d": "+5%",
+      "per": {
+       "e": "g0/5",
+       "g": [
+        "Occult necklace"
+       ]
+      }
+     },
+     {
+      "n": "Bloodbark helm",
+      "b": "+1%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "(?)"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0",
+       "g": [
+        "(?)"
+       ]
+      }
+     },
+     {
+      "n": "Bloodbark body",
+      "b": "+1%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "(?)"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0",
+       "g": [
+        "(?)"
+       ]
+      }
+     },
+     {
+      "n": "Bloodbark legs",
+      "b": "+1%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "(?)"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0",
+       "g": [
+        "(?)"
+       ]
+      }
+     },
+     {
+      "n": "Mystic Vigour",
+      "b": "+3%",
+      "d": "+1%"
+     },
+     {
+      "n": "Mage's book",
+      "b": "+2%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "(?)"
+       ]
+      },
+      "d": "+2%",
+      "per": {
+       "e": "g0/2",
+       "g": [
+        "(?)"
+       ]
+      }
+     },
+     {
+      "n": "Elidinis' ward",
+      "b": "+3%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Elidinis' ward"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0-g1",
+       "g": [
+        "Elidinis' ward",
+        "(?)"
+       ]
+      }
+     },
+     {
+      "n": "Seers ring (i)",
+      "b": "+0.5%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Seers ring"
+       ]
+      },
+      "d": "+0.5%",
+      "per": {
+       "e": "g0/0.5",
+       "g": [
+        "Seers ring"
+       ]
+      }
+     },
+     {
+      "n": "Tormented bracelet",
+      "b": "+5%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Tormented bracelet"
+       ]
+      },
+      "d": "+5%",
+      "per": {
+       "e": "g0/5",
+       "g": [
+        "Tormented bracelet"
+       ]
+      }
+     },
+     {
+      "n": "Augury",
+      "b": "+4%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Arcane prayer scroll"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0",
+       "g": [
+        "Arcane prayer scroll"
+       ]
+      }
+     },
+     {
+      "n": "Eternal boots",
+      "b": "+1%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Eternal boots"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0",
+       "g": [
+        "Eternal boots"
+       ]
+      }
+     },
+     {
+      "n": "Virtus mask",
+      "b": "+2%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Virtus mask"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0-g1",
+       "g": [
+        "Virtus mask",
+        "(?)"
+       ]
+      },
+      "alt": [
+       {
+        "d": "+5%",
+        "dn": "For ancient magicks only",
+        "per": {
+         "t": "+4%"
+        }
+       }
+      ]
+     },
+     {
+      "n": "Virtus robe top",
+      "b": "+2%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Virtus robe top"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0-g1",
+       "g": [
+        "Virtus robe top",
+        "(?)"
+       ]
+      },
+      "alt": [
+       {
+        "d": "+5%",
+        "dn": "For ancient magicks only",
+        "per": {
+         "t": "+4%"
+        }
+       }
+      ]
+     },
+     {
+      "n": "Virtus robe bottom",
+      "b": "+2%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Virtus robe bottom"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0-g1",
+       "g": [
+        "Virtus robe bottom",
+        "(?)"
+       ]
+      },
+      "alt": [
+       {
+        "d": "+5%",
+        "dn": "For ancient magicks only",
+        "per": {
+         "t": "+4%"
+        }
+       }
+      ]
+     },
+     {
+      "n": "Confliction gauntlets",
+      "b": "+7%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Confliction gauntlets"
+       ]
+      },
+      "d": "+2%",
+      "per": {
+       "e": "(g0-g1)/2",
+       "g": [
+        "Confliction gauntlets",
+        "Tormented bracelet"
+       ]
+      }
+     },
+     {
+      "n": "Magus ring",
+      "b": "+2%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Magus ring"
+       ]
+      },
+      "d": "+1.5%",
+      "per": {
+       "e": "(g0-g1)/1.5",
+       "g": [
+        "Magus ring",
+        "Seers ring"
+       ]
+      }
+     },
+     {
+      "n": "Elidinis' ward (f)",
+      "b": "+5%",
+      "cost": {
+       "e": "g0+g1+(g2*(10000))",
+       "g": [
+        "Elidinis' ward",
+        "Arcane sigil",
+        "Soul rune"
+       ]
+      },
+      "d": "+2%",
+      "per": {
+       "e": "(g0+(g1*(10000)))/2",
+       "g": [
+        "Arcane sigil",
+        "Soul rune"
+       ]
+      }
+     },
+     {
+      "n": "Ancestral hat",
+      "b": "+3%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Ancestral hat"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0-g1",
+       "g": [
+        "Ancestral hat",
+        "Virtus mask"
+       ]
+      }
+     },
+     {
+      "n": "Ancestral robe top",
+      "b": "+3%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Ancestral robe top"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0-g1",
+       "g": [
+        "Ancestral robe top",
+        "Virtus robe top"
+       ]
+      }
+     },
+     {
+      "n": "Ancestral robe bottom",
+      "b": "+3%",
+      "cost": {
+       "e": "g0",
+       "g": [
+        "Ancestral robe bottom"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0-g1",
+       "g": [
+        "Ancestral robe bottom",
+        "Virtus robe bottom"
+       ]
+      }
+     },
+     {
+      "n": "Avernic treads (et)",
+      "b": "+2%",
+      "cost": {
+       "e": "g0+g1+(g2*(4000))",
+       "g": [
+        "Avernic treads",
+        "Eternal boots",
+        "Demon tear"
+       ]
+      },
+      "d": "+1%",
+      "per": {
+       "e": "g0+(g1*(4000))",
+       "g": [
+        "Avernic treads",
+        "Demon tear"
+       ]
+      }
+     }
+    ]
+   }
+  }
+ },
+ "skilling": [
+  {
+   "skill": "Agility",
+   "name": "Graceful outfit",
+   "fx": [
+    "Reduces character weight by 25 kg",
+    "Increases run energy regeneration rate by 30%"
+   ],
+   "src": [
+    "Purchased with a total of 260 marks of grace from Grace's Graceful Clothing"
+   ],
+   "pic": "Graceful hood",
+   "set": 1
+  },
+  {
+   "skill": "Construction",
+   "name": "Carpenter's outfit",
+   "fx": [
+    "2.5% experience boost"
+   ],
+   "src": [
+    "Purchased with a total of 2000 points from the Mahogany Homes Reward Shop"
+   ],
+   "pic": "Carpenter's helmet",
+   "set": 1
+  },
+  {
+   "skill": "Farming",
+   "name": "Farmer's outfit",
+   "fx": [
+    "2.5% experience boost"
+   ],
+   "src": [
+    "Purchased with a total of 400 points from the Tithe Farm"
+   ],
+   "pic": "Farmer's strawhat",
+   "set": 1
+  },
+  {
+   "skill": "Firemaking",
+   "name": "Pyromancer outfit",
+   "fx": [
+    "2.5% experience boost",
+    "Counts as warm clothing"
+   ],
+   "src": [
+    "Obtained from the reward cart or from opening supply crates after subduing the Wintertodt with at least 500 points"
+   ],
+   "pic": "Pyromancer hood",
+   "set": 1
+  },
+  {
+   "skill": "Fishing",
+   "name": "Angler's outfit",
+   "fx": [
+    "2.5% experience boost"
+   ],
+   "src": [
+    "Obtained from inspecting the trawler net after a game of Fishing Trawler",
+    "Purchased from Alry the Angler's Angling Accessories"
+   ],
+   "pic": "Angler hat",
+   "set": 1
+  },
+  {
+   "skill": "Fishing",
+   "name": "Spirit angler's outfit",
+   "fx": [
+    "2.5% experience boost",
+    "Acts as a rope for tethering to totem poles and masts while battling Tempoross"
+   ],
+   "src": [
+    "Purchased with spirit flakes and a corresponding angler's outfit piece from Gita Prymes"
+   ],
+   "pic": "Spirit angler headband",
+   "set": 1
+  },
+  {
+   "skill": "Hunter",
+   "name": "Guild hunter outfit",
+   "fx": [
+    "2.5% bonus to catch rate",
+    "5% increased chance to obtain a Rare Creature Part when hunting Rumours"
+   ],
+   "src": [
+    "Obtained from completing Rumours for the Hunter Guild"
+   ],
+   "pic": "Guild hunter headwear",
+   "set": 1
+  },
+  {
+   "skill": "Mining",
+   "name": "Prospector kit",
+   "fx": [
+    "2.5% experience boost"
+   ],
+   "src": [
+    "Purchased with golden nuggets from Prospector Percy's Nugget Shop"
+   ],
+   "pic": "Prospector helmet",
+   "set": 1
+  },
+  {
+   "skill": "Mining",
+   "name": "Golden prospector kit",
+   "fx": [
+    "2.5% experience boost"
+   ],
+   "src": [
+    "Obtained by using a star fragment on each piece of the regular prospector kit"
+   ],
+   "page": "Prospector kit (golden)",
+   "pic": "Golden prospector helmet",
+   "set": 1
+  },
+  {
+   "skill": "Prayer",
+   "name": "Zealot's robes",
+   "fx": [
+    "5.0% chance to save bones / ensouled heads"
+   ],
+   "src": [
+    "Obtained by looting gold chests within the Shade Catacombs"
+   ],
+   "pic": "Zealot's helm",
+   "set": 1
+  },
+  {
+   "skill": "Runecraft",
+   "name": "Raiments of the Eye",
+   "fx": [
+    "60% more runes when Runecrafting"
+   ],
+   "src": [
+    "Purchased with a total of 1350 Abyssal pearls from the Guardians of the Rift Temple Supplies shop"
+   ],
+   "pic": "Hat of the Eye",
+   "set": 1
+  },
+  {
+   "skill": "Runecraft",
+   "name": "Red Raiments of the Eye",
+   "fx": [
+    "60% more runes when Runecrafting"
+   ],
+   "src": [
+    "Obtained by using abyssal red dye on the hat, robe top, and robe bottoms of the Eye"
+   ],
+   "page": "Raiments of the Eye",
+   "pic": "Hat of the Eye (red)",
+   "set": 1
+  },
+  {
+   "skill": "Runecraft",
+   "name": "Green Raiments of the Eye",
+   "fx": [
+    "60% more runes when Runecrafting"
+   ],
+   "src": [
+    "Obtained by using abyssal green dye on the hat, robe top, and robe bottoms of the Eye"
+   ],
+   "page": "Raiments of the Eye",
+   "pic": "Hat of the Eye (green)",
+   "set": 1
+  },
+  {
+   "skill": "Runecraft",
+   "name": "Blue Raiments of the Eye",
+   "fx": [
+    "60% more runes when Runecrafting"
+   ],
+   "src": [
+    "Obtained by using abyssal blue dye on the hat, robe top, and robe bottoms of the Eye"
+   ],
+   "page": "Raiments of the Eye",
+   "pic": "Hat of the Eye (blue)",
+   "set": 1
+  },
+  {
+   "skill": "Smithing",
+   "name": "Smiths' Uniform",
+   "fx": [
+    "Chance to speed up Smithing actions by 1 tick",
+    "Chance to give increased progress on preforms in the Giants' Foundry"
+   ],
+   "src": [
+    "Purchased with a total of 15,000 Foundry Reputation from the Giants' Foundry"
+   ],
+   "pic": "Smiths tunic",
+   "set": 1
+  },
+  {
+   "skill": "Thieving",
+   "name": "Rogue equipment",
+   "fx": [
+    "Chance to receive double loot when pickpocketing"
+   ],
+   "src": [
+    "Obtained from looting the safe at the end of the Rogues' Den minigame"
+   ],
+   "pic": "Rogue mask",
+   "set": 1
+  },
+  {
+   "skill": "Woodcutting",
+   "name": "Lumberjack outfit",
+   "fx": [
+    "2.5% experience boost"
+   ],
+   "src": [
+    "Purchased with Anima-infused bark and various noted Logs from the Forestry Shop",
+    "Obtained from Undead Lumberjacks during the bridge puzzle events in the Temple Trekking minigame"
+   ],
+   "pic": "Lumberjack hat",
+   "set": 1
+  },
+  {
+   "skill": "Woodcutting",
+   "name": "Forestry outfit",
+   "fx": [
+    "2.5% experience boost"
+   ],
+   "src": [
+    "Purchased with Anima-infused bark, various noted Logs, and a corresponding Lumberjack outfit piece from the Forestry Shop"
+   ],
+   "pic": "Forestry hat",
+   "set": 1
+  },
+  {
+   "skill": "Agility",
+   "name": "Agility cape",
+   "fx": [
+    "Once per day, restores 100% run energy and provides the effect of a stamina potion for one minute",
+    "Acts as a graceful cape"
+   ],
+   "src": [
+    "Purchased for 99,000 coins after achieving 99 Agility"
+   ]
+  },
+  {
+   "skill": "Agility",
+   "name": "Ring of endurance",
+   "fx": [
+    "Doubles the regeneration and time of stamina potions while worn and charged (immediately removes doubling effect on ring removal)",
+    "Passively reduces run energy drain by 15% with 500 or more charges (does not stack with active stamina potion buff)"
+   ],
+   "src": [
+    "Obtained from the Grand Hallowed Coffin in the Hallowed Sepulchre"
+   ]
+  },
+  {
+   "skill": "Agility",
+   "name": "Medallion of the Deep",
+   "fx": [
+    "Reduces Oxygen depletion in the Underwater Agility/Thieving area by 80%"
+   ],
+   "src": [
+    "Created by assembling the eight medallion fragments found on various islands"
+   ]
+  },
+  {
+   "skill": "Construction",
+   "name": "Amy's saw",
+   "fx": [
+    "Wieldable variant of a saw, saving an inventory space."
+   ],
+   "src": [
+    "Purchased from the Mahogany Homes Reward Shop for 500 Carpenter points."
+   ]
+  },
+  {
+   "skill": "Construction",
+   "name": "Imcando hammer",
+   "fx": [
+    "Wieldable variant of a hammer, saving an inventory space."
+   ],
+   "src": [
+    "Obtained from a barronite deposit as a rare drop."
+   ]
+  },
+  {
+   "skill": "Construction",
+   "name": "Plank sack",
+   "fx": [
+    "Allows storing up to 28 planks of any type and can be used directly from the sack"
+   ],
+   "src": [
+    "Purchased from the Mahogany Homes Reward Shop for 350 Carpenter points"
+   ]
+  },
+  {
+   "skill": "Cooking",
+   "name": "Cooking gauntlets",
+   "fx": [
+    "Reduces burn rate for lobsters, swordfish, cooked kyatt, monkfish, sharks, and anglerfish."
+   ],
+   "src": [
+    "Reward from Family Crest/Pest"
+   ]
+  },
+  {
+   "skill": "Cooking",
+   "name": "Infernal harpoon",
+   "fx": [
+    "Fish caught with a charged harpoon have a 1/3 chance of being cooked and destroyed instantly, giving half the Cooking experience, granting passive experience while fishing"
+   ],
+   "src": [
+    "Created by combining a smouldering stone with a dragon harpoon"
+   ]
+  },
+  {
+   "skill": "Cooking",
+   "name": "Cooking cape",
+   "fx": [
+    "Food will never be burned while cooking",
+    "Acts as a chef's hat for entering the Cooks' Guild"
+   ],
+   "src": [
+    "Purchased for 99,000 coins after achieving 99 Cooking"
+   ]
+  },
+  {
+   "skill": "Crafting",
+   "name": "Jeweller's chisel",
+   "fx": [
+    "Increases chance to successfully cut opals, jades, and red topaz",
+    "Has a 10% chance to cut two gems at once when cutting any gem"
+   ],
+   "src": [
+    "Reward from Golem crafting"
+   ]
+  },
+  {
+   "skill": "Farming",
+   "name": "Amulet of bounty",
+   "fx": [
+    "Provides a 25% chance to use only one seed instead of three when planting in allotment patches, consuming 1 charge of 10 total."
+   ],
+   "src": [
+    "Created by enchanting an opal amulet using the Lvl-1 Enchant spell",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ]
+  },
+  {
+   "skill": "Farming",
+   "name": "Amulet of Nature",
+   "fx": [
+    "Monitors the state of a Farming patch, informing the player if the patch has become diseased, died, or becomes fully grown"
+   ],
+   "src": [
+    "Created by enchanting a pre-nature amulet using the Lvl-2 Enchant spell"
+   ]
+  },
+  {
+   "skill": "Farming",
+   "name": "Magic secateurs",
+   "fx": [
+    "Increases the crop yield of herbs, allotments, celastrus trees, grape vines, bushes, limpwurt plants and hops by 10%, as well as yielding more herbs from Herbiboars."
+   ],
+   "src": [
+    "Partial completion of Fairytale I - Growing Pains"
+   ]
+  },
+  {
+   "skill": "Farming",
+   "name": "Farming cape",
+   "fx": [
+    "Herb patches have a 5% increase in yield",
+    "Unlimited teleports to the Farming Guild"
+   ],
+   "src": [
+    "Purchased for 99,000 coins after achieving 99 Farming"
+   ]
+  },
+  {
+   "skill": "Farming",
+   "name": "Seed box",
+   "fx": [
+    "Allows storing up to 2,147,483,647 seeds of six different types"
+   ],
+   "src": [
+    "Purchased from Farmer Gricoller's Rewards for 250 tithe points."
+   ]
+  },
+  {
+   "skill": "Firemaking",
+   "name": "Infernal axe",
+   "fx": [
+    "Logs chopped with a charged axe have a 1/3 chance of being burnt, giving half the Firemaking experience, granting passive experience while woodcutting"
+   ],
+   "src": [
+    "Created by combining a smouldering stone with a dragon axe"
+   ]
+  },
+  {
+   "skill": "Fishing",
+   "name": "Fish sack barrel",
+   "fx": [
+    "Allows storing a combined total of 28 raw fish of any type except for harpoonfish, stackable fish such as karambwanji, and trophy fish"
+   ],
+   "src": [
+    "Created by combining:",
+    "A fish barrel, obtainable from Tempoross' reward pool at a rate of 1/400",
+    "A fish sack, purchasable from Alry the Angler for 500 Molch pearls"
+   ]
+  },
+  {
+   "skill": "Fishing",
+   "name": "Rada's blessing",
+   "fx": [
+    "Gives a 2/4/6/8% chance to catch two fish at once everywhere when equipped (no additional XP is given), excluding Tempoross"
+   ],
+   "src": [
+    "Reward for completing tiers of the Kourend & Kebos Diary"
+   ],
+   "pic": "Rada's blessing 1"
+  },
+  {
+   "skill": "Fishing",
+   "name": "Pearl fishing rod",
+   "fx": [
+    "Pearl rod"
+   ],
+   "src": [
+    "Wieldable variant of a fishing rod, barbarian rod and fly fishing rod, saving an inventory space"
+   ]
+  },
+  {
+   "skill": "Fishing",
+   "name": "Crystal harpoon",
+   "fx": [
+    "A charged harpoon provides a 35% increased catch rate over the harpoon and a 12.5% increase over the dragon harpoon"
+   ],
+   "src": [
+    "Created by combining a crystal tool seed, 120 crystal shards, and a dragon harpoon at a singing bowl"
+   ]
+  },
+  {
+   "skill": "Fletching",
+   "name": "Bow string spool",
+   "fx": [
+    "An item to store bow strings which allows the player to string 27 bows per inventory rather than 14."
+   ],
+   "src": [
+    "Reward from the Vale Totems minigame, obtained from rummaging through Vale offerings at a rate of 1/200, or purchased from the Vale Research Exchange for 250 research points."
+   ]
+  },
+  {
+   "skill": "Fletching",
+   "name": "Fletching knife",
+   "fx": [
+    "Reduces the time to complete various Fletching actions by 1 tick for all but the first item being fletched."
+   ],
+   "src": [
+    "Reward from the Vale Totems minigame, obtained from rummaging through Vale offerings at a rate of 1/333.3, or purchased from the Vale Research Exchange for 350 research points."
+   ]
+  },
+  {
+   "skill": "Herblore",
+   "name": "Silklined herb sack",
+   "fx": [
+    "Allows storing up to 100 of each of the grimy normal herbs, for a total of 1500 stored."
+   ],
+   "src": [
+    "Created by combining:",
+    "A herb sack, purchased from Slayer masters for 750 Slayer reward points or from Farmer Gricoller's Rewards for 250 Tithe Farm points.",
+    "A pristine spider silk, obtained from Sarachnis as an uncommon drop."
+   ]
+  },
+  {
+   "skill": "Herblore",
+   "name": "Amulet of chemistry",
+   "fx": [
+    "Has a 5% chance when mixing a potion to create 4 doses rather than the typical 3 doses, consuming one charge of five total. This does not grant extra experience."
+   ],
+   "src": [
+    "Created by enchanting a jade amulet using the Lvl-2 Enchant spell",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ]
+  },
+  {
+   "skill": "Herblore",
+   "name": "Alchemist's amulet",
+   "fx": [
+    "Has a 15% chance when mixing a potion to create a potion with an extra dose (e.g. mixing 2-dose potions has a 15% chance of mixing a 3-dose potion), consuming one charge out of a maximum of 5000, and is recharged with amulets of chemistry. This does not grant extra experience."
+   ],
+   "src": [
+    "Obtained as a reward from Mastering Mixology"
+   ],
+   "pic": "Alchemist's amulet (charged)"
+  },
+  {
+   "skill": "Herblore",
+   "name": "Reagent pouch",
+   "fx": [
+    "Holds up to 26 of each Herblore secondary ingredient."
+   ],
+   "src": [
+    "Obtained as a reward from Mastering Mixology"
+   ]
+  },
+  {
+   "skill": "Herblore",
+   "name": "Prescription goggles",
+   "fx": [
+    "Grants a 10% chance to save a secondary ingredient when mixing potions."
+   ],
+   "src": [
+    "Obtained as a reward from Mastering Mixology"
+   ],
+   "pic": "Prescription goggles (unfocused)"
+  },
+  {
+   "skill": "Herblore",
+   "name": "Herblore cape",
+   "fx": [
+    "Allows grimy herbs to be used in creating unfinished potions, giving the experience of cleaning the herb",
+    "Zahur in Nardah will create unfinished potions for 200 coins each",
+    "Can be searched for a pestle and mortar"
+   ],
+   "src": [
+    "Purchased for 99,000 coins after achieving 99 Herblore"
+   ]
+  },
+  {
+   "skill": "Hunter",
+   "name": "Strung rabbit foot",
+   "fx": [
+    "Decreases the chance of receiving an empty nest while dismantling bird houses on Fossil Island"
+   ],
+   "src": [
+    "Created by stringing a rabbit foot with a ball of wool, requiring 37 Crafting",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ]
+  },
+  {
+   "skill": "Hunter",
+   "name": "Ring of pursuit",
+   "fx": [
+    "Reveals the entire track of hunter creatures caught via noose wand (excluding herbiboars), provides 10 charges before disappearing"
+   ],
+   "src": [
+    "Created by enchanting an opal ring using the Lvl-1 Enchant spell",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ]
+  },
+  {
+   "skill": "Hunter",
+   "name": "Horn of Plenty",
+   "fx": [
+    "Gives +2 boost to Hunter when uncharged, or +4 when charged with gryphon feathers",
+    "Can be toggled to give 1/10 chance to double a hunter catch. Additional catch doesn't yield xp"
+   ],
+   "src": [
+    "Obtained from Gryphons as a rare drop.",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ]
+  },
+  {
+   "skill": "Hunter",
+   "name": "Small fur pouch",
+   "fx": [
+    "Fur pouch"
+   ],
+   "src": [
+    "Allows storing fur from hunter creatures, up to 28 pieces with the large fur pouch"
+   ]
+  },
+  {
+   "skill": "Hunter",
+   "name": "Small meat pouch",
+   "fx": [
+    "Meat pouch"
+   ],
+   "src": [
+    "Allows storing meat from hunter creatures, up to 28 pieces with the large meat pouch"
+   ]
+  },
+  {
+   "skill": "Mining",
+   "name": "Amulet of glory",
+   "fx": [
+    "Increases the chance of obtaining uncut gems while mining and increases the speed of mining gem rock"
+   ],
+   "src": [
+    "Created by enchanting a dragonstone amulet using the Lvl-5 Enchant spell, requiring 68 Magic",
+    "Can be obtained by catching dragon implings, requiring 83 Hunter, or by opening dragon impling jars",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ],
+   "pic": "Amulet of glory(1)"
+  },
+  {
+   "skill": "Mining",
+   "name": "Celestial ring",
+   "fx": [
+    "Gives an invisible +4 boost to Mining",
+    "When charged, gives a 1/10 chance of giving an extra ore when mining rocks up to adamantite, granting experience for both ores mined"
+   ],
+   "src": [
+    "Purchased from Dusuri's Star Shop for 2000 stardust"
+   ]
+  },
+  {
+   "skill": "Mining",
+   "name": "Celestial signet",
+   "fx": [
+    "Same as celestial ring; in addition:",
+    "Grants a 10% chance to not use a charge when using crystal equipment, excluding the Blade of Saeldor and the Bow of Faerdhinen"
+   ],
+   "src": [
+    "Created by combining:",
+    "A celestial ring, purchasable from Dusuri for 2000 stardust",
+    "An elven signet, obtainable by hunting crystal implings and opening the jars",
+    "1000 stardust and 100 crystal shards Requires 70 Smithing and 70 Crafting"
+   ]
+  },
+  {
+   "skill": "Mining",
+   "name": "Mining gloves",
+   "fx": [
+    "Mining gloves"
+   ],
+   "src": [
+    "Gives a chance to prevent rocks from becoming depleted after mining an ore from them"
+   ]
+  },
+  {
+   "skill": "Mining",
+   "name": "Varrock armour 1",
+   "fx": [
+    "Varrock armour"
+   ],
+   "src": [
+    "Gives a 10% chance to mine an extra ore in standard rocks, granting experience for both ores mined",
+    "Varrock armour 4 acts as a prospector jacket"
+   ]
+  },
+  {
+   "skill": "Mining",
+   "name": "Gem sack",
+   "fx": [
+    "The highest tier gem container; allows storing up to 60 of each of uncut opals, jades, red topaz, sapphires, emeralds, rubies, diamonds, and dragonstones, for a total of 480 stored"
+   ],
+   "src": [
+    "Created by combining:",
+    "A gem tote, crafted by the player",
+    "A gem bag, purchased from Prospector Percy's Nugget Shop for 100 golden nuggets",
+    "An immaculate mole skin, obtained from the Giant mole as an uncommon drop using a needle and thread"
+   ]
+  },
+  {
+   "skill": "Mining",
+   "name": "Coal bag",
+   "fx": [
+    "Allows storing up to 27 pieces of coal (36 if a Smithing cape is equipped)."
+   ],
+   "src": [
+    "Purchased from Prospector Percy's Nugget Shop for 100 golden nuggets."
+   ]
+  },
+  {
+   "skill": "Mining",
+   "name": "Crystal pickaxe",
+   "fx": [
+    "A charged pickaxe provides a chance to mine an ore every three ticks (with an additional 1/4 chance to reduce this to two ticks), granting and effecting 3.03% increase in mining speed over a dragon pickaxe"
+   ],
+   "src": [
+    "Created by combining a crystal tool seed, 120 crystal shards, and a dragon pickaxe at a singing bowl"
+   ]
+  },
+  {
+   "skill": "Mining",
+   "name": "Mining cape",
+   "fx": [
+    "Gives a 5% chance of receiving an extra ore while mining ore up to adamantite, granting experience for both ores mined"
+   ],
+   "src": [
+    "Purchased for 99,000 coins after achieving 99 Mining"
+   ]
+  },
+  {
+   "skill": "Runecraft",
+   "name": "Binding necklace",
+   "fx": [
+    "Gives a 100% success rate in making combination runes through the Runecrafting skill"
+   ],
+   "src": [
+    "Created by enchanting an emerald necklace using the Lvl-2 Enchant spell",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ]
+  },
+  {
+   "skill": "Runecraft",
+   "name": "Abyssal lantern",
+   "fx": [
+    "Can be lit with one of six logs to provide various boosts inside and outside the Guardians of the rift minigame, including boosts to contribution points, finding portal talismans, or crafting runes, as well as the ability to prevent essence pouches from degrading."
+   ],
+   "src": [
+    "Obtained by searching the Rewards Guardian at a rate of 1/700.",
+    "Purchased from the Temple Supplies reward shop or Apprentice Felix via dialogue for 1,500 abyssal pearls"
+   ]
+  },
+  {
+   "skill": "Runecraft",
+   "name": "Runecraft cape",
+   "fx": [
+    "Allows access to any runic altar without a talisman or tiara",
+    "Prevents essence pouches from degrading when filling them"
+   ],
+   "src": [
+    "Purchased for 99,000 coins after achieving 99 Runecraft"
+   ]
+  },
+  {
+   "skill": "Runecraft",
+   "name": "Sailing cape",
+   "fx": [],
+   "src": []
+  },
+  {
+   "skill": "Slayer",
+   "name": "Slayer helmet (i)",
+   "fx": [
+    "Slayer equipment"
+   ],
+   "src": [
+    "See the main page on Slayer equipment for information on the various tools and weapons used when fighting Slayer monsters."
+   ]
+  },
+  {
+   "skill": "Smithing",
+   "name": "Goldsmith gauntlets",
+   "fx": [
+    "2.5x experience when smelting gold ore into bars"
+   ],
+   "src": [
+    "Reward from Family Crest/Pest"
+   ]
+  },
+  {
+   "skill": "Smithing",
+   "name": "Varrock armour 1",
+   "fx": [
+    "Varrock armour"
+   ],
+   "src": [
+    "Gives a 10% chance to smelt two bars at once when using the Edgeville furnace"
+   ]
+  },
+  {
+   "skill": "Smithing",
+   "name": "Imcando hammer",
+   "fx": [
+    "Wieldable variant of a hammer, saving an inventory space."
+   ],
+   "src": [
+    "Obtained from a barronite deposit as a rare drop."
+   ]
+  },
+  {
+   "skill": "Smithing",
+   "name": "Coal bag",
+   "fx": [
+    "Allows storing up to 27 pieces of coal (36 if a Smithing cape is equipped)."
+   ],
+   "src": [
+    "Purchased from Prospector Percy's Nugget Shop for 100 golden nuggets."
+   ]
+  },
+  {
+   "skill": "Smithing",
+   "name": "Infernal pickaxe",
+   "fx": [
+    "Ore mined with a charged pickaxe have a 1/3 chance for the ore to combust, giving half the Smithing experience, granting passive experience while Mining"
+   ],
+   "src": [
+    "Created by combining a smouldering stone with a dragon pickaxe"
+   ]
+  },
+  {
+   "skill": "Smithing",
+   "name": "Smithing cape",
+   "fx": [
+    "Makes the coal bag capable of holding 36 coal instead of 27",
+    "Acts as a pair of goldsmith gauntlets"
+   ],
+   "src": [
+    "Purchased for 99,000 coins after achieving 99 Smithing"
+   ]
+  },
+  {
+   "skill": "Thieving",
+   "name": "Dodgy necklace",
+   "fx": [
+    "25% chance of not getting hit and stunned when unsuccessfully pickpocketing an NPC"
+   ],
+   "src": [
+    "Created by enchanting an opal necklace using the Lvl-1 Enchant spell",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ]
+  },
+  {
+   "skill": "Thieving",
+   "name": "Gloves of silence",
+   "fx": [
+    "Reduces pickpocketing failure rate by 5%"
+   ],
+   "src": [
+    "Created by Asyff at the Fancy Clothes Store in Varrock for a cost of 2 dark kebbit furs and 600 coins",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ]
+  },
+  {
+   "skill": "Thieving",
+   "name": "Medallion of the Deep",
+   "fx": [
+    "Reduces Oxygen depletion in the Underwater Agility/Thieving area by 80%"
+   ],
+   "src": [
+    "Created by assembling the eight medallion fragments found on various islands"
+   ]
+  },
+  {
+   "skill": "Thieving",
+   "name": "Thieving cape",
+   "fx": [
+    "Additional 10% chance of being successful when pickpocketing"
+   ],
+   "src": [
+    "Purchased for 99,000 coins after achieving 99 Thieving"
+   ]
+  },
+  {
+   "skill": "Woodcutting",
+   "name": "Kandarin headgear 1",
+   "fx": [
+    "Kandarin headgear"
+   ],
+   "src": [
+    "Grants 1 extra logs while wearing with no additional experience (only regular logs)"
+   ]
+  },
+  {
+   "skill": "Woodcutting",
+   "name": "Twitcher's gloves",
+   "fx": [
+    "Increases the chance of receiving a specific type of any particular type of bird nest by 20%. This is done by selecting the type of nest by right-clicking on its settings.",
+    "Wearing the gloves as well as the strung rabbit foot will stack the increase in chance of the preferred bird nest."
+   ],
+   "src": [
+    "Purchased from the Forestry Shop for 5,000 anima-infused bark and 500 noted willow logs"
+   ]
+  },
+  {
+   "skill": "Woodcutting",
+   "name": "Strung rabbit foot",
+   "fx": [
+    "Increases the drop rate of egg nests from 3/100 to 3/95. This is done by removing 5 seed nest rolls; the seed nest rate therefore decreases from 65/100 to 60/95. As such, players who value seed nests should not wear this necklace while woodcutting."
+   ],
+   "src": [
+    "Created by stringing a rabbit foot with a ball of wool, requiring 37 Crafting",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ]
+  },
+  {
+   "skill": "Woodcutting",
+   "name": "Felling axe handle",
+   "fx": [
+    "Can be attached to a regular axe, turning it into a felling axe",
+    "Felling axes provide 10% more Woodcutting experience along with a 20% chance not to obtain a log when used with forester's rations"
+   ],
+   "src": [
+    "Purchased from the Forestry Shop for 10,000 anima-infused bark and 500 noted oak logs",
+    "Purchased from another player or from the Grand Exchange for its Grand Exchange price"
+   ]
+  },
+  {
+   "skill": "Woodcutting",
+   "name": "Crystal axe",
+   "fx": [
+    "A charged axe grants the player a 4.5% increase in efficiency chopping logs over the dragon axe"
+   ],
+   "src": [
+    "Created by combining a crystal tool seed, 120 crystal shards, and a dragon axe at a singing bowl"
+   ]
+  },
+  {
+   "skill": "Woodcutting",
+   "name": "Woodcutting cape",
+   "fx": [
+    "Additional 10% chance of a bird nest falling while chopping trees"
+   ],
+   "src": [
+    "Purchased for 99,000 coins after achieving 99 Woodcutting"
+   ]
+  },
+  {
+   "skill": "Woodcutting",
+   "name": "Forestry basket",
+   "fx": [
+    "Allows storing of Forestry-related items, as well as a combined total of 28 logs of any type. Also allows players to spawn Forestry events"
+   ],
+   "src": [
+    "Created by combining:",
+    "Forestry kit, obtainable for free from the Forestry shop",
+    "Log basket, purchasable from the Forestry shop for 5,000 anima-infused bark, 300 oak logs, and 300 willow logs",
+    "Sturdy harness",
+    "Can be created by combining the log brace, 2 ropes, 3 adamantite bars, and 45 steel nails",
+    "Purchased from another player or from Grand Exchange for its Grand Exchange price"
+   ]
+  }
+ ],
+ "items": {
+  "Abyssal bludgeon": {
+   "ids": [
+    13263
+   ]
+  },
+  "Abyssal lantern": {
+   "ids": [
+    26822,
+    26824,
+    26826,
+    26828,
+    26830,
+    26832,
+    26834,
+    26836,
+    26838,
+    26840,
+    26842,
+    26844,
+    26846,
+    26848
+   ],
+   "nt": 1
+  },
+  "Abyssal tentacle": {
+   "ids": [
+    12006
+   ],
+   "nt": 1
+  },
+  "Abyssal whip": {
+   "ids": [
+    4151
+   ]
+  },
+  "Adamant arrow": {
+   "ids": [
+    890,
+    891,
+    5620,
+    5626
+   ],
+   "img": "Adamant_arrow_1.png"
+  },
+  "Adamant full helm": {
+   "ids": [
+    1161
+   ]
+  },
+  "Adamant platebody": {
+   "ids": [
+    1123
+   ]
+  },
+  "Adamant platelegs": {
+   "ids": [
+    1073
+   ]
+  },
+  "Adamant scimitar": {
+   "ids": [
+    1331
+   ]
+  },
+  "Agility cape": {
+   "ids": [
+    9771,
+    9772,
+    13340,
+    13341
+   ],
+   "nt": 1
+  },
+  "Ahrim's hood": {
+   "ids": [
+    4708,
+    4856,
+    4857,
+    4858,
+    4859,
+    4860
+   ]
+  },
+  "Ahrim's robeskirt": {
+   "ids": [
+    4714,
+    4874,
+    4875,
+    4876,
+    4877,
+    4878
+   ]
+  },
+  "Ahrim's robetop": {
+   "ids": [
+    4712,
+    4868,
+    4869,
+    4870,
+    4871,
+    4872
+   ]
+  },
+  "Alchemist's amulet": {
+   "ids": [
+    29988,
+    29990
+   ],
+   "img": "Alchemist's_amulet_(uncharged).png",
+   "nt": 1
+  },
+  "Alchemist's amulet (charged)": {
+   "ids": [
+    29988,
+    29990
+   ],
+   "img": "Alchemist's_amulet_(uncharged).png",
+   "nt": 1,
+   "page": "Alchemist's amulet"
+  },
+  "Amethyst arrow": {
+   "ids": [
+    21326,
+    21332,
+    21334,
+    21336
+   ],
+   "img": "Amethyst_arrow_1.png"
+  },
+  "Amulet of Nature": {
+   "ids": [
+    6040
+   ],
+   "nt": 1
+  },
+  "Amulet of blood fury": {
+   "ids": [
+    24780
+   ],
+   "nt": 1
+  },
+  "Amulet of bounty": {
+   "ids": [
+    21160
+   ]
+  },
+  "Amulet of chemistry": {
+   "ids": [
+    21163
+   ]
+  },
+  "Amulet of fury": {
+   "ids": [
+    6585
+   ]
+  },
+  "Amulet of glory": {
+   "ids": [
+    1704,
+    1706,
+    1708,
+    1710,
+    1712,
+    11976,
+    11978
+   ]
+  },
+  "Amulet of glory(1)": {
+   "ids": [
+    1704,
+    1706,
+    1708,
+    1710,
+    1712,
+    11976,
+    11978
+   ],
+   "img": "Amulet_of_glory.png",
+   "page": "Amulet of glory"
+  },
+  "Amulet of magic": {
+   "ids": [
+    1727
+   ]
+  },
+  "Amulet of power": {
+   "ids": [
+    1731
+   ]
+  },
+  "Amulet of rancour": {
+   "ids": [
+    29801
+   ]
+  },
+  "Amulet of strength": {
+   "ids": [
+    1725
+   ]
+  },
+  "Amulet of torture": {
+   "ids": [
+    19553
+   ]
+  },
+  "Amy's saw": {
+   "ids": [
+    24880
+   ],
+   "nt": 1
+  },
+  "Ancestral hat": {
+   "ids": [
+    21018
+   ]
+  },
+  "Ancestral robe bottom": {
+   "ids": [
+    21024
+   ]
+  },
+  "Ancestral robe top": {
+   "ids": [
+    21021
+   ]
+  },
+  "Ancient sceptre": {
+   "ids": [
+    27624,
+    27626,
+    33827,
+    33829
+   ],
+   "nt": 1
+  },
+  "Ancient staff": {
+   "ids": [
+    4675
+   ]
+  },
+  "Ancient wyvern shield": {
+   "ids": [
+    21634,
+    21633
+   ],
+   "img": "Ancient_wyvern_shield_(uncharged).png"
+  },
+  "Angler hat": {
+   "ids": [
+    13258
+   ],
+   "nt": 1
+  },
+  "Anti-dragon shield": {
+   "ids": [
+    1540
+   ]
+  },
+  "Antler guard": {
+   "ids": [
+    31081
+   ]
+  },
+  "Arcane prayer scroll": {
+   "ids": [
+    21079
+   ]
+  },
+  "Archer helm": {
+   "ids": [
+    3749
+   ]
+  },
+  "Arclight": {
+   "ids": [
+    30305,
+    19675
+   ],
+   "img": "Arclight_(inactive).png",
+   "nt": 1
+  },
+  "Ardougne cloak 1": {
+   "ids": [
+    13121
+   ],
+   "nt": 1
+  },
+  "Ardougne cloak 2": {
+   "ids": [
+    13122
+   ],
+   "nt": 1
+  },
+  "Armadyl crossbow": {
+   "ids": [
+    11785
+   ]
+  },
+  "Ascension crossbows": {
+   "ids": [
+    34681
+   ]
+  },
+  "Atlatl dart": {
+   "ids": [
+    28991
+   ],
+   "img": "Atlatl_dart_1.png"
+  },
+  "Ava's accumulator": {
+   "ids": [
+    10499
+   ],
+   "nt": 1
+  },
+  "Ava's assembler": {
+   "ids": [
+    22109,
+    21914,
+    24222
+   ],
+   "nt": 1
+  },
+  "Ava's attractor": {
+   "ids": [
+    10498
+   ],
+   "nt": 1
+  },
+  "Avernic defender": {
+   "ids": [
+    22322,
+    22441,
+    24186
+   ],
+   "nt": 1
+  },
+  "Avernic treads": {
+   "ids": [
+    31088
+   ]
+  },
+  "Avernic treads (et)": {
+   "ids": [
+    31093
+   ],
+   "nt": 1
+  },
+  "Avernic treads (pe)": {
+   "ids": [
+    31092
+   ],
+   "nt": 1
+  },
+  "Avernic treads (pr)": {
+   "ids": [
+    31091
+   ],
+   "nt": 1
+  },
+  "Bandos chestplate": {
+   "ids": [
+    11832
+   ]
+  },
+  "Bandos equipment": {
+   "page": "Bandos armour"
+  },
+  "Bandos godsword": {
+   "ids": [
+    11804
+   ]
+  },
+  "Barrows gloves": {
+   "ids": [
+    7462
+   ],
+   "nt": 1
+  },
+  "Bellator ring": {
+   "ids": [
+    28316
+   ]
+  },
+  "Berserker helm": {
+   "ids": [
+    3751
+   ]
+  },
+  "Berserker necklace": {
+   "ids": [
+    11128
+   ]
+  },
+  "Berserker ring (i)": {
+   "ids": [
+    11773,
+    25264,
+    26770
+   ],
+   "nt": 1
+  },
+  "Binding necklace": {
+   "ids": [
+    5521
+   ]
+  },
+  "Black cape": {
+   "ids": [
+    1019
+   ]
+  },
+  "Black chinchompa": {
+   "ids": [
+    11959
+   ]
+  },
+  "Black d'hide body": {
+   "ids": [
+    2503
+   ]
+  },
+  "Black d'hide chaps": {
+   "ids": [
+    2497
+   ]
+  },
+  "Blade of Saeldor": {
+   "ids": [
+    23997,
+    23995
+   ],
+   "img": "Blade_of_Saeldor_(inactive).png"
+  },
+  "Blade of Saeldor (inactive)": {
+   "ids": [
+    23997,
+    23995
+   ],
+   "page": "Blade of Saeldor"
+  },
+  "Blood Moon helm": {
+   "ids": [
+    29028,
+    29047,
+    29073
+   ]
+  },
+  "Blood Moon tassets": {
+   "ids": [
+    29025,
+    29045,
+    29070
+   ]
+  },
+  "Bloodbark body": {
+   "ids": [
+    25404
+   ]
+  },
+  "Bloodbark boots": {
+   "ids": [
+    25410
+   ]
+  },
+  "Bloodbark helm": {
+   "ids": [
+    25413
+   ]
+  },
+  "Bloodbark legs": {
+   "ids": [
+    25416
+   ]
+  },
+  "Blue Moon chestplate": {
+   "ids": [
+    29013,
+    29037,
+    29058
+   ]
+  },
+  "Blue Moon helm": {
+   "ids": [
+    29019,
+    29041,
+    29064
+   ]
+  },
+  "Blue Moon tassets": {
+   "ids": [
+    29016,
+    29039,
+    29061
+   ]
+  },
+  "Blue d'hide body": {
+   "ids": [
+    2499
+   ]
+  },
+  "Blue d'hide chaps": {
+   "ids": [
+    2493
+   ]
+  },
+  "Blue wizard robe": {
+   "ids": [
+    577
+   ]
+  },
+  "Bone bolts": {
+   "ids": [
+    8882
+   ],
+   "img": "Bone_bolts_1.png"
+  },
+  "Book of Darkness": {
+   "ids": [
+    12612
+   ],
+   "nt": 1
+  },
+  "Book of Law": {
+   "ids": [
+    12610
+   ],
+   "nt": 1
+  },
+  "Bow of Faerdhinen": {
+   "ids": [
+    25862,
+    25865
+   ],
+   "img": "Bow_of_Faerdhinen_(inactive).png"
+  },
+  "Bow string spool": {
+   "ids": [
+    31052
+   ],
+   "nt": 1
+  },
+  "Burning claws": {
+   "ids": [
+    29577
+   ]
+  },
+  "Cannon barrels": {
+   "ids": [
+    10
+   ]
+  },
+  "Carpenter's helmet": {
+   "ids": [
+    24872
+   ],
+   "nt": 1
+  },
+  "Celestial ring": {
+   "ids": [
+    25539,
+    25541
+   ],
+   "img": "Celestial_ring_(uncharged).png",
+   "nt": 1
+  },
+  "Celestial signet": {
+   "ids": [
+    25543,
+    25545
+   ],
+   "img": "Celestial_signet_(uncharged).png",
+   "nt": 1
+  },
+  "Coal bag": {
+   "ids": [
+    12019,
+    24480
+   ],
+   "nt": 1
+  },
+  "Coif": {
+   "ids": [
+    1169
+   ]
+  },
+  "Combat bracelet": {
+   "ids": [
+    11126,
+    11124,
+    11122,
+    11120,
+    11118,
+    11974,
+    11972
+   ],
+   "img": "Combat_bracelet_(uncharged).png"
+  },
+  "Confliction gauntlets": {
+   "ids": [
+    31106
+   ]
+  },
+  "Cooking cape": {
+   "ids": [
+    9801,
+    9802
+   ],
+   "nt": 1
+  },
+  "Cooking gauntlets": {
+   "ids": [
+    775
+   ],
+   "nt": 1
+  },
+  "Crystal axe": {
+   "ids": [
+    23673,
+    23675
+   ],
+   "nt": 1
+  },
+  "Crystal body": {
+   "ids": [
+    23975,
+    23977
+   ],
+   "nt": 1
+  },
+  "Crystal harpoon": {
+   "ids": [
+    23762,
+    23764
+   ],
+   "nt": 1
+  },
+  "Crystal helm": {
+   "ids": [
+    23971,
+    23973
+   ],
+   "nt": 1
+  },
+  "Crystal legs": {
+   "ids": [
+    23979,
+    23981
+   ],
+   "nt": 1
+  },
+  "Crystal pickaxe": {
+   "ids": [
+    23680,
+    23682
+   ],
+   "nt": 1
+  },
+  "Dagon'hai hat": {
+   "ids": [
+    24288
+   ]
+  },
+  "Dagon'hai robe bottom": {
+   "ids": [
+    24294
+   ]
+  },
+  "Dagon'hai robe top": {
+   "ids": [
+    24291
+   ]
+  },
+  "Dexterous prayer scroll": {
+   "ids": [
+    21034
+   ]
+  },
+  "Dharok's helm": {
+   "ids": [
+    4716,
+    4880,
+    4881,
+    4882,
+    4883,
+    4884
+   ]
+  },
+  "Diamond ascension bolts (e)": {
+   "ids": [
+    34696
+   ],
+   "img": "Diamond_ascension_bolts_(e)_1.png"
+  },
+  "Dinh's bulwark": {
+   "ids": [
+    21015
+   ]
+  },
+  "Dizana's quiver": {
+   "ids": [
+    28947,
+    28951,
+    28949,
+    28953
+   ],
+   "img": "Dizana's_quiver_(uncharged).png",
+   "nt": 1
+  },
+  "Dodgy necklace": {
+   "ids": [
+    21143
+   ]
+  },
+  "Dorgeshuun crossbow": {
+   "ids": [
+    8880
+   ]
+  },
+  "Dragon boots": {
+   "ids": [
+    11840
+   ]
+  },
+  "Dragon claws": {
+   "ids": [
+    13652
+   ]
+  },
+  "Dragon crossbow": {
+   "ids": [
+    21902
+   ]
+  },
+  "Dragon dart": {
+   "ids": [
+    11230,
+    11231,
+    11233,
+    11234
+   ]
+  },
+  "Dragon defender": {
+   "ids": [
+    12954,
+    20463,
+    24143
+   ],
+   "nt": 1
+  },
+  "Dragon hunter crossbow": {
+   "ids": [
+    21012
+   ]
+  },
+  "Dragon hunter lance": {
+   "ids": [
+    22978
+   ]
+  },
+  "Dragon hunter wand": {
+   "ids": [
+    30070
+   ]
+  },
+  "Dragon platelegs": {
+   "ids": [
+    4087
+   ]
+  },
+  "Dragon scimitar": {
+   "ids": [
+    4587
+   ]
+  },
+  "Dragon warhammer": {
+   "ids": [
+    13576
+   ]
+  },
+  "Dragonfire ward": {
+   "ids": [
+    22003,
+    22002
+   ],
+   "img": "Dragonfire_ward_(uncharged).png"
+  },
+  "Dual macuahuitl": {
+   "ids": [
+    28997
+   ]
+  },
+  "Dwarf multicannon": {
+   "ids": [
+    6,
+    7,
+    8,
+    9,
+    14916,
+    43027,
+    43029,
+    43030,
+    43031,
+    43028
+   ]
+  },
+  "Echo boots": {
+   "ids": [
+    28945
+   ],
+   "nt": 1
+  },
+  "Eclipse Moon helm": {
+   "ids": [
+    29010,
+    29035,
+    29055
+   ]
+  },
+  "Eclipse atlatl": {
+   "ids": [
+    29000
+   ]
+  },
+  "Elemental amulet": {
+   "ids": [
+    34428
+   ]
+  },
+  "Elemental spells": {
+   "page": "Combat spells"
+  },
+  "Elidinis' ward": {
+   "ids": [
+    25985
+   ]
+  },
+  "Elidinis' ward (f)": {
+   "ids": [
+    27251
+   ],
+   "nt": 1
+  },
+  "Elite void robe": {
+   "ids": [
+    13073,
+    20471,
+    24180,
+    33488,
+    33490
+   ],
+   "nt": 1
+  },
+  "Elite void top": {
+   "ids": [
+    13072,
+    20467,
+    24178,
+    33480,
+    33482
+   ],
+   "nt": 1
+  },
+  "Emberlight": {
+   "ids": [
+    29589
+   ],
+   "nt": 1
+  },
+  "Eternal boots": {
+   "ids": [
+    13235
+   ]
+  },
+  "Explorer's ring 1": {
+   "ids": [
+    13125
+   ],
+   "nt": 1
+  },
+  "Explorer's ring 2": {
+   "ids": [
+    13126
+   ],
+   "nt": 1
+  },
+  "Explorer's ring 3": {
+   "ids": [
+    13127
+   ],
+   "nt": 1
+  },
+  "Explorer's ring 4": {
+   "ids": [
+    13128
+   ],
+   "nt": 1
+  },
+  "Eye of Ayak": {
+   "ids": [
+    31115,
+    31113
+   ],
+   "img": "Eye_of_Ayak_(uncharged).png"
+  },
+  "Farmer's strawhat": {
+   "ids": [
+    13646,
+    13647
+   ],
+   "nt": 1
+  },
+  "Farming cape": {
+   "ids": [
+    9810,
+    9811
+   ],
+   "nt": 1
+  },
+  "Felling axe handle": {
+   "ids": [
+    28177
+   ]
+  },
+  "Ferocious gloves": {
+   "ids": [
+    22981
+   ],
+   "nt": 1
+  },
+  "Fighter torso": {
+   "ids": [
+    10551,
+    20513,
+    24175,
+    33520,
+    33522
+   ],
+   "nt": 1
+  },
+  "Fighting boots": {
+   "ids": [
+    9006
+   ],
+   "nt": 1
+  },
+  "Fire cape": {
+   "ids": [
+    6570,
+    20445,
+    24223
+   ],
+   "nt": 1
+  },
+  "Fish sack barrel": {
+   "ids": [
+    25585,
+    25587
+   ],
+   "nt": 1
+  },
+  "Fletching knife": {
+   "ids": [
+    31043
+   ],
+   "nt": 1
+  },
+  "Forestry basket": {
+   "ids": [
+    28143,
+    28145
+   ],
+   "nt": 1
+  },
+  "Forestry hat": {
+   "ids": [
+    28173
+   ],
+   "nt": 1
+  },
+  "Gem sack": {
+   "ids": [
+    33393,
+    33395
+   ],
+   "nt": 1
+  },
+  "Ghrazi rapier": {
+   "ids": [
+    22324
+   ]
+  },
+  "Gloves of silence": {
+   "ids": [
+    10075
+   ]
+  },
+  "Golden prospector helmet": {
+   "ids": [
+    25549
+   ],
+   "nt": 1
+  },
+  "Goldsmith gauntlets": {
+   "ids": [
+    776
+   ],
+   "nt": 1
+  },
+  "Graceful hood": {
+   "ids": [
+    11850,
+    11851
+   ],
+   "nt": 1
+  },
+  "Green d'hide body": {
+   "ids": [
+    1135
+   ]
+  },
+  "Green d'hide chaps": {
+   "ids": [
+    1099
+   ]
+  },
+  "Green d'hide shield": {
+   "ids": [
+    22275
+   ]
+  },
+  "Green d'hide vambraces": {
+   "ids": [
+    1065
+   ]
+  },
+  "Guild hunter headwear": {
+   "ids": [
+    29263
+   ],
+   "nt": 1
+  },
+  "Guthix chaps": {
+   "ids": [
+    10380
+   ]
+  },
+  "Guthix coif": {
+   "ids": [
+    10382
+   ]
+  },
+  "Guthix d'hide body": {
+   "ids": [
+    10378
+   ]
+  },
+  "Guthix d'hide boots": {
+   "ids": [
+    19927
+   ]
+  },
+  "Hallowfell": {
+   "ids": [
+    34027
+   ]
+  },
+  "Harmonised Nightmare staff": {
+   "ids": [
+    24423
+   ],
+   "nt": 1
+  },
+  "Hat of the Eye": {
+   "ids": [
+    26850,
+    26858,
+    26864,
+    26870
+   ],
+   "nt": 1
+  },
+  "Hat of the Eye (blue)": {
+   "ids": [
+    26850,
+    26858,
+    26864,
+    26870
+   ],
+   "img": "Hat_of_the_Eye.png",
+   "nt": 1,
+   "page": "Hat of the Eye"
+  },
+  "Hat of the Eye (green)": {
+   "ids": [
+    26850,
+    26858,
+    26864,
+    26870
+   ],
+   "img": "Hat_of_the_Eye.png",
+   "nt": 1,
+   "page": "Hat of the Eye"
+  },
+  "Hat of the Eye (red)": {
+   "ids": [
+    26850,
+    26858,
+    26864,
+    26870
+   ],
+   "img": "Hat_of_the_Eye.png",
+   "nt": 1,
+   "page": "Hat of the Eye"
+  },
+  "Helm of Neitiznot": {
+   "ids": [
+    10828
+   ]
+  },
+  "Herblore cape": {
+   "ids": [
+    9774,
+    9775
+   ],
+   "nt": 1
+  },
+  "Horn of Plenty": {
+   "ids": [
+    31243,
+    31241
+   ],
+   "img": "Horn_of_Plenty_(empty).png"
+  },
+  "Hueycoatl hide body": {
+   "ids": [
+    30076
+   ]
+  },
+  "Hueycoatl hide chaps": {
+   "ids": [
+    30079
+   ]
+  },
+  "Hueycoatl hide coif": {
+   "ids": [
+    30073
+   ]
+  },
+  "Hunters' sunlight crossbow": {
+   "ids": [
+    28869
+   ]
+  },
+  "Iban's staff (u)": {
+   "ids": [
+    12658
+   ],
+   "nt": 1
+  },
+  "Imbued Saradomin cape": {
+   "ids": [
+    21791,
+    24236,
+    24248
+   ],
+   "nt": 1
+  },
+  "Imcando hammer": {
+   "ids": [
+    25644,
+    25633
+   ],
+   "nt": 1
+  },
+  "Infernal axe": {
+   "ids": [
+    13241,
+    13242
+   ],
+   "nt": 1
+  },
+  "Infernal cape": {
+   "ids": [
+    21295,
+    21287,
+    24224,
+    33500,
+    33502
+   ],
+   "nt": 1
+  },
+  "Infernal harpoon": {
+   "ids": [
+    21031,
+    21033
+   ],
+   "nt": 1
+  },
+  "Infernal pickaxe": {
+   "ids": [
+    13243,
+    13244
+   ],
+   "nt": 1
+  },
+  "Infinity boots": {
+   "ids": [
+    6920
+   ]
+  },
+  "Infinity bottoms": {
+   "ids": [
+    6924
+   ]
+  },
+  "Infinity hat": {
+   "ids": [
+    6918
+   ]
+  },
+  "Infinity top": {
+   "ids": [
+    6916
+   ]
+  },
+  "Inquisitor's great helm": {
+   "ids": [
+    24419
+   ]
+  },
+  "Inquisitor's hauberk": {
+   "ids": [
+    24420
+   ]
+  },
+  "Inquisitor's mace": {
+   "ids": [
+    24417
+   ]
+  },
+  "Inquisitor's plateskirt": {
+   "ids": [
+    24421
+   ]
+  },
+  "Iron arrow": {
+   "ids": [
+    884,
+    885,
+    5617,
+    5623
+   ],
+   "img": "Iron_arrow_1.png"
+  },
+  "Iron full helm": {
+   "ids": [
+    1153
+   ]
+  },
+  "Iron platebody": {
+   "ids": [
+    1115
+   ]
+  },
+  "Iron platelegs": {
+   "ids": [
+    1067
+   ]
+  },
+  "Iron scimitar": {
+   "ids": [
+    1323
+   ]
+  },
+  "Jeweller's chisel": {
+   "ids": [
+    34024
+   ],
+   "nt": 1
+  },
+  "Justiciar chestguard": {
+   "ids": [
+    22327
+   ]
+  },
+  "Justiciar faceguard": {
+   "ids": [
+    22326
+   ]
+  },
+  "Justiciar legguards": {
+   "ids": [
+    22328
+   ]
+  },
+  "Kandarin headgear 1": {
+   "ids": [
+    13137
+   ],
+   "nt": 1
+  },
+  "Kodai wand": {
+   "ids": [
+    21006
+   ]
+  },
+  "Kraken tentacle": {
+   "ids": [
+    12004
+   ]
+  },
+  "Leather body": {
+   "ids": [
+    1129
+   ]
+  },
+  "Leather boots": {
+   "ids": [
+    1061
+   ]
+  },
+  "Leather chaps": {
+   "ids": [
+    1095
+   ]
+  },
+  "Leather cowl": {
+   "ids": [
+    1167
+   ]
+  },
+  "Leather gloves": {
+   "ids": [
+    1059
+   ]
+  },
+  "Leather vambraces": {
+   "ids": [
+    1063
+   ]
+  },
+  "Lumberjack hat": {
+   "ids": [
+    10941
+   ],
+   "nt": 1
+  },
+  "Mage's book": {
+   "ids": [
+    6889
+   ]
+  },
+  "Magic secateurs": {
+   "ids": [
+    7409
+   ],
+   "nt": 1
+  },
+  "Magic shortbow": {
+   "ids": [
+    861
+   ]
+  },
+  "Magic shortbow (i)": {
+   "ids": [
+    12788
+   ],
+   "nt": 1
+  },
+  "Magus ring": {
+   "ids": [
+    28313
+   ]
+  },
+  "Malediction ward": {
+   "ids": [
+    11924
+   ]
+  },
+  "Maple shortbow": {
+   "ids": [
+    853
+   ]
+  },
+  "Masori body": {
+   "ids": [
+    27229
+   ]
+  },
+  "Masori body (f)": {
+   "ids": [
+    27238
+   ]
+  },
+  "Masori chaps": {
+   "ids": [
+    27232
+   ]
+  },
+  "Masori chaps (f)": {
+   "ids": [
+    27241
+   ]
+  },
+  "Masori mask": {
+   "ids": [
+    27226
+   ]
+  },
+  "Masori mask (f)": {
+   "ids": [
+    27235
+   ]
+  },
+  "Medallion of the Deep": {
+   "ids": [
+    32386
+   ],
+   "nt": 1
+  },
+  "Mining cape": {
+   "ids": [
+    9792,
+    9793
+   ],
+   "nt": 1
+  },
+  "Mining gloves": {
+   "ids": [
+    21343
+   ],
+   "nt": 1
+  },
+  "Mithril arrow": {
+   "ids": [
+    888,
+    889,
+    5619,
+    5625
+   ],
+   "img": "Mithril_arrow_1.png"
+  },
+  "Mithril full helm": {
+   "ids": [
+    1159
+   ]
+  },
+  "Mithril platebody": {
+   "ids": [
+    1121
+   ]
+  },
+  "Mithril platelegs": {
+   "ids": [
+    1071
+   ]
+  },
+  "Mithril scimitar": {
+   "ids": [
+    1329
+   ]
+  },
+  "Mixed hide boots": {
+   "ids": [
+    29286
+   ]
+  },
+  "Mixed hide cape": {
+   "ids": [
+    29289
+   ]
+  },
+  "Mixed hide legs": {
+   "ids": [
+    29283
+   ]
+  },
+  "Mixed hide top": {
+   "ids": [
+    29280
+   ]
+  },
+  "Mooleta": {
+   "ids": [
+    33101
+   ],
+   "nt": 1
+  },
+  "Moonlight antler bolts": {
+   "ids": [
+    28878
+   ],
+   "img": "Moonlight_antler_bolts_1.png"
+  },
+  "Mystic boots": {
+   "ids": [
+    4097
+   ]
+  },
+  "Mystic hat": {
+   "ids": [
+    4089
+   ]
+  },
+  "Mystic robe bottom": {
+   "ids": [
+    4093
+   ]
+  },
+  "Mystic robe top": {
+   "ids": [
+    4091
+   ]
+  },
+  "Necklace of Fangs": {
+   "ids": [
+    34401
+   ]
+  },
+  "Necklace of anguish": {
+   "ids": [
+    19547
+   ]
+  },
+  "Necklace of rupture": {
+   "ids": [
+    33639
+   ]
+  },
+  "Neitiznot faceguard": {
+   "ids": [
+    24271
+   ],
+   "nt": 1
+  },
+  "Nightmare staff": {
+   "ids": [
+    24422
+   ]
+  },
+  "Noxious halberd": {
+   "ids": [
+    29796
+   ]
+  },
+  "Oak shortbow": {
+   "ids": [
+    843
+   ]
+  },
+  "Oathplate chest": {
+   "ids": [
+    30753
+   ]
+  },
+  "Oathplate helm": {
+   "ids": [
+    30750
+   ]
+  },
+  "Oathplate legs": {
+   "ids": [
+    30756
+   ]
+  },
+  "Obligator": {
+   "ids": [
+    34717,
+    34715
+   ],
+   "img": "Obligator_(uncharged).png"
+  },
+  "Obsidian armour set": {
+   "ids": [
+    21279
+   ]
+  },
+  "Obsidian helmet": {
+   "ids": [
+    21298
+   ]
+  },
+  "Obsidian platelegs": {
+   "ids": [
+    21304
+   ]
+  },
+  "Occult necklace": {
+   "ids": [
+    12002
+   ]
+  },
+  "Odium ward": {
+   "ids": [
+    11926
+   ]
+  },
+  "Osmumten's fang": {
+   "ids": [
+    26219
+   ]
+  },
+  "Peaceful blessing": {
+   "ids": [
+    20226
+   ]
+  },
+  "Pearl fishing rod": {
+   "ids": [
+    22846
+   ],
+   "nt": 1
+  },
+  "Pegasian boots": {
+   "ids": [
+    13237
+   ]
+  },
+  "Plank sack": {
+   "ids": [
+    24882
+   ],
+   "nt": 1
+  },
+  "Prescription goggles": {
+   "ids": [
+    29974,
+    29976
+   ],
+   "img": "Prescription_goggles_(unfocused).png",
+   "nt": 1
+  },
+  "Primordial boots": {
+   "ids": [
+    13239
+   ]
+  },
+  "Prospector helmet": {
+   "ids": [
+    12013,
+    29472
+   ],
+   "nt": 1
+  },
+  "Purging staff": {
+   "ids": [
+    29594
+   ],
+   "nt": 1
+  },
+  "Pyromancer hood": {
+   "ids": [
+    20708
+   ],
+   "nt": 1
+  },
+  "Rada's blessing 1": {
+   "ids": [
+    22941
+   ],
+   "nt": 1
+  },
+  "Rada's blessing 3": {
+   "ids": [
+    22945
+   ],
+   "nt": 1
+  },
+  "Rada's blessing 4": {
+   "ids": [
+    22947
+   ],
+   "nt": 1
+  },
+  "Reagent pouch": {
+   "ids": [
+    29996,
+    29998
+   ],
+   "nt": 1
+  },
+  "Red chinchompa": {
+   "ids": [
+    10034
+   ]
+  },
+  "Revenant ether": {
+   "ids": [
+    21820
+   ],
+   "img": "Revenant_ether_1.png"
+  },
+  "Ring of endurance": {
+   "ids": [
+    24844,
+    24736
+   ],
+   "img": "Ring_of_endurance_(uncharged).png"
+  },
+  "Ring of pursuit": {
+   "ids": [
+    21126
+   ]
+  },
+  "Ring of suffering (i)": {
+   "ids": [
+    19710,
+    20657,
+    25246,
+    25248,
+    26761,
+    26762
+   ],
+   "nt": 1
+  },
+  "Rogue mask": {
+   "ids": [
+    5554
+   ],
+   "nt": 1
+  },
+  "Ruby dragon bolts (e)": {
+   "ids": [
+    21944
+   ],
+   "img": "Ruby_dragon_bolts_(e)_1.png"
+  },
+  "Rune arrow": {
+   "ids": [
+    892,
+    893,
+    5621,
+    5627
+   ],
+   "img": "Rune_arrow_1.png"
+  },
+  "Rune boots": {
+   "ids": [
+    4131
+   ]
+  },
+  "Rune crossbow": {
+   "ids": [
+    9185
+   ]
+  },
+  "Rune full helm": {
+   "ids": [
+    1163
+   ]
+  },
+  "Rune platebody": {
+   "ids": [
+    1127
+   ]
+  },
+  "Rune platelegs": {
+   "ids": [
+    1079
+   ]
+  },
+  "Rune scimitar": {
+   "ids": [
+    1333
+   ]
+  },
+  "Runecraft cape": {
+   "ids": [
+    9765,
+    9766
+   ],
+   "nt": 1
+  },
+  "Sailing cape": {
+   "ids": [
+    31288,
+    31290
+   ],
+   "nt": 1
+  },
+  "Sanguinesti staff": {
+   "ids": [
+    22481,
+    22323
+   ],
+   "img": "Sanguinesti_staff_(uncharged).png"
+  },
+  "Saradomin cape": {
+   "ids": [
+    2412
+   ],
+   "nt": 1
+  },
+  "Scorching bow": {
+   "ids": [
+    29591
+   ],
+   "nt": 1
+  },
+  "Scythe of Vitur": {
+   "ids": [
+    22486,
+    22325
+   ],
+   "img": "Scythe_of_Vitur_(uncharged).png"
+  },
+  "Seed box": {
+   "ids": [
+    13639,
+    24482
+   ],
+   "nt": 1
+  },
+  "Seeking dragon arrow": {
+   "ids": [
+    33595
+   ],
+   "img": "Seeking_dragon_arrow_1.png"
+  },
+  "Seers ring (i)": {
+   "ids": [
+    11770,
+    25258,
+    26767
+   ],
+   "nt": 1
+  },
+  "Serpentine helm": {
+   "ids": [
+    12929,
+    12931
+   ],
+   "img": "Serpentine_helm_(uncharged).png"
+  },
+  "Shaman mask": {
+   "ids": [
+    21838
+   ]
+  },
+  "Shortbow": {
+   "ids": [
+    841
+   ]
+  },
+  "Silklined herb sack": {
+   "ids": [
+    33135,
+    33137
+   ],
+   "nt": 1
+  },
+  "Slayer helmet (i)": {
+   "ids": [
+    11865,
+    25177,
+    26674
+   ],
+   "nt": 1
+  },
+  "Small fur pouch": {
+   "ids": [
+    29299,
+    29466
+   ],
+   "nt": 1
+  },
+  "Small meat pouch": {
+   "ids": [
+    29295,
+    29462
+   ],
+   "nt": 1
+  },
+  "Smithing cape": {
+   "ids": [
+    9795,
+    9796
+   ],
+   "nt": 1
+  },
+  "Smiths tunic": {
+   "ids": [
+    27023
+   ],
+   "nt": 1
+  },
+  "Snakeskin bandana": {
+   "ids": [
+    6326
+   ]
+  },
+  "Snakeskin boots": {
+   "ids": [
+    6328
+   ]
+  },
+  "Soulreaper axe": {
+   "ids": [
+    28338
+   ]
+  },
+  "Spirit angler headband": {
+   "ids": [
+    25592
+   ],
+   "nt": 1
+  },
+  "Staff of air": {
+   "ids": [
+    1381
+   ]
+  },
+  "Steel arrow": {
+   "ids": [
+    886,
+    887,
+    5618,
+    5624
+   ],
+   "img": "Steel_arrow_1.png"
+  },
+  "Steel cannonball": {
+   "ids": [
+    2
+   ]
+  },
+  "Steel full helm": {
+   "ids": [
+    1157
+   ]
+  },
+  "Steel platebody": {
+   "ids": [
+    1119
+   ]
+  },
+  "Steel platelegs": {
+   "ids": [
+    1069
+   ]
+  },
+  "Steel scimitar": {
+   "ids": [
+    1325
+   ]
+  },
+  "Strung rabbit foot": {
+   "ids": [
+    10132
+   ]
+  },
+  "Studded body": {
+   "ids": [
+    1133
+   ]
+  },
+  "Studded chaps": {
+   "ids": [
+    1097
+   ]
+  },
+  "Thieving cape": {
+   "ids": [
+    9777,
+    9778
+   ],
+   "nt": 1
+  },
+  "Toktz-xil-ak": {
+   "ids": [
+    6523
+   ]
+  },
+  "Tome of Earth": {
+   "ids": [
+    30066,
+    30064
+   ],
+   "img": "Tome_of_Earth_(empty).png"
+  },
+  "Tome of Fire": {
+   "ids": [
+    20716,
+    20714
+   ],
+   "img": "Tome_of_Fire_(empty).png"
+  },
+  "Tome of Water": {
+   "ids": [
+    25576,
+    25574
+   ],
+   "img": "Tome_of_Water_(empty).png"
+  },
+  "Torag's platebody": {
+   "ids": [
+    4749,
+    4964,
+    4965,
+    4966,
+    4967,
+    4968
+   ]
+  },
+  "Torag's platelegs": {
+   "ids": [
+    4751,
+    4970,
+    4971,
+    4972,
+    4973,
+    4974
+   ]
+  },
+  "Tormented bracelet": {
+   "ids": [
+    19544
+   ]
+  },
+  "Torva full helm": {
+   "ids": [
+    26376,
+    26382
+   ],
+   "img": "Torva_full_helm_(damaged).png"
+  },
+  "Torva platebody": {
+   "ids": [
+    26378,
+    26384
+   ],
+   "img": "Torva_platebody_(damaged).png"
+  },
+  "Torva platelegs": {
+   "ids": [
+    26380,
+    26386
+   ],
+   "img": "Torva_platelegs_(damaged).png"
+  },
+  "Toxic Staff of the Dead": {
+   "ids": [
+    12902,
+    12904
+   ],
+   "img": "Toxic_staff_(uncharged).png"
+  },
+  "Toxic blowpipe": {
+   "ids": [
+    12924,
+    12926
+   ],
+   "img": "Toxic_blowpipe_(empty).png"
+  },
+  "Trident of the Seas": {
+   "ids": [
+    11908,
+    11907,
+    11905
+   ],
+   "img": "Uncharged_trident.png"
+  },
+  "Trident of the Swamp": {
+   "ids": [
+    12900,
+    12899
+   ],
+   "img": "Uncharged_toxic_trident.png"
+  },
+  "Tumeken's shadow": {
+   "ids": [
+    27277,
+    27275
+   ],
+   "img": "Tumeken's_shadow_(uncharged).png"
+  },
+  "Tumeken's shadow (uncharged)": {
+   "ids": [
+    27277,
+    27275
+   ],
+   "page": "Tumeken's shadow"
+  },
+  "Twinflame staff": {
+   "ids": [
+    30634
+   ]
+  },
+  "Twisted bow": {
+   "ids": [
+    20997
+   ]
+  },
+  "Twisted buckler": {
+   "ids": [
+    21000
+   ]
+  },
+  "Twitcher's gloves": {
+   "ids": [
+    28630
+   ],
+   "nt": 1
+  },
+  "Ultor ring": {
+   "ids": [
+    28307
+   ]
+  },
+  "Ursine chainmace": {
+   "ids": [
+    27657,
+    27660
+   ],
+   "img": "Ursine_chainmace_(u).png"
+  },
+  "Varrock armour 1": {
+   "ids": [
+    13104
+   ],
+   "nt": 1
+  },
+  "Venator bow": {
+   "ids": [
+    27612,
+    27610
+   ],
+   "img": "Venator_bow_(uncharged).png"
+  },
+  "Venator ring": {
+   "ids": [
+    28310
+   ]
+  },
+  "Virtus mask": {
+   "ids": [
+    26241
+   ]
+  },
+  "Virtus robe bottom": {
+   "ids": [
+    26245
+   ]
+  },
+  "Virtus robe top": {
+   "ids": [
+    26243
+   ]
+  },
+  "Void knight gloves": {
+   "ids": [
+    8842,
+    20475,
+    24182,
+    33492,
+    33494
+   ],
+   "nt": 1
+  },
+  "Void mage helm": {
+   "ids": [
+    11663,
+    20477,
+    24183,
+    33468,
+    33470
+   ],
+   "nt": 1
+  },
+  "Void ranger helm": {
+   "ids": [
+    11664,
+    20479,
+    24184,
+    33472,
+    33474
+   ],
+   "nt": 1
+  },
+  "Voidwaker": {
+   "ids": [
+    27690
+   ]
+  },
+  "Warped sceptre": {
+   "ids": [
+    28583,
+    28585
+   ],
+   "img": "Warped_sceptre_(uncharged).png"
+  },
+  "Webweaver bow": {
+   "ids": [
+    27652,
+    27655
+   ],
+   "img": "Webweaver_bow_(u).png"
+  },
+  "Willow shortbow": {
+   "ids": [
+    849
+   ]
+  },
+  "Woodcutting cape": {
+   "ids": [
+    9807,
+    9808
+   ],
+   "nt": 1
+  },
+  "Xerician hat": {
+   "ids": [
+    13385
+   ]
+  },
+  "Xerician robe": {
+   "ids": [
+    13389
+   ]
+  },
+  "Xerician top": {
+   "ids": [
+    13387
+   ]
+  },
+  "Zamorak monk bottom": {
+   "ids": [
+    1033
+   ]
+  },
+  "Zamorakian hasta": {
+   "ids": [
+    11889
+   ]
+  },
+  "Zaryte crossbow": {
+   "ids": [
+    26374
+   ]
+  },
+  "Zaryte vambraces": {
+   "ids": [
+    26235
+   ]
+  },
+  "Zealot's helm": {
+   "ids": [
+    25438
+   ],
+   "nt": 1
+  },
+  "Zombie axe": {
+   "ids": [
+    28810
+   ]
+  },
+  "Zorya's tome": {
+   "ids": [
+    34727,
+    34725
+   ],
+   "img": "Zorya's_tome_(uncharged).png"
+  }
+ }
+}

@@ -29,6 +29,8 @@ Character: Home, Scroll, Achievements. Planning: Goals, Roadmap, Quest Hub (was 
 
 **Skills** (2026-11-13). Every skill with your level and the way to the next; per skill, the hero, the quests waiting on it, and the wiki's training guide as a ladder with you marked on it. The same guide opens as a card from any requirement row.
 
+**Upgrades** (2026-11-16; tabs Melee, Ranged, Magic, Skilling). The wiki's gear progression guides as a ladder per combat style: the rung your levels reach, the worn-equipment grid for a rung with what is new on it, today's prices, what each point of bonus costs, and ticks for what you own (the RuneLite export fills in the bank). Skilling is the wiki's Skilling equipment page by skill. Data is a snapshot from `tools/gear.js`, inline in the page.
+
 **Coffer** (sections The Bakery, Bank, Exchange, Repeatable runs since 2026-11-13)**.** Money making. A quiz (love, like, hate per skill; stage from your data) builds a page: skill pills lead (the lens), a podium of best methods, a ledger. Tabs for Repeatables, Vault, Flip and Runs (the farm: herb, tree, fruit and hardwood runs curated to your Farming level, patches with gates, plant and harvest presses, a log). Vault opens with the bank window (tabs you mark yourself, slot grid, stack numbers, search) above the value history. Flip margins are averages of real trades (5m or 1h). 525 methods from the wiki. Josh called it finished for now.
 
 **Notes.** Sticky notes, saving as you type.
@@ -49,4 +51,4 @@ Themes, character and profiles, RuneLite data (the Character Export folder, sync
 
 ## Data the app carries itself
 
-`data/quest-steps.json` (185 of 193 quests, the rest stubs), `data/upgrades.json` (67 account upgrades with how, cost, levels, quests, why; images are the wiki's), and the mockups copied to `data/mockups` for the Beta. Candidates to bring in-repo next: money makers, diaries, achievements.
+`data/quest-steps.json` (185 of 193 quests, the rest stubs), `data/gear.json` (the three gear progression guides and the Skilling equipment page, also written inline into the page by `tools/gear.js`), `data/upgrades.json` (67 account upgrades with how, cost, levels, quests, why; images are the wiki's), and the mockups copied to `data/mockups` for the Beta. Candidates to bring in-repo next: money makers, diaries, achievements.
