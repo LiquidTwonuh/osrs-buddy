@@ -1,0 +1,39 @@
+
+  /* ============ THE COMMAND LINE ============
+     The path line at the top of every page is a place to type (tpWire in the page's script). It
+     stays at the top of the window as the page scrolls, and what a line prints drops down under
+     it. Settings, Look turns the typing off and it is a plain path again. */
+  body[data-skin="term"] .term-path{position:relative; display:block; overflow:visible}
+  body[data-skin="term"]:not(.dock) .term-path{position:sticky; top:var(--gap); z-index:25}
+  body[data-skin="term"] .tp-row{display:flex; align-items:baseline; gap:0; min-width:0; margin:0; white-space:nowrap; cursor:text}
+  body[data-skin="term"] .tp-pre{flex:none}
+  body[data-skin="term"] #tpIn{flex:1 1 80px; min-width:60px; width:auto; height:auto; min-height:0; margin:0 0 0 8px; padding:0; background:none; border:0; outline:0; box-shadow:none;
+    color:var(--me); caret-color:var(--me); font:inherit}
+  body[data-skin="term"] .term-path:focus-within{border-color:color-mix(in srgb, var(--gold) 60%, transparent) !important}
+  body[data-skin="term"] .term-path:focus-within .cur, body[data-skin="term"] .term-path.has .cur{display:none}
+  body[data-skin="term"] .tp-hint{flex:0 1 auto; min-width:0; margin-left:12px; overflow:hidden; text-overflow:ellipsis; color:var(--faint)}
+  body[data-skin="term"] .tp-hint u{text-decoration:none; color:var(--muted)}
+  body[data-skin="term"] .tp-hint kbd{padding:0 5px; border:1px solid var(--line); font:inherit; color:var(--muted)}
+  body[data-skin="term"] .tp-hint .c{color:var(--k-c)} body[data-skin="term"] .tp-hint .y{color:var(--k-y)} body[data-skin="term"] .tp-hint .o{color:var(--k-o)} body[data-skin="term"] .tp-hint .g{color:var(--k-g)}
+  body[data-skin="term"] .term-path.tp-off .tp-row{cursor:default}
+  body[data-skin="term"] .term-path.tp-off #tpIn, body[data-skin="term"] .term-path.tp-off .tp-hint{display:none}
+  /* what a line printed */
+  body[data-skin="term"] .tp-out{position:absolute; left:-1px; right:-1px; top:calc(100% + 5px); z-index:2; min-height:0; max-height:min(52vh, 460px); padding:10px 12px;
+    background:color-mix(in srgb, var(--bg) 93%, transparent); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
+    border:1px solid color-mix(in srgb, var(--gold) 45%, transparent); font:12.5px/1.5 var(--fm); white-space:normal; animation:tpDrop .2s cubic-bezier(.2,.7,.2,1)}
+  @keyframes tpDrop{from{opacity:0; transform:translateY(-6px)}}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .tp-out{animation:none} }
+
+  /* two kinds of line the command language adds to the log: the line as typed, and what it printed */
+  body[data-skin="term"] .ht-log .x span{color:var(--faint)}
+  body[data-skin="term"] .ht-log .x b{font-weight:400; color:var(--gold-dim)}
+  body[data-skin="term"] .ht-log .o > span{color:var(--text)}
+  body[data-skin="term"] .ht-log .o b{font-weight:600; color:var(--gold)}
+  body[data-skin="term"] .ht-log .o .ln{display:block; white-space:pre-wrap}
+  body[data-skin="term"] .ht-log .o .dim{color:var(--faint)}
+  body[data-skin="term"] .ht-log .o .warn{color:var(--k-o)}
+  body[data-skin="term"] .ht-log .o .g{color:var(--k-g)} body[data-skin="term"] .ht-log .o .y{color:var(--k-y)} body[data-skin="term"] .ht-log .o .c{color:var(--k-c)}
+  body[data-skin="term"] .ht-log .tc{display:inline; min-height:0; margin:0; padding:0 1px; background:none; border:0; box-shadow:none; font:inherit; color:var(--k-c); cursor:pointer; text-decoration:none; transition:color .12s}
+  body[data-skin="term"] .ht-log .tc.g{color:var(--k-g)} body[data-skin="term"] .ht-log .tc.y{color:var(--k-y)} body[data-skin="term"] .ht-log .tc.o{color:var(--k-o)}
+  body[data-skin="term"] .ht-log .tc:hover, body[data-skin="term"] .ht-log .tc:focus-visible{color:var(--text); text-decoration:underline; outline:0}
+  body[data-skin="term"] .ht-log .o .bar{display:inline-block; width:90px; height:8px; vertical-align:middle; background:linear-gradient(90deg, var(--gold) var(--p), var(--line) var(--p))}

@@ -3992,6 +3992,45 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .wf-capes i::after{content:""; position:absolute; left:0; right:0; bottom:0; height:calc(var(--v, 0) * 1%); background:color-mix(in srgb, var(--k-y) 50%, transparent)}
   body[data-skin="term"] .wf-capes i.got::after{background:var(--k-y)}
 
+  /* ============ THE COMMAND LINE ============
+     The path line at the top of every page is a place to type (tpWire in the page's script). It
+     stays at the top of the window as the page scrolls, and what a line prints drops down under
+     it. Settings, Look turns the typing off and it is a plain path again. */
+  body[data-skin="term"] .term-path{position:relative; display:block; overflow:visible}
+  body[data-skin="term"]:not(.dock) .term-path{position:sticky; top:var(--gap); z-index:25}
+  body[data-skin="term"] .tp-row{display:flex; align-items:baseline; gap:0; min-width:0; margin:0; white-space:nowrap; cursor:text}
+  body[data-skin="term"] .tp-pre{flex:none}
+  body[data-skin="term"] #tpIn{flex:1 1 80px; min-width:60px; width:auto; height:auto; min-height:0; margin:0 0 0 8px; padding:0; background:none; border:0; outline:0; box-shadow:none;
+    color:var(--me); caret-color:var(--me); font:inherit}
+  body[data-skin="term"] .term-path:focus-within{border-color:color-mix(in srgb, var(--gold) 60%, transparent) !important}
+  body[data-skin="term"] .term-path:focus-within .cur, body[data-skin="term"] .term-path.has .cur{display:none}
+  body[data-skin="term"] .tp-hint{flex:0 1 auto; min-width:0; margin-left:12px; overflow:hidden; text-overflow:ellipsis; color:var(--faint)}
+  body[data-skin="term"] .tp-hint u{text-decoration:none; color:var(--muted)}
+  body[data-skin="term"] .tp-hint kbd{padding:0 5px; border:1px solid var(--line); font:inherit; color:var(--muted)}
+  body[data-skin="term"] .tp-hint .c{color:var(--k-c)} body[data-skin="term"] .tp-hint .y{color:var(--k-y)} body[data-skin="term"] .tp-hint .o{color:var(--k-o)} body[data-skin="term"] .tp-hint .g{color:var(--k-g)}
+  body[data-skin="term"] .term-path.tp-off .tp-row{cursor:default}
+  body[data-skin="term"] .term-path.tp-off #tpIn, body[data-skin="term"] .term-path.tp-off .tp-hint{display:none}
+  /* what a line printed */
+  body[data-skin="term"] .tp-out{position:absolute; left:-1px; right:-1px; top:calc(100% + 5px); z-index:2; min-height:0; max-height:min(52vh, 460px); padding:10px 12px;
+    background:color-mix(in srgb, var(--bg) 93%, transparent); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
+    border:1px solid color-mix(in srgb, var(--gold) 45%, transparent); font:12.5px/1.5 var(--fm); white-space:normal; animation:tpDrop .2s cubic-bezier(.2,.7,.2,1)}
+  @keyframes tpDrop{from{opacity:0; transform:translateY(-6px)}}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .tp-out{animation:none} }
+
+  /* two kinds of line the command language adds to the log: the line as typed, and what it printed */
+  body[data-skin="term"] .ht-log .x span{color:var(--faint)}
+  body[data-skin="term"] .ht-log .x b{font-weight:400; color:var(--gold-dim)}
+  body[data-skin="term"] .ht-log .o > span{color:var(--text)}
+  body[data-skin="term"] .ht-log .o b{font-weight:600; color:var(--gold)}
+  body[data-skin="term"] .ht-log .o .ln{display:block; white-space:pre-wrap}
+  body[data-skin="term"] .ht-log .o .dim{color:var(--faint)}
+  body[data-skin="term"] .ht-log .o .warn{color:var(--k-o)}
+  body[data-skin="term"] .ht-log .o .g{color:var(--k-g)} body[data-skin="term"] .ht-log .o .y{color:var(--k-y)} body[data-skin="term"] .ht-log .o .c{color:var(--k-c)}
+  body[data-skin="term"] .ht-log .tc{display:inline; min-height:0; margin:0; padding:0 1px; background:none; border:0; box-shadow:none; font:inherit; color:var(--k-c); cursor:pointer; text-decoration:none; transition:color .12s}
+  body[data-skin="term"] .ht-log .tc.g{color:var(--k-g)} body[data-skin="term"] .ht-log .tc.y{color:var(--k-y)} body[data-skin="term"] .ht-log .tc.o{color:var(--k-o)}
+  body[data-skin="term"] .ht-log .tc:hover, body[data-skin="term"] .ht-log .tc:focus-visible{color:var(--text); text-decoration:underline; outline:0}
+  body[data-skin="term"] .ht-log .o .bar{display:inline-block; width:90px; height:8px; vertical-align:middle; background:linear-gradient(90deg, var(--gold) var(--p), var(--line) var(--p))}
+
   /* ============ GLYPHS (written by glyphs.py; edit the drawings there) ============ */
   body[data-skin="term"] .gl{display:inline-block; width:18px; height:18px; vertical-align:-4px; overflow:hidden; text-indent:-99em; white-space:nowrap; background:currentColor; -webkit-mask:var(--g) center / contain no-repeat; mask:var(--g) center / contain no-repeat; flex:0 0 auto; text-align:left}
   body[data-skin="term"] .gl.x1{width:9px; height:9px; vertical-align:-1px} body[data-skin="term"] .gl.x3{width:27px; height:27px; vertical-align:-7px} body[data-skin="term"] .gl.x4{width:36px; height:36px; vertical-align:-9px}
@@ -4225,6 +4264,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="set-h">Look</div>
             <div class="skin-pick" id="skinPick"></div>
             <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose, and you can drag a pane by its header to move it. Orderly lines every edge up.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="tilesSeg"></div><button class="ghost small hidden" id="tilesReset" title="Put Home's panes back where they started">Reset panes</button></div></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Command line</b><small>The line at the top of every page takes commands: cd scroll, log mined for an hour, stats mining, -help for the list. Press / or the key under Esc to start typing. Off leaves it as a plain path.</small></div><div class="seg" id="tpSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Wide window</b><small>On a wide monitor, the room beside and under a page fills with extra panes. The most useful come first, so more room only ever adds less essential ones. A pane's x hides it.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="wfSeg"></div><button class="ghost small hidden" id="wfShowAll" title="Bring back the panes you hid"></button></div></div>
           </div>
           <div class="set-group">
@@ -4310,7 +4350,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <nav class="term-tabs term-only hidden" id="termTabs" aria-label="Sections of this page"></nav>
     </div>
 
-    <div class="term-path term-only" id="termPath"></div>
+    <div class="term-path term-only" id="termPath"><label class="tp-row" for="tpIn"><span class="tp-pre" id="tpPre"></span><span class="cur" aria-hidden="true">_</span><input id="tpIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command line"><span class="tp-hint" id="tpHint"></span></label><div class="tp-out ht-log hidden" id="tpOut" aria-live="polite"></div></div>
     <div class="pagehead classic-only">
       <div class="ph-row">
         <span class="ph-line"></span>
@@ -8926,6 +8966,7 @@ function applySkin(){
   let touch = false; try{ touch = matchMedia("(pointer:coarse)").matches || !!phonePreview; }catch(e){}
   document.body.classList.toggle("dock", touch);
   try{ homeHeatPlace(); htLater(); }catch(e){}
+  try{ tpApply(); }catch(e){}
   try{ glyphPass(document.body); }catch(e){}
 }
 // how Home's panes are arranged in the Terminal look: mosaic (uneven on purpose) or orderly (one grid)
@@ -13071,6 +13112,7 @@ function termRenderLog(fresh){
   el.innerHTML = list.map((e, i)=>termLineHtml(e, who, fresh && i === list.length - 1)).join("") || `<div class="s"><time></time><span>Nothing here yet. What you do shows up as you go.</span></div>`;
   el.scrollTop = el.scrollHeight;
   try{ tlRender(); }catch(e){}
+  try{ tpRender(); }catch(e){}
 }
 // one status line a launch; it replaces the last launch's rather than piling up
 function termBoot(){
@@ -13136,8 +13178,9 @@ function termPathSet(name){
   const slug = t=>String(t).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const on = termSubs().find(b=>b.classList.contains("active")), sec = on ? slug(termSubLabel(on)) : "";
   const path = `~/${escapeHtml(slug(VIEW_TITLES[name] || name))}${sec ? "/" + escapeHtml(sec) : ""}`;
-  const el = $("#termPath");
-  if(el) el.innerHTML = `<b>${escapeHtml(slug(termWho()) || "you")}</b><i>@</i><b>mortimeter</b>&nbsp;<u>${path}</u><span class="cur">_</span>`;
+  if(name){ if(termCurView && termCurView !== name) termPrevView = termCurView; termCurView = name; }
+  const el = $("#tpPre");
+  if(el) el.innerHTML = `<b>${escapeHtml(slug(termWho()) || "you")}</b><i>@</i><b>mortimeter</b>&nbsp;<u>${path}</u>`;
   const tb = $("#tbPath"); if(tb) tb.innerHTML = `<u>${path}</u><span class="cur">_</span>`;
 }
 // The page's sections as a row of tabs under the top bar of a phone. They are the sidebar's own
@@ -13163,7 +13206,7 @@ function tabsRender(){
 var tlSince = 0;
 function termLineHtml(e, who, fresh){
   const body = e.k === "m" || e.k === "q" ? `<b>${who}:</b> ${escapeHtml(e.s)}` : e.k === "s" ? `<b>Mortimer:</b> ${escapeHtml(e.s)}` : e.k === "a" ? `<b>Mortimer:</b> ${e.s}`
-    : e.k === "w" ? `<b>SYSTEM:</b> ${escapeHtml(e.s)}` + (e.p ? ` <span class="yn">Connect Claude? <button type="button" data-termyn="y" title="Yes, set it up">y</button>/<button type="button" data-termyn="n" title="No, and do not ask again">n</button></span>` : "") : escapeHtml(e.s);
+    : e.k === "w" ? `<b>SYSTEM:</b> ${escapeHtml(e.s)}` + (e.p ? ` <span class="yn">Connect Claude? <button type="button" data-termyn="y" title="Yes, set it up">y</button>/<button type="button" data-termyn="n" title="No, and do not ask again">n</button></span>` : "") : e.k === "x" ? `<b>$</b> ${escapeHtml(e.s)}` : e.k === "o" ? e.s : escapeHtml(e.s);
   return `<div class="${e.k}${e.w ? " wait" : ""}${fresh ? " new" : ""}"><time>${termWhen(e.t)}</time><span>${body}</span>${e.x ? `<em>${escapeHtml(e.x)}</em>` : ""}</div>`;
 }
 function tlIsOpen(){ const el = $("#termLine"); return !!el && !el.classList.contains("hidden"); }
@@ -13177,7 +13220,7 @@ function tlRender(){
 function tlHint(){
   const inp = $("#tlIn"), hint = $("#tlHint"); if(!inp || !hint) return;
   const r = termResolve(inp.value);
-  hint.innerHTML = r ? r.hint.replace("<u>enter</u>", "<u>go</u>") + (r.fill && r.fill.toLowerCase() !== inp.value.trim().toLowerCase() ? ` <span class="fill">tap to complete</span>` : "") : `a note, an action, a page or a question. <u>help</u> lists them`;
+  hint.innerHTML = r ? r.hint.replace("<u>enter</u>", "<u>go</u>") + (r.fill && r.fill.toLowerCase() !== inp.value.trim().toLowerCase() ? ` <span class="fill">tap to complete</span>` : "") : `a command, a note or a question. <u>-help</u> lists the commands`;
 }
 function tlOpen(){
   const el = $("#termLine"), inp = $("#tlIn"); if(!el || !inp) return;
@@ -13213,7 +13256,7 @@ function tlKeys(){
     if(e.key === "Tab"){ const r = termResolve(inp.value); if(r && r.fill){ e.preventDefault(); inp.value = r.fill; tlHint(); } return; }
     if(e.key === "ArrowUp" && termHist.length){ e.preventDefault(); termHistAt = termHistAt < 0 ? termHist.length - 1 : Math.max(0, termHistAt - 1); inp.value = termHist[termHistAt]; tlHint(); }
   });
-  if(hint) hint.onclick = ()=>{ const r = termResolve(inp.value); if(r && r.fill){ inp.value = r.fill; tlHint(); } else if(!inp.value.trim()){ inp.value = "help"; tlHint(); } inp.focus(); };
+  if(hint) hint.onclick = ()=>{ const r = termResolve(inp.value); if(r && r.fill){ inp.value = r.fill; tlHint(); } else if(!inp.value.trim()){ inp.value = "-help"; tlHint(); } inp.focus(); };
   if(x) x.onclick = tlClose;
   if(window.visualViewport){ visualViewport.addEventListener("resize", tlKeys); visualViewport.addEventListener("scroll", tlKeys); }
 })();
@@ -13954,7 +13997,7 @@ function termAskCmd(q){ return {hint:`<u>enter</u> asks ${termAi() ? "Claude" : 
 // What a line means, in the order it is tried: a command word, the start of an action that is
 // ready, a page, a skill, a question, and failing all of those a note. The hint beside the line
 // says which before Enter is pressed, so nothing is a surprise.
-function termResolve(raw){
+function termLoose(raw){
   const v = String(raw || "").trim(), low = v.toLowerCase(); if(!v) return null;
   if(low === "help") return {hint:`<u>enter</u> shows what you can type`, run:termHelp};
   if(termAiPending() && /^(y|yes|n|no)$/.test(low)){ const yes = low[0] === "y"; return {hint:`<u>enter</u> ${yes ? "opens the Claude setup" : "leaves Claude off"}`, run:()=>termAiAnswer(yes)}; }
@@ -13989,7 +14032,7 @@ function termResolve(raw){
 function termHint(){
   const inp = $("#htIn"), hint = $("#htHint"); if(!inp || !hint) return;
   const r = termResolve(inp.textContent);
-  hint.innerHTML = r ? r.hint : "a note, an action, a page or a question";
+  hint.innerHTML = r ? r.hint : "a command, a note or a question. -help lists the commands";
 }
 function termHelp(){
   const acts = [...new Set(termRounds().filter(m=>m.st.up).map(m=>termVerb(m).act.toLowerCase()))];
@@ -14015,6 +14058,7 @@ function termExec(v, clear){
   const r = termResolve(v); if(!r) return;
   termHist.push(v); if(termHist.length > 30) termHist.shift(); termHistAt = -1;
   if(clear) clear();
+  if(r.cmd && !r.quiet) termLog("x", v);
   try{ r.run(); }catch(e){ console.error(e); termLog("s", "That did not work."); }
 }
 function termRun(){
@@ -14046,6 +14090,355 @@ function termWire(){
     e.preventDefault(); termFocus(); say.scrollIntoView({block:"nearest", behavior:"smooth"});
   });
 }
+
+// ============ THE COMMAND LANGUAGE ============
+// The terminal takes commands now, on every page (Josh, 2026-11-17: cd Scroll should go to
+// Scroll; hyphens rather than slashes; maybe ~ for some). How a line is read:
+//   a command word first       cd scroll, log mined for an hour, stats mining
+//   a leading hyphen is strict -help, -log: "this is a command, do not guess". An unknown one
+//                              says so and nothing is saved as a note by accident
+//   ~ is a path                ~ is Home, ~/scroll/journal a section, ~name another character
+//   a && b                     runs both
+//   anything else              as before: the start of an action, a page, a skill, a question, a note
+// A command is termDef([names], usage, what it does, make). make gets the rest of the line and
+// returns {hint, run} (hint shows before Enter), or a string to say why it cannot run.
+const TERM_CMDS = {}, TERM_CMD_LIST = [];
+var termPrevView = "", termCurView = "";
+function termDef(names, use, about, group, make, opt){ const d = Object.assign({name:names[0], names, use, about, group, make}, opt || {}); TERM_CMD_LIST.push(d); names.forEach(n=>{ TERM_CMDS[n] = d; }); }
+const tE = t=>escapeHtml(String(t == null ? "" : t));
+const termOut = html=>termLog("o", html);
+const termSlug = t=>String(t).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+// something in the output that runs a command when clicked
+const termBtn = (cmd, label, kind)=>`<button type="button" class="tc ${kind || "c"}" data-termcmd="${tE(cmd)}" title="${tE(cmd)}">${tE(label)}</button>`;
+const termLn = parts=>`<span class="ln">${parts}</span>`;
+
+// ---- where you are, and where a path leads ----
+function termHere(){
+  const cur = $(".view:not(.hidden)"), view = cur ? cur.id.replace(/^view-/, "") : "home", on = termSubs().find(b=>b.classList.contains("active"));
+  const sec = on ? termSlug(termSubLabel(on)) : "";
+  return {view, sec, path:"~/" + termSlug(VIEW_TITLES[view] || view) + (sec ? "/" + sec : "")};
+}
+function termPageList(){
+  const out = [];
+  $$(".navitem").forEach(n=>{ if(n.classList.contains("hidden")) return; const label = VIEW_TITLES[n.dataset.view]; if(label && !out.some(o=>o.view === n.dataset.view)) out.push({view:n.dataset.view, label, slug:termSlug(label)}); });
+  return out;
+}
+function termPageFind(word){
+  word = termSlug(word); if(!word) return null; const pages = termPageList();
+  return pages.find(p=>p.slug === word) || pages.find(p=>p.slug.startsWith(word)) || pages.find(p=>p.slug.split("-").some(x=>x.startsWith(word))) || null;
+}
+function termSecFind(word){
+  word = termSlug(word); if(!word) return null; const subs = termSubs();
+  return subs.find(b=>termSlug(termSubLabel(b)) === word) || subs.find(b=>termSlug(termSubLabel(b)).startsWith(word)) || null;
+}
+// {view, sec} for a path, {settings:true}, or a string saying why not. sec "^" is the page's first section.
+function termPathPlan(arg){
+  let a = String(arg || "").trim().toLowerCase(); const here = termHere();
+  if(!a || a === "~" || a === "~/" || a === "/") return {view:"home", sec:"", path:"~/home"};
+  if(a === "-") return termPrevView ? {view:termPrevView, sec:"", path:"~/" + termSlug(VIEW_TITLES[termPrevView] || termPrevView)} : "There is no page to go back to yet.";
+  if(a === ".." || a === "../"){ const subs = termSubs(); return here.sec && subs[0] && !subs[0].classList.contains("active") ? {view:here.view, sec:"^", path:"~/" + termSlug(VIEW_TITLES[here.view] || here.view)} : {view:"home", sec:"", path:"~/home"}; }
+  const rooted = /^~?\//.test(a), dot = /^\.\//.test(a);
+  const parts = a.replace(/^~?\//, "").replace(/^\.\//, "").split("/").filter(Boolean); if(!parts.length) return {view:"home", sec:"", path:"~/home"};
+  if(parts[0] === "settings" && !dot) return {settings:true, path:"settings"};
+  const pg = dot ? null : termPageFind(parts[0]);
+  if(pg) return {view:pg.view, sec:parts[1] || "", path:"~/" + pg.slug + (parts[1] ? "/" + termSlug(parts[1]) : "")};
+  if(!rooted){ const b = termSecFind(parts[0]); if(b) return {view:here.view, sec:termSlug(termSubLabel(b)), path:"~/" + termSlug(VIEW_TITLES[here.view] || here.view) + "/" + termSlug(termSubLabel(b))}; }
+  return `No page or section called ${parts[0]}. ls lists what is here.`;
+}
+function termGo(plan){
+  if(plan.settings){ openSettings(); return true; }
+  const cur = $(".view:not(.hidden)");
+  if(!cur || cur.id !== "view-" + plan.view) switchView(plan.view);
+  if(plan.sec){
+    const subs = termSubs(), b = plan.sec === "^" ? subs[0] : termSecFind(plan.sec);
+    if(!b){ termOut(`No section <b>${tE(plan.sec)}</b> in ${tE(termHere().path)}. ${termBtn("ls", "ls")} lists them.`); return false; }
+    b.click();
+  }
+  return true;
+}
+function termCd(arg){
+  const plan = termPathPlan(arg);
+  if(typeof plan === "string") return plan;
+  return {hint:`<u>enter</u> goes to <span class="c">${tE(plan.path)}</span>`, run:()=>{ termGo(plan); }, quiet:true};
+}
+// the two resets of the game's day, for time
+function termResets(){
+  const now = new Date(), day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)), wk = new Date(day);
+  while(wk.getUTCDay() !== ROUND_WEEK_RESET_DOW) wk.setUTCDate(wk.getUTCDate() + 1);
+  const left = ms=>{ const m = Math.max(1, Math.round(ms / 6e4)); return m >= 2880 ? `in ${Math.round(m / 1440)} days` : m >= 120 ? `in ${Math.floor(m / 60)} h ${m % 60} min` : `in ${m} min`; };
+  const p2 = n=>String(n).padStart(2, "0");
+  return {utc:p2(now.getUTCHours()) + ":" + p2(now.getUTCMinutes()), day:left(day - now), week:left(wk - now)};
+}
+function termSkillFind(word){ word = String(word || "").trim().toLowerCase(); if(!word) return null; return SKILL_ORDER.find(k=>k === word || frSkName(k).toLowerCase() === word) || SKILL_ORDER.find(k=>frSkName(k).toLowerCase().startsWith(word) || k.startsWith(word)) || null; }
+function termBossFind(word){
+  word = String(word || "").trim().toLowerCase(); if(!word) return null;
+  const bs = Object.entries((live && live.bosses) || {}).filter(([k, e])=>e && e.kills > 0);
+  return bs.find(([k])=>nice(k).toLowerCase() === word) || bs.find(([k])=>nice(k).toLowerCase().startsWith(word)) || bs.find(([k])=>nice(k).toLowerCase().includes(word)) || null;
+}
+function termPrioFind(word){ word = String(word || "").trim().toLowerCase(); if(!word) return null; const ps = state.priorities || []; return ps.find(p=>String(p.label).toLowerCase() === word) || ps.find(p=>String(p.label).toLowerCase().startsWith(word)) || ps.find(p=>String(p.label).toLowerCase().includes(word)) || null; }
+function termDayXp(back){
+  const auto = (state.scroll && state.scroll.autoOn !== false && state.scroll.auto) || {}, iso = isoDate(new Date(parseISO(todayISO()).getTime() - back * 864e5));
+  const sk = Object.entries((auto[iso] || {}).skills || {}).filter(e=>e[1] > 0 && SKILL_ORDER.includes(e[0])).sort((a, b)=>b[1] - a[1]);
+  return {iso, xp:sk.reduce((a, e)=>a + e[1], 0), skills:sk.map(e=>frSkName(e[0]))};
+}
+
+// ---- going places ----
+termDef(["cd"], "cd <page>[/<section>]", "Goes to a page or one of its sections. cd ~ is Home, cd .. goes up, cd - goes back to the page before.", "Go", rest=>termCd(rest));
+termDef(["back"], "back", "Goes back to the page you were on before this one.", "Go", ()=>termCd("-"), {bare:true});
+termDef(["ls"], "ls [page]", "Lists the sections of the page you are on, and the pages.", "Go", rest=>({hint:`<u>enter</u> lists what is here`, run:()=>{
+  const here = termHere(), want = rest.trim() ? termPageFind(rest.trim().replace(/^~?\//, "")) : null;
+  if(rest.trim() && !want && !/^~\/?$/.test(rest.trim())){ termOut(`No page called <b>${tE(rest.trim())}</b>.`); return; }
+  let out = "";
+  if(want && want.view !== here.view) out += termLn(`<span class="dim">${tE("~/" + want.slug)}</span> ${termBtn("cd " + want.slug, "open it to list its sections")}`);
+  else { const subs = termSubs(); if(subs.length > 1 && !/^~\/?$/.test(rest.trim())) out += termLn(`<span class="dim">${tE("~/" + termSlug(VIEW_TITLES[here.view] || here.view))}</span> ` + subs.map(b=>{ const sl = termSlug(termSubLabel(b)); return termBtn("cd ./" + sl, sl + "/", b.classList.contains("active") ? "g" : "c"); }).join(" ")); }
+  if(!want) out += termLn(`<span class="dim">~</span> ` + termPageList().map(p=>termBtn("cd " + p.slug, p.slug + "/", p.view === here.view ? "g" : "c")).join(" ") + " " + termBtn("cd settings", "settings"));
+  termOut(out);
+}}));
+termDef(["pwd"], "pwd", "Says where you are.", "Go", ()=>({hint:`<u>enter</u> says where you are`, run:()=>termOut(tE(termHere().path))}), {bare:true});
+termDef(["open"], "open <skill or boss>", "Opens the card for a skill or a boss.", "Go", rest=>{
+  const sk = termSkillFind(rest), bo = sk ? null : termBossFind(rest);
+  if(sk) return {hint:`<u>enter</u> opens <span class="g">${tE(frSkName(sk))}</span>`, fill:"open " + frSkName(sk).toLowerCase(), run:()=>openSkillModal(sk), quiet:true};
+  if(bo) return {hint:`<u>enter</u> opens <span class="y">${tE(nice(bo[0]))}</span>`, fill:"open " + nice(bo[0]).toLowerCase(), run:()=>openBossModal(bo[0]), quiet:true};
+  return rest.trim() ? `No skill or boss called ${rest.trim()}.` : "open needs a skill or a boss: open mining";
+}, {soft:true});
+termDef(["settings"], "settings", "Opens Settings.", "Go", ()=>({hint:`<u>enter</u> opens Settings`, run:()=>openSettings(), quiet:true}), {bare:true});
+
+// ---- writing things down ----
+termDef(["log"], "log <what you did>", "Adds an entry to today's journal, with the skills it mentions picked out. log -chill marks a chill day, log -y writes to yesterday.", "Write", rest=>{
+  let text = rest.trim(), date = todayISO(), chill = false;
+  for(let m; (m = text.match(/^-(chill|c|y|yesterday)\b\s*/i)); text = text.slice(m[0].length)){ if(/^-c/i.test(m[0])) chill = true; else date = isoDate(new Date(parseISO(todayISO()).getTime() - 864e5)); }
+  const when = date === todayISO() ? "today" : "yesterday";
+  if(chill) return {hint:`<u>enter</u> marks ${when} as a chill day`, run:()=>{
+    const log = state.scroll.log = state.scroll.log || [];
+    if(log.some(e=>e && e.date === date && e.chill)){ termOut(`${when === "today" ? "Today" : "Yesterday"} is already a chill day.`); return; }
+    log.push({id:"l" + Date.now() + Math.random().toString(36).slice(2, 5), date, text:"Chill day", skills:[], types:["social"], prios:[], chill:true, createdAt:Date.now()});
+    save(); renderScroll(); termOut(`Chill day logged for ${when}. It still counts as a day played.`);
+  }};
+  if(!text) return "log needs something to write: log mined for an hour";
+  let skills = []; try{ skills = qlDetect(text) || []; }catch(e){}
+  return {hint:`<u>enter</u> writes it in ${when}'s journal${skills.length ? `: <span class="g">${tE(skills.join(", "))}</span>` : ""}`, run:()=>{
+    const types = (!skills.length && /\b(chill|social|bank(ing)?|talk(ing|ed)?|hang(ing)?|afk|organi[sz](ing|ed)?)\b/i.test(text)) ? ["social"] : [];
+    (state.scroll.log = state.scroll.log || []).push({id:"l" + Date.now() + Math.random().toString(36).slice(2, 5), date, text, skills, prios:[], types, milestone:false, createdAt:Date.now()});
+    save(); renderScroll(); termOut(`Logged to ${when}${skills.length ? `: <span class="g">${tE(skills.join(", "))}</span>` : ""}. ${termBtn("cd scroll/journal", "open the journal")}`);
+  }};
+});
+termDef(["note"], "note <text>", "Keeps a note in Notes.", "Write", rest=>rest.trim() ? termNote(rest.trim()) : "note needs something to keep: note buy more runes");
+termDef(["touch"], "touch <priority>", "Says you worked on a priority today, so it stops gathering dust.", "Write", rest=>{
+  const p = termPrioFind(rest);
+  if(!p) return rest.trim() ? `No priority called ${rest.trim()}. dust lists them.` : "touch needs a priority: touch sailing";
+  return {hint:`<u>enter</u> marks <span class="y">${tE(p.label)}</span> as worked on today`, fill:"touch " + String(p.label).toLowerCase(), run:()=>{
+    const d = prioDays(p); touchPriority(p); save(); try{ renderPriorities(); renderGlance(); htLater(); }catch(e){}
+    termOut(`You return to <span class="y">${tE(p.label)}</span>.${d ? ` It had been ${d} day${d === 1 ? "" : "s"}.` : ""}`);
+  }};
+}, {soft:true});
+termDef(["tick"], "tick <action>", "Ticks a routine that is ready, the same as typing the start of it.", "Write", rest=>{
+  const low = rest.trim().toLowerCase(), up = termRounds().filter(m=>m.st.up).map(m=>({m, v:termVerb(m)}));
+  const hit = low && (up.find(x=>(x.v.act + " " + x.v.tgt).toLowerCase().startsWith(low)) || up.find(x=>x.v.tgt.toLowerCase().startsWith(low)) || up.find(x=>x.m.name.toLowerCase().includes(low)));
+  if(!hit) return low ? `Nothing ready matches ${rest.trim()}. ready lists what is.` : "tick needs an action: tick herb. ready lists them.";
+  return {hint:`<u>enter</u> ${tE(hit.v.act)} <span class="${hit.v.kind}">${tE(hit.v.tgt)}</span>`, fill:"tick " + hit.v.tgt.toLowerCase(), run:()=>roundTick(hit.m.key), quiet:true};
+}, {soft:true});
+
+// ---- looking things up ----
+termDef(["stats", "xp"], "stats [skill]", "Your levels in brief, or one skill: level, experience, and how far to the next.", "Look up", rest=>{
+  if(!(live && live.skills)) return "No character is loaded yet.";
+  const sk = rest.trim() ? termSkillFind(rest) : null;
+  if(rest.trim() && !sk) return `No skill called ${rest.trim()}.`;
+  if(sk) return {hint:`<u>enter</u> shows <span class="g">${tE(frSkName(sk))}</span>`, fill:"stats " + frSkName(sk).toLowerCase(), run:()=>{
+    const p = skillProgress(sk);
+    termOut(`<span class="g">${tE(frSkName(sk))}</span> <b>${p.lvl}</b>, ${fmt(liveSkillXp(sk))} xp` + (p.lvl < 99 && p.toNext > 0 ? `, <b>${fmt(p.toNext)}</b> to ${p.next} (${Math.round((p.frac || 0) * 100)}% there)` : "") + `. ${termBtn("open " + frSkName(sk).toLowerCase(), "open")}`);
+  }};
+  return {hint:`<u>enter</u> shows your levels`, run:()=>{
+    const m = state.playerMeta || {}, o = live.skills.overall || {}, n99 = SKILL_ORDER.filter(k=>levelFromXp(liveSkillXp(k)) >= 99).length, near = htNear(1)[0];
+    termOut(termLn(`<b>${tE(termWho())}</b>${m.combat != null ? `, combat <b>${tE(m.combat)}</b>` : ""}, total level <b>${fmt(o.level || 0)}</b>, ${fmt(o.experience || 0)} xp, ${n99} of ${SKILL_ORDER.length} at 99.`)
+      + (near ? termLn(`Closest level: ${termBtn("stats " + frSkName(near.k).toLowerCase(), frSkName(near.k), "g")}, ${fmt(near.p.toNext)} xp to ${near.p.next}.`) : ""));
+  }};
+}, {soft:true});
+termDef(["near"], "near", "The skills closest to their next level.", "Look up", ()=>({hint:`<u>enter</u> lists the closest level ups`, run:()=>{
+  const n = htNear(6); termOut(n.length ? n.map(x=>termLn(`${termBtn("stats " + frSkName(x.k).toLowerCase(), frSkName(x.k), "g")} <span class="dim">${fmt(x.p.toNext)} xp to ${x.p.next}</span>`)).join("") : "No character is loaded yet.");
+}}), {bare:true});
+termDef(["kc"], "kc [boss]", "Your kill counts, or one boss.", "Look up", rest=>{
+  const all = Object.entries((live && live.bosses) || {}).filter(([k, e])=>e && e.kills > 0).sort((a, b)=>b[1].kills - a[1].kills);
+  if(!all.length) return "No boss kills on the hiscores yet.";
+  const one = rest.trim() ? termBossFind(rest) : null;
+  if(rest.trim() && !one) return `No kills recorded for ${rest.trim()}.`;
+  if(one) return {hint:`<u>enter</u> shows <span class="y">${tE(nice(one[0]))}</span>`, fill:"kc " + nice(one[0]).toLowerCase(), run:()=>termOut(`<span class="y">${tE(nice(one[0]))}</span> <b>${fmt(one[1].kills)}</b> kill${one[1].kills === 1 ? "" : "s"}. ${termBtn("open " + nice(one[0]).toLowerCase(), "open")}`)};
+  return {hint:`<u>enter</u> lists your kill counts`, run:()=>termOut(all.slice(0, 10).map(([k, e])=>termLn(`${termBtn("open " + nice(k).toLowerCase(), nice(k), "y")} <b>${fmt(e.kills)}</b>`)).join(""))};
+}, {soft:true});
+termDef(["ready"], "ready", "What is ready now, and what comes next.", "Look up", ()=>({hint:`<u>enter</u> lists what is ready`, run:()=>{
+  const rows = termRounds(), up = rows.filter(m=>m.st.up), wait = rows.filter(m=>!m.st.up).slice(0, 4);
+  if(!rows.length){ termOut("No routines are set up. Coffer, Repeatable runs is where they are picked."); return; }
+  termOut((up.length ? up.map(m=>{ const v = termVerb(m); return termLn(`${termBtn("tick " + v.tgt.toLowerCase(), v.act + " " + v.tgt, v.kind)} <span class="g">ready</span>`); }).join("") : termLn("Nothing is ready right now."))
+    + wait.map(m=>{ const v = termVerb(m); return termLn(`<span class="dim">${tE(v.act + " " + v.tgt)}, ${tE(roundWhen(m.st.next))}</span>`); }).join(""));
+}}), {bare:true});
+termDef(["dust"], "dust", "The priorities you have not touched in a while.", "Look up", ()=>({hint:`<u>enter</u> lists what is gathering dust`, run:()=>{
+  const al = (state.priorities || []).filter(x=>!prioSnoozed(x)).sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 8);
+  termOut(al.length ? al.map(x=>{ const d = prioDays(x); return termLn(`${termBtn("touch " + String(x.label).toLowerCase(), x.label, "y")} <span class="${prioTier(x) === "ok" ? "dim" : "warn"}">${d == null ? "no record" : d + (d === 1 ? " day" : " days")}</span>`); }).join("") : "No priorities are set. Scroll, Priorities is where they live.");
+}}), {bare:true});
+termDef(["today"], "today", "Experience gained today, and yesterday for comparison.", "Look up", ()=>({hint:`<u>enter</u> shows today so far`, run:()=>{
+  const t = termDayXp(0), y = termDayXp(1);
+  termOut((t.xp ? `Today so far: <b>+${fmt(t.xp)}</b> xp in ${tE(t.skills.slice(0, 4).join(", "))}.` : "Nothing gained yet today.") + (y.xp ? ` Yesterday: +${fmt(y.xp)}.` : ""));
+}}), {bare:true});
+termDef(["week"], "week", "The last seven days, a line a day.", "Look up", ()=>({hint:`<u>enter</u> shows the last seven days`, run:()=>{
+  const days = [6, 5, 4, 3, 2, 1, 0].map(termDayXp), max = Math.max(1, ...days.map(d=>d.xp)), total = days.reduce((a, d)=>a + d.xp, 0);
+  termOut(days.map(d=>termLn(`<span class="dim">${tE(parseISO(d.iso).toLocaleDateString([], {weekday:"short", day:"numeric"}).toLowerCase().padEnd(7, " "))}</span> <span class="bar" style="--p:${Math.round(d.xp / max * 100)}%"></span> ${d.xp ? `<b>+${htShort(d.xp)}</b> <span class="dim">${tE(d.skills.slice(0, 2).join(", "))}</span>` : `<span class="dim">0</span>`}`)).join("") + termLn(`Seven days: <b>+${fmt(total)}</b> xp.`));
+}}), {bare:true});
+termDef(["time", "date"], "time", "The game's clock (UTC) and how long until the daily and weekly resets.", "Look up", ()=>({hint:`<u>enter</u> shows the game's clock`, run:()=>{ const r = termResets(); termOut(`<b>${r.utc}</b> UTC. Daily reset ${r.day}, weekly reset ${r.week}.`); }}), {bare:true});
+termDef(["whoami"], "whoami", "The character that is loaded.", "Look up", ()=>({hint:`<u>enter</u> says who is loaded`, run:()=>{
+  const m = state.playerMeta || {}, others = profileList().filter(r=>!r.active && r.key);
+  termOut(termLn(`<b>${tE(termWho())}</b>${m.type ? `, ${tE(m.type === "regular" ? "main" : nice(m.type).toLowerCase())}` : ""}${m.combat != null ? `, combat ${tE(m.combat)}` : ""}.`)
+    + (others.length ? termLn(`Also here: ` + others.map(r=>termBtn("~" + termSlug(r.name), "~" + termSlug(r.name), "y")).join(" ")) : ""));
+}}), {bare:true});
+termDef(["uptime"], "uptime", "How many days you have logged and the streak you are on.", "Look up", ()=>({hint:`<u>enter</u> shows days logged and your streak`, run:()=>{
+  const set = new Set(); const auto = (state.scroll && state.scroll.auto) || {}; for(const iso in auto) if(Object.values((auto[iso] || {}).skills || {}).some(n=>n > 0)) set.add(iso);
+  ((state.scroll && state.scroll.log) || []).forEach(e=>{ if(e && e.date) set.add(e.date); });
+  let st = 0; try{ st = currentStreak(); }catch(e){}
+  termOut(`<b>${fmt(set.size)}</b> day${set.size === 1 ? "" : "s"} logged${set.size ? `, the first on ${tE(fmtDay([...set].sort()[0]))}` : ""}. Streak: <b>${st}</b> day${st === 1 ? "" : "s"}.`);
+}}), {bare:true});
+
+// ---- the app itself ----
+termDef(["theme"], "theme <name>", "Sets the colour theme.", "App", rest=>{ const r = rest.trim() ? termLoose("theme " + rest.trim()) : null; return r && /^theme /.test(r.fill || "") ? r : rest.trim() ? `No theme called ${rest.trim()}.` : "theme needs a name: theme night"; }, {soft:true});
+termDef(["layout"], "layout mosaic | orderly", "Sets how Home's panes are arranged.", "App", rest=>{ const r = rest.trim() ? termLoose("layout " + rest.trim()) : null; return r && /^layout /.test(r.fill || "") ? r : "layout takes mosaic or orderly"; }, {soft:true});
+termDef(["fill"], "fill on | off", "Turns the extra panes on a wide window on or off.", "App", rest=>{
+  const a = rest.trim().toLowerCase(); if(a !== "on" && a !== "off") return "fill takes on or off";
+  return {hint:`<u>enter</u> turns the wide-window panes ${a}`, run:()=>{ state.wideFill = a === "on"; save(); wfDraw(); termOut(`Wide-window panes ${a}.`); }};
+}, {soft:true});
+termDef(["panes"], "panes reset", "Puts Home's panes back where they started.", "App", rest=>rest.trim().toLowerCase() === "reset" ? {hint:`<u>enter</u> puts Home's panes back`, run:()=>{ htArrReset(); termOut("Home's panes are back where they started."); }} : "panes takes reset", {soft:true});
+termDef(["reload", "refresh"], "reload", "Reads your stats from the hiscores again.", "App", ()=>state.username ? {hint:`<u>enter</u> reads your stats again`, run:()=>{ termOut("Reading your stats from the hiscores."); loadCharacter({name:state.username, live:true}); }} : "No character is loaded yet.", {bare:true});
+termDef(["claude"], "claude", "Opens the setup for answers from Claude, with your own key.", "App", ()=>termLoose("claude"), {bare:true});
+termDef(["ask"], "ask <question>", "Asks a question. A line that ends in a question mark does the same.", "App", rest=>rest.trim() ? termAskCmd(rest.trim()) : "ask needs a question: ask what should i train");
+termDef(["clear", "cls"], "clear", "Empties the log.", "App", ()=>termLoose("clear"), {bare:true});
+termDef(["history"], "history", "The last lines you ran.", "App", ()=>({hint:`<u>enter</u> lists the last lines you ran`, run:()=>termOut(termHist.slice(-12, -1).map(h=>termLn(termBtn(h, h))).join("") || "Nothing yet.")}), {bare:true});
+termDef(["echo"], "echo <text>", "Prints the text back. Useful in an alias.", "App", rest=>({hint:`<u>enter</u> prints it`, run:()=>termOut(tE(rest))}));
+termDef(["alias"], "alias <name>=<line>", "Makes your own command: alias gm=log -chill. alias alone lists yours.", "App", rest=>{
+  const al = termState().alias || {}, m = rest.trim().match(/^([a-z][a-z0-9_]*)\s*=?\s*(.*)$/i);
+  if(!rest.trim()) return {hint:`<u>enter</u> lists your own commands`, run:()=>termOut(Object.keys(al).length ? Object.keys(al).sort().map(k=>termLn(`${termBtn(k, k, "y")} <span class="dim">=</span> ${tE(al[k])}`)).join("") : "You have not made any. alias gm=log -chill makes one called gm.")};
+  if(!m || !m[2].trim()) return "alias needs a name and a line: alias gm=log -chill";
+  const name = m[1].toLowerCase(), line = m[2].trim();
+  if(TERM_CMDS[name]) return `${name} is already a command. Pick another name.`;
+  return {hint:`<u>enter</u> makes <span class="y">${tE(name)}</span> run: ${tE(line)}`, run:()=>{ (termState().alias || (termState().alias = {}))[name] = line; save(); termOut(`<span class="y">${tE(name)}</span> now runs: ${tE(line)}`); }};
+});
+termDef(["unalias"], "unalias <name>", "Removes a command you made.", "App", rest=>{
+  const al = termState().alias || {}, name = rest.trim().toLowerCase();
+  if(!al[name]) return name ? `You have no command called ${name}.` : "unalias needs a name";
+  return {hint:`<u>enter</u> removes <span class="y">${tE(name)}</span>`, run:()=>{ delete al[name]; save(); termOut(`Removed ${tE(name)}.`); }};
+});
+termDef(["exit"], "exit", "Puts the command line away.", "App", ()=>({hint:`<u>enter</u> puts the command line away`, run:()=>{ tpClose(true); tlClose(); }, quiet:true}), {bare:true});
+termDef(["help", "man", "h", "?"], "help [command]", "Lists the commands, or says what one does.", "App", rest=>{
+  const one = rest.trim().replace(/^-+/, "").toLowerCase(), d = one ? TERM_CMDS[one] : null;
+  if(one && !d) return `No command called ${one}. help lists them.`;
+  if(d) return {hint:`<u>enter</u> says what ${tE(d.name)} does`, run:()=>termOut(termLn(`<b>${tE(d.use)}</b>`) + termLn(tE(d.about)) + (d.names.length > 1 ? termLn(`<span class="dim">Also: ${tE(d.names.slice(1).join(", "))}</span>`) : ""))};
+  return {hint:`<u>enter</u> lists the commands`, run:()=>{
+    const groups = ["Go", "Write", "Look up", "App"];
+    termOut(groups.map(g=>termLn(`<span class="dim">${tE(g.toLowerCase().padEnd(8, " "))}</span>` + TERM_CMD_LIST.filter(c=>c.group === g).map(c=>termBtn("help " + c.name, c.name)).join(" "))).join("")
+      + termLn(`<span class="dim">A hyphen in front means "this is a command": -log, -help. ~ is a path: ~ is Home, ~/scroll/journal a section. Join two with &amp;&amp;. Tab completes, the up arrow brings back the last line. Anything that is not a command is read as before: an action, a page, a skill, a question, or a note. Click a name for what it does.</span>`));
+  }};
+});
+
+// ---- reading a line ----
+function termCmd(v, strict){
+  // ~ alone, ~/a/path, or ~name for another character
+  if(v[0] === "~"){
+    if(v === "~" || v[1] === "/") return termCd(v);
+    const want = termSlug(v.slice(1)), p = profileList().filter(r=>!r.active && r.key).find(r=>termSlug(r.name) === want) || profileList().filter(r=>!r.active && r.key).find(r=>termSlug(r.name).startsWith(want));
+    if(!p) return `No other character called ${v.slice(1)}. whoami lists them.`;
+    return {hint:`<u>enter</u> switches to <span class="y">${tE(p.name)}</span>`, fill:"~" + termSlug(p.name), run:()=>{ if(!switchProfile(p.name)) return; renderAll(); termOut(`Switched to <b>${tE(profName())}</b>.`); loadCharacter({name:state.username, live:true, silent:true}); }};
+  }
+  const sp = v.search(/\s/), word = (sp < 0 ? v : v.slice(0, sp)).toLowerCase(), rest = sp < 0 ? "" : v.slice(sp + 1);
+  const d = TERM_CMDS[word]; if(!d) return null;
+  if(/^(-h|-help|--help)$/i.test(rest.trim())) return TERM_CMDS.help.make(d.name);
+  // without a hyphen, "today i mined" is a note that starts with today, not the command
+  if(!strict && d.bare && rest.trim()) return null;
+  const r = d.make(rest, v);
+  if(!strict && d.soft && typeof r === "string" && rest.trim()) return null;
+  return r;
+}
+function termResolve(raw, depth){
+  let v = String(raw || "").trim(); if(!v) return null;
+  if(termAiPending() && /^(y|yes|n|no)$/i.test(v)) return termLoose(v);
+  // two or more lines joined with &&
+  if(v.includes("&&")){
+    const parts = v.split("&&").map(x=>x.trim()).filter(Boolean), rs = parts.map(p=>termResolve(p, (depth || 0) + 1));
+    if(parts.length > 1 && rs.every(Boolean)) return {hint:`<u>enter</u> runs ${parts.length} lines, one after the other`, cmd:true, run:()=>rs.forEach((r, i)=>{ try{ r.run(); }catch(e){ console.error(e); termOut(`<span class="warn">${tE(parts[i])} did not work.</span>`); } })};
+  }
+  const strict = /^-+[a-z?]/i.test(v); if(strict) v = v.replace(/^-+/, "");
+  // a command of your own stands for the line it was given
+  const al = termState().alias || {}, w0 = v.split(/\s/)[0].toLowerCase();
+  if(al[w0] && (depth || 0) < 4){ const r = termResolve(al[w0] + v.slice(w0.length), (depth || 0) + 1); if(r) return Object.assign({}, r, {cmd:true}); }
+  let r = termCmd(v, strict);
+  if(typeof r === "string"){ const msg = r; r = {hint:tE(msg), run:()=>termOut(`<span class="warn">${tE(msg)}</span>`)}; }
+  if(r) return Object.assign({cmd:true}, r);
+  if(strict){
+    // a hyphen promises a command: complete the name if it can only be one, and say so if it is none
+    const hits = TERM_CMD_LIST.filter(c=>c.names.some(n=>n.startsWith(w0)));
+    if(hits.length === 1 && !/\s/.test(v)) return {hint:`<u>tab</u> completes <span class="c">-${tE(hits[0].name)}</span>: ${tE(hits[0].about)}`, fill:"-" + hits[0].name + " ", cmd:true, run:()=>{ const rr = termResolve("-" + hits[0].name); if(rr) rr.run(); }};
+    const msg = hits.length > 1 && !/\s/.test(v) ? `-${w0} could be ${hits.map(c=>c.name).join(", ")}` : `No command called -${w0}. -help lists them.`;
+    return {hint:tE(msg), cmd:true, run:()=>termOut(`<span class="warn">${tE(msg)}</span>`)};
+  }
+  return termLoose(v);
+}
+// something in the log that runs a command when clicked
+document.addEventListener("click", e=>{
+  const b = e.target.closest && e.target.closest("[data-termcmd]"); if(!b) return;
+  e.preventDefault(); termExec(b.dataset.termcmd);
+});
+
+// ---- the path line at the top of every page is a place to type ----
+// It was already written as a prompt, user@mortimeter ~/scroll/overview and a cursor. Now the
+// cursor is real. What a line prints drops down under it and stays until Esc or a click elsewhere.
+var tpSince = 0, tpShown = false;
+function tpOn(){ return document.body.dataset.skin === "term" && termState().bar !== false; }
+function tpApply(){ const el = $("#termPath"); if(!el) return; el.classList.toggle("tp-off", !tpOn()); if(!tpOn()) tpClose(true); else tpIdle(); }
+function tpIdle(){ const h = $("#tpHint"), inp = $("#tpIn"); if(h && inp && document.activeElement !== inp) h.innerHTML = inp.value ? "" : `<kbd>/</kbd> to type, <u>-help</u> for the commands`; }
+function tpRender(){
+  const out = $("#tpOut"); if(!out) return;
+  const who = escapeHtml(termWho()), list = tpShown ? termState().log.filter(e=>e.t >= tpSince && !e.b).slice(-16) : [];
+  out.innerHTML = list.map((e, i)=>termLineHtml(e, who, i === list.length - 1)).join("");
+  out.classList.toggle("hidden", !list.length);
+  out.scrollTop = out.scrollHeight;
+}
+function tpHint(){
+  const inp = $("#tpIn"), hint = $("#tpHint"), el = $("#termPath"); if(!inp || !hint) return;
+  const r = termResolve(inp.value);
+  hint.innerHTML = r ? r.hint : `a command, a note or a question. <u>-help</u> lists the commands`;
+  if(el) el.classList.toggle("has", !!inp.value);
+}
+// Home's own terminal pane already shows the log; the drop-down would say it twice
+function tpHomeLogSeen(){ const v = $("#view-home"), lg = $("#htLog"); if(!v || !lg || v.classList.contains("hidden")) return false; const r = lg.getBoundingClientRect(); return r.height > 0 && r.top < innerHeight - 40 && r.bottom > 40; }
+function tpRun(){
+  const inp = $("#tpIn"); if(!inp) return; const v = inp.value.trim(); if(!v) return;
+  if(!tpShown && !tpHomeLogSeen()){ tpShown = true; tpSince = Date.now(); }
+  termExec(v, ()=>{ inp.value = ""; });
+  if(tpShown && tpHomeLogSeen()) tpShown = false;
+  tpHint(); tpRender();
+}
+function tpClose(blur){ tpShown = false; tpRender(); if(blur){ const inp = $("#tpIn"); if(inp) inp.blur(); } }
+function tpFocus(){ const inp = $("#tpIn"); if(!inp || !tpOn()) return false; try{ inp.focus({preventScroll:true}); }catch(e){ inp.focus(); } return true; }
+(function tpWire(){
+  const inp = $("#tpIn"), el = $("#termPath"); if(!inp || !el) return;
+  inp.addEventListener("input", tpHint);
+  inp.addEventListener("focus", tpHint);
+  inp.addEventListener("blur", ()=>setTimeout(tpIdle, 0));
+  inp.addEventListener("keydown", e=>{
+    if(e.key === "Enter"){ e.preventDefault(); tpRun(); return; }
+    if(e.key === "Escape"){ e.preventDefault(); if(inp.value){ inp.value = ""; tpHint(); } else tpClose(true); return; }
+    if(e.key === "Tab"){ const r = termResolve(inp.value); if(r && r.fill){ e.preventDefault(); inp.value = r.fill; tpHint(); } return; }
+    if(e.key === "ArrowUp" && termHist.length){ e.preventDefault(); termHistAt = termHistAt < 0 ? termHist.length - 1 : Math.max(0, termHistAt - 1); inp.value = termHist[termHistAt]; tpHint(); return; }
+    if(e.key === "ArrowDown" && termHistAt >= 0){ e.preventDefault(); termHistAt++; inp.value = termHistAt >= termHist.length ? "" : termHist[termHistAt]; if(termHistAt >= termHist.length) termHistAt = -1; tpHint(); }
+  });
+  // a click anywhere else puts the drop-down away
+  document.addEventListener("pointerdown", e=>{ if(tpShown && !el.contains(e.target) && !(e.target.closest && e.target.closest("[data-termcmd]"))) tpClose(); });
+  // / or the key under Esc starts a line from anywhere. On Home, / keeps going to Home's own terminal.
+  document.addEventListener("keydown", e=>{
+    if((e.key !== "/" && e.key !== "`") || e.ctrlKey || e.metaKey || e.altKey) return;
+    const t = e.target, tag = t && t.tagName;
+    if(/^(INPUT|TEXTAREA|SELECT)$/.test(tag || "") || (t && t.isContentEditable)) return;
+    if(!tpOn() || document.body.classList.contains("modal") || document.body.classList.contains("dock")) return;
+    const home = $("#view-home");
+    if(e.key === "/" && home && !home.classList.contains("hidden") && $("#htIn")) return;
+    if(tpFocus()) e.preventDefault();
+  });
+  tpApply();
+})();
 
 // ============ COFFER SECTIONS ============
 // Earn is what you can do for GP. Vault is what you've got, valued live from your bank. Flip is
@@ -18067,6 +18460,12 @@ function renderLookSettings(){
   if(ts){
     ts.innerHTML = TILE_LAYOUTS.map(([id,label])=>`<button class="${id===tcur?"on":""}" data-settiles="${id}">${label}</button>`).join("");
     ts.querySelectorAll("[data-settiles]").forEach(b=>b.onclick=()=>{ setTiles(b.dataset.settiles); renderLookSettings(); });
+  }
+  const pseg = $("#tpSeg");
+  if(pseg){
+    const on = termState().bar !== false;
+    pseg.innerHTML = `<button class="${on ? "on" : ""}" data-tp="1">On every page</button><button class="${on ? "" : "on"}" data-tp="0">Off</button>`;
+    pseg.querySelectorAll("[data-tp]").forEach(b=>b.onclick = ()=>{ termState().bar = b.dataset.tp === "1"; save(); tpApply(); renderLookSettings(); });
   }
   const wseg = $("#wfSeg");
   if(wseg){
