@@ -3410,6 +3410,146 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .note{animation:htLine .3s cubic-bezier(.2,.7,.2,1) backwards}
   @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .note{animation:none} }
 
+  /* ============ TILES ============
+     The Terminal look as tiled panes (Josh's sketch, 2026-11-17: the rounded parts were what felt
+     off). Everything is square. A pane is glass over a soft backdrop, with a hairline; panes sit a
+     small gap apart, the sidebar included, the way a tiling window manager lays out terminals;
+     the pane under the pointer takes the accent border. Home's panes come in two arrangements,
+     body[data-tiles]: mosaic (three columns that each split at their own height) and orderly
+     (every edge on one grid). Settings, Look picks between them. */
+  body[data-skin="term"]{
+    --gap:10px;
+    --hair:color-mix(in srgb, var(--text) 9%, transparent);
+    --glass:color-mix(in srgb, var(--panel) 50%, transparent);
+    --glow1:color-mix(in srgb, var(--gold-dim) 50%, var(--bg));
+    --glow2:color-mix(in srgb, var(--me) 30%, var(--bg));
+    background:
+      radial-gradient(ellipse 46% 52% at 12% 8%, color-mix(in srgb, var(--glow1) 62%, transparent), transparent 70%),
+      radial-gradient(ellipse 40% 50% at 92% 96%, color-mix(in srgb, var(--glow2) 58%, transparent), transparent 70%),
+      radial-gradient(circle, color-mix(in srgb, var(--text) 9%, transparent) 0 1px, transparent 1.4px) 0 0 / 22px 22px,
+      var(--bg);
+    background-attachment:fixed;
+  }
+  /* square, everywhere; the Wrapped button keeps its pill because he asked for that one */
+  body[data-skin="term"] *:not(.wrap-go), body[data-skin="term"] *::before, body[data-skin="term"] *::after{border-radius:0 !important}
+
+  /* ---- a pane ---- */
+  body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section){
+    background:var(--glass); -webkit-backdrop-filter:blur(18px) saturate(1.2); backdrop-filter:blur(18px) saturate(1.2);
+    border:1px solid var(--hair) !important; box-shadow:inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent) !important;
+    transition:border-color .2s, box-shadow .2s}
+  body[data-skin="term"] :is(.panel, .term-path, .ht section):hover{
+    border-color:color-mix(in srgb, var(--gold) 60%, transparent) !important;
+    box-shadow:inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent), 0 0 0 1px color-mix(in srgb, var(--gold) 14%, transparent) !important}
+  body[data-skin="term"] .panel .panel{-webkit-backdrop-filter:none; backdrop-filter:none; background:color-mix(in srgb, var(--bg) 40%, transparent)}
+  /* a phone draws flat glass: the blur is the costly part */
+  @media (pointer:coarse){ body[data-skin="term"] :is(.panel, .sidebar, .term-path, .ht section){-webkit-backdrop-filter:none; backdrop-filter:none; background:color-mix(in srgb, var(--panel) 72%, var(--bg))} }
+
+  /* ---- the window ---- */
+  body[data-skin="term"] .panel{margin-top:var(--gap); padding:16px}
+  body[data-skin="term"] .term-path{margin:0 0 var(--gap); padding:8px 12px}
+  body[data-skin="term"] .content-inner{max-width:1400px; margin:0}
+  body[data-skin="term"][data-wide] .content-inner{max-width:1640px}
+  @media (min-width:701px){
+    body[data-skin="term"] .app{gap:var(--gap); padding:var(--gap)}
+    body[data-skin="term"] .sidebar{top:var(--gap); height:calc(100vh - var(--gap) * 2)}
+    body[data-skin="term"] .content{padding:0 0 70px}
+  }
+  @media (max-width:700px){
+    body[data-skin="term"] .sidebar{background:var(--bg); -webkit-backdrop-filter:none; backdrop-filter:none}
+    body[data-skin="term"] .content{padding:0 var(--gap) 70px}
+  }
+  body[data-skin="term"] :is(.goals-head, .scroll-hero){margin-bottom:var(--gap)}
+
+  /* ============ HOME'S PANES ============ */
+  body[data-skin="term"] #homeTerm{position:relative; display:grid; gap:var(--gap); grid-template-columns:minmax(0,1fr)}
+  body[data-skin="term"] :is(.ht-head, .ht-grid, .ht-col){display:contents}
+  body[data-skin="term"] .ht-drops{right:14px; top:6px; z-index:3}
+  body[data-skin="term"] .ht section{display:flex; flex-direction:column; min-width:0; min-height:0; margin:0 !important}
+  body[data-skin="term"] #homeTerm #homeHeatPanel{margin:0 !important; padding:14px 16px; border-radius:0}
+  body[data-skin="term"] .ht .ht-lab{margin:0; padding:7px 11px 6px; border-bottom:1px solid var(--hair); white-space:nowrap}
+  body[data-skin="term"] .ht .ht-lab small{font:11.5px var(--fm); color:var(--faint); overflow:hidden; text-overflow:ellipsis}
+  body[data-skin="term"] .ht.intro section{animation:tileIn .5s cubic-bezier(.2,.7,.2,1) backwards}
+  body[data-skin="term"] .ht.intro .hs-menu{animation-delay:.06s} body[data-skin="term"] .ht.intro .hs-term{animation-delay:.12s}
+  body[data-skin="term"] .ht.intro .hs-play{animation-delay:.18s} body[data-skin="term"] .ht.intro .hs-id{animation-delay:.24s}
+  body[data-skin="term"] .ht.intro .hs-kc{animation-delay:.3s} body[data-skin="term"] .ht.intro .hs-orbs{animation-delay:.36s}
+  @keyframes tileIn{from{opacity:0; transform:scale(.97)}}
+
+  /* character */
+  body[data-skin="term"] .hs-idb{padding:12px}
+  body[data-skin="term"] .hs-id .ht-name{display:block; font-size:24px; overflow-wrap:anywhere}
+  body[data-skin="term"] .hs-id .ht-name em{display:block; margin:5px 0 0; font-size:14px}
+  body[data-skin="term"] .hs-id{position:relative}
+  body[data-skin="term"] .hs-id .ht-name button{position:absolute; top:3px; right:5px; margin:0}
+  body[data-skin="term"] .hs-id .ht-sub{font-size:13px; line-height:1.5}
+  /* vitals */
+  body[data-skin="term"] .hs-orbs .ht-orbs{flex:1; flex-direction:column; flex-wrap:nowrap; gap:14px; justify-content:center; padding:12px}
+  body[data-skin="term"] .hs-orbs .ht-orb svg{width:42px; height:42px}
+  body[data-skin="term"] .hs-orbs .ht-orb .num{font-size:19px}
+  body[data-skin="term"] .hs-orbs .ht-orb .lab{font-size:11.5px; white-space:nowrap}
+  /* skills fill their pane; a narrow pane shows them the way the game does, icon and number */
+  body[data-skin="term"] .hs-skills{container-type:inline-size}
+  body[data-skin="term"] .ht-skills{flex:1; grid-auto-rows:1fr; border:0; background:var(--hair)}
+  body[data-skin="term"] .ht-sk{align-content:center; padding:8px 11px; background:color-mix(in srgb, var(--bg) 62%, transparent)}
+  body[data-skin="term"] .ht-sk:hover, body[data-skin="term"] .ht-sk:focus-visible{background:color-mix(in srgb, var(--panel2) 80%, transparent)}
+  @container (max-width:470px){ .ht-sk .nm{display:none} .ht-sk{grid-template-columns:20px 1fr auto} .ht-sk .lv{justify-self:end} }
+  /* play grid */
+  body[data-skin="term"] .hs-play .ht-play{margin:12px 12px 0}
+  body[data-skin="term"] .hs-play .ht-playfoot{margin:9px 12px 12px; flex-wrap:wrap; gap:6px 10px}
+  body[data-skin="term"] .ht-play i:not(.l1):not(.l2):not(.l3):not(.l4){background:color-mix(in srgb, var(--text) 6%, transparent)}
+  /* choose option */
+  body[data-skin="term"] .ht-menu{flex:1; border:0}
+  body[data-skin="term"] .ht-menu .ttl{padding:7px 11px 6px; border-bottom:1px solid var(--hair); font:500 11px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim); white-space:nowrap}
+  body[data-skin="term"] .ht-menu .ttl::before{content:"//"; margin-right:7px; color:var(--faint); letter-spacing:0; font-weight:400}
+  body[data-skin="term"] .ht-menu .ttl small{font:11.5px var(--fm); letter-spacing:0; text-transform:none}
+  body[data-skin="term"] .ht-menu .grp{padding:10px 11px 3px}
+  body[data-skin="term"] .ht-opt{flex-wrap:wrap; gap:0 6px; padding:5px 11px}
+  body[data-skin="term"] .ht-opt .t{white-space:normal}
+  body[data-skin="term"] .ht-opt .st{padding-left:0}
+  /* terminal: the log takes whatever height the pane has */
+  body[data-skin="term"] .ht-term{flex:1; display:flex; flex-direction:column; border:0; background:color-mix(in srgb, var(--inset) 55%, transparent); box-shadow:none}
+  body[data-skin="term"] .ht-term:focus-within{box-shadow:none}
+  body[data-skin="term"] .ht-term .top{border-bottom-color:var(--hair)}
+  body[data-skin="term"] .ht-say{border-top-color:var(--hair); flex-wrap:wrap; gap:0 8px}
+  body[data-skin="term"] .ht-log{flex:1 1 auto; max-height:236px}
+  /* kill counts */
+  body[data-skin="term"] .ht-kc{grid-template-columns:minmax(0,1fr); padding:4px 12px 0}
+  body[data-skin="term"] .ht-kc button{border-bottom-color:var(--hair)}
+  body[data-skin="term"] .ht-clues{margin:9px 12px 12px; font-size:12px}
+
+  @media (min-width:1101px){
+    body[data-skin="term"] .ht-log{flex:1 1 0; height:0; min-height:120px; max-height:none}
+    /* Mosaic: three columns, each split at its own height, the right one split again below */
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm{grid-template-columns:37fr 20fr 29fr 14fr; grid-template-rows:repeat(12, minmax(50px, auto)) auto}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-skills{grid-column:1; grid-row:1 / 7}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-play{grid-column:1; grid-row:7 / 13}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-menu{grid-column:2; grid-row:1 / 10}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-id{grid-column:2; grid-row:10 / 13}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-term{grid-column:3 / 5; grid-row:1 / 8}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-kc{grid-column:3; grid-row:8 / 13}
+    body[data-skin="term"][data-tiles="mosaic"] .hs-orbs{grid-column:4; grid-row:8 / 13}
+    body[data-skin="term"][data-tiles="mosaic"] #homeTerm #homeHeatPanel{grid-column:1 / -1; grid-row:13}
+    /* Orderly: every edge on one twelve-column grid */
+    body[data-skin="term"][data-tiles="orderly"] #homeTerm{grid-template-columns:repeat(12, minmax(0,1fr))}
+    body[data-skin="term"][data-tiles="orderly"] .hs-id{grid-column:1 / 5; grid-row:1}
+    body[data-skin="term"][data-tiles="orderly"] .hs-orbs{grid-column:5 / 13; grid-row:1}
+    body[data-skin="term"][data-tiles="orderly"] .hs-skills{grid-column:1 / 6; grid-row:2}
+    body[data-skin="term"][data-tiles="orderly"] .hs-menu{grid-column:6 / 9; grid-row:2}
+    body[data-skin="term"][data-tiles="orderly"] .hs-term{grid-column:9 / 13; grid-row:2}
+    body[data-skin="term"][data-tiles="orderly"] .hs-play{grid-column:1 / 6; grid-row:3}
+    body[data-skin="term"][data-tiles="orderly"] .hs-kc{grid-column:6 / 13; grid-row:3}
+    body[data-skin="term"][data-tiles="orderly"] #homeTerm #homeHeatPanel{grid-column:1 / -1; grid-row:4}
+    body[data-skin="term"][data-tiles="orderly"] .hs-id .ht-name em{display:inline; margin:0 0 0 10px}
+    body[data-skin="term"][data-tiles="orderly"] .hs-orbs .ht-orbs{flex-direction:row; flex-wrap:wrap; gap:14px 34px; justify-content:flex-start; align-items:center}
+    body[data-skin="term"][data-tiles="orderly"] .ht-kc{grid-template-columns:1fr 1fr; column-gap:28px}
+  }
+  @media (max-width:1100px){
+    body[data-skin="term"] .hs-id{order:1} body[data-skin="term"] .hs-orbs{order:2} body[data-skin="term"] .hs-menu{order:3} body[data-skin="term"] .hs-term{order:4}
+    body[data-skin="term"] .hs-skills{order:5} body[data-skin="term"] .hs-play{order:6} body[data-skin="term"] .hs-kc{order:7} body[data-skin="term"] #homeTerm #homeHeatPanel{order:8}
+    body[data-skin="term"] .hs-orbs .ht-orbs{flex-direction:row; flex-wrap:wrap; gap:14px 22px; justify-content:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .ht.intro section{animation:none} }
+
   /* ============ GLYPHS (written by glyphs.py; edit the drawings there) ============ */
   body[data-skin="term"] .gl{display:inline-block; width:18px; height:18px; vertical-align:-4px; overflow:hidden; text-indent:-99em; white-space:nowrap; background:currentColor; -webkit-mask:var(--g) center / contain no-repeat; mask:var(--g) center / contain no-repeat; flex:0 0 auto; text-align:left}
   body[data-skin="term"] .gl.x1{width:9px; height:9px; vertical-align:-1px} body[data-skin="term"] .gl.x3{width:27px; height:27px; vertical-align:-7px} body[data-skin="term"] .gl.x4{width:36px; height:36px; vertical-align:-9px}
@@ -3498,6 +3638,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     var th = st.theme;
     if(!st.skin && (!th || th === "parchment")) th = "mortimer";
     b.dataset.skin = st.skin === "classic" ? "classic" : "term";
+    b.dataset.tiles = st.tiles === "orderly" ? "orderly" : "mosaic";
     b.dataset.theme = th || "mortimer";
   }catch(e){ b.dataset.skin = "term"; b.dataset.theme = "mortimer"; }
 })();
@@ -3636,6 +3777,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
           <div class="set-group">
             <div class="set-h">Look</div>
             <div class="skin-pick" id="skinPick"></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose. Orderly lines every edge up.</small></div><div class="seg" id="tilesSeg"></div></div>
           </div>
           <div class="set-group">
             <div class="set-h">Theme</div>
@@ -3735,11 +3877,17 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
            Activity panel is shared and moves in under the skills. -->
       <div class="term-only ht" id="homeTerm">
         <header class="ht-head">
-          <div>
-            <h1 class="ht-name" id="htName"></h1>
-            <p class="ht-sub" id="htSub"></p>
-          </div>
-          <div class="ht-orbs" id="htOrbs"></div>
+          <section class="hs-id">
+            <h2 class="ht-lab">Character</h2>
+            <div class="hs-idb">
+              <h1 class="ht-name" id="htName"></h1>
+              <p class="ht-sub" id="htSub"></p>
+            </div>
+          </section>
+          <section class="hs-orbs">
+            <h2 class="ht-lab">Vitals</h2>
+            <div class="ht-orbs" id="htOrbs"></div>
+          </section>
           <div class="ht-drops" id="htDrops" aria-hidden="true"></div>
         </header>
         <div class="ht-grid">
@@ -8314,8 +8462,16 @@ const SKINS = [["term", "Terminal", "Monospace, hairlines, a command line on Hom
 function applySkin(){
   if(!state.skin){ state.skin = "term"; if(!state.theme || state.theme === "parchment") state.theme = "mortimer"; save(); }
   document.body.dataset.skin = state.skin === "classic" ? "classic" : "term";
+  document.body.dataset.tiles = state.tiles === "orderly" ? "orderly" : "mosaic";
   try{ homeHeatPlace(); htLater(); }catch(e){}
   try{ glyphPass(document.body); }catch(e){}
+}
+// how Home's panes are arranged in the Terminal look: mosaic (uneven on purpose) or orderly (one grid)
+const TILE_LAYOUTS = [["mosaic", "Mosaic"], ["orderly", "Orderly"]];
+function setTiles(id){
+  state.tiles = id === "orderly" ? "orderly" : "mosaic"; save();
+  document.body.dataset.tiles = state.tiles;
+  try{ setTimeout(htPlay, 60); }catch(e){}
 }
 function setSkin(id){
   if(state.skin === id) return;
@@ -12515,6 +12671,7 @@ function renderHomeTerm(){
       + htOrb(`Total, of ${fmt(MAX_TOTAL_LEVEL)}`, fmt(overall.level), overall.level / MAX_TOTAL_LEVEL, "var(--k-c)", 2)
       + htOrb("Experience", htShort(overall.experience), maxCapeXp() / XP_MAX_TOTAL, "var(--gold)", 3)
     : "";
+  root.querySelector(".hs-orbs").classList.toggle("hidden", !overall);
   root.querySelector(".hs-skills").classList.toggle("hidden", !has);
   root.querySelector(".hs-kc").classList.toggle("hidden", !has);
   if(has){
@@ -12572,7 +12729,7 @@ function htPlay(){
   const el = $("#htPlay"); if(!el || document.body.dataset.skin !== "term") return;
   let am = {}; try{ am = skillAmountsByDate() || {}; }catch(e){}
   const dayXp = iso=>{ const a = am[iso]; let t = 0; if(a) for(const k in a) t += (+a[k] || 0); return t; };
-  const room = el.parentElement.clientWidth || 480;
+  const room = el.clientWidth || el.parentElement.clientWidth || 480;
   const weeks = Math.max(8, Math.min(53, Math.floor((room + 2) / 13)));
   const today = new Date(); today.setHours(12, 0, 0, 0);
   const start = new Date(today); start.setDate(start.getDate() - ((today.getDay() + 6) % 7) - (weeks - 1) * 7);   // a Monday
@@ -12685,6 +12842,11 @@ function termResolve(raw){
   if(low === "clear") return {hint:`<u>enter</u> clears the log`, run:()=>{ termState().log = []; save(); termRenderLog(); }};
   if(low.startsWith("note ") && v.length > 5) return termNote(v.slice(5).trim());
   if(low.startsWith("ask ") && v.length > 4) return termAskCmd(v.slice(4).trim());
+  const ly = low.match(/^layout\s+(.+)$/);
+  if(ly){
+    const t = TILE_LAYOUTS.find(x=>x[0].startsWith(ly[1]));
+    if(t) return {hint:`<u>enter</u> sets the layout to <span class="c">${t[1]}</span>`, fill:"layout " + t[0], run:()=>{ setTiles(t[0]); termLog("s", `Layout set to ${t[1]}.`); }};
+  }
   const th = low.match(/^theme\s+(.+)$/);
   if(th){
     const t = THEMES.find(x=>x[1].toLowerCase().startsWith(th[1]) || x[0].startsWith(th[1]));
@@ -12711,7 +12873,7 @@ function termHint(){
 }
 function termHelp(){
   const acts = [...new Set(termRounds().filter(m=>m.st.up).map(m=>termVerb(m).act.toLowerCase()))];
-  termLog("s", "Type a note and press Enter to keep it in Notes. " + (acts.length ? `Type the start of an action to tick it: ${acts.join(", ")}. ` : "") + "A page or a skill opens it. A question gets an answer. Also: theme and a name, clear. Tab completes, the up arrow brings back the last line.");
+  termLog("s", "Type a note and press Enter to keep it in Notes. " + (acts.length ? `Type the start of an action to tick it: ${acts.join(", ")}. ` : "") + "A page or a skill opens it. A question gets an answer. Also: theme and a name, layout mosaic or orderly, clear. Tab completes, the up arrow brings back the last line.");
 }
 function termAsk(q){
   termLog("q", q);
@@ -16776,6 +16938,11 @@ function renderLookSettings(){
   if(sp){
     sp.innerHTML = SKINS.map(([id,label,sub])=>`<button class="skin-opt ${id===skin?"on":""}" data-setskin="${id}"><b>${label}</b><small>${sub}</small></button>`).join("");
     sp.querySelectorAll("[data-setskin]").forEach(b=>b.onclick=()=>{ setSkin(b.dataset.setskin); renderLookSettings(); });
+  }
+  const ts = $("#tilesSeg"), tcur = state.tiles === "orderly" ? "orderly" : "mosaic";
+  if(ts){
+    ts.innerHTML = TILE_LAYOUTS.map(([id,label])=>`<button class="${id===tcur?"on":""}" data-settiles="${id}">${label}</button>`).join("");
+    ts.querySelectorAll("[data-settiles]").forEach(b=>b.onclick=()=>{ setTiles(b.dataset.settiles); renderLookSettings(); });
   }
   const cur = state.theme || DEFAULT_THEME;
   tp.innerHTML = THEMES.map(([id,label,ic])=>`<button class="su-theme ${id===cur?"on":""}" data-settheme="${id}"><img src="${WIKI+ic}" alt=""><span>${label}</span></button>`).join("");
