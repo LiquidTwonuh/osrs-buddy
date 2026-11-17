@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mortimeter theme kit, Terminal look</title>
+<style>
+  /* A stand-in for Mortimeter's Terminal look, for trying colour themes. Paste one theme block
+     into the box and everything here recolours the way the app would. The derived colours below
+     (--line, --faint, --hair, --glass, the two backdrop lights) are computed exactly as the app
+     computes them, so a block that reads well here reads well there. Built by tools/theme-kit.py. */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#000; font:13px/1.45 "Segoe UI",system-ui,sans-serif; color:#cfcfcf}
+  button{font:inherit}
+  .kit{display:grid; grid-template-columns:330px minmax(0,1fr); min-height:100vh}
+  .in{position:sticky; top:0; height:100vh; display:flex; flex-direction:column; gap:9px; padding:14px; background:#0b0b0b; border-right:1px solid #242424; overflow:auto}
+  .in h1{margin:0; font-size:16px; color:#eee} .in p{margin:0; color:#9a9a9a; font-size:12.5px}
+  .in label{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#8a8a8a}
+  .in select, .in textarea{width:100%; background:#000; color:#ddd; border:1px solid #333; padding:7px}
+  .in textarea{flex:1; min-height:230px; font:11.5px/1.45 Consolas,monospace; resize:none}
+  .in .row{display:flex; gap:6px; flex-wrap:wrap}
+  .in button{padding:6px 11px; color:#ddd; background:#161616; border:1px solid #3a3a3a; cursor:pointer}
+  .in button.p{background:#ddd; color:#000; border-color:#ddd}
+  .msg{min-height:17px; font-size:12px} .msg.ok{color:#7fd18a} .msg.bad{color:#e07a6c}
+  .ck{display:grid; grid-template-columns:1fr auto auto; gap:2px 10px; font:12px Consolas,monospace}
+  .ck b{font-weight:400} .ck .pass{color:#7fd18a} .ck .fail{color:#e07a6c}
+
+  /* ---- the app ---- */
+  .W{
+    /* the 27 theme tokens (Mortimer, the default) */
+    --bg:#0b1513; --bg2:#10201c; --panel:#11201d; --panel2:#172a26; --border:#2a443f;
+    --gold:#66cbb9; --gold-dim:#4a9c8f; --gold2:#57b5a5; --gold3:#2f655d;
+    --text:#e0e6d9; --muted:#8fa39c;
+    --inset:#07100e; --active:#1c332f; --btnlo:#12211e; --btnhov1:#22403a; --btnhov2:#182d29;
+    --cellbg:#0d1917; --code:#b9d8cf; --ph:#64776f; --xp:#7d918a; --catbd:#1f3531;
+    --dotdim:#35554f; --swempty:#1f3430; --glow:rgba(102,203,185,.16);
+    --green:#7fd18a; --green-bg:#1f3a2a; --red:#e07a6c; --blue:#7fb4e6;
+    /* what the Terminal look adds; a theme may set any of these too */
+    --k-c:#62d2d2; --k-y:#f0d264; --k-o:#f39a40; --k-g:#70cf6a; --me:#c79be6;
+    --line:color-mix(in srgb, var(--border) 58%, var(--bg));
+    --faint:color-mix(in srgb, var(--muted) 56%, var(--bg));
+    --glow1:color-mix(in srgb, var(--gold-dim) 50%, var(--bg));
+    --glow2:color-mix(in srgb, var(--me) 30%, var(--bg));
+    /* fixed by the look, not themeable */
+    --hair:color-mix(in srgb, var(--text) 9%, transparent);
+    --glass:color-mix(in srgb, var(--panel) 50%, transparent);
+    --fs:"Bahnschrift","DIN Alternate","Inter","Segoe UI",system-ui,sans-serif;
+    --fm:"Cascadia Mono","Cascadia Code","SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+    --gap:10px;
+    display:grid; grid-template-columns:212px minmax(0,1fr); gap:var(--gap); padding:var(--gap); min-height:100vh; color:var(--text); font:14.5px/1.4 var(--fs);
+    background:
+      radial-gradient(ellipse 46% 52% at 12% 8%, color-mix(in srgb, var(--glow1) 62%, transparent), transparent 70%),
+      radial-gradient(ellipse 40% 50% at 92% 96%, color-mix(in srgb, var(--glow2) 58%, transparent), transparent 70%),
+      radial-gradient(circle, color-mix(in srgb, var(--text) 9%, transparent) 0 1px, transparent 1.4px) 0 0 / 22px 22px,
+      var(--bg);
+  }
+  .pane{min-width:0; background:var(--glass); -webkit-backdrop-filter:blur(18px) saturate(1.2); backdrop-filter:blur(18px) saturate(1.2);
+    border:1px solid var(--hair); box-shadow:inset 0 1px 0 color-mix(in srgb, var(--text) 5%, transparent); transition:border-color .2s}
+  .pane:hover{border-color:color-mix(in srgb, var(--gold) 60%, transparent)}
+  .pane > h2{display:flex; gap:8px; margin:0; padding:7px 11px 6px; border-bottom:1px solid var(--hair); font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  .pane > h2::before{content:"//"; color:var(--faint); letter-spacing:0}
+  .pane > h2 small{margin-left:auto; font:11.5px var(--fm); letter-spacing:0; text-transform:none; color:var(--faint)}
+  .b{padding:11px}
+  .side{position:sticky; top:var(--gap); align-self:start; height:calc(100vh - var(--gap) * 2); display:flex; flex-direction:column; padding:14px 10px 10px}
+  .brand{padding:0 4px 8px; font:600 17px var(--fm); letter-spacing:-.4px} .brand small{margin-left:6px; font:11px var(--fm); color:var(--faint)}
+  .side h3{margin:14px 7px 5px; font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+  .side a{display:block; padding:6px 8px; color:var(--muted)} .side a:hover{color:var(--text); background:color-mix(in srgb, var(--text) 5%, transparent)}
+  .side a.on{color:var(--text)} .side a.on::before{content:"> "; font:13px var(--fm); color:var(--gold)}
+  .side a.sub{padding:3px 8px 3px 24px; font:12px var(--fm)} .side a.sub.on{color:var(--gold)} .side a.sub.on::before{content:none}
+  .who{margin-top:auto; display:flex; gap:8px; align-items:center; padding:8px; border:1px solid var(--line)} .who b{padding:3px 6px; border:1px solid var(--line); font:600 12px var(--fm); color:var(--gold)} .who small{display:block; color:var(--faint); font:11.5px var(--fm)}
+  .main{display:grid; grid-template-columns:repeat(12, minmax(0,1fr)); gap:var(--gap); align-content:start}
+  .path{grid-column:1 / -1; padding:8px 12px; font:12.5px var(--fm); color:var(--muted)} .path b{font-weight:500; color:var(--text)} .path i{font-style:normal; color:var(--gold)}
+  .c3{grid-column:span 3} .c4{grid-column:span 4} .c5{grid-column:span 5} .c6{grid-column:span 6} .c7{grid-column:span 7} .c8{grid-column:span 8} .c12{grid-column:1 / -1}
+  @media (max-width:1250px){ .c3,.c4,.c5,.c6,.c7,.c8{grid-column:span 6} }
+  .name{margin:0; font:600 24px var(--fm); letter-spacing:-.5px} .name em{display:block; margin-top:5px; font:400 14px var(--fm); color:var(--gold)}
+  .sub{margin:8px 0 0; font-size:13px; color:var(--muted)}
+  .orbs{display:grid; grid-template-columns:1fr 1fr; gap:14px 18px}
+  .orb{display:flex; align-items:center; gap:10px} .orb i{flex:none; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:linear-gradient(to top, color-mix(in srgb, var(--oc) 30%, transparent) var(--p), transparent var(--p))}
+  .orb b{display:block; font:600 18px var(--fm); color:var(--oc)} .orb small{font-size:11.5px; color:var(--muted)}
+  .grp{padding:9px 0 3px; font:500 10px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+  .lead{margin:0 0 2px; font-size:13px; color:var(--muted)} .lead b{color:var(--text)}
+  .opt{display:flex; gap:7px; align-items:baseline; padding:4px 0} .opt .t.c{color:var(--k-c)} .opt .t.y{color:var(--k-y)} .opt .t.o{color:var(--k-o)} .opt .t.g{color:var(--k-g)}
+  .opt .st{margin-left:auto; font:12px var(--fm); color:var(--muted)} .opt .st.r{color:var(--k-g)} .opt .st.w{color:var(--k-o)}
+  .skills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:1px; background:var(--hair)}
+  .sk{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:5px 8px; padding:8px 11px; background:color-mix(in srgb, var(--bg) 62%, transparent)}
+  .sk span{font-size:12.5px; color:var(--muted)} .sk b{font:600 17px var(--fm); color:var(--gold)} .sk.near b{color:var(--k-g)}
+  .sk u{grid-column:1 / -1; display:block; height:3px; background:var(--hair)} .sk u i{display:block; height:100%; width:var(--p); background:var(--gold)} .sk.near u i{background:var(--k-g)}
+  .play{display:grid; grid-auto-flow:column; grid-template-rows:repeat(7, 11px); grid-auto-columns:11px; gap:2px}
+  .play i{background:color-mix(in srgb, var(--text) 6%, transparent)} .play .l1{background:color-mix(in srgb, var(--gold) 22%, transparent)} .play .l2{background:color-mix(in srgb, var(--gold) 44%, transparent)} .play .l3{background:color-mix(in srgb, var(--gold) 70%, transparent)} .play .l4{background:var(--gold)}
+  .bars{margin-top:11px} .bar{display:grid; grid-template-columns:70px 1fr 50px; gap:10px; align-items:center; padding:3px 0; font:12.5px var(--fm); color:var(--muted)} .bar b{text-align:right; font-weight:400; color:var(--text)}
+  .bar u{display:block; height:9px; background:var(--line)} .bar u i{display:block; height:100%; width:var(--p); background:var(--gold)} .bar.g u i{background:var(--k-g)}
+  .term{font:12.5px/1.5 var(--fm); background:color-mix(in srgb, var(--inset) 55%, transparent)}
+  .log{display:grid; gap:4px; padding:10px 11px} .log div{display:flex; gap:9px} .log time{flex:none; width:38px; color:var(--faint)}
+  .log .me span{color:var(--me)} .log .me b{font-weight:400; color:var(--text)} .log .sys b{color:var(--gold); font-weight:400} .log .sys span{color:var(--muted)} .log .w b{color:var(--k-y)} .log .w span{color:var(--muted)} .log em{margin-left:auto; font-style:normal; color:var(--k-g)}
+  .yn{margin-left:47px; padding-bottom:8px; color:var(--text)} .yn button{margin:0 4px; padding:0 9px; background:none; border:1px solid var(--line); color:var(--text)} .yn button:hover{border-color:var(--gold); color:var(--gold)}
+  .say{display:flex; gap:8px; padding:9px 11px; border-top:1px solid var(--hair)} .say span{color:var(--me)} .say small{margin-left:auto; color:var(--faint); font-size:11.5px}
+  .kc div{display:flex; gap:8px; padding:6px 0; border-bottom:1px solid var(--hair)} .kc small{color:var(--faint); font-size:12px} .kc b{margin-left:auto; font:500 13.5px var(--fm); color:var(--gold)}
+  .stats{display:flex; gap:8px; flex-wrap:wrap} .stat{flex:1; min-width:150px; padding:8px 12px; border:1px solid var(--line); background:var(--cellbg)} .stat b{display:block; font:600 17px var(--fm); color:var(--gold)} .stat small{font-size:11px; color:var(--muted)}
+  .tabs{display:flex; gap:4px; margin:11px 0 0; font:12px var(--fm); color:var(--muted)} .tabs span{padding:3px 9px} .tabs .on{color:var(--gold); border:1px solid var(--line); background:var(--active)}
+  .heat{display:flex; align-items:flex-end; justify-content:center; gap:5px; height:120px; margin:12px 0 4px} .heat i{display:flex; flex-direction:column-reverse; width:14px; gap:1px} .heat i b{display:block; height:var(--s); background:var(--c)} .heat i:empty{height:2px; background:var(--line)}
+  .ctl{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .ctl input{flex:1; min-width:180px; padding:8px 11px; background:var(--inset); border:1px solid var(--line); color:var(--text); font:13.5px var(--fs)} .ctl input::placeholder{color:var(--ph)} .ctl input:focus{outline:0; border-color:var(--gold); box-shadow:0 0 0 3px var(--glow)}
+  .btn{padding:8px 13px; border:1px solid var(--line); background:var(--btnlo); color:var(--text); font:500 12.5px var(--fm); cursor:pointer} .btn:hover{background:var(--btnhov1)}
+  .btn.p{background:var(--gold); border-color:var(--gold); color:var(--bg); font-weight:600}
+  .cmd{padding:9px 15px; border:1px solid var(--gold); background:color-mix(in srgb, var(--gold) 9%, transparent); color:var(--gold); font:600 13px var(--fm)} .cmd::before{content:"$ "; color:var(--faint); font-weight:400}
+  .cards{display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:8px}
+  .card{padding:10px 12px; border:1px solid var(--line); border-left:2px solid var(--c, var(--gold)); background:var(--panel2)} .card b{display:block; font:600 13.5px var(--fm)} .card small{font-size:11.5px; color:var(--muted)}
+  .rowz div{display:flex; gap:10px; align-items:center; padding:7px 9px; border-bottom:1px solid var(--line)} .rowz .done{background:var(--green-bg)} .rowz .ok{color:var(--green)} .rowz .no{color:var(--red)} .rowz .info{color:var(--blue)} .rowz code{margin-left:auto; font:12.5px var(--fm); color:var(--code)} .rowz small{color:var(--xp); font:11.5px var(--fm)}
+  .chip{padding:2px 8px; border:1px solid var(--catbd); font-size:11.5px; color:var(--muted)}
+  .dots{display:flex; gap:4px} .dots i{width:9px; height:9px; background:var(--dotdim)} .dots i.on{background:var(--gold2)}
+  .meter{height:8px; background:var(--line)} .meter i{display:block; height:100%; width:var(--p); background:var(--gold2)} .ring{color:var(--gold3); font:12px var(--fm)}
+</style>
+</head>
+<body>
+<div class="kit">
+  <div class="in">
+    <h1>Theme kit, Terminal look</h1>
+    <p>Pick a theme the app has now, or paste a block and press Apply. Only lines of the form <code>--token: value;</code> are read, so the selector does not matter here.</p>
+    <label for="pick">The app's themes as they are now</label>
+    <select id="pick"></select>
+    <label for="css">Theme block</label>
+    <textarea id="css" spellcheck="false"></textarea>
+    <div class="row"><button class="p" id="apply">Apply</button><button id="reset">Back to Mortimer</button></div>
+    <div class="msg" id="msg"></div>
+    <label>Contrast (wanted, measured)</label>
+    <div class="ck" id="ck"></div>
+  </div>
+
+  <div class="W" id="W">
+    <aside class="pane side">
+      <div class="brand">Mortimeter<small>v1.0</small></div>
+      <h3>Character</h3><a class="on">Home</a><a>Scroll</a><a class="sub on">Overview</a><a class="sub">Journal</a><a>Achievements</a>
+      <h3>Tools</h3><a>Goals</a><a>Roadmap</a><a>Quest Hub</a><a>Coffer</a><a>Skills</a><a>Upgrades</a><a>Notes</a>
+      <div class="who"><b>107</b><div>Twonuh<small>1,525 total</small></div></div>
+    </aside>
+    <main class="main">
+      <div class="pane path">twonuh@mortimeter <b>~/home</b> <i>_</i></div>
+
+      <section class="pane c4"><h2>Character</h2><div class="b"><h1 class="name">Twonuh<em>(level-107)</em></h1><p class="sub">Main · 24,482,865 experience · 7.8% of a max cape</p></div></section>
+      <section class="pane c4"><h2>Vitals</h2><div class="b"><div class="orbs">
+        <div class="orb" style="--oc:#e0685c; --p:85%"><i></i><div><b>107</b><small>Combat level</small></div></div>
+        <div class="orb" style="--oc:var(--k-c); --p:64%"><i></i><div><b>1,525</b><small>Total skill level</small></div></div>
+        <div class="orb" style="--oc:var(--k-y); --p:90%"><i></i><div><b>24.5M</b><small>Total experience</small></div></div>
+        <div class="orb" style="--oc:var(--k-g); --p:97%"><i></i><div><b>185</b><small>Closest level</small></div></div>
+      </div></div></section>
+      <section class="pane c4"><h2>Kill counts <small>6 bosses</small></h2><div class="b kc">
+        <div>Brutus<b>650</b></div><div>Mad Angel<b>52</b></div><div>Tempoross <small>0 of 7 drops</small><b>19</b></div><div>Barrows Chests <small>0 of 7 drops</small><b>7</b></div>
+      </div></section>
+
+      <section class="pane c4"><h2>Debrief <small style="color:var(--k-g)">played today</small></h2><div class="b">
+        <p class="lead">Today so far: <b>+5,638</b> xp in Magic and Hitpoints.</p>
+        <div class="grp">Ready now</div>
+        <div class="opt"><span>Empty</span><span class="t c">Bird houses</span><span class="st r">ready</span></div>
+        <div class="opt"><span>Talk-to</span><span class="t y">Zaff</span><span class="st r">ready</span></div>
+        <div class="opt"><span>Claim</span><span class="t o">Bonemeal and slime</span><span class="st">in 3 h</span></div>
+        <div class="grp">Closest level ups</div>
+        <div class="opt"><span>Train</span><span class="t g">Runecraft</span><span class="st">185 xp to 48</span></div>
+        <div class="opt"><span>Train</span><span class="t g">Fletching</span><span class="st">237 xp to 34</span></div>
+        <div class="grp">Gathering dust</div>
+        <div class="opt"><span>Return-to</span><span class="t y">Sailing</span><span class="st w">52 days</span></div>
+      </div></section>
+      <section class="pane c4"><h2>Skills <small>24 skills, none at 99 yet</small></h2><div class="skills" id="skills"></div></section>
+      <section class="pane c4 term"><h2>mortimeter <small>claude off</small></h2>
+        <div class="log">
+          <div><time>Sat</time><span>You reach level 80 Sailing.</span></div>
+          <div><time>Sun</time><span>You empty four bird houses.</span><em>+1,476 Hunter</em></div>
+          <div class="me"><time>12:18</time><span><b>Twonuh:</b> what prayer should i use?</span></div>
+          <div class="sys"><time>12:18</time><span><b>Mortimer:</b> At 70 Prayer you can use Piety.</span></div>
+          <div class="w"><time>14:58</time><span><b>SYSTEM:</b> Questions here are answered on this device. Claude can answer them instead, using your own key.</span></div>
+        </div>
+        <div class="yn">Connect Claude? <button>y</button>/<button>n</button></div>
+        <div class="say">Twonuh: <span>harv</span><small>enter Harvest Herb patches</small></div>
+      </section>
+
+      <section class="pane c6"><h2>Activity <small>nothing yet today</small></h2><div class="b"><div class="play" id="play"></div>
+        <div class="bars">
+          <div class="bar"><span>fri 13</span><u><i style="--p:58%"></i></u><b>+119K</b></div><div class="bar"><span>sat 14</span><u><i style="--p:30%"></i></u><b>+62K</b></div><div class="bar"><span>mon 16</span><u><i style="--p:100%"></i></u><b>+204K</b></div>
+          <div class="bar g"><span>Mining</span><u><i style="--p:100%"></i></u><b>+465K</b></div><div class="bar g"><span>Attack</span><u><i style="--p:48%"></i></u><b>+225K</b></div>
+        </div></div></section>
+      <section class="pane c6"><h2>Activity heatmap <small>108 days logged</small></h2><div class="b">
+        <div class="stats"><div class="stat"><b>7</b><small>days running</small></div><div class="stat"><b>18/30</b><small>active days</small></div><div class="stat"><b>342,152</b><small>best single day</small></div></div>
+        <div class="tabs"><span>Week</span><span class="on">Month</span><span>3 months</span><span>1 year</span></div>
+        <div class="heat" id="heat"></div>
+      </div></section>
+
+      <section class="pane c7"><h2>Highlights <small>buttons, inputs, cards</small></h2><div class="b">
+        <div class="ctl"><input placeholder="What did you do today? e.g. questing and a slayer task"><button class="btn p">Log it</button><button class="btn">Chill day</button><button class="cmd">generate your wrapped</button></div>
+        <div class="cards" style="margin-top:11px">
+          <div class="card" style="--c:var(--k-c)"><b>7-day streak</b><small>Your best is 69 days.</small></div>
+          <div class="card" style="--c:var(--k-g)"><b>5,324 xp from 40 Herblore</b><small>Closest notable level.</small></div>
+          <div class="card" style="--c:var(--k-o)"><b>Farming has gone quiet</b><small>Not trained in 30 days.</small></div>
+        </div>
+      </div></section>
+      <section class="pane c5"><h2>Status and small parts</h2><div class="b rowz">
+        <div class="done"><span class="ok">done</span> Cook's Assistant <code>1 qp</code></div>
+        <div><span class="no">blocked</span> Monkey Madness II <small>needs 70 Slayer</small><code>4 qp</code></div>
+        <div><span class="info">info</span> Prices are from the wiki <span class="chip">chip</span></div>
+        <div><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span> 3 of 5 steps <span class="ring">ring</span></div>
+        <div style="display:block"><div class="meter"><i style="--p:62%"></i></div></div>
+      </div></section>
+    </main>
+  </div>
+</div>
+
+<script>
+const THEMES = /*THEMES_JSON*/;
+const TOKENS = ["--bg","--bg2","--panel","--panel2","--border","--gold","--gold-dim","--gold2","--gold3","--text","--muted","--inset","--active","--btnlo","--btnhov1","--btnhov2","--cellbg","--code","--ph","--xp","--catbd","--dotdim","--swempty","--glow","--green","--green-bg","--red","--blue"];
+const EXTRA = ["--k-c","--k-y","--k-o","--k-g","--me","--line","--faint","--glow1","--glow2"];
+const W = document.getElementById("W"), box = document.getElementById("css"), msg = document.getElementById("msg");
+const SK = [["Attack",85,66],["Hitpoints",87,12],["Mining",68,8],["Strength",90,5],["Agility",58,12],["Smithing",65,64],["Defence",80,2],["Herblore",38,46],["Fishing",52,23],["Runecraft",47,98],["Fletching",33,88],["Hunter",51,96]];
+document.getElementById("skills").innerHTML = SK.map(([n, l, p])=>`<div class="sk${p > 85 ? " near" : ""}"><span>${n}</span><b>${l}</b><u><i style="--p:${p}%"></i></u></div>`).join("");
+(function(){ let s = 11, o = ""; for(let i = 0; i < 30 * 7; i++){ s = (s * 16807) % 2147483647; const r = s / 2147483647; o += `<i class="${r > .9 ? "l4" : r > .8 ? "l3" : r > .68 ? "l2" : r > .55 ? "l1" : ""}"></i>`; } document.getElementById("play").innerHTML = o; })();
+(function(){ const C = ["#f06ea0","#5e6a1c","#1f8a8a","#c79be6","#c0392b","#2456c9","#7a4a9a","#9aa7ad","#e8c73a","#19b8a6"]; let s = 7, o = ""; const rnd = ()=>{ s = (s * 16807) % 2147483647; return s / 2147483647; };
+  for(let i = 0; i < 30; i++){ const k = rnd() > .42 ? 1 + Math.floor(rnd() * 5) : 0; let b = ""; for(let j = 0; j < k; j++) b += `<b style="--c:${C[Math.floor(rnd() * C.length)]}; --s:${4 + Math.floor(rnd() * 20)}px"></b>`; o += `<i>${b}</i>`; } document.getElementById("heat").innerHTML = o; })();
+
+function blockOf(id){ const t = THEMES[id]; return `body[data-skin="term"][data-theme="${id}"]{\n` + Object.keys(t).map(k=>`  ${k}:${t[k]};`).join("\n") + `\n}`; }
+function apply(text){
+  [...TOKENS, ...EXTRA].forEach(k=>W.style.removeProperty(k));
+  const found = {}; let m; const re = /(--[a-z0-9-]+)\s*:\s*([^;}]+)/gi;
+  while((m = re.exec(text))) found[m[1].toLowerCase()] = m[2].trim();
+  const known = Object.keys(found).filter(k=>TOKENS.includes(k) || EXTRA.includes(k)), strange = Object.keys(found).filter(k=>!TOKENS.includes(k) && !EXTRA.includes(k) && k !== "--shadow");
+  known.forEach(k=>W.style.setProperty(k, found[k]));
+  const missing = TOKENS.filter(k=>!(k in found));
+  msg.className = "msg " + (missing.length || strange.length ? "bad" : "ok");
+  msg.textContent = !Object.keys(found).length ? "" : missing.length ? "Missing: " + missing.join(" ") : strange.length ? "Not a token the app has: " + strange.join(" ") : `All ${TOKENS.length} tokens set` + (known.some(k=>EXTRA.includes(k)) ? ", plus Terminal extras." : ".");
+  check();
+}
+// contrast, measured on what the browser actually resolves
+const probe = document.createElement("i"); probe.style.cssText = "position:absolute; width:0; height:0; overflow:hidden"; W.appendChild(probe);
+function rgb(expr){
+  probe.style.color = ""; probe.style.color = expr; const c = getComputedStyle(probe).color;
+  let m = c.match(/^rgba?\(([^)]+)\)/); if(m){ const p = m[1].split(/[ ,/]+/).map(Number); return p.slice(0, 3).map(v=>v / 255); }
+  m = c.match(/^color\(srgb ([^)]+)\)/); if(m) return m[1].split(/[ /]+/).slice(0, 3).map(Number);
+  return [0, 0, 0];
+}
+const lum = c=>{ const f = v=>v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); return .2126 * f(c[0]) + .7152 * f(c[1]) + .0722 * f(c[2]); };
+const ratio = (a, b)=>{ const x = lum(rgb(a)), y = lum(rgb(b)); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+// a pane is the panel colour at half strength over the page background
+const PANE = "color-mix(in srgb, var(--panel) 50%, var(--bg))";
+const CHECKS = [["text on a pane", "var(--text)", PANE, 7], ["muted on a pane", "var(--muted)", PANE, 4.5], ["accent on a pane", "var(--gold)", PANE, 4.5], ["accent-dim (pane titles)", "var(--gold-dim)", PANE, 3], ["faint labels on a pane", "var(--faint)", PANE, 2.8],
+  ["place cyan on a pane", "var(--k-c)", PANE, 4.5], ["person yellow on a pane", "var(--k-y)", PANE, 4.5], ["item orange on a pane", "var(--k-o)", PANE, 4.5], ["skill green on a pane", "var(--k-g)", PANE, 4.5], ["your own lines (--me)", "var(--me)", PANE, 4.5],
+  ["button text on accent", "var(--bg)", "var(--gold)", 4.5], ["hairline against the page", "var(--line)", "var(--bg)", 1.15]];
+function check(){ document.getElementById("ck").innerHTML = CHECKS.map(([n, a, b, want])=>{ const r = ratio(a, b); return `<span>${n}</span><b>${want}</b><b class="${r >= want ? "pass" : "fail"}">${r.toFixed(2)}</b>`; }).join(""); }
+const pick = document.getElementById("pick");
+pick.innerHTML = Object.keys(THEMES).map(id=>`<option value="${id}">${THEMES[id]["--name"] || id}</option>`).join("");
+Object.values(THEMES).forEach(t=>delete t["--name"]);
+pick.onchange = ()=>{ box.value = blockOf(pick.value); apply(box.value); };
+document.getElementById("apply").onclick = ()=>apply(box.value);
+document.getElementById("reset").onclick = ()=>{ pick.value = "mortimer"; pick.onchange(); };
+pick.value = "mortimer"; pick.onchange();
+</script>
+</body>
+</html>
