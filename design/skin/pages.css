@@ -40,3 +40,35 @@
      own pane padding would otherwise put what a run pays underneath them) */
   body[data-skin="term"] .panel.fr-mini{padding:12px 84px}
   body[data-skin="term"] .panel.fr-mini.fr-round{padding-left:16px}
+
+  /* ---- Skills page: the grid with panes beside it and under it (skillsExtras) ---- */
+  body[data-skin="term"] #skillsView{container-type:inline-size}
+  body[data-skin="term"] .skx{display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 4fr); gap:var(--gap); align-items:stretch; margin-top:var(--gap)}
+  body[data-skin="term"] .skx-side{display:grid; gap:var(--gap); align-content:start}
+  /* a wrapping row, so the panes of a short last row stretch to fill it */
+  body[data-skin="term"] .skx-under{display:flex; flex-wrap:wrap; gap:var(--gap); margin-top:var(--gap)}
+  body[data-skin="term"] .skx-under > .panel{flex:1 1 300px; min-width:0}
+  body[data-skin="term"] :is(.skx, .skx-side, .skx-under) > .panel{margin:0}
+  body[data-skin="term"] .skx-g .skg{max-width:none}
+  body[data-skin="term"] .skx-b{display:grid}
+  body[data-skin="term"] .skx-r{display:flex; align-items:center; gap:9px; width:100%; min-height:0; margin:0; padding:6px 2px; background:none; border:0; border-top:1px solid var(--hair); box-shadow:none;
+    color:var(--text); font:inherit; font-weight:400; text-align:left; cursor:pointer; transition:background .14s}
+  body[data-skin="term"] .skx-r:first-child{border-top:0}
+  body[data-skin="term"] .skx-r:hover, body[data-skin="term"] .skx-r:focus-visible{background:color-mix(in srgb, var(--text) 5%, transparent); outline:0}
+  body[data-skin="term"] .skx-r .gic{width:18px; height:18px; margin:0}
+  body[data-skin="term"] .skx-r .n{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600}
+  body[data-skin="term"] .skx-r .n small{overflow:hidden; text-overflow:ellipsis; font:400 12px var(--fm); color:var(--faint)}
+  body[data-skin="term"] .skx-r .v{flex:none; display:flex; flex-direction:column; align-items:flex-end; font:600 13px var(--fm); color:var(--gold); white-space:nowrap; font-variant-numeric:tabular-nums}
+  body[data-skin="term"] .skx-r .v.g{color:var(--k-g)} body[data-skin="term"] .skx-r .v.o{color:var(--k-o)}
+  body[data-skin="term"] .skx-r .v small{font:400 11.5px var(--fm); color:var(--faint)}
+  body[data-skin="term"] .skx-r.bar-r .bar{display:block; width:100%; height:5px; margin-top:4px}
+  body[data-skin="term"] .skx-r.bar-r .bar i{display:block; height:100%}
+  body[data-skin="term"] .skx-nil, body[data-skin="term"] .skx-foot{padding:8px 2px 2px; font-size:12.5px; line-height:1.5; color:var(--faint)}
+  body[data-skin="term"] .skx-foot{border-top:1px solid var(--hair); margin-top:2px}
+  body[data-skin="term"] .skx-kv{display:grid; grid-template-columns:1fr auto; gap:0 12px; align-items:baseline; padding:6px 2px; border-top:1px solid var(--hair)}
+  body[data-skin="term"] .skx-kv:first-child{border-top:0}
+  body[data-skin="term"] .skx-kv span{color:var(--muted)}
+  body[data-skin="term"] .skx-kv b{font:600 17px var(--fm); color:var(--gold); text-align:right}
+  body[data-skin="term"] .skx-kv small{grid-column:1 / -1; text-align:right; font:12px var(--fm); color:var(--faint)}
+  body[data-skin="term"] .skx-kv small:empty{display:none}
+  @container (max-width:760px){ .skx{grid-template-columns:1fr !important} }
