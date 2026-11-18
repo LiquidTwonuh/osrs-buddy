@@ -3938,6 +3938,33 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .ht-mark.on{opacity:1}
   @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .ht-mark{transition:none} }
 
+  /* ============ HOME: THE SKILLS ARE THE MAIN THING ============
+     Josh, 2026-11-17: bigger, more like the original Home, always the biggest element. The pane
+     gets the widest column (HT_PANES in the page's script) and most of any spare height; a cell
+     shows a larger icon, the name with what is left to the next level under it, and a larger
+     level. The sizes follow the pane's own width. */
+  body[data-skin="term"] .ht-sk{grid-template-columns:26px minmax(0,1fr) auto; column-gap:10px; row-gap:7px; min-height:58px; padding:10px 12px}
+  body[data-skin="term"] .ht-sk img{width:26px; height:26px}
+  body[data-skin="term"] .ht-sk .nm{display:flex; flex-direction:column; gap:2px; min-width:0; overflow:hidden; font-size:14px; line-height:1.15; color:var(--text)}
+  body[data-skin="term"] .ht-sk .nm small{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:11.5px var(--fm); color:var(--faint); font-variant-numeric:tabular-nums}
+  body[data-skin="term"] .ht-sk .lv{font-size:25px}
+  body[data-skin="term"] .ht-sk .bar{height:4px}
+  body[data-skin="term"] .ht-sk.near .nm small{color:var(--k-g)}
+  @container (min-width:620px){
+    body[data-skin="term"] .ht-sk{grid-template-columns:30px minmax(0,1fr) auto; column-gap:12px; min-height:66px; padding:12px 15px}
+    body[data-skin="term"] .ht-sk img{width:30px; height:30px}
+    body[data-skin="term"] .ht-sk .nm{font-size:15px}
+    body[data-skin="term"] .ht-sk .nm small{font-size:12px}
+    body[data-skin="term"] .ht-sk .lv{font-size:29px}
+  }
+  /* a narrow pane shows the skills the way the game does: the icon and the number */
+  @container (max-width:470px){
+    body[data-skin="term"] .ht-sk{grid-template-columns:22px 1fr auto; column-gap:8px; min-height:50px; padding:8px 10px}
+    body[data-skin="term"] .ht-sk img{width:22px; height:22px}
+    body[data-skin="term"] .ht-sk .nm{display:none}
+    body[data-skin="term"] .ht-sk .lv{font-size:21px; justify-self:end}
+  }
+
   /* ============ WRAPPED, IN THE TERMINAL LOOK ============
      The button was a pink and orange pill, the one round thing left on the page (Josh, 2026-11-17:
      make it more thematic). Here it is a command waiting to be run: a prompt, the words, a cursor.
@@ -13576,7 +13603,7 @@ function renderHomeTerm(){
     $("#htSkills").innerHTML = SKILL_ORDER.map((k, i)=>{
       const pr = skillProgress(k), n = frSkName(k), top = pr.lvl >= 99; if(top) maxed++;
       const tip = `<span>${n.toLowerCase()} xp</span><b>${fmt(pr.xp)}</b>` + (top ? "" : `<span>next level at</span><b>${fmt(pr.xp + pr.toNext)}</b><span>remaining</span><b>${fmt(pr.toNext)}</b>`);
-      return `<div class="ht-sk${top ? " maxed" : pr.frac >= .88 ? " near" : ""}" tabindex="0" data-skillinfo="${k}"><img src="${skillIconUrl(k)}" alt="" width="20" height="20"><span class="nm">${n}</span><span class="lv">${pr.lvl}</span><div class="bar"><i style="--p:${(pr.frac * 100).toFixed(1)}%;--n:${i}"></i></div><div class="ht-tip">${tip}</div></div>`;
+      return `<div class="ht-sk${top ? " maxed" : pr.frac >= .88 ? " near" : ""}" tabindex="0" data-skillinfo="${k}"><img src="${skillIconUrl(k)}" alt="" width="20" height="20"><span class="nm">${n}<small>${top ? htShort(pr.xp) + " xp" : fmt(pr.toNext) + " to " + (pr.lvl + 1)}</small></span><span class="lv">${pr.lvl}</span><div class="bar"><i style="--p:${(pr.frac * 100).toFixed(1)}%;--n:${i}"></i></div><div class="ht-tip">${tip}</div></div>`;
     }).join("");
     $("#htSkillsSub").textContent = maxed ? `${maxed} of ${SKILL_ORDER.length} at 99` : `${SKILL_ORDER.length} skills, none at 99 yet`;
     $("#htSkills").onclick = e=>{ const t = e.target.closest("[data-skillinfo]"); if(t) openSkillModal(t.dataset.skillinfo); };
@@ -13602,11 +13629,12 @@ function renderHomeTerm(){
 // of another pane to sit above or below it, onto a side to share its row, or onto the gap between
 // columns for a column of its own. Orderly is one fixed grid and is not draggable.
 // w: how wide a pane likes its column. g: how readily it takes spare height.
-const HT_PANES = {id:{w:24, g:0, n:"Character"}, orbs:{w:15, g:0, n:"Vitals"}, menu:{w:24, g:1, n:"Debrief"}, skills:{w:34, g:2, n:"Skills"},
-  play:{w:34, g:1, n:"Activity"}, term:{w:42, g:2, n:"Terminal"}, kc:{w:27, g:0, n:"Kill counts"}};
+// The skills are the main thing on Home: the widest column, and first call on spare height.
+const HT_PANES = {id:{w:26, g:0, n:"Character"}, orbs:{w:12, g:0, n:"Vitals"}, menu:{w:26, g:1, n:"Debrief"}, skills:{w:46, g:4, n:"Skills"},
+  play:{w:46, g:1, n:"Activity"}, term:{w:32, g:2, n:"Terminal"}, kc:{w:20, g:0, n:"Kill counts"}};
 const HT_ARR = {
   w:{max:4, lo:18, hi:60, def:[[["id"], ["menu"]], [["skills"], ["play"]], [["term"], ["kc", "orbs"]]]},
-  m:{max:2, lo:34, hi:42, def:[[["id"], ["orbs"], ["menu"], ["kc"]], [["skills"], ["play"], ["term"]]]}
+  m:{max:2, lo:34, hi:48, def:[[["id"], ["orbs"], ["menu"], ["kc"]], [["skills"], ["play"], ["term"]]]}
 };
 // a saved arrangement made safe: every pane once, no empty rows or columns, no more columns than fit
 function htArrClean(a, key){
@@ -13990,12 +14018,6 @@ wfAdd({id:"onthisday", tier:3, title:"On this day", draw(){
   for(const [label, d] of tries){ const day = days[isoDate(d)]; if(day) return {sub:fmtDay(isoDate(d)), html:`<p class="wf-p">${label}: <b>+${fmt(day.xp)}</b> xp in ${wfEsc(wfSkillNames(day.skills, 3))}.</p>`}; }
   return null;
 }});
-wfAdd({id:"capes", tier:3, title:"Capes", not:["skills"], draw(){
-  if(!(live && live.skills)) return null;
-  const lv = SKILL_ORDER.map(k=>[k, Math.min(99, levelFromXp(liveSkillXp(k)))]), n99 = lv.filter(x=>x[1] >= 99).length, next = lv.filter(x=>x[1] < 99).sort((a, b)=>b[1] - a[1])[0];
-  return {sub:`${n99} of ${lv.length}`, html:`<div class="wf-capes">${lv.map(([k, l])=>`<i class="${l >= 99 ? "got" : ""}" style="--v:${Math.round(l / 99 * 100)}" title="${wfEsc(frSkName(k))} ${l}"></i>`).join("")}</div>`
-    + (next ? `<p class="wf-p">Nearest: <b>${wfEsc(frSkName(next[0]))}</b>, ${next[1]}. A square per skill, fuller the closer it is to 99.</p>` : `<p class="wf-p">Every skill at 99.</p>`)};
-}});
 wfAdd({id:"trained", tier:3, title:"Most trained, 30 days", not:["home"], sizes:true, draw(v, sz){
   const days = wfDays(), tot = {}; for(let i = 0; i < 30; i++){ const d = days[wfIsoBack(i)]; if(d) d.skills.forEach(([k, x])=>tot[k] = (tot[k] || 0) + x); }
   const list = Object.entries(tot).sort((a, b)=>b[1] - a[1]).slice(0, wfN(sz, 6, 12, 24)); if(list.length < 3) return null;
@@ -14007,11 +14029,11 @@ wfAdd({id:"weeks20", tier:3, title:"Twenty weeks", not:["home", "scroll"], sizes
 }});
 
 // what there is to show on a page, in the order it is poured
-function wfList(view){
+function wfList(view, boost){
   const hide = state.wfHide || {}, out = [];
   WF.forEach((d, i)=>{
     if(hide[d.id] || (d.pages && !d.pages.includes(view)) || (d.not && d.not.includes(view))) return;
-    let r = null; try{ r = d.draw(view, (state.wfSize || {})[d.id] || 2); }catch(e){ console.error("extra", d.id, e); }
+    let r = null; try{ r = d.draw(view, (state.wfSize || {})[d.id] || (boost && boost[d.id] ? 3 : 2)); }catch(e){ console.error("extra", d.id, e); }
     if(r && r.html) out.push({d, i, own:d.pages ? 0 : 1, sub:r.sub || "", html:r.html});
   });
   // an order of your own (edit mode) comes before the usual one: tier, then a page's own first
@@ -14035,39 +14057,67 @@ function wfFillInto(el, list){
   const box = el.getBoundingClientRect();
   [...el.children].forEach(sec=>{ const r = sec.getBoundingClientRect(), fits = r.left < box.right - 4 && r.bottom <= box.bottom + 1 && r.height > 0; sec.classList.toggle("off", !fits); sec.inert = !fits; });
 }
+// Home's panes grow to the foot of the window when the page is shorter than it
+function htStretch(on){
+  const root = $("#homeTerm"), cols = root && root.querySelector(":scope > .ht-cols"), view = $("#view-home"); if(!cols || !view) return;
+  cols.style.minHeight = "";
+  if(!on || !root.dataset.arr || view.classList.contains("hidden")) return;
+  const free = innerHeight - 20 - (view.getBoundingClientRect().bottom + scrollY);
+  // the page's foot room goes when Home reaches the foot of the window, so no scrollbar appears for it
+  if(free > 8){ cols.style.minHeight = Math.floor(cols.getBoundingClientRect().height + free) + "px"; const c = $(".content"); if(c) c.classList.add("wf-u"); try{ htMenuFit(); }catch(e){} }
+}
 function wfDraw(){
   const content = $(".content"), inner = $(".content-inner"), side = $("#wideFill"), under = $("#wideUnder");
   if(!content || !inner || !side || !under) return;
   const cur = $(".view:not(.hidden)"), view = cur ? cur.id.replace(/^view-/, "") : "";
   const gap = 10, avail = content.clientWidth;
   const active = document.body.dataset.skin === "term" && state.wideFill !== false && !!view && !WF_SKIP.has(view) && !document.body.classList.contains("dock");
-  const n = active ? Math.max(0, Math.min(4, Math.floor((avail - WF_PAGE_MIN + gap) / (WF_COL + gap)))) : 0;
-  const list = active ? wfList(view) : [];
+  const nMax = active ? Math.max(0, Math.min(4, Math.floor((avail - WF_PAGE_MIN + gap) / (WF_COL + gap)))) : 0;
+  let list = active ? wfList(view) : [];
+  htStretch(false);
   // no room for a column beside the page: the page itself takes the whole width
-  content.classList.toggle("wf-stretch", active && !n);
-  const cols = n && list.length;
-  content.classList.toggle("wf-on", !!cols); side.classList.toggle("hidden", !cols);
-  if(!cols){ side.dataset.ids = ""; side.innerHTML = ""; }
-  under.classList.add("hidden"); content.classList.remove("wf-u");
-  if(!list.length){ under.dataset.ids = ""; under.innerHTML = ""; try{ editTray(); }catch(e){} return; }
-  // the page may grow a little too: up to 1500, or what the columns leave it
-  let mw = inner.clientWidth;
-  if(cols){
-    mw = Math.min(document.body.hasAttribute("data-wide") ? 1640 : 1500, avail - n * (WF_COL + gap));
-    content.style.setProperty("--wf-mw", mw + "px"); side.style.setProperty("--wf-n", n);
+  content.classList.toggle("wf-stretch", active && !(nMax && list.length));
+  const clear = el=>{ el.dataset.ids = ""; el.innerHTML = ""; };
+  const lay = k=>{
+    content.classList.toggle("wf-on", !!k); side.classList.toggle("hidden", !k);
+    under.classList.add("hidden"); content.classList.remove("wf-u");
+    if(!k){ clear(side); return inner.clientWidth; }
+    // with every column in use the page stops at 1500; with fewer, it takes what they leave
+    const mw = k === nMax ? Math.min(document.body.hasAttribute("data-wide") ? 1640 : 1500, avail - k * (WF_COL + gap)) : avail - k * (WF_COL + gap);
+    content.style.setProperty("--wf-mw", mw + "px"); side.style.setProperty("--wf-n", k);
+    return mw;
+  };
+  // pours the list for k columns; says how many columns ended up holding something and whether everything fitted
+  const pour = (k, mw)=>{
+    const pool = k ? list.filter(x=>x.d.wide) : list;
+    const free = innerHeight - gap * 2 - (cur.getBoundingClientRect().bottom + scrollY), useUnder = pool.length && free >= 170;
+    if(useUnder){
+      under.style.height = Math.floor(free) + "px";
+      under.style.setProperty("--wf-n", Math.max(1, Math.min(pool.length, Math.floor(mw / (k ? 520 : 380)))));
+      under.classList.remove("hidden"); content.classList.add("wf-u");
+      wfFillInto(under, pool);
+    } else { under.classList.add("hidden"); content.classList.remove("wf-u"); clear(under); }
+    if(!k) return {used:0, all:true, useUnder};
+    wfFillInto(side, useUnder ? list.filter(x=>!x.d.wide) : list);
+    const kids = [...side.children], shown = kids.filter(p=>!p.classList.contains("off"));
+    return {used:new Set(shown.map(p=>Math.round(p.getBoundingClientRect().left))).size, all:shown.length === kids.length, useUnder};
+  };
+  if(!list.length){ lay(0); clear(under); htStretch(active && view === "home"); try{ editTray(); }catch(e){} return; }
+  // As many columns as fit, but never an empty one: if the extras do not reach a column, it is
+  // not drawn and the page gets its width.
+  let k = nMax, mw = lay(k), res = pour(k, mw);
+  for(let guard = 0; k > 0 && res.used < k && guard < 4; guard++){ k = res.used; mw = lay(k); res = pour(k, mw); }
+  // Room left under the last pane: panes that have sizes show more, one at a time, while everything still fits
+  if(k > 0 && res.all && !document.body.classList.contains("editing")){
+    const boost = {}, sized = state.wfSize || {};
+    for(const x of list.slice()){
+      if(!x.d.sizes || sized[x.d.id] || x.d.wide) continue;
+      boost[x.d.id] = 1; list = wfList(view, boost);
+      const r2 = pour(k, mw);
+      if(!r2.all || r2.used > k){ delete boost[x.d.id]; list = wfList(view, boost); pour(k, mw); }
+    }
   }
-  // Under a page shorter than the window. With columns beside the page these are the wide ones;
-  // with none, everything goes here, in as many columns as the page is wide.
-  const pool = cols ? list.filter(x=>x.d.wide) : list;
-  const free = innerHeight - gap * 2 - (cur.getBoundingClientRect().bottom + scrollY);
-  const useUnder = pool.length && free >= 170;
-  if(useUnder){
-    under.style.height = Math.floor(free) + "px";
-    under.style.setProperty("--wf-n", Math.max(1, Math.min(pool.length, Math.floor(mw / (cols ? 520 : 380)))));
-    under.classList.remove("hidden"); content.classList.add("wf-u");
-    wfFillInto(under, pool);
-  } else { under.dataset.ids = ""; under.innerHTML = ""; }
-  if(cols) wfFillInto(side, useUnder ? list.filter(x=>!x.d.wide) : list);
+  htStretch(view === "home" && !res.useUnder);
   try{ editTray(); }catch(e){}
 }
 function wfLater(){ if(wfLater.q) return; wfLater.q = setTimeout(()=>{ wfLater.q = 0; try{ wfDraw(); }catch(e){ console.error(e); } }, 60); }
