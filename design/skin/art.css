@@ -1,79 +1,27 @@
 
   /* ============ THEME ARTWORK, TERMINAL LOOK ============
-     A theme can carry a picture: on the Character pane, a page's heading, and in Illustrated the
-     sidebar and the launch screen. The pictures are ChatGPT's v1 paintings, made by its image
-     tool for this app (design/theme-art); Josh chose v1 over the later, quieter set on
-     2026-11-17. How much shows is body[data-theme-art] (focused, illustrated, or absent for off). The rules below are ChatGPT's, as delivered; inject.py writes the pictures in. */
+     A theme can carry a picture. It shows in one place, the Character pane on Home. The pictures
+     are ChatGPT's, made by its image tool for this app (design/theme-art): the set Josh approved
+     on 2026-11-18. How much shows is body[data-theme-art]: focused, illustrated, or absent for off.
+     inject.py writes the pictures in at the marker below.
+
+     How the picture meets the pane (ours, not ChatGPT's):
+     - Wherever the picture is darker than the pane it gives way to the pane's own colour
+       (background-blend-mode:lighten over --tm-ground), so a picture painted on black does not
+       sit in a dark box.
+     - A mask the shape of the picture eases every edge out to nothing (--tm-feather, built by
+       p31_approved.py), so no edge of the picture is ever seen.
+     --tm-ground is the pane's surface as it ends up on screen: --panel at half strength over --bg. */
 /*THEME_ART*/
-  /* Optional Terminal artwork. Each compositor layer lives on the component that displays it. */
-  body[data-skin="term"][data-theme-art="focused"]{
-    --tm-plate-alpha:.82;
-    --tm-fade:linear-gradient(to right,transparent 10%,#000 53%);
-  }
-  body[data-skin="term"][data-theme-art="illustrated"]{
-    --tm-plate-alpha:1;
-    --tm-fade:linear-gradient(to right,transparent 2%,#000 46%);
-  }
-  /* Keep text above the print. The transparent end and the underside of the etching protect the copy. */
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) :is(.hs-id,.scroll-hero,.cf-hero){position:relative;isolation:isolate}
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) :is(.hs-id,.scroll-hero,.cf-hero)::before{
-    content:""; position:absolute; z-index:-1; inset:0 0 0 auto; width:76%; pointer-events:none;
-    background-image:linear-gradient(0deg,var(--bg) 1%,transparent 38%),var(--tm-scene);
-    background-size:100% 100%, auto 100%; background-repeat:no-repeat; background-position:right center;
-    -webkit-mask-image:var(--tm-fade); mask-image:var(--tm-fade); opacity:var(--tm-plate-alpha);
-  }
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) :is(.scroll-hero,.cf-hero)::before{width:49%;background-size:100% 100%,cover;background-position:center,75% 48%}
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) .hs-id :is(.ht-lab,h2,.ht-sub,.sub){background-color:color-mix(in srgb,var(--bg) 80%,transparent)}
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) .hs-id :is(.ht-sub,.sub){max-width:60%; width:fit-content;background:transparent;text-shadow:0 1px 3px var(--bg)}
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) .hs-id :is(.name,.ht-name){text-shadow:0 1px 3px var(--bg),0 0 9px var(--bg)}
-  /* Illustrated uses the free space in the navigation for a larger print. */
-  body[data-skin="term"][data-theme-art="illustrated"]:not(.sb-rail) :is(.sidebar,.side) > .nav::after{
-    content:""; display:block; flex:1 1 0; min-height:0; max-height:clamp(0px,calc(100vh - 510px),190px);
-    margin-block-start:auto; pointer-events:none; opacity:.79; background:var(--tm-scene) 77% center / cover no-repeat;
-    -webkit-mask-image:linear-gradient(transparent,#000 24%,#000 85%,transparent);
-    mask-image:linear-gradient(transparent,#000 24%,#000 85%,transparent);
-  }
-  @media (max-width:700px){
-    body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) :is(.scroll-hero,.cf-hero)::before{width:40%;opacity:.57}
-    body[data-skin="term"][data-theme-art="illustrated"]:not(.sb-rail) :is(.sidebar,.side) > .nav::after{display:none}
-  }
-
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) .hs-id h2{background-color:color-mix(in srgb,var(--bg) 89%,transparent)}
-
-  /* On the boot screen the print sits outside the command log. */
-  @media (min-width:900px){
-    body[data-skin="term"][data-theme-art="illustrated"] #mtBoot .mt-boot-in::after{
-      content:"";position:absolute;pointer-events:none;left:calc(100% + 24px);top:0;
-      width:min(27vw,420px);height:100%;opacity:.72;background:var(--tm-scene) 80% center/cover no-repeat;
-      mask-image:radial-gradient(ellipse 62% 58% at 57% 51%,black 32%,transparent 94%);
-    }
-  }
-
-  @media (min-width:701px) and (min-height:780px){
-    body[data-skin="term"][data-theme-art="illustrated"]:not(.sb-rail) .sidebar > .nav{flex:1 1 auto;min-height:0;overflow:auto}
-  }
-
-
-  /* The new plates have a 2:1 print area. Clip the outer print edge on the illustration itself. */
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]):not([data-theme="mortimer"],[data-theme="parchment"]){
-    --print-window:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100' viewBox='0 0 200 100'%3E%3Crect x='2' y='1' width='196' height='98' fill='white'/%3E%3C/svg%3E");
-  }
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]):not([data-theme="mortimer"],[data-theme="parchment"]) .hs-id::before{
-    mask:var(--tm-fade) center / 100% 100% no-repeat,var(--print-window) right center / auto 100% no-repeat;
-    mask-composite:intersect;
-  }
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]):not([data-theme="mortimer"],[data-theme="parchment"]) :is(.scroll-hero,.cf-hero)::before{
-    mask:var(--tm-fade) center / 100% 100% no-repeat,var(--print-window) 75% 48% / cover no-repeat;
-    mask-composite:intersect;
-  }
-  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]):not([data-theme="mortimer"],[data-theme="parchment"])[data-theme-art="illustrated"]:not(.sb-rail) :is(.sidebar,.side) > .nav::after{
-    mask:linear-gradient(transparent,#000 24%,#000 85%,transparent),var(--print-window) 77% center / cover no-repeat;
-    mask-composite:intersect;
-  }
-  @media(min-width:900px){
-    body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]):not([data-theme="mortimer"],[data-theme="parchment"])[data-theme-art="illustrated"] #mtBoot .mt-boot-in::after{
-      mask:radial-gradient(ellipse 62% 58% at 57% 51%,black 32%,transparent 94%),var(--print-window) 80% center / cover no-repeat;
-      mask-composite:intersect;
-    }
-  }
-
+  body[data-skin="term"][data-theme-art="focused"]{--tm-plate-alpha:.84; --tm-feather:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22100%22%20viewBox%3D%220%200%20200%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22x%22%3E%3Cstop%20offset%3D%220.1400%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0000%22%2F%3E%3Cstop%20offset%3D%220.1920%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0086%22%2F%3E%3Cstop%20offset%3D%220.2440%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0579%22%2F%3E%3Cstop%20offset%3D%220.2960%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.1631%22%2F%3E%3Cstop%20offset%3D%220.3480%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.3174%22%2F%3E%3Cstop%20offset%3D%220.4000%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.5000%22%2F%3E%3Cstop%20offset%3D%220.4520%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.6826%22%2F%3E%3Cstop%20offset%3D%220.5040%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.8369%22%2F%3E%3Cstop%20offset%3D%220.5560%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9421%22%2F%3E%3Cstop%20offset%3D%220.6080%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9914%22%2F%3E%3Cstop%20offset%3D%220.6600%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%221.0000%22%2F%3E%3Cstop%20offset%3D%220.8400%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%221.0000%22%2F%3E%3Cstop%20offset%3D%220.8560%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9914%22%2F%3E%3Cstop%20offset%3D%220.8720%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9421%22%2F%3E%3Cstop%20offset%3D%220.8880%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.8369%22%2F%3E%3Cstop%20offset%3D%220.9040%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.6826%22%2F%3E%3Cstop%20offset%3D%220.9200%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.5000%22%2F%3E%3Cstop%20offset%3D%220.9360%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.3174%22%2F%3E%3Cstop%20offset%3D%220.9520%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.1631%22%2F%3E%3Cstop%20offset%3D%220.9680%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0579%22%2F%3E%3Cstop%20offset%3D%220.9840%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0086%22%2F%3E%3Cstop%20offset%3D%221.0000%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0000%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22y%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220.0000%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0000%22%2F%3E%3Cstop%20offset%3D%220.0260%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0086%22%2F%3E%3Cstop%20offset%3D%220.0520%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0579%22%2F%3E%3Cstop%20offset%3D%220.0780%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.1631%22%2F%3E%3Cstop%20offset%3D%220.1040%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.3174%22%2F%3E%3Cstop%20offset%3D%220.1300%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.5000%22%2F%3E%3Cstop%20offset%3D%220.1560%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.6826%22%2F%3E%3Cstop%20offset%3D%220.1820%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.8369%22%2F%3E%3Cstop%20offset%3D%220.2080%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9421%22%2F%3E%3Cstop%20offset%3D%220.2340%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9914%22%2F%3E%3Cstop%20offset%3D%220.2600%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%221.0000%22%2F%3E%3Cstop%20offset%3D%220.6400%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%221.0000%22%2F%3E%3Cstop%20offset%3D%220.6760%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9914%22%2F%3E%3Cstop%20offset%3D%220.7120%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9421%22%2F%3E%3Cstop%20offset%3D%220.7480%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.8369%22%2F%3E%3Cstop%20offset%3D%220.7840%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.6826%22%2F%3E%3Cstop%20offset%3D%220.8200%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.5000%22%2F%3E%3Cstop%20offset%3D%220.8560%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.3174%22%2F%3E%3Cstop%20offset%3D%220.8920%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.1631%22%2F%3E%3Cstop%20offset%3D%220.9280%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0579%22%2F%3E%3Cstop%20offset%3D%220.9640%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0086%22%2F%3E%3Cstop%20offset%3D%221.0000%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0000%22%2F%3E%3C%2FlinearGradient%3E%3Cmask%20id%3D%22m%22%3E%3Crect%20width%3D%22200%22%20height%3D%22100%22%20fill%3D%22url%28%23y%29%22%2F%3E%3C%2Fmask%3E%3C%2Fdefs%3E%3Crect%20width%3D%22200%22%20height%3D%22100%22%20fill%3D%22url%28%23x%29%22%20mask%3D%22url%28%23m%29%22%2F%3E%3C%2Fsvg%3E")}
+  body[data-skin="term"][data-theme-art="illustrated"]{--tm-plate-alpha:1; --tm-feather:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22100%22%20viewBox%3D%220%200%20200%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22x%22%3E%3Cstop%20offset%3D%220.0300%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0000%22%2F%3E%3Cstop%20offset%3D%220.0790%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0086%22%2F%3E%3Cstop%20offset%3D%220.1280%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0579%22%2F%3E%3Cstop%20offset%3D%220.1770%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.1631%22%2F%3E%3Cstop%20offset%3D%220.2260%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.3174%22%2F%3E%3Cstop%20offset%3D%220.2750%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.5000%22%2F%3E%3Cstop%20offset%3D%220.3240%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.6826%22%2F%3E%3Cstop%20offset%3D%220.3730%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.8369%22%2F%3E%3Cstop%20offset%3D%220.4220%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9421%22%2F%3E%3Cstop%20offset%3D%220.4710%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9914%22%2F%3E%3Cstop%20offset%3D%220.5200%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%221.0000%22%2F%3E%3Cstop%20offset%3D%220.9000%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%221.0000%22%2F%3E%3Cstop%20offset%3D%220.9100%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9914%22%2F%3E%3Cstop%20offset%3D%220.9200%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9421%22%2F%3E%3Cstop%20offset%3D%220.9300%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.8369%22%2F%3E%3Cstop%20offset%3D%220.9400%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.6826%22%2F%3E%3Cstop%20offset%3D%220.9500%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.5000%22%2F%3E%3Cstop%20offset%3D%220.9600%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.3174%22%2F%3E%3Cstop%20offset%3D%220.9700%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.1631%22%2F%3E%3Cstop%20offset%3D%220.9800%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0579%22%2F%3E%3Cstop%20offset%3D%220.9900%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0086%22%2F%3E%3Cstop%20offset%3D%221.0000%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0000%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22y%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220.0000%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0000%22%2F%3E%3Cstop%20offset%3D%220.0180%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0086%22%2F%3E%3Cstop%20offset%3D%220.0360%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0579%22%2F%3E%3Cstop%20offset%3D%220.0540%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.1631%22%2F%3E%3Cstop%20offset%3D%220.0720%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.3174%22%2F%3E%3Cstop%20offset%3D%220.0900%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.5000%22%2F%3E%3Cstop%20offset%3D%220.1080%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.6826%22%2F%3E%3Cstop%20offset%3D%220.1260%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.8369%22%2F%3E%3Cstop%20offset%3D%220.1440%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9421%22%2F%3E%3Cstop%20offset%3D%220.1620%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9914%22%2F%3E%3Cstop%20offset%3D%220.1800%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%221.0000%22%2F%3E%3Cstop%20offset%3D%220.7400%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%221.0000%22%2F%3E%3Cstop%20offset%3D%220.7660%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9914%22%2F%3E%3Cstop%20offset%3D%220.7920%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.9421%22%2F%3E%3Cstop%20offset%3D%220.8180%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.8369%22%2F%3E%3Cstop%20offset%3D%220.8440%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.6826%22%2F%3E%3Cstop%20offset%3D%220.8700%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.5000%22%2F%3E%3Cstop%20offset%3D%220.8960%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.3174%22%2F%3E%3Cstop%20offset%3D%220.9220%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.1631%22%2F%3E%3Cstop%20offset%3D%220.9480%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0579%22%2F%3E%3Cstop%20offset%3D%220.9740%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0086%22%2F%3E%3Cstop%20offset%3D%221.0000%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220.0000%22%2F%3E%3C%2FlinearGradient%3E%3Cmask%20id%3D%22m%22%3E%3Crect%20width%3D%22200%22%20height%3D%22100%22%20fill%3D%22url%28%23y%29%22%2F%3E%3C%2Fmask%3E%3C%2Fdefs%3E%3Crect%20width%3D%22200%22%20height%3D%22100%22%20fill%3D%22url%28%23x%29%22%20mask%3D%22url%28%23m%29%22%2F%3E%3C%2Fsvg%3E")}
+  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) .hs-id{position:relative; isolation:isolate}
+  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) .hs-id::before{content:""; position:absolute; z-index:-1; inset:0; pointer-events:none;
+    --tm-ground:color-mix(in srgb, var(--panel) 50%, var(--bg));
+    background:var(--tm-scene) right top / contain no-repeat, linear-gradient(var(--tm-ground), var(--tm-ground));
+    background-blend-mode:lighten, normal;
+    -webkit-mask:var(--tm-feather) right top / contain no-repeat; mask:var(--tm-feather) right top / contain no-repeat;
+    opacity:var(--tm-plate-alpha)}
+  /* the words stay readable where the picture runs under them */
+  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) .hs-id :is(.name, .ht-name, .ht-sub, .sub){text-shadow:0 1px 3px var(--bg), 0 0 8px var(--bg)}
+  body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) .hs-id :is(.ht-sub, .sub){max-width:60%; width:fit-content}
