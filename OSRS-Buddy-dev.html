@@ -2803,6 +2803,19 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .pw-item .pw-name small{margin-left:8px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold-dim)}
   .pw-item .pbtn{background:transparent; border:1px solid var(--border); color:var(--muted); cursor:pointer; padding:2px 8px}
   .pw-item .pbtn:hover{color:var(--gold); border-color:var(--gold-dim)}
+  /* ideas for priorities */
+  .pi-how{margin:6px auto 8px; max-width:640px; text-align:center; font-size:12.5px; line-height:1.5; color:var(--muted)}
+  .pi-how b{color:var(--text); font-weight:600}
+  .pi-grp{margin:12px 0 5px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-dim); text-align:left}
+  .pi-row{display:grid; grid-template-columns:auto minmax(150px, 220px) 1fr; align-items:baseline; gap:4px 12px; padding:6px 0; border-top:1px solid var(--border); text-align:left; font-size:13px}
+  .pi-row .pbtn{min-width:62px; background:transparent; border:1px solid var(--border); color:var(--gold); cursor:pointer; padding:2px 8px; box-shadow:none; font:inherit; font-size:12px; transition:color .16s, border-color .16s}
+  .pi-row .pbtn:hover:not(:disabled){border-color:var(--gold)}
+  .pi-row .pbtn:disabled{color:var(--muted); cursor:default; opacity:.7}
+  .pi-name{font-weight:600; color:var(--text)}
+  .pi-name small{margin-left:8px; font-weight:400; font-size:11.5px; color:var(--gold-dim); white-space:nowrap}
+  .pi-why{color:var(--muted); line-height:1.45}
+  .pi-row.has .pi-name, .pi-row.has .pi-why{opacity:.55}
+  @media (max-width:700px){ .pi-row{grid-template-columns:auto 1fr} .pi-why{grid-column:1 / -1} }
   /* late nights: the ask at the top of Scroll, the picker in the day popup */
   .late-ask{display:grid; gap:6px; margin:10px 0 2px}
   .late-row{display:flex; align-items:center; justify-content:space-between; gap:8px 14px; flex-wrap:wrap; padding:8px 12px; border:1px solid var(--gold-dim); background:var(--panel); font-size:13px; line-height:1.45}
@@ -5352,22 +5365,28 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       </p>
       <div id="prioList"></div>
       <div class="sub-row">
+      <details class="sub-details" id="prioIdeasBox">
+      <summary>Ideas: what people focus on</summary>
+      <p class="pi-how">Drawn from community guides to account progress and daily routines. Press one to add it with a starting weekly target, then change the target or park it on its own row.</p>
+      <div id="prioIdeas"></div>
+      </details>
       <details class="sub-details">
       <summary>➕ Add a priority</summary>
+      <p class="pi-how" style="text-align:left">Track via: <b>Skill</b> and <b>Boss</b> count themselves from your experience and kills. <b>Activity</b> is a hiscores score, such as clue scrolls. <b>Journal tag</b> counts any day your journal carries that tag, such as Questing. <b>Manual</b> counts only when you press its tick.</p>
       <div class="grid2">
         <div>
           <label class="small muted">Priority</label><br>
           <input type="text" id="pLabel" style="width:100%" placeholder="e.g. Train Sailing">
         </div>
         <div>
-          <label class="small muted">Track via <span class="muted">(optional)</span></label><br>
+          <label class="small muted" title="Skill and Boss count themselves from your experience and kills. Activity is a hiscores score, such as clue scrolls or a minigame. Journal tag counts any day your journal carries that tag, for example Questing. Manual counts only when you press its tick.">Track via <span class="muted">(optional)</span></label><br>
           <div class="row" style="gap:6px; flex-wrap:nowrap">
             <select id="pKind" style="width:44%">
               <option value="none">Manual</option>
               <option value="skill">Skill</option>
               <option value="boss">Boss</option>
               <option value="activity">Activity</option>
-              <option value="tag">Scroll tag</option>
+              <option value="tag">Journal tag</option>
             </select>
             <select id="pMetric" style="width:56%" disabled></select>
           </div>
@@ -7590,12 +7609,62 @@ function prioWeekList(){
   return (state.priorities || []).filter(p=>!prioSnoozed(p) && prioTarget(p)).map(p=>({p, w:prioWeek(p, ctx)}))
     .sort((a, b)=>(a.w.done - b.w.done) || ((prioBucket(a.p) === "focus" ? 0 : 1) - (prioBucket(b.p) === "focus" ? 0 : 1)) || (b.w.need / b.w.want - a.w.need / a.w.want));
 }
+// Ideas for priorities, as a place to start. From community guides read on 2026-11-18: Theoatrix's
+// mid-game goals (Slayer for combat, quests for direction, the prayer book, 83 Construction, hard
+// diaries, medium combat achievements, tree runs for Farming) and the daily-routine checklists
+// that guide sites share (herb, tree and bird house runs). Each is a recurring thing, since a
+// priority is something not to let slide; one-off unlocks belong on Goals.
+// l label, k kind, m metric, b bucket, n days a week, why the line beside it.
+const PRIO_IDEAS = [
+  ["The skills people put off", [
+    {l:"Train Agility", k:"skill", m:"agility", b:"warm", n:2, why:"Run energy on every trip you make. It is slow, so a little each week is how it gets done."},
+    {l:"Train Runecraft", k:"skill", m:"runecrafting", b:"warm", n:2, why:"The one most accounts leave for last. Quests and diaries ask for it sooner than expected."},
+    {l:"Train Herblore", k:"skill", m:"herblore", b:"warm", n:1, why:"Costly, and the big quests and bossing potions both want it."},
+    {l:"Train Construction", k:"skill", m:"construction", b:"warm", n:1, why:"83 is the usual target: a house with every teleport and a pool that restores you."},
+    {l:"Train Prayer", k:"skill", m:"prayer", b:"warm", n:1, why:"70 for Piety, 77 for Rigour and Augury."},
+  ]],
+  ["Steady progress", [
+    {l:"Train Slayer", k:"skill", m:"slayer", b:"focus", n:4, why:"The common advice is to train combat through Slayer. It opens the bosses that pay."},
+    {l:"Questing", k:"tag", m:"Questing", b:"focus", n:2, why:"Quests give an account its direction: unlocks, travel and large experience rewards."},
+    {l:"Train Farming", k:"skill", m:"farming", b:"warm", n:3, why:"Tree and herb runs take a few minutes and the levels arrive while you do other things."},
+    {l:"Train Hunter", k:"skill", m:"hunter", b:"warm", n:3, why:"Bird house runs: two minutes, ready again in fifty."},
+  ]],
+  ["The long lists", [
+    {l:"Achievement diaries", k:"none", b:"warm", n:1, why:"Aim for the hard tier. Guides say elite can wait."},
+    {l:"Combat achievements", k:"none", b:"warm", n:1, why:"The easy and medium tiers are within reach of a mid-level account."},
+    {l:"Clue scrolls", k:"tag", m:"Clues", b:"warm", n:1, why:"Do them as they drop, or they pile up in the bank."},
+    {l:"Learn a boss", k:"none", b:"warm", n:1, why:"Pick one and learn it properly, rather than trying several once each."},
+  ]],
+];
+function prioIdeaHas(d){ return (state.priorities || []).some(p=>(d.m && p.metric === d.m && p.kind === d.k) || String(p.label || "").toLowerCase() === d.l.toLowerCase()); }
+function renderPrioIdeas(){
+  const el = $("#prioIdeas"); if(!el) return;
+  el.innerHTML = PRIO_IDEAS.map(([name, list], gi)=>`<div class="pi-grp">${escapeHtml(name)}</div>` + list.map((d, ii)=>{
+    const has = prioIdeaHas(d);
+    return `<div class="pi-row${has ? " has" : ""}"><button type="button" class="pbtn" data-pidea="${gi}:${ii}" ${has ? "disabled" : ""} title="${has ? "Already on your list" : "Add it to your priorities"}">${has ? "added" : "+ add"}</button>
+      <span class="pi-name">${escapeHtml(d.l)}<small>${d.n} day${d.n === 1 ? "" : "s"} a week</small></span><span class="pi-why">${escapeHtml(d.why)}</span></div>`;
+  }).join("")).join("");
+  el.onclick = e=>{ const b = e.target.closest("[data-pidea]"); if(!b || b.disabled) return; const [gi, ii] = b.dataset.pidea.split(":").map(Number); prioIdeaAdd(gi, ii); };
+  const box = $("#prioIdeasBox"); if(box && !box.dataset.seen){ box.dataset.seen = "1"; if(!(state.priorities || []).length) box.open = true; }
+}
+function prioIdeaAdd(gi, ii){
+  const d = (PRIO_IDEAS[gi] || [0, []])[1][ii]; if(!d || prioIdeaHas(d)) return;
+  // Main focus holds three; a fourth goes to Keep warm
+  const full = (state.priorities || []).filter(p=>prioBucket(p) === "focus").length >= 3, bucket = d.b === "focus" && full ? "warm" : d.b;
+  const p = {id:"p" + Date.now() + Math.random().toString(36).slice(2, 5), label:d.l, kind:d.k, metric:d.m || null, weight:5,
+    createdAt:todayISO(), lastTouched:null, lastValue:null, snoozeUntil:null, bucket, target:{n:d.n, unit:"days"}};
+  if(p.metric && p.kind !== "tag" && live){ const e = metricEntry(p.kind, p.metric); if(e) p.lastValue = p.kind === "skill" ? e.experience : p.kind === "boss" ? e.kills : e.score; }
+  state.priorities.push(p); save();
+  renderPriorities(); renderGlance(); renderPrioPicker(); try{ htLater(); }catch(e){}
+  toast(`Added: ${d.l}, ${d.n} day${d.n === 1 ? "" : "s"} a week${bucket !== d.b ? ". Main focus is full, so it went to Keep warm" : ""}.`);
+}
 function prioVerb(p){ return p.kind === "skill" && p.metric ? "Train" : p.kind === "boss" && p.metric ? "Kill" : "Do"; }
 // "Train Mining" reads as Train, then Mining, rather than Train Train Mining
 function prioName(p){ const v = prioVerb(p), l = String(p.label || ""); return l.toLowerCase().startsWith(v.toLowerCase() + " ") ? l.slice(v.length + 1) : l; }
 function renderPriorities(){
   const el = $("#prioList"); if(!el) return;
   prioMigrate();
+  try{ renderPrioIdeas(); }catch(e){}
   const on = prioTargetsOn(), ctx = prioWeekCtx(), ps = state.priorities;
   $("#prioSub").textContent = ps.length ? `${ps.length} tracked` : "";
   const left = 7 - ctx.isos.length;
@@ -21201,7 +21270,7 @@ const PATCH_NOTES = [
     "OSRS Buddy is now installable as a Windows application, with a Start Menu entry and desktop shortcut.",
     "Revised the activity colours. Minigames merged into Skilling; Questing is blue, Social is purple, Clues are pink. Existing entries were migrated automatically.",
     "Added milestone days. Marking a log entry as a milestone highlights that day on the heatmap.",
-    "Priorities can be tracked by Scroll tag, so logging an entry with that tag marks the priority as worked on.",
+    "Priorities can be tracked by journal tag, so logging an entry with that tag marks the priority as worked on.",
     "To-do items on the Home overview expand to show their steps.",
     "Rebuilt the Roadmap around mid-game progression: gear ladder, unlock quests, bossing ladder, and skill milestones, with an \"In reach\" list based on your current levels.",
     "Changed the fonts to EB Garamond and Segoe UI, and increased the weight of stat numbers.",
