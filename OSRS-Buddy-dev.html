@@ -558,6 +558,15 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .qp-stat{background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:7px 13px; text-align:center; min-width:96px}
   .qp-stat .k{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px}
   .qp-stat .v{font-size:20px; color:var(--gold); font-family:var(--font-display); font-weight:700}
+  /* the game's quest record at the top of Quest Hub */
+  .qp-sync{margin:0 0 12px; padding:10px 12px 9px; border:1px solid var(--border); border-radius:10px; background:var(--panel2)}
+  .qp-sync .qp-sum{margin:0}
+  .qp-sync .qp-stat{background:var(--panel)}
+  .qp-sync .qp-stat.warn .v{color:var(--red)}
+  .qp-sync-l{display:flex; align-items:center; gap:8px 12px; flex-wrap:wrap; margin-top:8px; font-size:13px; color:var(--muted)}
+  .qp-sync-l > span:first-child{flex:1 1 260px}
+  .qp-sync-l .warn-t{color:var(--red)}
+  .qp-sync-b{display:flex; gap:6px; flex-wrap:wrap}
   .qp-gap{display:flex; align-items:center; gap:8px; padding:5px 0; border-top:1px solid var(--border); font-size:13px}
   .qp-gap .g-lvl{font-family:var(--font-display); font-weight:700; color:var(--gold); min-width:74px}
   .qp-tag{font-size:10.5px; padding:1px 7px; border-radius:9px; background:var(--btnlo); border:1px solid var(--border); color:var(--muted)}
@@ -3073,10 +3082,12 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .ht-log .wait span::after{content:" ..."; animation:termBlink 1.1s steps(1) infinite}
   .ht-say{display:flex; align-items:baseline; gap:8px; padding:9px 12px 10px; border-top:1px solid var(--line); cursor:text; margin:0}
   .ht-say .who{color:var(--text); white-space:nowrap}
-  .ht-say .ln{min-width:0}
-  .ht-say .in{color:var(--me); outline:0; white-space:pre-wrap; word-break:break-word; caret-color:transparent}
+  /* one line, however long: the line scrolls under the cursor instead of wrapping, so the pane
+     keeps its height while you type (a wrap moved every pane beside it; Josh, 2026-11-18) */
+  .ht-say .ln{flex:1 1 0; min-width:0; display:flex; align-items:baseline; overflow:hidden; white-space:nowrap}
+  .ht-say .in{flex:0 0 auto; color:var(--me); outline:0; white-space:pre; caret-color:transparent}
   .ht-say .star{color:var(--me); animation:termBlink 1.1s steps(1) infinite}
-  .ht-say .hint{margin-left:auto; padding-left:12px; color:var(--faint); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:0 1 auto}
+  .ht-say .hint{margin-left:auto; padding-left:12px; color:var(--faint); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:0 1 auto; max-width:55%}
   .ht-say .hint .c{color:var(--k-c)} .ht-say .hint .y{color:var(--k-y)} .ht-say .hint .o{color:var(--k-o)} .ht-say .hint .g{color:var(--k-g)}
   .ht-say .hint u{text-decoration:none; color:var(--muted)}
 
@@ -13343,7 +13354,7 @@ function questPlan(target, db){
   const xp={};
   SKILL_ORDER.forEach(s=>{ xp[s] = liveSkillXp(s); });
   let qp = remaining.reduce((a,n)=>a,0);
-  let qpNow = all.filter(n=>questDone(n)).reduce((a,n)=>a+(db.quests[n].qpGain||0), 0);
+  let qpNow = all.filter(n=>questDone(n)).reduce((a,n)=>a+questQpGain(n, db), 0);
   const gaps={}, blockers=[];
   remaining.forEach(n=>{
     const q=db.quests[n];
@@ -13359,7 +13370,7 @@ function questPlan(target, db){
     });
     if(q.qp && qpNow < q.qp) blockers.push({quest:n, qp:q.qp, have:qpNow});
     Object.entries(q.rewards||{}).forEach(([s,amt])=>{ if(xp[s]!=null) xp[s]+=amt; });
-    qpNow += q.qpGain||0;
+    qpNow += questQpGain(n, db);
   });
   // which skills the chain itself trains (the factory-planner payoff)
   const chainXp={};
@@ -13435,7 +13446,7 @@ function renderQuestPlanner(){
   }
   const total = db.order.length, done = db.order.filter(questDone).length;
   $("#qpSub").textContent = `${done}/${total} quests complete · data from ${fmtDay(isoDate(new Date(db.ts)))}`;
-  setup.innerHTML = "";
+  setup.innerHTML = qpSyncHtml(db); qpSyncWire();
   const target = state.qpTarget;
   // the popular goals are for picking a first goal; once one is charted they fold away
   const sugOpen = !target || !!state.qpSugOpen;
@@ -13521,7 +13532,7 @@ function qpRoute(scope, db){
   const done = new Set(pool.filter(questDone));
   const xp = {}; SKILL_ORDER.forEach(s=>{ xp[s] = liveSkillXp(s) || 0; });
   // quest points come from every quest you've done, not only the ones in this pool
-  let qpNow = db.order.filter(questDone).reduce((a,n)=>a+(db.quests[n].qpGain||0), 0);
+  let qpNow = db.order.filter(questDone).reduce((a,n)=>a+questQpGain(n, db), 0);
 
   // how many pool quests each one stands in front of, for picking between equals
   const unblocks = {};
@@ -13547,9 +13558,9 @@ function qpRoute(scope, db){
       ready.sort((a,b)=> (unblocks[b]||0)-(unblocks[a]||0) || (db.quests[a].order??999)-(db.quests[b].order??999));
       const n = ready[0], q = db.quests[n];
       Object.entries(q.rewards||{}).forEach(([s,v])=>{ if(SKILL_ORDER.includes(s)) xp[s] = (xp[s]||0) + v; });
-      qpNow += q.qpGain||0;
+      qpNow += questQpGain(n, db);
       done.add(n);
-      steps.push({kind:"quest", n, qp:q.qpGain||0, difficulty:q.difficulty, length:q.length,
+      steps.push({kind:"quest", n, qp:questQpGain(n, db), difficulty:q.difficulty, length:q.length,
                   mini:!!q.mini, rewards:q.rewards||{}, unlocks:q.unlocks||[], items:q.items||[]});
       continue;
     }
@@ -14316,7 +14327,7 @@ function claudeQuestFor(q){
   if(t && t !== "__ALL__" && db && db.quests[t] && /\b(quest|steps?|next|stuck|where|guide)\b/i.test(q || "")) return t;
   return null;
 }
-function claudeQp(){ const db = questDB(); return db ? db.order.filter(questDone).reduce((a, n)=>a + (db.quests[n].qpGain || 0), 0) : 0; }
+function claudeQp(){ const db = questDB(); return db ? qpMyQp(db) : 0; }
 function claudeStepsText(n){
   const mode = state.qpStepsMode === "full" ? "full" : "quick";
   let tkey = mode === "full" ? n + "|full" : n, label = mode === "full" ? "walkthrough" : "quick guide";
@@ -15173,6 +15184,17 @@ function wfCells(days, weeks){
 }
 
 // ---- tier 1: useful ----
+wfAdd({id:"questrec", tier:1, title:"Quest record", pages:["home"], draw(v, sz){
+  const db = questDB(); if(!db) return null;
+  const c = state.ceSync || {}, on = ceDesktop() && !!c.path && !c.off, g = on ? c.game : null, conf = on ? (c.conflicts || []).length : 0, done = db.order.filter(questDone).length;
+  const go = t=>({attrs:`data-wfgo="quests" title="${wfEsc(t || "Open Quest Hub")}"`});
+  const rows = [wfRow("Quest points", "", qpMyQp(db), go()), wfRow("Done here", `of ${db.order.length}`, done, go())];
+  if(g && g.finished != null) rows.push(wfRow("Finished in game", g.at ? fmtDay(isoDate(new Date(g.at))) : "", g.finished, go()));
+  if(conf) rows.push(wfRow("Ticked here, not in game", "", conf, go("Open Quest Hub to put it right")));
+  const ready = db.order.filter(n=>questStatus(n, db) === "ready").length;
+  if(ready) rows.push(wfRow("Ready to start", "", ready, go()));
+  return {sub: conf ? `${conf} to check` : ceDesktop() && c.path && !c.off ? "in step with the game" : "", html: rows.join("")};
+}});
 wfAdd({id:"journal", tier:1, title:"Latest in the journal", pages:["scroll", "home"], sizes:true, draw(v, sz){
   const es = ((state.scroll && state.scroll.log) || []).filter(e=>e && e.date).sort((a, b)=>a.date < b.date ? 1 : a.date > b.date ? -1 : (b.createdAt || 0) - (a.createdAt || 0)).slice(0, wfN(sz, 3, 6, 12));
   if(!es.length) return null;
@@ -15667,6 +15689,8 @@ function termHint(){
   const inp = $("#htIn"), hint = $("#htHint"); if(!inp || !hint) return;
   const r = termResolve(inp.textContent);
   hint.innerHTML = r ? r.hint : "a command. -help lists them, -note keeps a note, -ask asks a question";
+  // a long line shows its end, where the cursor is
+  const ln = inp.parentElement; if(ln) ln.scrollLeft = ln.scrollWidth;
 }
 function termHelp(){
   const acts = [...new Set(termRounds().filter(m=>m.st.up).map(m=>termVerb(m).act.toLowerCase()))];
@@ -15958,6 +15982,7 @@ termDef(["fill"], "fill on | off", "Turns the extra panes on a wide window on or
   const a = rest.trim().toLowerCase(); if(a !== "on" && a !== "off") return "fill takes on or off";
   return {hint:`<u>enter</u> turns the wide-window panes ${a}`, run:()=>{ state.wideFill = a === "on"; save(); wfDraw(); termOut(`Wide-window panes ${a}.`); }};
 }, {soft:true});
+termDef(["reset"], "reset layout", "Puts every page's panes, Home's widgets and the console back where they started. Settings, Look has the same button.", "App", rest=>/^layout$/i.test(rest.trim()) ? {hint:`<u>enter</u> resets the layout of every page`, run:()=>layoutReset("all")} : "reset takes layout: -reset layout", {soft:true});
 termDef(["panes"], "panes reset", "Puts Home's panes back where they started.", "App", rest=>rest.trim().toLowerCase() === "reset" ? {hint:`<u>enter</u> puts Home's panes back`, run:()=>{ htArrReset(); termOut("Home's panes are back where they started."); }} : "panes takes reset", {soft:true});
 termDef(["reload", "refresh"], "reload", "Reads your stats from the hiscores again.", "App", ()=>state.username ? {hint:`<u>enter</u> reads your stats again`, run:()=>{ termOut("Reading your stats from the hiscores."); loadCharacter({name:state.username, live:true}); }} : "No character is loaded yet.", {bare:true});
 termDef(["claude"], "claude", "Opens the setup for answers from Claude, with your own key.", "App", ()=>termLoose("claude"), {bare:true});
@@ -16295,13 +16320,14 @@ function editOn(){ return document.body.classList.contains("editing"); }
 // moved, hidden and resized on any other page. "all" is every page, and the wide-window extras too.
 function layoutReset(scope){
   const cur = $(".view:not(.hidden)"), view = cur ? cur.id.replace(/^view-/, "") : "";
-  if(scope === "all") ["wfHide", "wfOrder", "wfSize", "pageEdit", "pageOrder", "homeArr", "homeHide", "homeH", "homeColW", "homeSplit"].forEach(k=>{ delete state[k]; });
+  if(scope === "all") ["wfHide", "wfOrder", "wfSize", "pageEdit", "pageOrder", "homeArr", "homeHide", "homeH", "homeColW", "homeSplit", "termFloat", "termRail", "termLast"].forEach(k=>{ delete state[k]; });
   else if(view === "home") ["homeArr", "homeHide", "homeH", "homeColW", "homeSplit"].forEach(k=>{ delete state[k]; });
   else for(const key of ["pageEdit", "pageOrder"]){ const o = state[key]; if(o) for(const k in o) if(k.startsWith(view + ">")) delete o[k]; }
   save();
   try{ htArrange.sig = ""; htArrange(true); htPlay(); }catch(e){}
   try{ peApply(); }catch(e){}
   try{ wfDraw(); htMenuFit(); }catch(e){}
+  if(scope === "all") try{ tfApply(); trApply(); tpRender(); }catch(e){}
   try{ editTray(); }catch(e){}
   toast(scope === "all" ? "Layout reset on every page." : "This page's layout is back to the default.");
 }
@@ -17782,10 +17808,7 @@ const REACH_LOCKED = 1200000;     // one that's behind other quests
 const REACH_SOFT_GRACE = 5;
 function reachBand(id){ return REACH_BANDS.find(b=>b.id===id) || REACH_BANDS[2]; }
 // quest points you hold right now, counted off the quests you've ticked
-function reachQP(){
-  const db = questDB();
-  return db ? db.order.filter(questDone).reduce((a,n)=>a + (db.quests[n].qpGain || 0), 0) : 0;
-}
+function reachQP(){ const db = questDB(); return db ? qpMyQp(db) : 0; }
 function reachOf(req){
   req = req || {};
   const skills = [], quests = [], other = (req.other || []).slice();
@@ -19661,6 +19684,45 @@ function qpPlanHtml(target, db){
   <div id="qpStrips">${qpStripsHtml(db, target)}</div>`;
 }
 // Nothing charted yet: the chips still show, and a line says what to do.
+// The game's quest record beside the app's, at the top of Quest Hub: quest points as counted
+// here, what the last RuneLite export says is finished, and whether the two disagree, with the
+// fix to hand (Josh, 2026-11-18: the app said 188 points, the game 178).
+function qpSyncHtml(db){
+  const c = state.ceSync || {}, on = ceDesktop() && !!c.path && !c.off, g = on ? c.game : null, conf = on ? (c.conflicts || []).length : 0;
+  const done = db.order.filter(questDone).length, qp = qpMyQp(db), e = escapeHtml;
+  const when = ts=>{ const d = new Date(ts); return `${fmtDay(isoDate(d))} ${d.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}`; };
+  const stat = (k, v, cls)=>`<div class="qp-stat ${cls || ""}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const stats = stat("Quest points", qp) + stat("Done here", done)
+    + (g && g.finished != null ? stat("Finished in game", g.finished) : "")
+    + (g && g.prog ? stat("In progress", g.prog) : "")
+    + (conf ? stat("Ticked here, not in game", conf, "warn") : "");
+  let line = "", btns = "";
+  if(on){
+    line = `RuneLite's record for <b>${e(c.account || "")}</b>${g && g.at ? `, exported ${when(g.at)}` : ""}.`
+      + (conf ? ` ${conf === 1 ? "One quest is" : conf + " quests are"} ticked here that the game says ${conf === 1 ? "is not" : "are not"} finished.` : g ? " The ticks here match the game." : "");
+    if(c.err) line += ` <span class="warn-t">${e(c.err)}</span>`;
+    btns = (conf ? `<button class="primary small" data-qpsync="untick">Untick ${conf === 1 ? "it" : "them"} here</button>` : "") + `<button class="ghost small" data-qpsync="now">Sync now</button>`;
+  }
+  else if(ceDesktop() && c.path){ line = "RuneLite syncing is paused, so this is only what is ticked here."; btns = `<button class="ghost small" data-qpsync="settings">Resume in Settings</button>`; }
+  else if(ceDesktop()){ line = "RuneLite is not connected, so this is only what is ticked here. Connect it and the game's quest record keeps this page honest."; btns = `<button class="primary small" data-qpsync="settings">Connect RuneLite</button>`; }
+  else { line = state.charExport && state.charExport.importedAt ? `Imported from RuneLite on ${when(Date.parse(state.charExport.importedAt))}.` : "Import your RuneLite data in Settings and the game's quest record keeps this page honest."; btns = `<button class="ghost small" data-qpsync="settings">${state.charExport ? "Import again" : "Import from RuneLite"}</button>`; }
+  return `<div class="qp-sync"><div class="qp-sum">${stats}</div><div class="qp-sync-l"><span>${line}</span><span class="qp-sync-b">${btns}</span></div></div>`;
+}
+function qpSyncWire(){
+  $$("#qpSetup [data-qpsync]").forEach(b=>b.onclick = async ()=>{
+    const k = b.dataset.qpsync;
+    if(k === "untick"){ await ceUntickConflicts(); renderQuestPlanner(); return; }
+    if(k === "now"){
+      b.disabled = true; b.textContent = "Syncing";
+      const r = await ceSyncNow({force:true});
+      if(r && r.waiting) toast("Quest data is still loading. Try again in a moment.");
+      else if(r && r.err) toast(r.err, true);
+      else if(!r || !r.changed) toast("Already up to date");
+      renderQuestPlanner(); return;
+    }
+    openRuneLite(true);
+  });
+}
 function qpIdleHtml(db){
   return `<div class="panel"><div class="empty">Pick a goal above, or search for any quest. Pinned quests and folders sit below.</div></div>
     <div id="qpStrips">${qpStripsHtml(db, null)}</div>`;
@@ -19885,8 +19947,16 @@ function qpChildren(n, db){
   return Object.keys(db.quests).filter(t=>(db.quests[t].prereqs||[]).includes(n))
     .sort((a,b)=>(db.quests[a].order||0)-(db.quests[b].order||0));
 }
+// Quest points a quest adds to the count. A quest with subquests is a container whose points sit
+// on the subquests already (Recipe for Disaster: 10 on its page, 1 on each of its ten), so it
+// counts nothing itself. Counting both had the app 10 ahead of the game (Josh, 2026-11-18).
+function questQpGain(n, db){
+  db = db || questDB(); const q = db && db.quests[n]; if(!q) return 0;
+  if(db.order.some(k=>k.startsWith(n + "/"))) return 0;
+  return q.qpGain || 0;
+}
 function qpMyQp(db){
-  return Object.keys(db.quests).reduce((a,t)=>a+(questDone(t)?(db.quests[t].qpGain||0):0), 0);
+  return Object.keys(db.quests).reduce((a,t)=>a+(questDone(t)?questQpGain(t, db):0), 0);
 }
 function qpQuestRow(t, db){
   const done = questDone(t);
@@ -23284,6 +23354,8 @@ async function ceSyncNow(opts){
     const res = ceApply(pv, acc, cfg.account, []);
     cfg.stamp = stamp; cfg.err = null;
     cfg.conflicts = pv.quests ? pv.quests.conflicts.map(c=>c.n) : [];
+    // what the game's record said, for Quest Hub and the Home pane: finished, in progress, and when
+    if(pv.quests) cfg.game = {finished:pv.quests.add.length + pv.quests.same.length, prog:Object.keys(pv.quests.prog).length, untracked:pv.quests.untracked.length, at:ceTime(acc.quests && acc.quests.exported_at) || Date.now()};
     if(res.changed) cfg.lastSync = Date.now();
     save();
     if(res.changed){
@@ -24161,7 +24233,7 @@ if(!loadTrouble && !state.setupDone && !state.username && !Object.keys(profStore
 // Desktop app: pick up anything the plugin saved since last time, then keep watching.
 // The folder only re-reads when a file is newer than last time. bank.json joined the list after
 // that stamp was taken, so the first launch with it reads the folder once regardless.
-if(ceDesktop()) setTimeout(()=>{ ceSyncNow({force: !!(state.charExport && state.charExport.bank === undefined)}); ceStartWatch(); }, 3000);
+if(ceDesktop()) setTimeout(()=>{ ceSyncNow({force:true}); ceStartWatch(); }, 3000);
 </script>
 </body>
 </html>
