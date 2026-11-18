@@ -12,13 +12,21 @@
     --glass:color-mix(in srgb, var(--panel) 50%, transparent);
     --glow1:color-mix(in srgb, var(--gold-dim) 50%, var(--bg));
     --glow2:color-mix(in srgb, var(--me) 30%, var(--bg));
-    background:
-      radial-gradient(ellipse 46% 52% at 12% 8%, color-mix(in srgb, var(--glow1) 62%, transparent), transparent 70%),
-      radial-gradient(ellipse 40% 50% at 92% 96%, color-mix(in srgb, var(--glow2) 58%, transparent), transparent 70%),
-      radial-gradient(circle, color-mix(in srgb, var(--text) 9%, transparent) 0 1px, transparent 1.4px) 0 0 / 22px 22px,
-      var(--bg);
+    /* the backdrop in two parts, so Settings, Look can swap the pattern (body[data-backdrop]) and leave the glows */
+    --bd-none:linear-gradient(transparent, transparent);
+    --bd-glow:radial-gradient(ellipse 46% 52% at 12% 8%, color-mix(in srgb, var(--glow1) 62%, transparent), transparent 70%),
+      radial-gradient(ellipse 40% 50% at 92% 96%, color-mix(in srgb, var(--glow2) 58%, transparent), transparent 70%);
+    --bd-pat:radial-gradient(circle, color-mix(in srgb, var(--text) 9%, transparent) 0 1px, transparent 1.4px) 0 0 / 22px 22px;
+    background:var(--bd-glow), var(--bd-pat), var(--bg);
     background-attachment:fixed;
   }
+  body[data-skin="term"][data-backdrop="grid"]{--bd-pat:linear-gradient(color-mix(in srgb, var(--text) 4.5%, transparent) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, color-mix(in srgb, var(--text) 4.5%, transparent) 1px, transparent 1px) 0 0 / 28px 28px}
+  body[data-skin="term"][data-backdrop="lines"]{--bd-pat:repeating-linear-gradient(0deg, color-mix(in srgb, var(--text) 3.5%, transparent) 0 1px, transparent 1px 4px)}
+  body[data-skin="term"][data-backdrop="weave"]{--bd-pat:repeating-linear-gradient(45deg, color-mix(in srgb, var(--text) 3%, transparent) 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--text) 3%, transparent) 0 1px, transparent 1px 9px)}
+  body[data-skin="term"][data-backdrop="clean"]{--bd-pat:var(--bd-none)}
+  body[data-skin="term"][data-backdrop="flat"]{--bd-pat:var(--bd-none); --bd-glow:var(--bd-none)}
   /* square, everywhere */
   body[data-skin="term"] *, body[data-skin="term"] *::before, body[data-skin="term"] *::after{border-radius:0 !important}
 

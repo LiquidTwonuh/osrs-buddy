@@ -3358,13 +3358,21 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     --glass:color-mix(in srgb, var(--panel) 50%, transparent);
     --glow1:color-mix(in srgb, var(--gold-dim) 50%, var(--bg));
     --glow2:color-mix(in srgb, var(--me) 30%, var(--bg));
-    background:
-      radial-gradient(ellipse 46% 52% at 12% 8%, color-mix(in srgb, var(--glow1) 62%, transparent), transparent 70%),
-      radial-gradient(ellipse 40% 50% at 92% 96%, color-mix(in srgb, var(--glow2) 58%, transparent), transparent 70%),
-      radial-gradient(circle, color-mix(in srgb, var(--text) 9%, transparent) 0 1px, transparent 1.4px) 0 0 / 22px 22px,
-      var(--bg);
+    /* the backdrop in two parts, so Settings, Look can swap the pattern (body[data-backdrop]) and leave the glows */
+    --bd-none:linear-gradient(transparent, transparent);
+    --bd-glow:radial-gradient(ellipse 46% 52% at 12% 8%, color-mix(in srgb, var(--glow1) 62%, transparent), transparent 70%),
+      radial-gradient(ellipse 40% 50% at 92% 96%, color-mix(in srgb, var(--glow2) 58%, transparent), transparent 70%);
+    --bd-pat:radial-gradient(circle, color-mix(in srgb, var(--text) 9%, transparent) 0 1px, transparent 1.4px) 0 0 / 22px 22px;
+    background:var(--bd-glow), var(--bd-pat), var(--bg);
     background-attachment:fixed;
   }
+  body[data-skin="term"][data-backdrop="grid"]{--bd-pat:linear-gradient(color-mix(in srgb, var(--text) 4.5%, transparent) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, color-mix(in srgb, var(--text) 4.5%, transparent) 1px, transparent 1px) 0 0 / 28px 28px}
+  body[data-skin="term"][data-backdrop="lines"]{--bd-pat:repeating-linear-gradient(0deg, color-mix(in srgb, var(--text) 3.5%, transparent) 0 1px, transparent 1px 4px)}
+  body[data-skin="term"][data-backdrop="weave"]{--bd-pat:repeating-linear-gradient(45deg, color-mix(in srgb, var(--text) 3%, transparent) 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--text) 3%, transparent) 0 1px, transparent 1px 9px)}
+  body[data-skin="term"][data-backdrop="clean"]{--bd-pat:var(--bd-none)}
+  body[data-skin="term"][data-backdrop="flat"]{--bd-pat:var(--bd-none); --bd-glow:var(--bd-none)}
   /* square, everywhere */
   body[data-skin="term"] *, body[data-skin="term"] *::before, body[data-skin="term"] *::after{border-radius:0 !important}
 
@@ -5015,6 +5023,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="skin-pick" id="skinPick"></div>
             <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose, and you can drag a pane by its header to move it. Orderly lines every edge up.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="tilesSeg"></div><button class="ghost small hidden" id="tilesReset" title="Put Home's panes back where they started">Reset panes</button></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Command line</b><small>The line at the top of every page takes commands: cd scroll, log mined for an hour, stats mining, -help for the list. Press / or the key under Esc to start typing. Rest the mouse on it and the console opens underneath; drag the console off the bar and it floats over the page. Off leaves it as a plain path.</small></div><div class="seg" id="tpSeg"></div></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Backdrop</b><small>What sits behind the panes. Dots, Grid, Lines and Weave are faint patterns. Clean keeps the soft glow in the corners and drops the pattern. Flat is the theme's plain colour.</small></div><div class="seg" id="bdSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Wide window</b><small>On a wide monitor, the room beside and under a page fills with extra panes. The most useful come first, so more room only ever adds less essential ones. A pane's x hides it.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="wfSeg"></div><button class="ghost small hidden" id="wfShowAll" title="Bring back the panes you hid"></button></div></div>
           </div>
           <div class="set-group">
@@ -6358,7 +6367,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat"];
+const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","backdrop"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -9881,11 +9890,15 @@ const DEFAULT_THEME = "mortimer";
 // The look. "term" is the terminal look, the default; "classic" is the page as it was before
 // 2026-11-17, kept whole. The first time a save meets the new look it moves onto it, and off
 // Gilded (the old default) onto Mortimer; a theme somebody picked on purpose is left alone.
+// What sits behind the panes in the Terminal look: a pattern over the theme's two soft glows.
+// Clean keeps the glows and drops the pattern; Flat is the theme's plain colour.
+const BACKDROPS = [["dots", "Dots"], ["grid", "Grid"], ["lines", "Lines"], ["weave", "Weave"], ["clean", "Clean"], ["flat", "Flat"]];
 const SKINS = [["term", "Terminal", "Monospace, hairlines, a command line on Home."], ["classic", "Classic", "The look before the redesign, exactly as it was."]];
 function applySkin(){
   if(!state.skin){ state.skin = "term"; if(!state.theme || state.theme === "parchment") state.theme = "mortimer"; save(); }
   document.body.dataset.skin = state.skin === "classic" ? "classic" : "term";
   document.body.dataset.tiles = state.tiles === "orderly" ? "orderly" : "mosaic";
+  document.body.dataset.backdrop = BACKDROPS.some(b=>b[0] === state.backdrop) ? state.backdrop : "dots";
   let touch = false; try{ touch = matchMedia("(pointer:coarse)").matches || !!phonePreview; }catch(e){}
   document.body.classList.toggle("dock", touch);
   try{ homeHeatPlace(); htLater(); }catch(e){}
@@ -19740,6 +19753,12 @@ function renderLookSettings(){
     const on = termState().bar !== false;
     pseg.innerHTML = `<button class="${on ? "on" : ""}" data-tp="1">On every page</button><button class="${on ? "" : "on"}" data-tp="0">Off</button>`;
     pseg.querySelectorAll("[data-tp]").forEach(b=>b.onclick = ()=>{ termState().bar = b.dataset.tp === "1"; save(); tpApply(); renderLookSettings(); });
+  }
+  const bseg = $("#bdSeg");
+  if(bseg){
+    const cur = document.body.dataset.backdrop || "dots";
+    bseg.innerHTML = BACKDROPS.map(([id, label])=>`<button class="${id === cur ? "on" : ""}" data-bd="${id}">${label}</button>`).join("");
+    bseg.querySelectorAll("[data-bd]").forEach(b=>b.onclick = ()=>{ state.backdrop = b.dataset.bd; save(); applySkin(); renderLookSettings(); });
   }
   const wseg = $("#wfSeg");
   if(wseg){
