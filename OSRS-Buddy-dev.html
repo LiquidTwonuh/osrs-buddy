@@ -20359,15 +20359,43 @@ const ART_CHOICES = [["focused","Focused"],["illustrated","Illustrated"],["off",
 const UI_SCALES = [["0.85","Compact"],["1","Normal"],["1.15","Large"],["1.3","Larger"]];
 const SCALE_BASE = "width=device-width, initial-scale=1.0, viewport-fit=cover";
 function scaleIsPhone(){ return matchMedia("(pointer:coarse) and (hover:none)").matches; }
+// The screen the app is on right now: its width in CSS pixels, and a key that changes whenever the
+// screen does. A foldable has two screens, and turning either swaps the sides, so nothing here is
+// remembered from launch. Android swaps screen.width and height when it turns and an iPhone does
+// not, so the side is chosen by which way up the page is.
+function scaleScreen(){
+  const sw = screen.width || 0, sh = screen.height || 0; let portrait = sh >= sw;
+  try{ portrait = matchMedia("(orientation:portrait)").matches; }catch(e){}
+  return {w:portrait ? Math.min(sw, sh) : Math.max(sw, sh), key:sw + "x" + sh + (portrait ? "p" : "l")};
+}
+var scaleKey = "";
 function applyScale(){
   const z = +(state.uiScale || 1), m = document.querySelector('meta[name="viewport"]'); if(!m) return;
-  // the layout width the phone gets: its own width over the scale, so a 1.3 draws everything 1.3 times bigger
-  const w = Math.round(Math.min(screen.width, screen.height) / z);
-  const want = z !== 1 && scaleIsPhone() && w >= 240 ? `width=${w}, viewport-fit=cover` : SCALE_BASE;
+  const sc = scaleScreen(), phone = scaleIsPhone();
+  // the layout width the phone gets: the screen's width over the scale, so a 1.3 draws everything 1.3 times bigger
+  const w = Math.round(sc.w / z);
+  const want = z !== 1 && phone && w >= 240 ? `width=${w}, viewport-fit=cover` : SCALE_BASE;
+  const moved = !!scaleKey && sc.key !== scaleKey; scaleKey = sc.key;
+  if(moved && phone){
+    // A different screen (a foldable opened or shut, or the phone turned). Whatever zoom was left
+    // from the other screen goes: the page is held at its natural size for a moment, which makes
+    // the WebView fit it to the new screen, and then pinching is allowed again.
+    const hold = want + ", maximum-scale=1";
+    m.setAttribute("content", hold);
+    setTimeout(()=>{ if(m.getAttribute("content") === hold) m.setAttribute("content", want); }, 160);
+    return;
+  }
   if(m.getAttribute("content") !== want) m.setAttribute("content", want);
 }
-// the phone's width changes when it turns, so the layout width follows it
-addEventListener("orientationchange", ()=>setTimeout(applyScale, 50));
+// the screen can change without the page loading again: the phone turns, a foldable opens or shuts,
+// the app comes back from the background on its other screen
+(function scaleWatch(){
+  let q = 0; const later = ()=>{ clearTimeout(q); q = setTimeout(()=>{ try{ applyScale(); }catch(e){} }, 120); };
+  addEventListener("orientationchange", later);
+  addEventListener("resize", later);
+  document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) later(); });
+  try{ if(screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", later); }catch(e){}
+})();
 function applyFont(){
   const f = state.font || "garamond";
   if(f==="garamond") document.body.removeAttribute("data-font");
