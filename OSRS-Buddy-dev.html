@@ -4813,6 +4813,143 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) .hs-id :is(.name, .ht-name, .ht-sub, .sub){text-shadow:0 1px 3px var(--bg), 0 0 8px var(--bg)}
   body[data-skin="term"]:is([data-theme-art="focused"],[data-theme-art="illustrated"]) .hs-id :is(.ht-sub, .sub){max-width:60%; width:fit-content}
 
+  /* ============ COFFER, THE BAKERY: BOARD AND LISTING ============
+     In the Terminal look the Bakery is drawn one of two ways (renderCoffer, cofferLayout):
+     Board, the best three side by side and the rest as tiles; Listing, one aligned table with the
+     chosen row opened beside it. Above both sits the strip: which skill to look through, the count,
+     the layout switch, and tuning, which is your quiz answers as the lines of a settings file. */
+
+  /* ---- the strip ---- */
+  body[data-skin="term"] .cf-tt{padding:0}
+  body[data-skin="term"] .bq-lens{display:flex; align-items:center; gap:6px; flex-wrap:wrap; padding:9px 12px; border-bottom:1px solid var(--hair)}
+  body[data-skin="term"] .bq-lab{margin-right:4px; font:11px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+  body[data-skin="term"] .bq-lens > button, body[data-skin="term"] .bq-lay button{display:inline-flex; align-items:center; gap:6px; min-height:0; margin:0; padding:2px 9px; background:none; border:1px solid var(--line); box-shadow:none;
+    color:var(--muted); font:12.5px var(--fm); cursor:pointer; transition:color .14s, border-color .14s}
+  body[data-skin="term"] .bq-lens > button img{width:14px; height:14px}
+  body[data-skin="term"] .bq-lens > button:hover, body[data-skin="term"] .bq-lay button:hover{color:var(--text); border-color:var(--gold-dim)}
+  body[data-skin="term"] .bq-lens > button.on, body[data-skin="term"] .bq-lay button.on{color:var(--gold); border-color:var(--gold)}
+  body[data-skin="term"] .bq-lens select{min-height:0; padding:2px 6px; font:12.5px var(--fm)}
+  body[data-skin="term"] .bq-count{font:12.5px var(--fm); color:var(--muted); white-space:nowrap}
+  body[data-skin="term"] .bq-count b{color:var(--text); font-weight:600}
+  body[data-skin="term"] .bq-lay{display:inline-flex; margin-left:6px}
+  body[data-skin="term"] .bq-lay button + button{border-left:0}
+
+  /* ---- tuning ---- */
+  body[data-skin="term"] .tt-bar{display:flex; align-items:center; gap:8px; padding:6px 12px; font:12.5px var(--fm); min-width:0}
+  body[data-skin="term"] .tt-ps{color:var(--gold); font-weight:600}
+  body[data-skin="term"] .tt-sum{flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--gold-dim)}
+  body[data-skin="term"] .tt-sum span{color:var(--muted)}
+  body[data-skin="term"] .tt-body{display:none; padding:2px 0 0; border-top:1px solid var(--hair); font:12.5px/1.8 var(--fm)}
+  body[data-skin="term"] .cf-tt.open .tt-body{display:block; animation:ttIn .22s cubic-bezier(.2,.7,.2,1)}
+  @keyframes ttIn{from{opacity:0; transform:translateY(-4px)}}
+  body[data-skin="term"] .cf-tt .cf-intro{margin:8px 12px 2px}
+  body[data-skin="term"] .tt-lines{display:grid; grid-template-columns:repeat(auto-fit, minmax(460px, 1fr)); gap:0 26px; padding:6px 12px 4px}
+  body[data-skin="term"] .tt-l{display:flex; gap:10px; min-width:0}
+  body[data-skin="term"] .tt-k{flex:0 0 11ch; color:var(--gold-dim)}
+  body[data-skin="term"] .tt-e{color:var(--faint)}
+  body[data-skin="term"] .tt-v{min-width:0; display:flex; flex-wrap:wrap; gap:0 2px; align-items:baseline}
+  body[data-skin="term"] .tt-o{min-height:0; margin:0; padding:0 4px; background:none; border:0; box-shadow:none; color:var(--faint); font:inherit; cursor:pointer; text-align:left; transition:color .12s}
+  body[data-skin="term"] .tt-o:hover, body[data-skin="term"] .tt-o:focus-visible{color:var(--text); outline:0}
+  body[data-skin="term"] .tt-o.on{color:var(--text)}
+  body[data-skin="term"] .tt-o.on::before{content:"["; color:var(--gold)} body[data-skin="term"] .tt-o.on::after{content:"]"; color:var(--gold)}
+  body[data-skin="term"] .tt-n{margin-left:8px; color:var(--faint); white-space:nowrap}
+  body[data-skin="term"] .tt-echo{min-height:1.8em; padding:0 12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  body[data-skin="term"] .tt-echo i{font-style:normal; color:var(--me)} body[data-skin="term"] .tt-echo b{font-weight:400; color:var(--k-g)}
+  body[data-skin="term"] .tt-in{display:flex; align-items:center; gap:8px; margin:0; padding:5px 12px 7px; border-top:1px solid var(--hair); cursor:text}
+  body[data-skin="term"] .tt-in > b{color:var(--gold)}
+  body[data-skin="term"] .tt-in input{flex:1 1 120px; min-width:80px; width:auto; height:auto; min-height:0; margin:0; padding:0; background:none; border:0; outline:0; box-shadow:none; color:var(--me); caret-color:var(--me); font:inherit}
+  body[data-skin="term"] .tt-in .ghost{min-height:0; padding:1px 8px; font:12px var(--fm)}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .cf-tt.open .tt-body{animation:none} }
+
+  /* ---- shared by both layouts ---- */
+  body[data-skin="term"] .bq-meter{display:block; position:relative; height:3px; background:color-mix(in srgb, var(--text) 9%, transparent)}
+  body[data-skin="term"] .bq-meter::before{content:""; position:absolute; inset:0 auto 0 0; width:var(--p); background:color-mix(in srgb, var(--gold) 60%, var(--bg))}
+  body[data-skin="term"] .bq-meter::after{content:""; position:absolute; top:-2px; bottom:-2px; left:calc(var(--p) - 2px); width:2px; background:var(--gold)}
+  body[data-skin="term"] .bq-name{font:600 17px/1.25 var(--fm); letter-spacing:-.2px; color:var(--text)}
+  body[data-skin="term"] .bq-gp{font:600 28px/1.1 var(--fm); color:var(--gold); font-variant-numeric:tabular-nums}
+  body[data-skin="term"] .bq-gp .muted{font-size:12px; font-weight:400}
+  body[data-skin="term"] .bq-need{color:var(--k-o)}
+  body[data-skin="term"] .bq-flag{margin-left:6px; font:11.5px var(--fm); color:var(--k-o)}
+  body[data-skin="term"] .bq-acts{display:flex; align-items:center; gap:6px}
+  body[data-skin="term"] .bq-a{display:inline-block; min-height:0; margin:0; padding:1px 8px; background:none; border:1px solid var(--line); box-shadow:none; color:var(--muted); font:12px var(--fm); line-height:1.6; text-decoration:none; cursor:pointer; transition:color .14s, border-color .14s}
+  body[data-skin="term"] .bq-a:hover, body[data-skin="term"] .bq-a:focus-visible{color:var(--gold); border-color:var(--gold); outline:0}
+  body[data-skin="term"] .bq-a.on{color:var(--gold); border-color:color-mix(in srgb, var(--gold) 55%, transparent)}
+  body[data-skin="term"] .bq-a.q{border-color:transparent; color:var(--faint)}
+  body[data-skin="term"] .bq-a.q:hover{color:var(--k-o); border-color:var(--k-o)}
+  body[data-skin="term"] .bq-rounds{display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:2px 14px}
+
+  /* ---- Board ---- */
+  body[data-skin="term"] .bq-podium{display:grid; grid-template-columns:1.15fr 1fr 1fr; gap:10px}
+  body[data-skin="term"] .bq-hero{display:flex; flex-direction:column; gap:5px; min-width:0; padding:12px 14px 10px; border:1px solid var(--hair); cursor:pointer; transition:border-color .16s, background .16s}
+  body[data-skin="term"] .bq-hero:hover{border-color:var(--gold-dim); background:color-mix(in srgb, var(--text) 3%, transparent)}
+  body[data-skin="term"] .bq-hero.first{border-color:color-mix(in srgb, var(--gold) 50%, transparent)}
+  body[data-skin="term"] .bq-hero.pinned{box-shadow:inset 2px 0 var(--gold)}
+  body[data-skin="term"] .bq-top{display:flex; align-items:center; gap:8px; font:12px var(--fm); color:var(--faint)}
+  body[data-skin="term"] .bq-rk{color:var(--gold); font-weight:600}
+  body[data-skin="term"] .bq-hero.first .bq-name{font-size:19px} body[data-skin="term"] .bq-hero.first .bq-gp{font-size:34px}
+  body[data-skin="term"] .bq-hero .bq-meter{margin:3px 0 2px}
+  body[data-skin="term"] .bq-why{font-size:13px; color:var(--muted)}
+  body[data-skin="term"] .bq-loc{min-height:1.4em; font-size:12.5px; color:var(--faint)}
+  /* a card's buttons wait until it is hovered or focused, so three cards do not shout twelve buttons */
+  body[data-skin="term"] .bq-hero .bq-acts{margin-top:auto; padding-top:6px; opacity:.38; transition:opacity .16s}
+  body[data-skin="term"] .bq-hero:hover .bq-acts, body[data-skin="term"] .bq-hero:focus-within .bq-acts{opacity:1}
+  @media (hover:none){ body[data-skin="term"] .bq-hero .bq-acts{opacity:1} }
+  body[data-skin="term"] .bq-tiles{display:grid; grid-template-columns:repeat(auto-fill, minmax(270px, 1fr)); gap:0 22px}
+  body[data-skin="term"] .bq-tile{position:relative; display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:baseline; gap:2px 10px; padding:9px 2px 10px; border-top:1px solid var(--hair); cursor:pointer; transition:background .14s}
+  body[data-skin="term"] .bq-tile:hover{background:color-mix(in srgb, var(--text) 4%, transparent)}
+  body[data-skin="term"] .bq-tile.pinned{box-shadow:inset 2px 0 var(--gold); padding-left:8px}
+  body[data-skin="term"] .bq-tn{display:flex; align-items:center; gap:7px; min-width:0}
+  body[data-skin="term"] .bq-tn b{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600}
+  body[data-skin="term"] .bq-tg{font:600 13.5px var(--fm); color:var(--gold); white-space:nowrap} body[data-skin="term"] .bq-tg .muted{font-weight:400; font-size:11px}
+  body[data-skin="term"] .bq-tile .bq-meter{grid-column:1 / -1; height:2px; margin:4px 0 3px}
+  body[data-skin="term"] .bq-ts{grid-column:1 / -1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12.5px; color:var(--faint)}
+  body[data-skin="term"] .bq-ta{position:absolute; right:0; bottom:6px; display:flex; gap:4px; opacity:0; pointer-events:none; transition:opacity .14s}
+  body[data-skin="term"] .bq-tile:hover .bq-ta, body[data-skin="term"] .bq-tile:focus-within .bq-ta{opacity:1; pointer-events:auto}
+  body[data-skin="term"] .bq-ta button{min-height:0; margin:0; padding:0 6px; background:var(--bg); border:1px solid var(--line); box-shadow:none; color:var(--muted); font:11.5px var(--fm); line-height:1.6; cursor:pointer}
+  body[data-skin="term"] .bq-ta button:hover{color:var(--gold); border-color:var(--gold)} body[data-skin="term"] .bq-ta button.on{color:var(--gold)}
+  @media (hover:none){ body[data-skin="term"] .bq-ta{display:none} }
+
+  /* ---- Listing ---- */
+  /* the table and the pane beside it; when the page is too narrow for both, the pane drops under the table */
+  body[data-skin="term"] .bq-split{display:flex; flex-wrap:wrap; gap:var(--gap); align-items:flex-start; margin-bottom:var(--gap)}
+  body[data-skin="term"] .bq-left{flex:1 1 600px; display:grid; grid-template-columns:minmax(0, 1fr); gap:var(--gap); min-width:0; container-type:inline-size}
+  /* beside the pane the table is narrow: where a method happens is already in the pane, so that column goes */
+  @container (max-width:820px){ .bq-ls .loc, .bq-ls th:last-child{display:none} }
+  @container (max-width:640px){ .bq-ls .cells, .bq-ls th:nth-child(4){display:none} }
+  body[data-skin="term"] .bq-prev{flex:0 1 340px}
+  body[data-skin="term"] .bq-split .panel{margin:0}
+  body[data-skin="term"] .bq-listpane{padding:0; overflow-x:auto}
+  body[data-skin="term"] .bq-ls{width:100%; border-collapse:collapse; font:13px var(--fm)}
+  body[data-skin="term"] .bq-ls th{padding:7px 10px; text-align:left; font:500 10.5px var(--fm); letter-spacing:.12em; text-transform:uppercase; color:var(--faint); border-bottom:1px solid var(--hair); white-space:nowrap}
+  body[data-skin="term"] .bq-ls th[data-bksort]{cursor:pointer} body[data-skin="term"] .bq-ls th[data-bksort]:hover{color:var(--text)}
+  body[data-skin="term"] .bq-ls th.on{color:var(--gold)}
+  body[data-skin="term"] .bq-ls :is(th, td).rk, body[data-skin="term"] .bq-ls :is(th, td).gp{text-align:right}
+  body[data-skin="term"] .bq-ls td{padding:5px 10px; border-bottom:1px solid color-mix(in srgb, var(--text) 4%, transparent); white-space:nowrap; vertical-align:middle}
+  body[data-skin="term"] .bq-ls td.nm{white-space:normal; min-width:190px; font:600 13.5px var(--fs)}
+  body[data-skin="term"] .bq-ls td.nm img{vertical-align:-3px; margin-right:8px}
+  body[data-skin="term"] .bq-pin{margin-left:8px; font:400 11px var(--fm); font-style:normal; color:var(--gold)}
+  body[data-skin="term"] .bq-row{cursor:pointer; transition:background .12s}
+  body[data-skin="term"] .bq-row:hover td{background:color-mix(in srgb, var(--text) 5%, transparent)}
+  body[data-skin="term"] .bq-row.sel td{background:color-mix(in srgb, var(--gold) 12%, transparent)}
+  body[data-skin="term"] .bq-row.sel td:first-child{box-shadow:inset 2px 0 var(--gold)}
+  body[data-skin="term"] .bq-ls .rk{color:var(--faint)} body[data-skin="term"] .bq-row.best .rk{color:var(--gold); font-weight:600}
+  body[data-skin="term"] .bq-ls td.gp{color:var(--gold); font-weight:600} body[data-skin="term"] .bq-ls td.gp .muted{font-weight:400; font-size:11px}
+  body[data-skin="term"] .bq-ls .cells{letter-spacing:1px; color:var(--gold); font-size:11px} body[data-skin="term"] .bq-ls .cells u{text-decoration:none; color:color-mix(in srgb, var(--text) 10%, transparent)}
+  body[data-skin="term"] .bq-ls .ef{color:var(--muted)}
+  body[data-skin="term"] .bq-row.short .ef{white-space:normal; min-width:220px}
+  body[data-skin="term"] .bq-ls .loc{max-width:220px; overflow:hidden; text-overflow:ellipsis; font-family:var(--fs); color:var(--muted)}
+  body[data-skin="term"] .bq-sec td{padding:12px 10px 5px; border-bottom:1px solid var(--hair); font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  body[data-skin="term"] .bq-sec small{margin-left:10px; font:12px var(--fs); letter-spacing:0; text-transform:none; color:var(--faint)}
+  body[data-skin="term"] .bq-sec .cf-sref{float:right; min-height:0; padding:0 6px}
+  body[data-skin="term"] .bq-prev{position:sticky; top:calc(var(--gap) * 2 + 40px); display:grid; gap:8px}
+  body[data-skin="term"] .bq-prev .bq-gp{font-size:30px}
+  body[data-skin="term"] .bq-kv{display:grid; grid-template-columns:8ch minmax(0, 1fr); gap:3px 10px; font-size:13px}
+  body[data-skin="term"] .bq-kv > span:nth-child(odd){font:12.5px var(--fm); color:var(--gold-dim)}
+  body[data-skin="term"] .bq-open{padding-top:8px; border-top:1px solid var(--hair); font-size:12.5px; color:var(--k-c); cursor:pointer}
+  body[data-skin="term"] .bq-open:hover{color:var(--text)}
+  @media (max-width:1100px){ body[data-skin="term"] .bq-podium{grid-template-columns:1fr} }
+  @media (max-width:900px){ body[data-skin="term"] .bq-prev{position:static; flex-basis:100%} body[data-skin="term"] .tt-lines{grid-template-columns:1fr} }
+
   /* ============ GLYPHS (written by glyphs.py; edit the drawings there) ============ */
   body[data-skin="term"] .gl{display:inline-block; width:18px; height:18px; vertical-align:-4px; overflow:hidden; text-indent:-99em; white-space:nowrap; background:currentColor; -webkit-mask:var(--g) center / contain no-repeat; mask:var(--g) center / contain no-repeat; flex:0 0 auto; text-align:left}
   body[data-skin="term"] .gl.x1{width:9px; height:9px; vertical-align:-1px} body[data-skin="term"] .gl.x3{width:27px; height:27px; vertical-align:-7px} body[data-skin="term"] .gl.x4{width:36px; height:36px; vertical-align:-9px}
@@ -5049,6 +5186,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose, and you can drag a pane by its header to move it. Orderly lines every edge up.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="tilesSeg"></div><button class="ghost small hidden" id="tilesReset" title="Put Home's panes back where they started">Reset panes</button></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Command line</b><small>The line at the top of every page takes commands: cd scroll, log mined for an hour, stats mining, -help for the list. Press / or the key under Esc to start typing. On a wide window the console sits in its own column at the right of every page; the console button on the line shows and hides it, and dragging its header off floats it over the page. Off leaves the line as a plain path.</small></div><div class="seg" id="tpSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Console</b><small>Where the console sits. At the side is a column to the right of every page, when the window has room. Floating is a window you can move and resize. Hidden closes it. The shortcut shows and hides it from anywhere; drag the console's header to pull it off the side.</small></div><div class="row" style="gap:8px; flex-wrap:wrap; align-items:center"><div class="seg" id="conSeg"></div><button class="ghost small" id="conKeyBtn" title="Press this, then the keys you want"></button></div></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Bakery layout</b><small>How Coffer's Bakery is laid out. Board puts the best three side by side and the rest in tiles. Listing is one aligned table with the row you choose opened beside it. The same switch is on the page itself.</small></div><div class="seg" id="bkSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Backdrop</b><small>What sits behind the panes. Dots, Grid, Lines and Weave are faint patterns. Clean keeps the soft glow in the corners and drops the pattern. Flat is the theme's plain colour.</small></div><div class="seg" id="bdSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Wide window</b><small>On a wide monitor, the room beside and under a page fills with extra panes. The most useful come first, so more room only ever adds less essential ones. A pane's x hides it.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="wfSeg"></div><button class="ghost small hidden" id="wfShowAll" title="Bring back the panes you hid"></button></div></div>
           </div>
@@ -6399,7 +6537,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","termLast","termKey","termCloseTips","backdrop"];
+const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","termLast","termKey","termCloseTips","backdrop","cofferLayout"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -17824,6 +17962,42 @@ function cofferClose(){
 }
 document.addEventListener("keydown", e=>{ if(e.key === "Escape" && cfqOpen()) cofferClose(); });
 let cfTuneTimer = 0;
+// ---- the Bakery's two layouts, and tuning as a settings file (Terminal look) ----
+// Board: the best three side by side and the rest as tiles. Listing: one aligned table, the chosen
+// row opened beside it. Josh liked both (2026-11-18), so it is a choice: on the page, in Settings,
+// Look, and in the setup walkthrough.
+const COFFER_LAYOUTS = [["board", "Board", "The best three side by side, the rest as tiles."], ["list", "Listing", "One aligned table, the chosen row opened beside it."]];
+function cofferLayout(){ return state.cofferLayout === "list" ? "list" : "board"; }
+function cofferLayoutSet(v){ state.cofferLayout = v === "list" ? "list" : "board"; save(); try{ renderCoffer(); }catch(e){} try{ renderLookSettings(); }catch(e){} }
+// a line of the settings file is one quiz answer: the word it goes by, and short names for its values
+const COFFER_TKEY = {members:"account", iron:"iron", style:"enjoy", skills:"skills", pace:"pace", session:"session", stage:"stage", xp:"xp", wildy:"wilderness", market:"risk", reach:"reach", goal:"goal", floor:"floor"};
+const COFFER_TSHORT = {members:{yes:"members", no:"free to play"}, iron:{no:"main", yes:"ironman"}, style:{any:"everything", combat:"combat", skilling:"skilling", gather:"gathering"},
+  pace:{any:"any", Low:"afk", Moderate:"in between", High:"hands on"}, session:{any:"any", short:"20 min", hour:"an hour", long:"a long evening"}, stage:{auto:"auto", early:"early", mid:"mid", late:"late", end:"endgame"},
+  xp:{gp:"gold only", both:"xp too"}, wildy:{ok:"fine", no:"avoid"}, market:{ok:"fine", no:"steady only"}, reach:{ready:"ready only", close:"near ones", all:"everything"}};
+var cfEcho = "", cfBSort = "", cfTuneRefocus = false;
+// a typed line: set <line> <value>, or quiz, refresh, board, listing
+function cofferTuneLine(text){
+  const v = String(text || "").trim().toLowerCase().replace(/\s+/g, " ");
+  const say = t=>{ cfEcho = t; renderCoffer(); };
+  if(v === "quiz"){ state.coffer.quizOpen = true; state.coffer.single = false; state.coffer.step = 0; save(); renderCoffer(); return; }
+  if(v === "refresh"){ mmgDbEnsure(true); return; }
+  if(v === "board" || v === "listing" || v === "list"){ cfEcho = "layout " + (v === "board" ? "board" : "listing"); cofferLayoutSet(v === "board" ? "board" : "list"); return; }
+  const m = /^(?:set\s+)?(\S+)\s*=?\s*(.*)$/.exec(v);
+  const id = m && Object.keys(COFFER_TKEY).find(k=>COFFER_TKEY[k] === m[1] || k === m[1]) || m && Object.keys(COFFER_TKEY).find(k=>COFFER_TKEY[k].startsWith(m[1]));
+  if(!id) return say(`${v}: no line called that. Try: set floor 1m`);
+  const q = COFFER_QUIZ.find(x=>x.id === id), val = m[2].trim(), pf = cofferPrefs();
+  if(q.tiers){ state.coffer.quizOpen = true; state.coffer.single = true; state.coffer.step = COFFER_QUIZ.indexOf(q); save(); renderCoffer(); return; }
+  if(q.slider || q.number){
+    const n = /^(any|none|0)$/.test(val) ? "0" : cfParseGp(val);
+    if(n === "") return say(`${v}: that needs an amount, such as 500k or 1m`);
+    if(q.slider){ const f = String(CF_FLOOR[cfFloorIdx(n)]); cfEcho = `set floor ${+f ? cfGp(f) : "any"}`; cofferSet("floor", f); }
+    else { cfEcho = `set goal ${+n ? cfGp(n) : "none"}`; cofferSet("goal", +n ? n : ""); }
+    return;
+  }
+  const names = COFFER_TSHORT[id] || {}, hit = q.opts.find(o=>(names[o[0]] || "").toLowerCase() === val || o[0].toLowerCase() === val) || (val && q.opts.find(o=>(names[o[0]] || "").toLowerCase().startsWith(val) || o[1].toLowerCase().includes(val)));
+  if(!hit) return say(`${v}: ${COFFER_TKEY[id]} takes ${q.opts.map(o=>names[o[0]] || o[1]).join(", ")}`);
+  cfEcho = `set ${COFFER_TKEY[id]} ${names[hit[0]] || hit[1]}`; cofferSet(id, hit[0]);
+}
 function renderCoffer(){
   const el = $("#cofferView"); if(!el) return;
   const db = mmgDB();
@@ -18025,8 +18199,114 @@ function renderCoffer(){
     return ledger(`<img src="${cfSkillIcon(k)}" alt="" class="cf-skico"> Because you love ${nice(k)}`, "the ones this skill is the point of", list, 4, "", true, undefined, sref("love_" + k, 4, all));
   }).join("") || "";
 
-  el.innerHTML = `
-    <div class="panel cf-strip ${tuneOpen ? "open" : ""}">
+  // ---- the Terminal look draws the page one of two ways: Board or Listing (cofferLayout) ----
+  const TL = document.body.dataset.skin === "term" ? cofferLayout() : "";
+  let bkStrip = "", bkMain = "";
+  if(TL){
+    const esc = escapeHtml, payOf = m=>m.recur ? m.perRun : m.profit;
+    const pctOf = m=>Math.max(2.5, Math.min(100, 100 * (payOf(m) || 0) / topPay)).toFixed(1);
+    const whyOf = m=>{ const g = cofferGoalText(m, pf); return (m.why || []).concat(g ? [g] : []); };
+    const flags = m=>(m.wildy ? ["Wilderness"] : m.wildyPass ? ["low Wilderness on the way"] : []).concat(m.market ? ["market risk"] : []);
+    const effort = m=>[m.cat, m.pace ? String(m.pace).toLowerCase() : ""].filter(Boolean).join(" · ");
+    const icon = m=>cfRowIcon(m, groupIcon(m), "cf-skico");
+    const acts = m=>{ const on = pins.includes(m.name), fav = cofferFavs().includes(m.name);
+      return `<button class="bq-a${on ? " on" : ""}" data-cfpin="${esc(m.name)}" title="${on ? "On your picks. Press to take it off" : "Add to your picks, at the top of this page"}">${on ? "picked" : "pick"}</button><button class="bq-a${fav ? " on" : ""}" data-cffav="${esc(m.name)}" title="${fav ? "A favourite. Press to take the star off" : "Favourite: floats it up the lists"}">${fav ? "starred" : "star"}</button><a class="bq-a" href="${cofferGuideUrl(m)}" target="_blank" rel="noopener">guide</a><span class="grow"></span><button class="bq-a q" data-cfhide="${esc(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">hide</button>`; };
+    const pane = (title, sub, body, refresh, cls)=>`<div class="panel bq-pane ${cls || ""}"><div class="section-title" style="margin-top:0"><h3>${title}</h3><span class="small muted">${sub}</span>${refresh ? `<span class="grow"></span>${refresh}` : ""}</div>${body}</div>`;
+    // ---- tuning: your answers as the lines of a settings file ----
+    const tline = q=>{
+      let v;
+      if(q.tiers){
+        const by = t=>Object.keys(pf.skillTiers).filter(x=>pf.skillTiers[x] === t).map(nice), bits = [["love", by("love")], ["like", by("like")], ["hate", by("hate")]].filter(x=>x[1].length).map(([t, l])=>`${t} ${l.join(", ")}`);
+        v = `<button class="tt-o on" data-cfstep="${stepOf(q.id)}" title="Change how you feel about each skill">${esc(bits.join("; ") || "no strong feelings")}</button>`;
+      } else if(q.number) v = `<button class="tt-o on" data-cfstep="${stepOf(q.id)}" title="Change what you are saving for">${pf.goal ? cfGp(+pf.goal) : "none"}</button><span class="tt-n"># saving for</span>`;
+      else if(q.slider){
+        const cur = CF_FLOOR[cfFloorIdx(pf.floor)], pick = [0, 100000, 250000, 500000, 1000000, 2000000, 5000000]; if(!pick.includes(cur)) pick.push(cur); pick.sort((a, b)=>a - b);
+        v = pick.map(n=>`<button class="tt-o${cur === n ? " on" : ""}" data-cfset="floor" data-cfval="${n}">${n ? cfGp(n) : "any"}</button>`).join("") + `<span class="tt-n"># an hour or better</span>`;
+      } else v = q.opts.map(([val, label])=>`<button class="tt-o${pf[q.id] === val ? " on" : ""}" data-cfset="${q.id}" data-cfval="${val}" title="${esc(label)}">${esc((COFFER_TSHORT[q.id] || {})[val] || label)}</button>`).join("")
+        + (q.id === "stage" ? `<span class="tt-n"># auto reads ${esc(String(st.autoLabel || "").toLowerCase())}</span>` : "");
+      return `<div class="tt-l"><span class="tt-k">${COFFER_TKEY[q.id] || q.id}</span><span class="tt-e">=</span><span class="tt-v">${v}</span></div>`;
+    };
+    const readyN = ready.length + dailies.length;
+    bkStrip = `<div class="panel cf-strip cf-tt ${tuneOpen ? "open" : ""}">
+      <div class="bq-lens"><span class="bq-lab">through</span>
+        <button class="${lens ? "" : "on"}" data-lens="">everything</button>
+        ${Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k] === "love").map(k=>`<button class="${lens === k ? "on" : ""}" data-lens="${k}"><img src="${cfSkillIcon(k)}" alt="">${nice(k).toLowerCase()}</button>`).join("")}
+        ${lens && pf.skillTiers[lens] !== "love" ? `<button class="on" data-lens="${lens}"><img src="${cfSkillIcon(lens)}" alt="">${nice(lens).toLowerCase()}</button>` : ""}
+        <select id="cfLensSel" class="small"><option value="">another skill…</option>${COFFER_TIER_SKILLS.filter(k=>k !== lens).map(k=>`<option value="${k}">${nice(k)}</option>`).join("")}</select>
+        <span class="grow"></span>
+        <span class="bq-count"><b>${fmt(readyN)}</b> ready now of ${fmt(db.methods.length)}${live ? "" : ", load your stats to check them against your levels"}</span>
+        <span class="bq-lay" title="How this page is laid out. Also in Settings, Look."><button class="${TL === "board" ? "on" : ""}" data-bklay="board">board</button><button class="${TL === "list" ? "on" : ""}" data-bklay="list">listing</button></span>
+      </div>
+      <div class="tt-bar"><span class="tt-ps">$</span><span class="tt-sum">tune <span>${words.map(esc).join(" · ")}</span></span><span class="grow"></span><button class="ghost small" id="cfTune">${tuneOpen ? "Done" : "⚙ Tune"}</button></div>
+      <div class="tt-body">
+        ${state.coffer.tuneIntro ? `<div class="cf-intro">Your answers live here. Press a value to choose it, or type a line. This tucks away on its own; Tune brings it back.</div>` : ""}
+        <div class="tt-lines">${COFFER_QUIZ.map(tline).join("")}</div>
+        <div class="tt-echo">${cfEcho ? `<i>&gt; ${esc(cfEcho)}</i> <b>${fmt(readyN)} ready now of ${fmt(db.methods.length)}</b>` : ""}</div>
+        <label class="tt-in" for="cfTuneIn"><b>$</b><input id="cfTuneIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="set floor 1m" aria-label="Tune by typing"><span class="tt-n">set &lt;line&gt; &lt;value&gt;</span>
+          <button class="ghost small" id="cfQuiz" title="Answer the questions again from the start">quiz</button><button class="ghost small" id="cfRefresh" title="Re-read the wiki">refresh</button></label>
+      </div>
+    </div>`;
+    // the skills you love, a couple of methods each, in one place rather than a section apiece
+    const seenB = new Set(top.concat(more).map(m=>m.name)), loved = [];
+    if(!lens) Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k] === "love").forEach(k=>{
+      const mine = m=>mmgTierSkill(m) === k || (m.skills || []).some(r=>cofferSkillKey(r.skill) === k && r.lvl >= 30);
+      ready.filter(m=>mine(m) && !seenB.has(m.name)).slice(0, 2).forEach(m=>{ seenB.add(m.name); loved.push(m); });
+    });
+    const trainOn = pf.reach !== "ready" && train.length;
+    const bestTitle = lens ? `Best for ${nice(lens)}` : "Best for you tonight";
+    const bestSub = lens ? `${fit.length} you can do now with ${nice(lens)}` : `${st.label}${st.auto ? "" : " (your call)"} · ${esc(st.why)}`;
+    const topRef = sref("top", 3, fit.length >= 3 ? fit.length : fit.length + rest.length), moreRef = sref("more", 6, fit.length - top.length + rest.length);
+    const roundsHtml = rounds.length ? pane("Repeatables", "dailies and the ones that come back sooner; tick it when it is done", `<div class="rd-list bq-rounds">${rounds.slice(0, 9).map(m=>roundRowHtml(m, pins)).join("")}</div>`,
+      `<button class="ghost small cf-sref" data-cfsref="rounds" data-n="0" data-len="0" title="Check the clock again">⟲</button>`) : "";
+    const empty = `<div class="empty">Nothing you can do yet fits those answers. Loosen one under Tune, or look under Worth training for.</div>`;
+    if(TL === "board"){
+      // Board: the best three side by side, everything else as small tiles. Kept quiet on purpose:
+      // a card says what it pays, why it is here and where; the rest is one click away.
+      const hero = (m, i)=>{ const why = whyOf(m), fl = flags(m);
+        return `<div class="bq-hero${i ? "" : " first"}${pins.includes(m.name) ? " pinned" : ""}" data-cfopen="${esc(m.name)}" title="Open the full card">
+          <div class="bq-top"><span class="bq-rk">#${i + 1}</span>${icon(m)}<span class="bq-cat">${esc(effort(m))}</span></div>
+          <div class="bq-name">${esc(m.name)}</div>
+          <div class="bq-gp">${cofferPayHtml(m)}</div>
+          <span class="bq-meter" style="--p:${pctOf(m)}%"></span>
+          <div class="bq-why">${m.gap.ok ? esc(why[0] || "You have the levels") : `<span class="bq-need">needs ${m.gap.text}</span>`}${fl.length ? ` <span class="bq-flag">${esc(fl.join(", "))}</span>` : ""}</div>
+          <div class="bq-loc">${esc(m.loc || "")}</div>
+          <div class="bq-acts">${acts(m)}</div></div>`; };
+      const tile = m=>{ const on = pins.includes(m.name), fav = cofferFavs().includes(m.name), fl = flags(m);
+        return `<div class="bq-tile${m.gap.ok ? "" : " short"}${on ? " pinned" : ""}" data-cfopen="${esc(m.name)}" title="${esc([effort(m)].concat(fl).join(", "))}">
+          <span class="bq-tn">${icon(m)}<b>${esc(m.name)}</b></span><span class="bq-tg">${cofferPayHtml(m)}</span>
+          ${m.gap.ok ? `<span class="bq-meter" style="--p:${pctOf(m)}%"></span>` : ""}
+          <span class="bq-ts">${m.gap.ok ? esc(whyOf(m)[0] || m.loc || "You have the levels") : `<span class="bq-need">needs ${m.gap.text}</span>`}</span>
+          <span class="bq-ta"><button class="${fav ? "on" : ""}" data-cffav="${esc(m.name)}" title="${fav ? "A favourite. Press to take the star off" : "Favourite: floats it up the lists"}">${fav ? "starred" : "star"}</button><button class="${on ? "on" : ""}" data-cfpin="${esc(m.name)}" title="${on ? "On your picks" : "Add to your picks"}">${on ? "picked" : "pick"}</button><button data-cfhide="${esc(m.name)}" title="Hide this one">hide</button></span></div>`; };
+      const tiles = list=>`<div class="bq-tiles">${list.map(tile).join("")}</div>`;
+      bkMain = pane(bestTitle, bestSub, top.length ? `<div class="bq-podium">${top.map(hero).join("")}</div>` : empty, topRef)
+        + (more.length ? pane(lens ? `More with ${nice(lens)}` : "More in your style", lens ? "the rest of what this skill pays" : "measured against tonight's best", tiles(more), moreRef) : "")
+        + (loved.length ? pane("From the skills you love", "a couple each; pick a skill at the top to see only that one", tiles(loved)) : "")
+        + (trainOn ? pane("Worth training for", "big earners a session or two away", tiles(train), sref("train", 3, close.length)) : "")
+        + roundsHtml;
+    } else {
+      // Listing: one aligned table, the chosen row opened in the pane beside it
+      const sortBy = list=>cfBSort === "gp" ? list.slice().sort((a, b)=>payOf(b) - payOf(a)) : cfBSort === "skill" ? list.slice().sort((a, b)=>String(mmgCatSkill(a) || "~").localeCompare(String(mmgCatSkill(b) || "~"))) : list;
+      const bsel = byName[state.coffer.bsel] ? state.coffer.bsel : ((top[0] || more[0] || train[0] || {}).name || "");
+      let n = 0;
+      const cells = m=>{ const k = Math.max(1, Math.min(10, Math.round((payOf(m) || 0) / topPay * 10))); return "■".repeat(k) + `<u>${"■".repeat(10 - k)}</u>`; };
+      const row = (m, kind)=>{ const fl = flags(m); if(m.gap.ok) n++;
+        return `<tr class="bq-row${kind === "best" ? " best" : ""}${m.name === bsel ? " sel" : ""}${m.gap.ok ? "" : " short"}" data-bksel="${esc(m.name)}"><td class="rk">${m.gap.ok ? n : "~"}</td><td class="nm">${icon(m)}<span>${esc(m.name)}</span>${pins.includes(m.name) ? `<i class="bq-pin" title="On your picks">picked</i>` : ""}</td><td class="gp">${cofferPayHtml(m)}</td><td class="cells">${m.gap.ok ? cells(m) : ""}</td><td class="ef">${m.gap.ok ? esc(effort(m)) + (fl.length ? ` <span class="bq-flag">${esc(fl.join(", "))}</span>` : "") : `<span class="bq-need">needs ${m.gap.text}</span>`}</td><td class="loc">${esc(m.loc || "")}</td></tr>`; };
+      const sec = (title, sub, list, kind, refresh)=>list.length ? `<tr class="bq-sec"><td colspan="6"><span>// ${title}</span><small>${sub}</small>${refresh || ""}</td></tr>` + sortBy(list).map(m=>row(m, kind)).join("") : "";
+      const pm = byName[bsel], pwhy = pm ? whyOf(pm) : [], pfl = pm ? flags(pm) : [];
+      const prev = pm ? `<div class="panel bq-prev"><div class="section-title" style="margin-top:0"><h3>${pm.gap.ok ? "Ready now" : "Within reach"}</h3><span class="grow"></span>${icon(pm)}</div>
+          <div class="bq-name">${esc(pm.name)}</div><div class="bq-gp">${cofferPayHtml(pm)}</div>${pm.gap.ok ? `<span class="bq-meter" style="--p:${pctOf(pm)}%"></span>` : ""}
+          <div class="bq-kv">${pwhy.length ? `<span>why</span><span>${pwhy.map(esc).join(" · ")}</span>` : ""}${pm.gap.ok ? "" : `<span>needs</span><span class="bq-need">${pm.gap.text}</span>`}<span>effort</span><span>${esc(effort(pm))}${pfl.length ? ` <span class="bq-flag">${esc(pfl.join(", "))}</span>` : ""}</span>${pm.loc ? `<span>where</span><span>${esc(pm.loc)}</span>` : ""}${pm.gap.ok ? `<span>vs best</span><span>${Math.round((payOf(pm) || 0) / topPay * 100)}% of the best on this page</span>` : ""}</div>
+          <div class="bq-acts">${acts(pm)}</div>
+          <div class="bq-open" data-cfopen="${esc(pm.name)}">Full details: the levels, what to bring, the wiki's notes ›</div></div>` : "";
+      const th = (key, label, cls)=>`<th class="${cls || ""}${cfBSort === key ? " on" : ""}" ${key ? `data-bksort="${key}" title="Sort each section by this. Press again to go back."` : ""}>${label}</th>`;
+      const body = sec(bestTitle, bestSub, top, "best", topRef)
+        + sec(lens ? `More with ${nice(lens)}` : "More in your style", lens ? "the rest of what this skill pays" : "measured against tonight's best", more, "", moreRef)
+        + sec("From the skills you love", "a couple each", loved, "")
+        + (trainOn ? sec("Worth training for", "big earners a session or two away", train, "", sref("train", 3, close.length)) : "");
+      bkMain = `<div class="bq-split"><div class="bq-left"><div class="panel bq-pane bq-listpane">${body ? `<table class="bq-ls"><thead><tr>${th("", "#", "rk")}${th("", "method")}${th("gp", "gp/hr", "gp")}${th("", "vs best")}${th("skill", "effort")}${th("", "where")}</tr></thead><tbody>${body}</tbody></table>` : empty}</div>${roundsHtml}</div>${prev}</div>`;
+    }
+  }
+  const cfStripOld = ()=>`    <div class="panel cf-strip ${tuneOpen ? "open" : ""}">
       <div class="cf-lenshead">
         <div class="cf-lenstitle">${lens ? `Seeing it through <b>${nice(lens)}</b>` : "See it through a skill"}</div>
         <div class="cf-lens">
@@ -18053,13 +18333,13 @@ function renderCoffer(){
           <button class="ghost small" id="cfRefresh" title="Re-read the wiki">⟲ Refresh</button>
         </div>
       </div></div></div>
-    </div>
-    ${pins.length ? `<div class="panel">
+    </div>`;
+  const cfPinsHtml = `    ${pins.length ? `<div class="panel">
       <div class="section-title" style="margin-top:0"><h3>📌 Your picks</h3>
         <span class="small muted">${pins.length} method${pins.length===1?"":"s"} · ${pins.filter(n=>byName[n].gap.ok).length} ready now</span></div>
       <div class="qb-grid">${pins.map(n=>cofferCardHtml(byName[n], sel && sel.name===n)).join("")}</div>
-    </div>` : ""}
-    <div class="panel cf-hero">
+    </div>` : ""}`;
+  const cfMainOld = ()=>`    <div class="panel cf-hero">
       <div class="section-title" style="margin-top:0"><h3>✦ ${lens ? `Best for ${nice(lens)}` : "Best for you tonight"}</h3><span class="small muted">${lens ? `${fit.length} you can do now with ${nice(lens)}, measured against your levels` : `${st.label}${st.auto ? "" : " (your call)"} · ${escapeHtml(st.why)}`}</span><span class="grow"></span>${sref("top", 3, fit.length >= 3 ? fit.length : fit.length + rest.length)}</div>
       ${top.length ? `<div class="cf-podium">${top.map(heroCard).join("")}</div>`
       : `<div class="empty">Nothing you can do yet fits those answers. Loosen one under Tune, or look under Worth training for.</div>`}
@@ -18068,8 +18348,8 @@ function renderCoffer(){
     ${loveSections}
     ${pf.reach!=="ready" && train.length ? ledger("🎯 Worth training for", "big earners a session or two away", train, 3, "", true, undefined, sref("train", 3, close.length)) : ""}
     ${rounds.length ? `<div class="panel"><div class="section-title" style="margin-top:0"><h3>🌱 Repeatables</h3><span class="small muted">dailies and the ones that come back sooner; tick it when it's done</span><span class="grow"></span><button class="ghost small cf-sref" data-cfsref="rounds" data-n="0" data-len="0" title="Check the clock again">⟲</button></div>
-      <div class="rd-list">${rounds.slice(0, 14).map(m=>roundRowHtml(m, pins)).join("")}</div></div>` : ""}
-    <details class="panel cf-full" ${state.coffer.full ? "open" : ""}><summary><h3 style="display:inline">The full list</h3> <span class="small muted">${fmt(ready.length)} you can do now${pf.reach!=="ready" ? ` · ${fmt(close.length)} within reach` : ""}${pf.reach==="all" ? ` · ${fmt(far.length)} further off` : ""}</span></summary>
+      <div class="rd-list">${rounds.slice(0, 14).map(m=>roundRowHtml(m, pins)).join("")}</div></div>` : ""}`;
+  const cfTailHtml = `    <details class="panel cf-full" ${state.coffer.full ? "open" : ""}><summary><h3 style="display:inline">The full list</h3> <span class="small muted">${fmt(ready.length)} you can do now${pf.reach!=="ready" ? ` · ${fmt(close.length)} within reach` : ""}${pf.reach==="all" ? ` · ${fmt(far.length)} further off` : ""}</span></summary>
       <div class="section-title"><h3>✅ Ready now</h3></div>
       <div class="cf-ledger">${ready.filter(m=>!inTop.has(m.name)).slice(0, 80).map(m=>ledgerRow(m, false)).join("") || `<div class="empty">That's all of them above.</div>`}</div>
       ${pf.reach!=="ready" && close.length ? `<div class="section-title"><h3>🎯 Within reach</h3></div><div class="cf-ledger">${close.slice(0, 40).map(m=>ledgerRow(m, false)).join("")}</div>` : ""}
@@ -18083,6 +18363,7 @@ function renderCoffer(){
           <div class="cf-lacts"><button class="ghost small" data-cfunhide="${escapeHtml(n)}" title="Back into the lists">↩ Bring back</button></div></div>`; }).join("")}</div>
       ${hiddenNames.length > 1 ? `<div class="row" style="margin-top:8px"><span class="grow"></span><button class="ghost small" id="cfUnhideAll">Bring them all back</button></div>` : ""}
     </details>` : ""}`;
+  el.innerHTML = (TL ? bkStrip : cfStripOld()) + cfPinsHtml + (TL ? bkMain : cfMainOld()) + cfTailHtml;
 
   // the strip opens and closes in place, no re-render, so it can animate
   $("#cfTune").onclick = ()=>{
@@ -18138,6 +18419,16 @@ function renderCoffer(){
     $$("#cofferView .sel").forEach(y=>y.classList.remove("sel")); x.classList.add("sel");
     cofferOpen(n);
   });
+  // the two layouts: the switch on the page, a row chosen in the listing, its sort, and tuning by pressing or typing
+  $$("#cofferView [data-bklay]").forEach(b=>b.onclick = ()=>cofferLayoutSet(b.dataset.bklay));
+  $$("#cofferView [data-bksel]").forEach(x=>x.onclick = e=>{ if(e.target.closest("button, a")) return; state.coffer.bsel = x.dataset.bksel; save(); renderCoffer(); });
+  $$("#cofferView [data-bksort]").forEach(x=>x.onclick = ()=>{ cfBSort = cfBSort === x.dataset.bksort ? "" : x.dataset.bksort; renderCoffer(); });
+  $$("#cofferView .cf-tt [data-cfset]").forEach(b=>b.onclick = ()=>{ cfEcho = `set ${COFFER_TKEY[b.dataset.cfset] || b.dataset.cfset} ${b.textContent.trim()}`; cofferSet(b.dataset.cfset, b.dataset.cfval); });
+  const tin = $("#cfTuneIn");
+  if(tin){
+    tin.onkeydown = e=>{ if(e.key !== "Enter") return; e.preventDefault(); const v = tin.value.trim(); if(!v) return; cfTuneRefocus = true; cofferTuneLine(v); cfTuneRefocus = false; };
+    if(cfTuneRefocus){ cfTuneRefocus = false; try{ tin.focus({preventScroll:true}); }catch(e){} }
+  }
   // the card follows a repaint (a pin or a star pressed on it), on the same method
   if(state.coffer.sel && cfqOpen()) cofferOpen(state.coffer.sel, {keep:true});
   const cl = $("#cfClose"); if(cl) cl.onclick = ()=>{ state.coffer.sel = null; save(); renderCoffer(); };
@@ -19928,6 +20219,11 @@ function renderLookSettings(){
     cseg.querySelectorAll("[data-con]").forEach(b=>b.onclick = ()=>{ if(b.dataset.con === "off") conClose(); else conOpen(b.dataset.con); renderLookSettings(); });
     const kb = $("#conKeyBtn");
     if(kb){ kb.textContent = conKeyGrab ? "Press the keys, or Esc" : "Shortcut: " + termKeyText(); kb.onclick = ()=>{ conKeyGrab = true; kb.textContent = "Press the keys, or Esc"; kb.blur(); }; }
+  }
+  const kseg = $("#bkSeg");
+  if(kseg){
+    kseg.innerHTML = COFFER_LAYOUTS.map(([id, label, what])=>`<button class="${id === cofferLayout() ? "on" : ""}" data-bk="${id}" title="${what}">${label}</button>`).join("");
+    kseg.querySelectorAll("[data-bk]").forEach(b=>b.onclick = ()=>cofferLayoutSet(b.dataset.bk));
   }
   const bseg = $("#bdSeg");
   if(bseg){
@@ -22474,6 +22770,8 @@ const SU_VIEW = {
         : `<p class="su-note" style="margin-top:4px">A phone setting. On a computer, Ctrl and plus or minus does the same.</p>`}
       <div class="su-lbl">Numbers</div>
       <div class="seg su-seg">${NUM_CHOICES.map(([id,label])=>`<button class="${id===num?"on":""}" data-sunum="${id}">${label}</button>`).join("")}</div>
+      ${state.skin === "classic" ? "" : `<div class="su-lbl">Bakery layout <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· how Coffer lays out its money makers. Board is cards and tiles, Listing is one aligned table</span></div>
+      <div class="seg su-seg">${COFFER_LAYOUTS.map(([id,label])=>`<button class="${cofferLayout()===id?"on":""}" data-subak="${id}">${label}</button>`).join("")}</div>`}
       ${state.skin === "classic" ? "" : `<p class="su-note" style="margin-top:14px">In the Terminal look a console sits at the side of every page: type a command, a note or a question. Drag its header to float it, and its x closes it. <b>${escapeHtml(termKeyText())}</b> brings it back from anywhere, and so does Settings, Look, where the shortcut can be changed.</p>`}`;
   },
   ai: ()=>`<h3 class="su-h">Claude in the terminal <span class="su-opt">Optional</span></h3>
@@ -22599,6 +22897,7 @@ const SU_WIRE = {
   look: ()=>{
     $$("#suBody [data-suskin]").forEach(b=>b.onclick=()=>{ setSkin(b.dataset.suskin); suDid("skin", "Look set to " + (b.dataset.suskin === "classic" ? "Classic" : "Terminal")); renderSetup(); });
     $$("#suBody [data-suart]").forEach(b=>b.onclick=()=>{ state.themeArt = b.dataset.suart; save(); applyTheme(); $$("#suBody [data-suart]").forEach(x=>x.classList.toggle("on", x===b)); });
+    $$("#suBody [data-subak]").forEach(b=>b.onclick=()=>{ cofferLayoutSet(b.dataset.subak); $$("#suBody [data-subak]").forEach(x=>x.classList.toggle("on", x===b)); });
     $$("#suBody [data-sutheme]").forEach(b=>b.onclick=()=>{
       if(state.theme !== b.dataset.sutheme){
         state.theme = b.dataset.sutheme; save(); applyTheme();
