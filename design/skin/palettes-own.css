@@ -1,0 +1,37 @@
+
+  /* ============ ABYSS ============
+     The very dark theme (theme id black): a black page, and the accent in white rather than a colour.
+     Made here on 2026-11-18 at Josh's asking; it passes the theme kit's twelve contrast checks
+     (p36_themes17.py prints them). No picture. */
+  body[data-skin="term"][data-theme="black"]{
+    --bg:#000000;
+    --bg2:#030303;
+    --panel:#070707;
+    --panel2:#0c0c0d;
+    --border:#232426;
+    --gold:#f2f3f4;
+    --gold-dim:#9a9da1;
+    --gold2:#d5d7da;
+    --gold3:#4c4e52;
+    --text:#cfd1d4;
+    --muted:#878a8e;
+    --inset:#000000;
+    --active:#18191b;
+    --btnlo:#080808;
+    --btnhov1:#202123;
+    --btnhov2:#141516;
+    --cellbg:#040404;
+    --code:#c4c7cb;
+    --ph:#5b5d61;
+    --xp:#75787c;
+    --catbd:#17181a;
+    --dotdim:#35373a;
+    --swempty:#1c1d1f;
+    --glow:rgba(242,243,244,.08);
+    --green:#7fd18a;
+    --green-bg:#162a1c;
+    --red:#e07a6c;
+    --blue:#7fb4e6;
+    --faint:#5f6266;
+    --line:#1a1b1d;
+  }

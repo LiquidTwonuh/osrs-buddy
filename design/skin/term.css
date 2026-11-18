@@ -38,7 +38,6 @@
     --shadow:none;
     background-image:none; font-family:var(--fs);
   }
-  body[data-skin="term"][data-theme="black"]{--line:#1c1c1c}
 
   /* ---- type ---- */
   body[data-skin="term"] :is(h1,h2,h3){font-family:var(--fm); font-weight:600; letter-spacing:-.3px; text-shadow:none}
