@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Bakery, two ways</title>
+<style>
+  /* Coffer, The Bakery (Josh, 2026-11-18: "re-design coffers bakery section to look better. it became
+     a list again. the tuning section could turn into some like, terminal interface?").
+     Today each method is a full-width row with a bar across the whole window, so three methods
+     fill the screen and the right half is empty. Two directions over the same sample methods:
+       A  Board    the best three side by side as cards, the rest as small tiles in a grid.
+       B  Listing  one aligned table, like a directory listing, with the chosen row opened in a
+                   pane beside it.
+     Tuning is the same in both: your answers as lines of a settings file. Click a value to choose
+     it, or type "set floor 1m". Each change answers with one line underneath.
+     Figures are samples. Built by tools/mock-bakery.py, which writes the theme colours in. */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#000; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
+  button,input{font:inherit}
+  .mk-strip{position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-height:36px; padding:6px 16px; background:#0a0a0a; border-bottom:1px solid #242424; color:#8c8c8c; font:12px/1.35 "Segoe UI",system-ui,sans-serif}
+  .mk-strip b{color:#d8d8d8; font-weight:600; margin-right:8px}
+  .mk-strip span.k{margin:0 2px 0 10px}
+  .mk-strip button{color:#b4b4b4; background:none; border:1px solid #333; padding:3px 9px; cursor:pointer}
+  .mk-strip button.on{color:#000; background:#d8d8d8; border-color:#d8d8d8}
+  .mk-note{padding:9px 16px 10px; background:#0a0a0a; border-bottom:1px solid #242424; color:#9a9a9a; font:12.5px/1.5 "Segoe UI",system-ui,sans-serif}
+  .mk-note b{color:#d8d8d8; font-weight:600}
+
+  .W{
+    --fs:"Bahnschrift","DIN Alternate","Inter","Segoe UI",system-ui,sans-serif;
+    --fm:"Cascadia Mono","Cascadia Code","SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+    --faint:color-mix(in srgb, var(--muted) 56%, var(--bg));
+    --line:color-mix(in srgb, var(--border) 58%, var(--bg));
+    --hair:color-mix(in srgb, var(--text) 9%, transparent);
+    --glass:color-mix(in srgb, var(--panel) 50%, transparent);
+    --track:color-mix(in srgb, var(--text) 9%, transparent);
+    --k-c:#62d2d2; --k-y:#f0d264; --k-o:#f39a40; --k-g:#70cf6a; --me:#c79be6;
+    min-height:100vh; padding:12px 14px 60px; color:var(--text); font:13.5px/1.45 var(--fs);
+    background:radial-gradient(ellipse 46% 52% at 12% 8%, color-mix(in srgb, var(--gold-dim) 30%, transparent), transparent 70%), var(--bg);
+  }
+/*THEMES*/
+  .col{max-width:1320px; display:grid; gap:10px}
+  .pane{border:1px solid var(--hair); background:var(--glass)}
+  .ph{display:flex; align-items:baseline; gap:10px; padding:7px 12px; border-bottom:1px solid var(--hair); font:500 11px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  .ph::before{content:"//"; color:var(--faint); letter-spacing:0}
+  .ph small{font:12px var(--fs); letter-spacing:0; text-transform:none; color:var(--faint)}
+  .ph .sp{flex:1}
+  .btn{min-height:0; padding:1px 8px; background:none; border:1px solid var(--line); color:var(--muted); font:12px var(--fm); cursor:pointer; transition:color .14s, border-color .14s}
+  .btn:hover{color:var(--gold); border-color:var(--gold)}
+  .num{font-family:var(--fm); font-variant-numeric:tabular-nums}
+  .tag{font:11.5px var(--fm); color:var(--faint)} .tag.r{color:var(--k-o)}
+  .sk{display:inline-block; min-width:34px; padding:0 4px; text-align:center; font:600 10.5px var(--fm); letter-spacing:.06em; text-transform:uppercase; color:var(--bg); background:var(--c, var(--gold-dim))}
+  .meter{display:block; height:3px; background:var(--track); position:relative}
+  .meter::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:color-mix(in srgb, var(--gold) 62%, var(--bg))}
+  .meter::after{content:""; position:absolute; top:-2px; bottom:-2px; left:calc(var(--p) * 100% - 1px); width:2px; background:var(--gold)}
+
+  /* the head: lens and count on one line */
+  .lens{display:flex; align-items:center; gap:6px; flex-wrap:wrap; padding:9px 12px}
+  .lens .lab{font:11px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin-right:4px}
+  .lens button{padding:2px 9px; background:none; border:1px solid var(--line); color:var(--muted); font:12.5px var(--fm); cursor:pointer}
+  .lens button.on{border-color:var(--gold); color:var(--gold)}
+  .lens .count{margin-left:auto; font:12.5px var(--fm); color:var(--muted)} .lens .count b{color:var(--text)}
+
+  /* tuning, as a settings file */
+  .tune{font:12.5px/1.75 var(--fm)}
+  .tune .body{display:grid; grid-template-columns:repeat(auto-fit, minmax(430px, 1fr)); gap:0 26px; padding:8px 12px 6px}
+  .tl{display:flex; gap:10px; min-width:0; white-space:nowrap}
+  .tl .k{flex:0 0 12ch; color:var(--gold-dim)}
+  .tl .eq{color:var(--faint)}
+  .tl .o{padding:0 3px; background:none; border:0; color:var(--faint); cursor:pointer; font:inherit}
+  .tl .o:hover{color:var(--text)}
+  .tl .o.on{color:var(--text)} .tl .o.on::before{content:"["; color:var(--gold)} .tl .o.on::after{content:"]"; color:var(--gold)}
+  .tl .note{color:var(--faint)}
+  .tune .echo{padding:0 12px; color:var(--muted); min-height:1.75em}
+  .tune .echo b{color:var(--k-g); font-weight:400} .tune .echo i{font-style:normal; color:var(--me)}
+  .tune .in{display:flex; align-items:baseline; gap:8px; padding:5px 12px 7px; border-top:1px solid var(--hair)}
+  .tune .in b{color:var(--gold)} .tune .in input{flex:1; min-width:80px; background:none; border:0; outline:0; color:var(--me); padding:0}
+  .tune .in span{color:var(--faint)}
+  .tune.fold .body, .tune.fold .echo, .tune.fold .in{display:none}
+  .tune .sum{display:none; padding:7px 12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .tune.fold .sum{display:block}
+
+  /* ---- A: the board ---- */
+  .podium{display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:10px; padding:10px}
+  .hero{position:relative; padding:12px 14px 10px; border:1px solid var(--hair); background:color-mix(in srgb, var(--panel) 40%, transparent); display:flex; flex-direction:column; gap:6px; min-width:0; transition:border-color .16s}
+  .hero:hover{border-color:var(--gold-dim)}
+  .hero.first{border-color:color-mix(in srgb, var(--gold) 55%, transparent)}
+  .hero .top{display:flex; align-items:center; gap:8px; font:12px var(--fm); color:var(--faint)}
+  .hero .rk{color:var(--gold); font-weight:600}
+  .hero h4{margin:0; font:600 17px/1.25 var(--fm); letter-spacing:-.2px}
+  .hero.first h4{font-size:19px}
+  .hero .gp{font:600 30px/1.1 var(--fm); color:var(--gold); font-variant-numeric:tabular-nums} .hero.first .gp{font-size:36px}
+  .hero .gp small{font-size:12px; color:var(--muted); font-weight:400}
+  .hero .why{color:var(--k-c); font:12.5px var(--fm)}
+  .hero .loc{color:var(--muted)}
+  .hero .acts{display:flex; gap:6px; margin-top:auto; padding-top:6px}
+  .hero .acts .sp{flex:1} .hero .acts .q{border-color:transparent; color:var(--faint)}
+  .tiles{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:8px; padding:10px}
+  .tile{position:relative; padding:8px 10px 9px; border:1px solid var(--hair); display:grid; grid-template-columns:1fr auto; gap:3px 10px; align-items:baseline; cursor:pointer; transition:border-color .16s, background .16s}
+  .tile:hover{border-color:var(--gold-dim); background:color-mix(in srgb, var(--text) 4%, transparent)}
+  .tile b{font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .tile .gp{font:600 13.5px var(--fm); color:var(--gold)} .tile .gp small{font-weight:400; color:var(--muted); font-size:11px}
+  .tile .meter{grid-column:1 / -1; margin:3px 0 2px}
+  .tile .sub{grid-column:1 / -1; display:flex; gap:8px; align-items:center; min-width:0; white-space:nowrap; overflow:hidden; color:var(--muted); font-size:12px}
+  .tile .need{color:var(--k-o); font:12px var(--fm)}
+  .rounds{display:flex; flex-wrap:wrap; gap:8px; padding:10px}
+  .round{display:flex; align-items:center; gap:8px; padding:5px 10px; border:1px solid var(--hair); font-size:13px}
+  .round .t{width:16px; height:16px; border:1px solid var(--muted); cursor:pointer} .round.up .t{border-color:var(--k-g)}
+  .round .w{font:12px var(--fm); color:var(--faint)} .round.up .w{color:var(--k-g)}
+  .round .gp{font:12.5px var(--fm); color:var(--gold)}
+
+  /* ---- B: the listing ---- */
+  .split{display:grid; grid-template-columns:minmax(0, 1fr) 340px; gap:10px; align-items:start}
+  table.ls{width:100%; border-collapse:collapse; font:13px var(--fm)}
+  .ls th{padding:6px 10px; text-align:left; font:500 10.5px var(--fm); letter-spacing:.12em; text-transform:uppercase; color:var(--faint); border-bottom:1px solid var(--hair); white-space:nowrap; cursor:pointer}
+  .ls th.on{color:var(--gold)} .ls th.r, .ls td.r{text-align:right}
+  .ls td{padding:5px 10px; border-bottom:1px solid color-mix(in srgb, var(--text) 4%, transparent); white-space:nowrap}
+  .ls td.nm{font:600 13.5px var(--fs); white-space:normal; min-width:200px}
+  .ls tr.row{cursor:pointer; transition:background .12s}
+  .ls tr.row:hover td{background:color-mix(in srgb, var(--text) 5%, transparent)}
+  .ls tr.row.sel td{background:color-mix(in srgb, var(--gold) 12%, transparent)}
+  .ls tr.row.sel td:first-child{box-shadow:inset 2px 0 var(--gold)}
+  .ls tr.sec td{padding:11px 10px 4px; font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim); border-bottom:1px solid var(--hair)}
+  .ls tr.sec td small{font:12px var(--fs); letter-spacing:0; text-transform:none; color:var(--faint); margin-left:8px}
+  .ls .rk{color:var(--faint)} .ls tr.best .rk{color:var(--gold); font-weight:600}
+  .ls .gp{color:var(--gold); font-weight:600} .ls .gp small{color:var(--muted); font-weight:400; font-size:11px}
+  .ls .cells{letter-spacing:1px; color:var(--gold)} .ls .cells u{text-decoration:none; color:var(--track)}
+  .ls .loc{color:var(--muted); font-family:var(--fs); max-width:210px; overflow:hidden; text-overflow:ellipsis}
+  .ls .need{color:var(--k-o)}
+  .detail{position:sticky; top:52px}
+  .detail .in{padding:12px 14px 12px; display:grid; gap:8px}
+  .detail h4{margin:0; font:600 18px/1.25 var(--fm)}
+  .detail .gp{font:600 32px/1.1 var(--fm); color:var(--gold)} .detail .gp small{font-size:12px; color:var(--muted); font-weight:400}
+  .detail .kv{display:grid; grid-template-columns:9ch 1fr; gap:3px 10px; font:12.5px var(--fm)}
+  .detail .kv span:nth-child(odd){color:var(--gold-dim)} .detail .kv span:nth-child(even){color:var(--text); font-family:var(--fs); font-size:13px}
+  .detail .acts{display:flex; flex-wrap:wrap; gap:6px; padding-top:4px}
+  .hidden{display:none !important}
+  @media (max-width:900px){ .podium{grid-template-columns:1fr} .split{grid-template-columns:1fr} .detail{position:static} }
+</style>
+</head>
+<body>
+<div class="mk-strip"><b>The Bakery</b><span class="k">layout</span><button data-dir="A" class="on">A Board</button><button data-dir="B">B Listing</button><span class="k">theme</span><span id="ths"></span></div>
+<div class="mk-note"><b>Today</b> every method is a row across the whole window, so three of them fill the screen. <b>A</b> puts the best three side by side and the rest in a grid of small tiles. <b>B</b> is one aligned table with the row you choose opened beside it. <b>Tuning</b> is the same in both: click a value, or type a line such as <b>set floor 1m</b>. Figures are samples.</div>
+<div class="W" id="W" data-th="law"><div class="col">
+  <div class="pane"><div class="lens"><span class="lab">through</span><span id="lens"></span><span class="count"><b id="cnt">12</b> ready now of 524</span></div></div>
+  <div class="pane tune" id="tune">
+    <div class="ph">tune<small>your answers. Change one and the page follows.</small><span class="sp"></span><button class="btn" id="fold">fold</button></div>
+    <div class="sum" id="sum"></div>
+    <div class="body" id="tbody"></div>
+    <div class="echo" id="echo"></div>
+    <label class="in"><b>$</b><input id="tin" autocomplete="off" spellcheck="false" placeholder="set floor 1m"><span>set &lt;line&gt; &lt;value&gt;, reset, quiz</span></label>
+  </div>
+  <div id="A"></div>
+  <div id="B" class="hidden"></div>
+</div></div>
+<script>
+const SK = {mag:["mag", "#6f8fe8"], mel:["mel", "#d9694f"], rng:["rng", "#6fbf6a"], sla:["sla", "#b8a05a"], fsh:["fsh", "#5fb5c9"], wc:["wc", "#7da35a"], agi:["agi", "#8f8fb8"], thv:["thv", "#a77bc2"], prc:["proc", "#9aa3a8"], pvp:["pvp", "#c96a8b"], sai:["sail", "#58a8a0"]};
+const M = [
+  {n:"Looting Branda the Fire Queen", gp:1909000, s:"mag", t:["combat/high", "high"], why:"a bit beyond mid game", loc:"Asgarnian Ice Dungeon", g:"best"},
+  {n:"Looting Eldric the Ice King", gp:1891000, s:"mag", t:["combat/high", "high"], why:"a bit beyond mid game", loc:"Asgarnian Ice Dungeon", g:"best"},
+  {n:"Killing Blood Moon", gp:1274000, s:"mel", t:["combat/high", "high"], why:"a bit beyond mid game", loc:"Moons of Peril", g:"best"},
+  {n:"Killing Eclipse Moon", gp:1190000, s:"rng", t:["combat/high", "high"], why:"you have the levels", loc:"Moons of Peril", g:"more"},
+  {n:"Cutting raw yellowfin", gp:980000, s:"prc", t:["processing", "low"], why:"needs a market that holds", loc:"Bank chest", g:"more", risk:1},
+  {n:"Killing gargoyles", gp:620000, s:"sla", t:["combat/mid", "moderate"], why:"on your Slayer list", loc:"Slayer Tower", g:"more"},
+  {n:"Salvaging shipwrecks", gp:540000, s:"sai", t:["skilling", "low"], why:"because you love Sailing", loc:"Open sea", g:"more"},
+  {n:"Catching sacred eels", gp:310000, s:"fsh", t:["skilling", "afk"], why:"because you love Fishing", loc:"Zul-Andra", g:"more"},
+  {n:"Cutting redwood logs", gp:120000, s:"wc", t:["skilling", "afk"], why:"because you love Woodcutting", loc:"Woodcutting Guild", g:"more"},
+  {n:"Killing Araxxor", gp:4200000, s:"sla", t:["combat/high", "high"], need:"92 Slayer, you are 55", loc:"Morytania Spider Cave", g:"train"},
+  {n:"Pickpocketing elves", gp:1450000, s:"thv", t:["skilling", "moderate"], need:"85 Thieving, you are 55", loc:"Prifddinas", g:"train"},
+  {n:"Killing Cerberus", gp:2300000, s:"sla", t:["combat/high", "high"], need:"91 Slayer, you are 55", loc:"Cerberus' Lair", g:"train"}
+];
+const R = [["Bird house trapping", "53K/run", "up now", 1], ["Herb run", "73K/run", "in 40 min", 0], ["Brewing chef's delight(m)", "526K/run", "every 2 days", 0]];
+const SEC = {best:["Best for you tonight", "mid game (your call), combat 107, total 1,527"], more:["More in your style", "measured against tonight's best"], train:["Worth training for", "big earners a session or two away"]};
+const fmt = n=>n.toLocaleString("en-US"), best = Math.max(...M.filter(m=>m.g !== "train").map(m=>m.gp));
+const sk = m=>`<span class="sk" style="--c:${SK[m.s][1]}">${SK[m.s][0]}</span>`;
+const tags = m=>m.t.map(t=>`<span class="tag${m.risk && t === "processing" ? " r" : ""}">#${t}</span>`).join(" ");
+const acts = q=>`<button class="btn">pick</button><button class="btn">favourite</button><button class="btn">guide</button><span class="sp"></span><button class="btn q">hide</button>`;
+// A
+function drawA(){
+  const g = k=>M.filter(m=>m.g === k);
+  document.getElementById("A").innerHTML = `<div class="col">
+    <div class="pane"><div class="ph">${SEC.best[0]}<small>${SEC.best[1]}</small></div><div class="podium">${g("best").map((m, i)=>`<div class="hero${i ? "" : " first"}">
+      <div class="top"><span class="rk">#${i + 1}</span>${sk(m)}${tags(m)}</div><h4>${m.n}</h4><div class="gp">${fmt(m.gp)}<small>/hr</small></div><span class="meter" style="--p:${m.gp / best}"></span>
+      <div class="why">${m.why}</div><div class="loc">${m.loc}</div><div class="acts">${acts()}</div></div>`).join("")}</div></div>
+    <div class="pane"><div class="ph">${SEC.more[0]}<small>${SEC.more[1]}</small><span class="sp"></span><button class="btn">shuffle</button></div><div class="tiles">${g("more").map(m=>`<div class="tile"><b>${m.n}</b><span class="gp">${fmt(m.gp)}<small>/hr</small></span><span class="meter" style="--p:${m.gp / best}"></span><span class="sub">${sk(m)}<span>${m.why}</span></span></div>`).join("")}</div></div>
+    <div class="pane"><div class="ph">${SEC.train[0]}<small>${SEC.train[1]}</small></div><div class="tiles">${g("train").map(m=>`<div class="tile"><b>${m.n}</b><span class="gp">${fmt(m.gp)}<small>/hr</small></span><span class="sub">${sk(m)}<span class="need">needs ${m.need}</span></span></div>`).join("")}</div></div>
+    <div class="pane"><div class="ph">Repeatables<small>tick it when it is done</small></div><div class="rounds">${R.map(r=>`<div class="round${r[3] ? " up" : ""}"><span class="t"></span><b>${r[0]}</b><span class="gp">${r[1]}</span><span class="w">${r[2]}</span></div>`).join("")}</div></div></div>`;
+}
+// B
+let sel = M[0].n, sort = "";
+const cells = p=>{ const k = Math.max(1, Math.round(p * 10)); return "■".repeat(Math.min(10, k)) + "<u>" + "■".repeat(10 - Math.min(10, k)) + "</u>"; };
+function drawB(){
+  let n = 0;
+  const rows = ["best", "more", "train"].map(k=>{
+    let list = M.filter(m=>m.g === k); if(sort === "gp") list = list.slice().sort((a, b)=>b.gp - a.gp); if(sort === "skill") list = list.slice().sort((a, b)=>a.s.localeCompare(b.s));
+    return `<tr class="sec"><td colspan="7">// ${SEC[k][0]}<small>${SEC[k][1]}</small></td></tr>` + list.map(m=>{ n++; return `<tr class="row${k === "best" ? " best" : ""}${m.n === sel ? " sel" : ""}" data-n="${m.n}"><td class="rk r">${k === "train" ? "~" : n}</td><td class="nm">${m.n}</td><td class="gp r">${fmt(m.gp)}<small>/hr</small></td><td class="cells">${k === "train" ? "" : cells(m.gp / best)}</td><td>${sk(m)}</td><td>${m.need ? `<span class="need">needs ${m.need}</span>` : tags(m)}</td><td class="loc">${m.loc}</td></tr>`; }).join("");
+  }).join("");
+  const m = M.find(x=>x.n === sel);
+  document.getElementById("B").innerHTML = `<div class="split"><div class="pane"><table class="ls"><thead><tr><th class="r">#</th><th>method</th><th class="r${sort === "gp" ? " on" : ""}" data-sort="gp">gp/hr</th><th>vs best</th><th class="${sort === "skill" ? "on" : ""}" data-sort="skill">skill</th><th>effort</th><th>where</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="pane detail"><div class="ph">${m.g === "train" ? "within reach" : "ready now"}<span class="sp"></span>${sk(m)}</div><div class="in"><h4>${m.n}</h4><div class="gp">${fmt(m.gp)}<small>/hr</small></div>${m.g === "train" ? "" : `<span class="meter" style="--p:${m.gp / best}"></span>`}
+      <div class="kv"><span>why</span><span>${m.why || "a big earner once the level is there"}</span><span>${m.need ? "needs" : "effort"}</span><span>${m.need || m.t.join(", ")}</span><span>where</span><span>${m.loc}</span><span>vs best</span><span>${m.g === "train" ? "not yet" : Math.round(m.gp / best * 100) + "% of tonight's best"}</span></div>
+      <div class="acts">${acts()}</div></div>
+      <div class="ph" style="border-top:1px solid var(--hair)">Repeatables</div><div class="rounds">${R.map(r=>`<div class="round${r[3] ? " up" : ""}"><span class="t"></span><b>${r[0]}</b><span class="w">${r[2]}</span></div>`).join("")}</div></div></div>`;
+}
+// tuning
+const T = [["account", ["main", "ironman"], 0], ["members", ["yes", "free to play"], 0], ["stage", ["early", "mid game", "late", "endgame"], 1, "your call"], ["enjoy", ["combat", "skilling", "a bit of everything"], 2],
+  ["session", ["20 min", "an hour", "all evening"], 1], ["pace", ["afk", "relaxed", "focused"], 1], ["xp", ["gold only", "xp too"], 1], ["wilderness", ["avoid", "fine with it"], 0],
+  ["money risk", ["steady earners", "market plays too"], 0], ["floor", ["any", "250k", "500k", "1m", "2m"], 2, "an hour or better"], ["reach", ["ready only", "a session away", "everything"], 1], ["skills", ["6 loved, 2 avoided"], 0, "click to edit"]];
+function drawT(){
+  document.getElementById("tbody").innerHTML = T.map(([k, o, on, note], i)=>`<div class="tl"><span class="k">${k}</span><span class="eq">=</span><span>${o.map((x, j)=>`<button class="o${j === on ? " on" : ""}" data-t="${i}:${j}">${x}</button>`).join("")}${note ? ` <span class="note"># ${note}</span>` : ""}</span></div>`).join("");
+  document.getElementById("sum").textContent = T.slice(0, 11).map(t=>t[1][t[2]]).join("  ·  ");
+}
+function setT(i, j, typed){
+  const t = T[i]; if(!t || !t[1][j] || t[1].length < 2) return; t[2] = j; drawT();
+  const n = 5 + ((i * 7 + j * 11) % 14); document.getElementById("cnt").textContent = n;
+  document.getElementById("echo").innerHTML = `<i>${typed ? "$" : ">"} set ${t[0]} ${t[1][j]}</i> &nbsp; <b>${n} ready now of 524</b>, the page below follows`;
+}
+document.getElementById("lens").innerHTML = ["everything", "sailing", "slayer", "fishing", "ranged", "woodcutting", "melee", "+ skill"].map((x, i)=>`<button class="${i ? "" : "on"}">${x}</button>`).join(" ");
+const TH = /*THLIST*/[];
+const W = document.getElementById("W");
+document.getElementById("ths").innerHTML = TH.map(([id, label])=>`<button data-th="${id}" class="${id === "law" ? "on" : ""}">${label}</button>`).join("");
+document.addEventListener("click", e=>{
+  const b = e.target.closest("button, tr.row, th[data-sort]"); if(!b) return; const d = b.dataset;
+  if(d.th){ W.dataset.th = d.th; document.querySelectorAll("#ths button").forEach(x=>x.classList.toggle("on", x === b)); }
+  else if(d.dir){ document.querySelectorAll("[data-dir]").forEach(x=>x.classList.toggle("on", x === b)); document.getElementById("A").classList.toggle("hidden", d.dir !== "A"); document.getElementById("B").classList.toggle("hidden", d.dir !== "B"); }
+  else if(d.t){ const [i, j] = d.t.split(":").map(Number); setT(i, j); }
+  else if(d.n){ sel = d.n; drawB(); }
+  else if(d.sort){ sort = sort === d.sort ? "" : d.sort; drawB(); }
+  else if(b.id === "fold"){ const t = document.getElementById("tune"); t.classList.toggle("fold"); b.textContent = t.classList.contains("fold") ? "tune" : "fold"; }
+  else if(b.parentElement && b.parentElement.id === "lens"){ document.querySelectorAll("#lens button").forEach(x=>x.classList.toggle("on", x === b)); }
+});
+document.getElementById("tin").addEventListener("keydown", e=>{
+  if(e.key !== "Enter") return; const v = e.target.value.trim().toLowerCase(), m = v.match(/^set\s+(.+)$/); e.target.value = "";
+  if(!m){ document.getElementById("echo").innerHTML = `<i>$ ${v}</i> &nbsp; try: set floor 1m`; return; }
+  const i = T.findIndex(t=>m[1].startsWith(t[0])), rest = i < 0 ? "" : m[1].slice(T[i][0].length).trim(), j = i < 0 ? -1 : T[i][1].findIndex(o=>o.startsWith(rest) && rest);
+  if(i < 0 || j < 0) document.getElementById("echo").innerHTML = `<i>$ ${v}</i> &nbsp; no line or value like that`; else setT(i, j, true);
+});
+drawT(); drawA(); drawB();
+</script>
+</body>
+</html>

@@ -5048,6 +5048,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="skin-pick" id="skinPick"></div>
             <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose, and you can drag a pane by its header to move it. Orderly lines every edge up.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="tilesSeg"></div><button class="ghost small hidden" id="tilesReset" title="Put Home's panes back where they started">Reset panes</button></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Command line</b><small>The line at the top of every page takes commands: cd scroll, log mined for an hour, stats mining, -help for the list. Press / or the key under Esc to start typing. On a wide window the console sits in its own column at the right of every page; the console button on the line shows and hides it, and dragging its header off floats it over the page. Off leaves the line as a plain path.</small></div><div class="seg" id="tpSeg"></div></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Console</b><small>Where the console sits. At the side is a column to the right of every page, when the window has room. Floating is a window you can move and resize. Hidden closes it. The shortcut shows and hides it from anywhere; drag the console's header to pull it off the side.</small></div><div class="row" style="gap:8px; flex-wrap:wrap; align-items:center"><div class="seg" id="conSeg"></div><button class="ghost small" id="conKeyBtn" title="Press this, then the keys you want"></button></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Backdrop</b><small>What sits behind the panes. Dots, Grid, Lines and Weave are faint patterns. Clean keeps the soft glow in the corners and drops the pattern. Flat is the theme's plain colour.</small></div><div class="seg" id="bdSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Wide window</b><small>On a wide monitor, the room beside and under a page fills with extra panes. The most useful come first, so more room only ever adds less essential ones. A pane's x hides it.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="wfSeg"></div><button class="ghost small hidden" id="wfShowAll" title="Bring back the panes you hid"></button></div></div>
           </div>
@@ -6398,7 +6399,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","backdrop"];
+const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","termLast","termKey","termCloseTips","backdrop"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -15572,7 +15573,7 @@ function tpKeys(inp, hint, bar){
 function tfEl(){
   let el = $("#termFloat"); if(el) return el;
   el = document.createElement("div"); el.id = "termFloat"; el.className = "term-float hidden";
-  el.innerHTML = `<div class="tf-h" data-tfdrag="1" title="Drag to move. The corner resizes."><span class="lab">// console</span><span class="tf-path" id="tfPath"></span><span class="sp"></span><button type="button" data-tfdock="1" title="Put the console back under the bar at the top">dock</button></div>
+  el.innerHTML = `<div class="tf-h" data-tfdrag="1" title="Drag to move. The corner resizes."><span class="lab">// console</span><span class="tf-path" id="tfPath"></span><span class="sp"></span><button type="button" data-tfdock="1" title="Put the console in its column at the side of the page">dock</button><button type="button" data-conx="1" title="Close the console. Its shortcut, or the console button on the line at the top, brings it back." aria-label="Close the console">✕</button></div>
     <div class="tf-log ht-log" id="tfLog" aria-live="polite"></div>
     <label class="tf-row" for="tfIn"><b>&gt;</b><input id="tfIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Console"><span class="tp-hint" id="tfHint"></span></label>`;
   document.body.appendChild(el);
@@ -15601,6 +15602,39 @@ function tfSet(on, at){
   if(on){ const i = $("#tfIn"); if(i) try{ i.focus({preventScroll:true}); }catch(e){} }
   return true;
 }
+// ---- showing and hiding the console, wherever it was ----
+// Its x closes it. The shortcut (Ctrl+Shift+T unless changed in Settings, Look) and the console
+// button on the line at the top bring it back to where it last was: at the side, or floating.
+const TERM_KEY = {ctrl:true, shift:true, alt:false, key:"t"};
+var conKeyGrab = false;
+function termKeyGet(){ const k = state.termKey; return k && k.key ? k : TERM_KEY; }
+function termKeyText(){ const k = termKeyGet(); return (k.ctrl ? "Ctrl+" : "") + (k.alt ? "Alt+" : "") + (k.shift ? "Shift+" : "") + (String(k.key).length === 1 ? String(k.key).toUpperCase() : k.key); }
+function termKeyHit(e){ const k = termKeyGet(); return !!k.ctrl === !!(e.ctrlKey || e.metaKey) && !!k.shift === !!e.shiftKey && !!k.alt === !!e.altKey && String(e.key).toLowerCase() === String(k.key).toLowerCase(); }
+function conShown(){ return trShown || tfOn(); }
+function conClose(){
+  state.termLast = tfOn() ? "float" : "side";
+  if(state.termFloat) state.termFloat.on = false;
+  (state.termRail || (state.termRail = {})).on = false;
+  save(); tfApply(); trApply(); tpRender();
+  const n = state.termCloseTips || 0; if(n < 3){ state.termCloseTips = n + 1; save(); toast(`Console closed. ${termKeyText()} brings it back.`); }
+}
+// where: "side", "float", or nothing for wherever it last was. With no room at the side it floats.
+function conOpen(where){
+  const home = $("#view-home"), hin = $("#htIn");
+  if(!where && home && !home.classList.contains("hidden") && hin && !(state.homeHide || {}).term && !tfOn() && state.termLast !== "float"){ try{ hin.focus(); }catch(e){} return; }   // Home has its own
+  const w = where || state.termLast || "side";
+  if(w === "float"){ if(tfSet(true)) return; }
+  if(tfOn()) tfSet(false);
+  trSet(true);
+  if(!trShown && !tpHomeLogSeen()) tfSet(true);
+  tpFocus();
+}
+function conToggle(){
+  if(!tpOn()) return;
+  const a = document.activeElement, inside = a && a.closest && a.closest("#termRail, #termFloat");
+  if(conShown() && !inside){ tpFocus(); return; }
+  if(conShown()) conClose(); else conOpen();
+}
 // ---- the console at the side ----
 const TR_SKIP = new Set(["start", "arcade", "survivors", "rhythm", "museum", "patch", "mockups", "board"]);
 function trW(){ const w = state.termRail && state.termRail.w; return Math.max(280, Math.min(600, w || 350)); }
@@ -15609,7 +15643,7 @@ function trEl(){
   const app = $(".app"); if(!app) return null;
   el = document.createElement("aside"); el.id = "termRail"; el.className = "term-rail hidden"; el.setAttribute("aria-label", "Console");
   el.innerHTML = `<i class="tr-size" data-trsize="1" title="Drag to make the console wider or narrower"></i>
-    <div class="tf-h" data-tfpull="1" title="Drag this off the side to float the console over the page"><span class="lab">// console</span><span class="sp"></span><button type="button" data-tfpop="1" title="Float the console over the page, where it can be moved and resized">pop out</button><button type="button" data-trhide="1" title="Put the console away. The console button on the line at the top brings it back.">hide</button></div>
+    <div class="tf-h" data-tfpull="1" title="Drag this off the side to float the console over the page"><span class="lab">// console</span><span class="sp"></span><button type="button" data-tfpop="1" title="Float the console over the page, where it can be moved and resized">pop out</button><button type="button" data-conx="1" title="Close the console. Its shortcut, or the console button on the line at the top, brings it back." aria-label="Close the console">✕</button></div>
     <div class="tf-log ht-log" id="trLog" aria-live="polite"></div>
     <label class="tf-row" for="trIn"><b>&gt;</b><input id="trIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Console"><span class="tp-hint" id="trHint"></span></label>`;
   app.appendChild(el);
@@ -15680,32 +15714,33 @@ function trSet(on){ const r = state.termRail || (state.termRail = {}); r.on = !!
   document.addEventListener("pointercancel", end);
   document.addEventListener("click", e=>{
     if(!e.target.closest) return;
-    if(e.target.closest("[data-tfdock]")){ e.preventDefault(); tfSet(false); }
+    if(e.target.closest("[data-tfdock]")){ e.preventDefault(); conOpen("side"); }
     else if(e.target.closest("[data-tfpop]")){ e.preventDefault(); tfSet(true); }
-    else if(e.target.closest("[data-trhide]")){ e.preventDefault(); trSet(false); }
-    else if(e.target.closest("#tpCon")){
-      // the console button: put a floating one back, hide the one at the side, or bring it out.
-      // With no room at the side it opens and shuts the drop-down under the line instead.
-      e.preventDefault();
-      if(tfOn()) tfSet(false);
-      else if(trShown) trSet(false);
-      else { trSet(true); if(!trShown){ if(tpShown) tpClose(); else tpOpen("run"); } }
-    }
+    else if(e.target.closest("[data-conx]")){ e.preventDefault(); conClose(); }
+    else if(e.target.closest("#tpCon")){ e.preventDefault(); if(conShown()) conClose(); else conOpen(); }
   });
+  // the shortcut, from anywhere; and choosing a new one in Settings, Look
+  document.addEventListener("keydown", e=>{
+    if(conKeyGrab){
+      if(["Control", "Shift", "Alt", "Meta"].includes(e.key)) return;
+      e.preventDefault(); e.stopPropagation(); conKeyGrab = false;
+      if(e.key === "Escape"){ try{ renderLookSettings(); }catch(err){} return; }
+      if(!(e.ctrlKey || e.metaKey || e.altKey)){ toast("A shortcut needs Ctrl or Alt in it.", true); try{ renderLookSettings(); }catch(err){} return; }
+      state.termKey = {ctrl:!!(e.ctrlKey || e.metaKey), shift:!!e.shiftKey, alt:!!e.altKey, key:e.key.length === 1 ? e.key.toLowerCase() : e.key};
+      save(); toast(`Console shortcut is now ${termKeyText()}.`); try{ renderLookSettings(); }catch(err){} return;
+    }
+    if(!termKeyHit(e) || document.body.classList.contains("modal") || document.body.classList.contains("dock")) return;
+    e.preventDefault(); conToggle();
+  }, true);
   window.addEventListener("resize", ()=>{ if(tfOn()) tfApply(); trApply(); });
   try{ const sb = $(".sidebar"); if(sb && window.ResizeObserver) new ResizeObserver(()=>trApply()).observe(sb); }catch(e){}
   tpApply();
 })();
-termDef(["console"], "console [side|float|off]", "Where the console is. side puts it in its own column at the right of the page, float lifts it over the page where it can be moved and resized, off puts it away. On its own it shows or hides it.", "App", rest=>{
+termDef(["console"], "console [side|float|off]", "Where the console is. side puts it in its own column at the right of the page, float lifts it over the page where it can be moved and resized, off closes it. On its own it shows or hides it. Its shortcut does the same from anywhere.", "App", rest=>{
   const w = String(rest || "").trim().toLowerCase().replace(/^-/, "");
-  if(w && !["side", "dock", "float", "off", "hide"].includes(w)) return "console takes side, float or off";
-  const showing = trShown || tfOn(), to = w === "float" ? "float" : w === "off" || w === "hide" ? "off" : w ? "side" : showing ? "off" : "side";
-  return {hint:`<u>enter</u> ${to === "float" ? "floats the console over the page" : to === "off" ? "puts the console away" : "puts the console at the side of the page"}`, quiet:true, run:()=>{
-    if(to === "float"){ if(!tfSet(true)) termOut("The floating console is for a mouse and a wide window."); return; }
-    if(tfOn()) tfSet(false);
-    trSet(to === "side");
-    if(to === "side" && !trShown) termOut("There is no room for the console at the side here: the window is too narrow, or this is Home, which has its own terminal pane.");
-  }};
+  if(w && !["side", "dock", "float", "off", "hide", "close"].includes(w)) return "console takes side, float or off";
+  const to = w === "float" ? "float" : ["off", "hide", "close"].includes(w) ? "off" : w ? "side" : conShown() ? "off" : "";
+  return {hint:`<u>enter</u> ${to === "float" ? "floats the console over the page" : to === "off" ? `closes the console (${tE(termKeyText())} brings it back)` : to === "side" ? "puts the console at the side of the page" : "brings the console back"}`, quiet:true, run:()=>{ if(to === "off") conClose(); else conOpen(to || undefined); }};
 });
 
 // ============ EDIT MODE ============
@@ -19886,6 +19921,14 @@ function renderLookSettings(){
     pseg.innerHTML = `<button class="${on ? "on" : ""}" data-tp="1">On every page</button><button class="${on ? "" : "on"}" data-tp="0">Off</button>`;
     pseg.querySelectorAll("[data-tp]").forEach(b=>b.onclick = ()=>{ termState().bar = b.dataset.tp === "1"; save(); tpApply(); renderLookSettings(); });
   }
+  const cseg = $("#conSeg");
+  if(cseg){
+    const cur = tfOn() ? "float" : state.termRail && state.termRail.on === false ? "off" : "side";
+    cseg.innerHTML = [["side", "At the side"], ["float", "Floating"], ["off", "Hidden"]].map(([id, label])=>`<button class="${id === cur ? "on" : ""}" data-con="${id}">${label}</button>`).join("");
+    cseg.querySelectorAll("[data-con]").forEach(b=>b.onclick = ()=>{ if(b.dataset.con === "off") conClose(); else conOpen(b.dataset.con); renderLookSettings(); });
+    const kb = $("#conKeyBtn");
+    if(kb){ kb.textContent = conKeyGrab ? "Press the keys, or Esc" : "Shortcut: " + termKeyText(); kb.onclick = ()=>{ conKeyGrab = true; kb.textContent = "Press the keys, or Esc"; kb.blur(); }; }
+  }
   const bseg = $("#bdSeg");
   if(bseg){
     const cur = document.body.dataset.backdrop || "dots";
@@ -22422,7 +22465,7 @@ const SU_VIEW = {
       <div class="seg su-seg">${SKINS.map(([id,label])=>`<button class="${(state.skin==="classic"?"classic":"term")===id?"on":""}" data-suskin="${id}">${label}</button>`).join("")}</div>
       <div class="su-lbl">Theme</div>
       <div class="su-themes">${THEMES.map(([id,label,ic])=>`<button class="su-theme ${id===cur?"on":""}" data-sutheme="${id}"><img src="${WIKI+ic}" alt=""><span>${label}</span></button>`).join("")}</div>
-      <div class="su-lbl">Scene art <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· the painted scene behind the top of a rune theme. Illustrated draws more on the combination runes</span></div>
+      <div class="su-lbl">Scene art <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· the picture a theme carries. Focused shows a little of it, Illustrated more, Off none</span></div>
       <div class="seg su-seg">${ART_CHOICES.map(([id,label])=>`<button class="${(state.themeArt||"focused")===id?"on":""}" data-suart="${id}">${label}</button>`).join("")}</div>
       <div class="su-lbl">Font</div>
       <div id="suFontPick"></div>
@@ -22430,7 +22473,8 @@ const SU_VIEW = {
       ${scaleIsPhone() ? `<div class="seg su-seg">${UI_SCALES.map(([id,label])=>`<button class="${String(state.uiScale||"1")===id?"on":""}" data-suscale="${id}">${label}</button>`).join("")}</div>`
         : `<p class="su-note" style="margin-top:4px">A phone setting. On a computer, Ctrl and plus or minus does the same.</p>`}
       <div class="su-lbl">Numbers</div>
-      <div class="seg su-seg">${NUM_CHOICES.map(([id,label])=>`<button class="${id===num?"on":""}" data-sunum="${id}">${label}</button>`).join("")}</div>`;
+      <div class="seg su-seg">${NUM_CHOICES.map(([id,label])=>`<button class="${id===num?"on":""}" data-sunum="${id}">${label}</button>`).join("")}</div>
+      ${state.skin === "classic" ? "" : `<p class="su-note" style="margin-top:14px">In the Terminal look a console sits at the side of every page: type a command, a note or a question. Drag its header to float it, and its x closes it. <b>${escapeHtml(termKeyText())}</b> brings it back from anywhere, and so does Settings, Look, where the shortcut can be changed.</p>`}`;
   },
   ai: ()=>`<h3 class="su-h">Claude in the terminal <span class="su-opt">Optional</span></h3>
       <p class="su-p">Home has a terminal. Type a question there and it is answered on this device, from what the app knows. Give it your own Claude API key and the question goes to Claude instead, along with your levels, so it can answer nearly anything about the game for your account.</p>

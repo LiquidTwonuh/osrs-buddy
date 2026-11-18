@@ -1,5 +1,11 @@
 [
   {
+    "file": "bakery.html",
+    "title": "The Bakery, two ways",
+    "desc": "Coffer's Bakery stopped being a page and became a list again: every method a row across the whole window. Two directions over the same sample methods. A, Board: the best three side by side, the rest as small tiles. B, Listing: one aligned table with the chosen row opened beside it. In both, tuning is a settings file you click or type into. Layout and theme switches in the top strip.",
+    "date": "2026-11-18"
+  },
+  {
     "file": "bars.html",
     "title": "Progress bars",
     "desc": "Twenty-one ways to draw a progress bar, each on the same four skill cells and three day rows, so only the bar changes. A is what the app draws today. Click a card to mark the ones you like; the theme switch in the top strip shows them on eight palettes.",
