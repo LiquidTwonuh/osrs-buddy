@@ -4066,9 +4066,21 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .tf-log{flex:1 1 auto; min-height:0; max-height:none; padding:9px 12px 10px}
   body[data-skin="term"] .tf-row{flex:none; display:flex; align-items:baseline; gap:8px; margin:0; padding:7px 26px 7px 12px; border-top:1px solid var(--line); cursor:text; white-space:nowrap}
   body[data-skin="term"] .tf-row > b{font-weight:600; color:var(--gold)}
-  body[data-skin="term"] #tfIn{flex:1 1 80px; min-width:60px; width:auto; height:auto; min-height:0; margin:0; padding:0; background:none; border:0; outline:0; box-shadow:none; color:var(--me); caret-color:var(--me); font:inherit}
+  body[data-skin="term"] .tf-row input{flex:1 1 80px; min-width:60px; width:auto; height:auto; min-height:0; margin:0; padding:0; background:none; border:0; outline:0; box-shadow:none; color:var(--me); caret-color:var(--me); font:inherit}
   body[data-skin="term"] .term-float:focus-within{border-color:var(--gold)}
-  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .tp-out, body[data-skin="term"] .tp-out.open{transition:none} body[data-skin="term"] .term-float{animation:none} }
+  /* the console at the side: a column of its own to the right of the page (trApply in the script
+     decides when). It stays in view as the page scrolls; its left edge drags to set its width. */
+  body[data-skin="term"] .term-rail{position:sticky; top:var(--gap); align-self:flex-start; flex:0 0 var(--tr-w, 350px); width:var(--tr-w, 350px); height:calc(100vh - var(--gap) * 2);
+    margin:0 var(--gap) 0 0; display:flex; flex-direction:column; min-width:0; font:12.5px/1.5 var(--fm);
+    background:var(--glass); -webkit-backdrop-filter:blur(18px) saturate(1.2); backdrop-filter:blur(18px) saturate(1.2); border:1px solid var(--hair); animation:trIn .3s cubic-bezier(.2,.7,.2,1)}
+  @keyframes trIn{from{opacity:0; transform:translateX(14px)}}
+  body:not([data-skin="term"]) .term-rail{display:none}
+  body[data-skin="term"] .term-rail:focus-within{border-color:color-mix(in srgb, var(--gold) 55%, transparent)}
+  body[data-skin="term"] .tr-size{position:absolute; left:-7px; top:0; bottom:0; width:12px; cursor:ew-resize; z-index:2}
+  body[data-skin="term"] .tr-size::after{content:""; position:absolute; left:6px; top:0; bottom:0; width:1px; background:var(--gold); opacity:0; transition:opacity .15s}
+  body[data-skin="term"] .tr-size:hover::after{opacity:1}
+  body[data-skin="term"] .tp-edit + .tp-edit{margin-left:6px}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .tp-out, body[data-skin="term"] .tp-out.open{transition:none} body[data-skin="term"] .term-float, body[data-skin="term"] .term-rail{animation:none} }
 
   /* two kinds of line the command language adds to the log: the line as typed, and what it printed */
   body[data-skin="term"] .ht-log .x span{color:var(--faint)}
@@ -5035,7 +5047,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="set-h">Look</div>
             <div class="skin-pick" id="skinPick"></div>
             <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose, and you can drag a pane by its header to move it. Orderly lines every edge up.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="tilesSeg"></div><button class="ghost small hidden" id="tilesReset" title="Put Home's panes back where they started">Reset panes</button></div></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Command line</b><small>The line at the top of every page takes commands: cd scroll, log mined for an hour, stats mining, -help for the list. Press / or the key under Esc to start typing. Rest the mouse on it and the console opens underneath; drag the console off the bar and it floats over the page. Off leaves it as a plain path.</small></div><div class="seg" id="tpSeg"></div></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Command line</b><small>The line at the top of every page takes commands: cd scroll, log mined for an hour, stats mining, -help for the list. Press / or the key under Esc to start typing. On a wide window the console sits in its own column at the right of every page; the console button on the line shows and hides it, and dragging its header off floats it over the page. Off leaves the line as a plain path.</small></div><div class="seg" id="tpSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Backdrop</b><small>What sits behind the panes. Dots, Grid, Lines and Weave are faint patterns. Clean keeps the soft glow in the corners and drops the pattern. Flat is the theme's plain colour.</small></div><div class="seg" id="bdSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Wide window</b><small>On a wide monitor, the room beside and under a page fills with extra panes. The most useful come first, so more room only ever adds less essential ones. A pane's x hides it.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="wfSeg"></div><button class="ghost small hidden" id="wfShowAll" title="Bring back the panes you hid"></button></div></div>
           </div>
@@ -5122,7 +5134,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <nav class="term-tabs term-only hidden" id="termTabs" aria-label="Sections of this page"></nav>
     </div>
 
-    <div class="term-path term-only" id="termPath"><label class="tp-row" for="tpIn"><span class="tp-pre" id="tpPre"></span><span class="cur" aria-hidden="true">_</span><input id="tpIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command line"><span class="tp-hint" id="tpHint"></span><button type="button" class="tp-edit" id="tpEdit" title="Move, hide, bring back and resize the panes">edit</button></label><div class="tp-out" id="tpOut"><div class="tp-in"><div class="tp-oh" data-tfpull="1" title="Drag this off the bar to float the console over the page"><span class="lab">// console</span><span class="how">drag it off the bar to float it</span><span class="sp"></span><button type="button" data-tfpop="1" title="Float the console over the page, where it can be moved and resized">pop out</button></div><div class="tp-log ht-log" id="tpLog" aria-live="polite"></div></div></div></div>
+    <div class="term-path term-only" id="termPath"><label class="tp-row" for="tpIn"><span class="tp-pre" id="tpPre"></span><span class="cur" aria-hidden="true">_</span><input id="tpIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command line"><span class="tp-hint" id="tpHint"></span><button type="button" class="tp-edit" id="tpCon" title="Show or hide the console">console</button><button type="button" class="tp-edit" id="tpEdit" title="Move, hide, bring back and resize the panes">edit</button></label><div class="tp-out" id="tpOut"><div class="tp-in"><div class="tp-oh" data-tfpull="1" title="Drag this off the bar to float the console over the page"><span class="lab">// console</span><span class="how">drag it off the bar to float it</span><span class="sp"></span><button type="button" data-tfpop="1" title="Float the console over the page, where it can be moved and resized">pop out</button></div><div class="tp-log ht-log" id="tpLog" aria-live="polite"></div></div></div></div>
     <div class="pagehead classic-only">
       <div class="ph-row">
         <span class="ph-line"></span>
@@ -6386,7 +6398,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","backdrop"];
+const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","backdrop"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -14211,6 +14223,7 @@ function termPathSet(name){
   if(el) el.innerHTML = `<b>${escapeHtml(slug(termWho()) || "you")}</b><i>@</i><b>mortimeter</b>&nbsp;<u>${path}</u>`;
   const tb = $("#tbPath"); if(tb) tb.innerHTML = `<u>${path}</u><span class="cur">_</span>`;
   const fp = $("#tfPath"); if(fp) fp.innerHTML = path;
+  try{ trApply(name); }catch(e){}
 }
 // The page's sections as a row of tabs under the top bar of a phone. They are the sidebar's own
 // buttons at one remove: a tap here clicks the one there, so nothing can drift apart.
@@ -15495,13 +15508,16 @@ document.addEventListener("click", e=>{
 // ---- the path line at the top of every page is a place to type ----
 // It was already written as a prompt, user@mortimeter ~/scroll/overview and a cursor. Now the
 // cursor is real. What a line prints drops down under it and stays until Esc or a click elsewhere.
-// The console under it opens when the mouse rests on the bar, when it is typed in, and when a line
-// has just run. It can also be taken off the bar: drag its header, or press pop out, and it floats
-// over the page (termFloat in the save: on, x, y, w, h), on every page, until it is docked again.
-var tpShown = false, tpWhy = "";   // open, and why: "hover" shuts when the mouse leaves; "focus" and "run" wait for Esc or a click elsewhere
+// Where the console is, in order of preference:
+//   floating  pulled off by its header or with pop out; moves, resizes, follows every page (termFloat)
+//   the side  a column of its own at the right of the page, whenever the window can spare the width
+//             (termRail: on, w). Not on Home while Home's own terminal pane is showing.
+//   the drop  under the bar, only when there is no room at the side: it opens when a line runs or
+//             the console button is pressed. It no longer opens on hover (Josh found that annoying).
+var tpShown = false, tpWhy = "", trShown = false;
 function tpOn(){ return document.body.dataset.skin === "term" && termState().bar !== false; }
 function tfOn(){ return tpOn() && !!(state.termFloat && state.termFloat.on) && !document.body.classList.contains("dock"); }
-function tpApply(){ const el = $("#termPath"); if(!el) return; el.classList.toggle("tp-off", !tpOn()); if(!tpOn()) tpClose(true); else tpIdle(); tfApply(); }
+function tpApply(){ const el = $("#termPath"); if(!el) return; el.classList.toggle("tp-off", !tpOn()); if(!tpOn()) tpClose(true); else tpIdle(); tfApply(); trApply(); tpRender(); }
 function tpIdle(){ const h = $("#tpHint"), inp = $("#tpIn"); if(h && inp && document.activeElement !== inp) h.innerHTML = inp.value ? "" : `<kbd>/</kbd> to type, <u>-help</u> for the commands`; }
 function tpLines(n, fresh){
   const who = escapeHtml(termWho()), list = termState().log.filter(e=>!e.b || e.i).slice(-n);
@@ -15514,18 +15530,19 @@ function tpRender(fresh){
   if(open) log.innerHTML = tpLines(40, fresh);
   out.classList.toggle("open", open);
   if(open) log.scrollTop = log.scrollHeight;
-  tfRender(fresh);
+  tfRender(fresh); trRender(fresh);
+  const cb = $("#tpCon"); if(cb) cb.classList.toggle("on", open || trShown || tfOn());
 }
 // Home's own terminal pane already shows the log; the drop-down would say it twice
 function tpHomeLogSeen(){ const v = $("#view-home"), lg = $("#htLog"); if(!v || !lg || v.classList.contains("hidden")) return false; const r = lg.getBoundingClientRect(); return r.height > 0 && r.top < innerHeight - 40 && r.bottom > 40; }
 function tpOpen(why){
-  if(!tpOn() || tfOn() || tpHomeLogSeen()) return;
-  if(!tpShown || why !== "hover") tpWhy = why;
+  if(!tpOn() || tfOn() || trShown || tpHomeLogSeen()) return;
+  tpWhy = why;
   if(tpShown) return;
   tpShown = true; tpRender();
 }
 function tpClose(blur){ tpShown = false; tpWhy = ""; tpRender(); if(blur){ const inp = $("#tpIn"); if(inp) inp.blur(); } }
-function tpFocus(){ const inp = (tfOn() && $("#tfIn")) || $("#tpIn"); if(!inp || !tpOn()) return false; try{ inp.focus({preventScroll:true}); }catch(e){ inp.focus(); } return true; }
+function tpFocus(){ const inp = (tfOn() && $("#tfIn")) || (trShown && $("#trIn")) || $("#tpIn"); if(!inp || !tpOn()) return false; try{ inp.focus({preventScroll:true}); }catch(e){ inp.focus(); } return true; }
 // the keys of a command line, for the bar's and the floating console's alike
 function tpKeys(inp, hint, bar){
   const show = ()=>{
@@ -15534,7 +15551,7 @@ function tpKeys(inp, hint, bar){
     if(bar){ const el = $("#termPath"); if(el) el.classList.toggle("has", !!inp.value); }
   };
   inp.addEventListener("input", show);
-  inp.addEventListener("focus", ()=>{ show(); if(bar) tpOpen("focus"); });
+  inp.addEventListener("focus", show);
   inp.addEventListener("blur", ()=>setTimeout(()=>{ if(bar) tpIdle(); else if(!inp.value) hint.innerHTML = ""; }, 0));
   inp.addEventListener("keydown", e=>{
     if(e.key === "Enter"){
@@ -15580,23 +15597,45 @@ function tfSet(on, at){
   if(on && document.body.classList.contains("dock")) return false;
   const f = state.termFloat || (state.termFloat = {}); f.on = !!on; if(at){ f.x = at.x; f.y = at.y; }
   save(); if(on){ tpShown = false; tpWhy = ""; }
-  tpRender(); tfApply();
+  tfApply(); trApply(); tpRender();
   if(on){ const i = $("#tfIn"); if(i) try{ i.focus({preventScroll:true}); }catch(e){} }
   return true;
 }
+// ---- the console at the side ----
+const TR_SKIP = new Set(["start", "arcade", "survivors", "rhythm", "museum", "patch", "mockups", "board"]);
+function trW(){ const w = state.termRail && state.termRail.w; return Math.max(280, Math.min(600, w || 350)); }
+function trEl(){
+  let el = $("#termRail"); if(el) return el;
+  const app = $(".app"); if(!app) return null;
+  el = document.createElement("aside"); el.id = "termRail"; el.className = "term-rail hidden"; el.setAttribute("aria-label", "Console");
+  el.innerHTML = `<i class="tr-size" data-trsize="1" title="Drag to make the console wider or narrower"></i>
+    <div class="tf-h" data-tfpull="1" title="Drag this off the side to float the console over the page"><span class="lab">// console</span><span class="sp"></span><button type="button" data-tfpop="1" title="Float the console over the page, where it can be moved and resized">pop out</button><button type="button" data-trhide="1" title="Put the console away. The console button on the line at the top brings it back.">hide</button></div>
+    <div class="tf-log ht-log" id="trLog" aria-live="polite"></div>
+    <label class="tf-row" for="trIn"><b>&gt;</b><input id="trIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Console"><span class="tp-hint" id="trHint"></span></label>`;
+  app.appendChild(el);
+  tpKeys($("#trIn"), $("#trHint"), false);
+  return el;
+}
+// decides whether the side console shows: the look, the setting, the page, and whether the page keeps at least 900px beside it
+function trApply(name){
+  const cur = $(".view:not(.hidden)"), view = name || (cur ? cur.id.replace(/^view-/, "") : "");
+  const app = $(".app"), sb = $(".sidebar"), room = (app ? app.clientWidth : innerWidth) - (sb ? sb.offsetWidth : 0);
+  const homeTerm = view === "home" && !(state.homeHide || {}).term;
+  const on = tpOn() && !tfOn() && !(state.termRail && state.termRail.on === false) && !document.body.classList.contains("dock") && !homeTerm && !TR_SKIP.has(view) && room - trW() - 10 >= 900;
+  const el = on ? trEl() : $("#termRail"), was = trShown;
+  if(el){ el.classList.toggle("hidden", !on); if(on) el.style.setProperty("--tr-w", trW() + "px"); }
+  trShown = !!(on && el);
+  document.body.classList.toggle("tr-on", trShown);
+  if(trShown && tpShown){ tpShown = false; tpWhy = ""; const o = $("#tpOut"); if(o) o.classList.remove("open"); }
+  if(trShown) trRender();
+  const cb = $("#tpCon"); if(cb) cb.classList.toggle("on", tpShown || trShown || tfOn());
+  if(was !== trShown){ try{ wfLater(); }catch(e){} }
+}
+function trRender(fresh){ const log = $("#trLog"); if(!log || !trShown) return; log.innerHTML = tpLines(80, fresh); log.scrollTop = log.scrollHeight; }
+function trSet(on){ const r = state.termRail || (state.termRail = {}); r.on = !!on; save(); trApply(); }
 (function tpWire(){
   const inp = $("#tpIn"), el = $("#termPath"); if(!inp || !el) return;
   tpKeys(inp, $("#tpHint"), true);
-  // the mouse resting on the bar opens the console; leaving it shuts it again, unless it is in use
-  let hv = 0, lv = 0;
-  el.addEventListener("pointerenter", e=>{
-    if(e.pointerType === "touch" || document.body.classList.contains("ht-dragging")) return;
-    clearTimeout(lv); clearTimeout(hv); hv = setTimeout(()=>tpOpen("hover"), 260);
-  });
-  el.addEventListener("pointerleave", ()=>{
-    clearTimeout(hv); clearTimeout(lv);
-    lv = setTimeout(()=>{ if(tpShown && tpWhy === "hover" && document.activeElement !== inp) tpClose(); }, 440);
-  });
   // a click anywhere else puts the drop-down away
   document.addEventListener("pointerdown", e=>{ if(tpShown && !el.contains(e.target) && !(e.target.closest && e.target.closest("[data-termcmd]"))) tpClose(); });
   // / or the key under Esc starts a line from anywhere. On Home, / keeps going to Home's own terminal.
@@ -15610,14 +15649,17 @@ function tfSet(on, at){
     if(tpFocus()) e.preventDefault();
   });
   // moving the floating console, and pulling the console off the bar
-  let d = null, pull = null;
+  let d = null, pull = null, rs = null;
   document.addEventListener("pointerdown", e=>{
     if(e.button !== 0 || !e.target.closest || e.target.closest("button, input")) return;
     const fl = $("#termFloat");
+    // the side console's left edge sets its width
+    if(e.target.closest("[data-trsize]")){ const r = $("#termRail"); if(r){ rs = {x:e.clientX, w0:r.getBoundingClientRect().width}; e.preventDefault(); document.body.classList.add("ht-dragging"); } return; }
     if(fl && e.target.closest("[data-tfdrag]")){ const r = fl.getBoundingClientRect(); d = {dx:e.clientX - r.left, dy:e.clientY - r.top}; e.preventDefault(); return; }
     if(e.target.closest("[data-tfpull]")){ pull = {x:e.clientX, y:e.clientY}; e.preventDefault(); }
   });
   document.addEventListener("pointermove", e=>{
+    if(rs){ const r = $("#termRail"); rs.w = Math.max(280, Math.min(600, Math.round(rs.w0 + rs.x - e.clientX))); if(r) r.style.setProperty("--tr-w", rs.w + "px"); return; }
     if(pull && Math.hypot(e.clientX - pull.x, e.clientY - pull.y) > 8){
       pull = null; const b = tfBox();
       if(tfSet(true, {x:Math.round(e.clientX - b.w / 2), y:Math.round(e.clientY - 14)})) d = {dx:b.w / 2, dy:14};
@@ -15628,6 +15670,7 @@ function tfSet(on, at){
     fl.style.left = d.x + "px"; fl.style.top = d.y + "px"; document.body.classList.add("ht-dragging");
   });
   const end = ()=>{
+    if(rs){ document.body.classList.remove("ht-dragging"); if(rs.w){ (state.termRail || (state.termRail = {})).w = rs.w; save(); } rs = null; trApply(); try{ wfLater(); }catch(e){} }
     pull = null; const fl = $("#termFloat"), f = state.termFloat;
     if(d){ document.body.classList.remove("ht-dragging"); if(d.x != null && f){ f.x = Math.round(d.x); f.y = Math.round(d.y); save(); } d = null; }
     // its corner is the browser's own resize handle: keep the size it was left at
@@ -15639,11 +15682,31 @@ function tfSet(on, at){
     if(!e.target.closest) return;
     if(e.target.closest("[data-tfdock]")){ e.preventDefault(); tfSet(false); }
     else if(e.target.closest("[data-tfpop]")){ e.preventDefault(); tfSet(true); }
+    else if(e.target.closest("[data-trhide]")){ e.preventDefault(); trSet(false); }
+    else if(e.target.closest("#tpCon")){
+      // the console button: put a floating one back, hide the one at the side, or bring it out.
+      // With no room at the side it opens and shuts the drop-down under the line instead.
+      e.preventDefault();
+      if(tfOn()) tfSet(false);
+      else if(trShown) trSet(false);
+      else { trSet(true); if(!trShown){ if(tpShown) tpClose(); else tpOpen("run"); } }
+    }
   });
-  window.addEventListener("resize", ()=>{ if(tfOn()) tfApply(); });
+  window.addEventListener("resize", ()=>{ if(tfOn()) tfApply(); trApply(); });
+  try{ const sb = $(".sidebar"); if(sb && window.ResizeObserver) new ResizeObserver(()=>trApply()).observe(sb); }catch(e){}
   tpApply();
 })();
-termDef(["console"], "console", "Floats the console over the page, where it can be moved and resized, or docks it back under the bar. It stays where you leave it.", "App", ()=>({hint:`<u>enter</u> ${tfOn() ? "docks the console back under the bar" : "floats the console over the page"}`, run:()=>{ if(!tfSet(!tfOn())) termOut("The floating console is for a mouse and a wide window."); }, quiet:true}), {bare:true});
+termDef(["console"], "console [side|float|off]", "Where the console is. side puts it in its own column at the right of the page, float lifts it over the page where it can be moved and resized, off puts it away. On its own it shows or hides it.", "App", rest=>{
+  const w = String(rest || "").trim().toLowerCase().replace(/^-/, "");
+  if(w && !["side", "dock", "float", "off", "hide"].includes(w)) return "console takes side, float or off";
+  const showing = trShown || tfOn(), to = w === "float" ? "float" : w === "off" || w === "hide" ? "off" : w ? "side" : showing ? "off" : "side";
+  return {hint:`<u>enter</u> ${to === "float" ? "floats the console over the page" : to === "off" ? "puts the console away" : "puts the console at the side of the page"}`, quiet:true, run:()=>{
+    if(to === "float"){ if(!tfSet(true)) termOut("The floating console is for a mouse and a wide window."); return; }
+    if(tfOn()) tfSet(false);
+    trSet(to === "side");
+    if(to === "side" && !trShown) termOut("There is no room for the console at the side here: the window is too narrow, or this is Home, which has its own terminal pane.");
+  }};
+});
 
 // ============ EDIT MODE ============
 // Josh, 2026-11-17: an edit button, or an edit command, for full customization, with resizing,

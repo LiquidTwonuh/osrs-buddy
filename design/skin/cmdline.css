@@ -45,9 +45,21 @@
   body[data-skin="term"] .tf-log{flex:1 1 auto; min-height:0; max-height:none; padding:9px 12px 10px}
   body[data-skin="term"] .tf-row{flex:none; display:flex; align-items:baseline; gap:8px; margin:0; padding:7px 26px 7px 12px; border-top:1px solid var(--line); cursor:text; white-space:nowrap}
   body[data-skin="term"] .tf-row > b{font-weight:600; color:var(--gold)}
-  body[data-skin="term"] #tfIn{flex:1 1 80px; min-width:60px; width:auto; height:auto; min-height:0; margin:0; padding:0; background:none; border:0; outline:0; box-shadow:none; color:var(--me); caret-color:var(--me); font:inherit}
+  body[data-skin="term"] .tf-row input{flex:1 1 80px; min-width:60px; width:auto; height:auto; min-height:0; margin:0; padding:0; background:none; border:0; outline:0; box-shadow:none; color:var(--me); caret-color:var(--me); font:inherit}
   body[data-skin="term"] .term-float:focus-within{border-color:var(--gold)}
-  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .tp-out, body[data-skin="term"] .tp-out.open{transition:none} body[data-skin="term"] .term-float{animation:none} }
+  /* the console at the side: a column of its own to the right of the page (trApply in the script
+     decides when). It stays in view as the page scrolls; its left edge drags to set its width. */
+  body[data-skin="term"] .term-rail{position:sticky; top:var(--gap); align-self:flex-start; flex:0 0 var(--tr-w, 350px); width:var(--tr-w, 350px); height:calc(100vh - var(--gap) * 2);
+    margin:0 var(--gap) 0 0; display:flex; flex-direction:column; min-width:0; font:12.5px/1.5 var(--fm);
+    background:var(--glass); -webkit-backdrop-filter:blur(18px) saturate(1.2); backdrop-filter:blur(18px) saturate(1.2); border:1px solid var(--hair); animation:trIn .3s cubic-bezier(.2,.7,.2,1)}
+  @keyframes trIn{from{opacity:0; transform:translateX(14px)}}
+  body:not([data-skin="term"]) .term-rail{display:none}
+  body[data-skin="term"] .term-rail:focus-within{border-color:color-mix(in srgb, var(--gold) 55%, transparent)}
+  body[data-skin="term"] .tr-size{position:absolute; left:-7px; top:0; bottom:0; width:12px; cursor:ew-resize; z-index:2}
+  body[data-skin="term"] .tr-size::after{content:""; position:absolute; left:6px; top:0; bottom:0; width:1px; background:var(--gold); opacity:0; transition:opacity .15s}
+  body[data-skin="term"] .tr-size:hover::after{opacity:1}
+  body[data-skin="term"] .tp-edit + .tp-edit{margin-left:6px}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .tp-out, body[data-skin="term"] .tp-out.open{transition:none} body[data-skin="term"] .term-float, body[data-skin="term"] .term-rail{animation:none} }
 
   /* two kinds of line the command language adds to the log: the line as typed, and what it printed */
   body[data-skin="term"] .ht-log .x span{color:var(--faint)}
