@@ -5306,6 +5306,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose, and you can drag a pane by its header to move it. Orderly lines every edge up.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="tilesSeg"></div><button class="ghost small hidden" id="tilesReset" title="Put Home's panes back where they started">Reset panes</button></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Command line</b><small>The line at the top of every page takes commands: cd scroll, log mined for an hour, stats mining, -help for the list. Press / or the key under Esc to start typing. On a wide window the console sits in its own column at the right of every page; the console button on the line shows and hides it, and dragging its header off floats it over the page. Off leaves the line as a plain path.</small></div><div class="seg" id="tpSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Console</b><small>Where the console sits. At the side is a column to the right of every page, when the window has room. Floating is a window you can move and resize. Hidden closes it. The shortcut shows and hides it from anywhere; drag the console's header to pull it off the side.</small></div><div class="row" style="gap:8px; flex-wrap:wrap; align-items:center"><div class="seg" id="conSeg"></div><button class="ghost small" id="conKeyBtn" title="Press this, then the keys you want"></button></div></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>Edit, on the line at the top of any page, lets you move, hide and resize its panes. This puts every page back to how it started, with nothing hidden.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><button class="ghost small" id="layoutResetBtn">Reset every page's layout</button></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Bakery layout</b><small>How Coffer's Bakery is laid out. Board puts the best three side by side and the rest in tiles. Listing is one aligned table with the row you choose opened beside it. The same switch is on the page itself.</small></div><div class="seg" id="bkSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Progress bars</b><small>How a bar is drawn, everywhere one appears: under a skill, beside a day, on a goal.</small></div><div class="seg" id="barSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Backdrop</b><small>What sits behind the panes. Clean is no pattern, with a soft glow in the corners. Dots, Grid, Lines and Weave are faint patterns. Flat is the theme's plain colour.</small></div><div class="seg" id="bdSeg"></div></div>
@@ -14745,6 +14746,36 @@ function htPaneCtl(sec, p){
   sec.insertAdjacentHTML("beforeend", `<button type="button" class="pane-x" data-panehide="${p}" title="Hide this pane. The bar at the bottom brings it back." aria-label="Hide ${HT_PANES[p].n}">x</button><span class="pane-grip" data-panegrip="${p}" title="Drag to resize. Double-click for automatic."></span>`);
 }
 function htArrReset(){ ["homeArr", "homeHide", "homeH", "homeColW", "homeSplit"].forEach(k=>{ delete state[k]; }); save(); htArrange(true); try{ htPlay(); }catch(e){} htMenuFit(); try{ editTray(); }catch(e){} }
+// Lines that nearly meet are made to meet. Each column of Home splits at its own heights, so the
+// line under one pane can sit a little above or below the line under its neighbour in the next
+// column, which reads as a mistake. The column that holds Skills is the reference: a seam in any
+// other column within HT_SNAP px of one of its seams moves onto it, the row above taking or giving
+// the difference and the row below the opposite, and neither is squeezed under what it holds.
+// A row the user sized by hand only moves if it is within a few pixels. Run after every layout.
+const HT_SNAP = 96;   // on a 1440-tall window the two lines sit about 70px apart
+function htSnap(){
+  const root = $("#homeTerm"); if(!root) return;
+  root.querySelectorAll(".ht-rowx[data-snap]").forEach(r=>{ r.style.flexBasis = ""; r.style.flexGrow = r.dataset.snap; delete r.dataset.snap; });
+  if(!root.dataset.arr) return;
+  const cols = [...root.querySelectorAll(":scope > .ht-cols > .ht-colx")]; if(cols.length < 2) return;
+  const rowsOf = c=>[...c.children].filter(r=>r.classList.contains("ht-rowx") && r.offsetHeight > 0);
+  const seamsOf = c=>{ const rows = rowsOf(c); return rows.slice(0, -1).map((r, i)=>({up:r, dn:rows[i + 1], y:r.getBoundingClientRect().bottom})); };
+  const ri = Math.max(0, cols.findIndex(c=>c.querySelector(".hs-skills")));
+  const refs = seamsOf(cols[ri]).map(x=>x.y); if(!refs.length) return;
+  // what a row needs at the least: its height when it is not asked to grow
+  const least = r=>{ const b = r.style.flexBasis, g = r.style.flexGrow; r.style.flexBasis = "auto"; r.style.flexGrow = "0"; const h = r.getBoundingClientRect().height; r.style.flexBasis = b; r.style.flexGrow = g; return h; };
+  const sized = r=>[...r.children].some(sec=>sec.style.minHeight);
+  cols.forEach((c, ci)=>{
+    if(ci === ri) return;
+    for(const sm of seamsOf(c)){
+      const t = refs.slice().sort((a, b)=>Math.abs(a - sm.y) - Math.abs(b - sm.y))[0], d = t - sm.y, lim = sized(sm.up) || sized(sm.dn) ? 12 : HT_SNAP;
+      if(Math.abs(d) < .5 || Math.abs(d) > lim) continue;
+      const hu = sm.up.getBoundingClientRect().height, hd = sm.dn.getBoundingClientRect().height;
+      if(hu + d < least(sm.up) - .5 || hd - d < least(sm.dn) - .5) continue;
+      for(const [r, h] of [[sm.up, hu + d], [sm.dn, hd - d]]){ if(r.dataset.snap === undefined) r.dataset.snap = r.style.flexGrow || "0"; r.style.flexGrow = "0"; r.style.flexBasis = h.toFixed(2) + "px"; }
+    }
+  });
+}
 // Home re-arranges when the width it has crosses a line, and the debrief refits when heights change
 function htArrWatch(){
   const v = $("#view-home"); if(htArrWatch.on || !v || typeof ResizeObserver !== "function") return;
@@ -14755,6 +14786,7 @@ function htArrWatch(){
       q = 0; const root = $("#homeTerm"); if(!root || document.body.dataset.skin !== "term") return;
       const k0 = root.dataset.arr || ""; htArrange();
       if((root.dataset.arr || "") !== k0) try{ htPlay(); }catch(e){}
+      try{ htSnap(); }catch(e){}
       htMenuFit();
     });
   }).observe(v);
@@ -15129,7 +15161,7 @@ function wfDraw(){
     const kids = [...side.children], shown = kids.filter(p=>!p.classList.contains("off"));
     return {used:new Set(shown.map(p=>Math.round(p.getBoundingClientRect().left))).size, all:shown.length === kids.length, useUnder};
   };
-  if(!list.length){ lay(0); clear(under); htStretch(active && view === "home"); try{ editTray(); }catch(e){} return; }
+  if(!list.length){ lay(0); clear(under); htStretch(active && view === "home"); try{ htSnap(); htMenuFit(); }catch(e){} try{ editTray(); }catch(e){} return; }
   // As many columns as fit, but never an empty one: if the extras do not reach a column, it is
   // not drawn and the page gets its width.
   let k = nMax, mw = lay(k), res = pour(k, mw);
@@ -15145,6 +15177,7 @@ function wfDraw(){
     }
   }
   htStretch(view === "home" && !res.useUnder);
+  try{ htSnap(); htMenuFit(); }catch(e){}
   try{ editTray(); }catch(e){}
 }
 function wfLater(){ if(wfLater.q) return; wfLater.q = setTimeout(()=>{ wfLater.q = 0; try{ wfDraw(); }catch(e){ console.error(e); } }, 60); }
@@ -16031,6 +16064,20 @@ termDef(["console"], "console [side|float|off]", "Where the console is. side put
 // the characters share: homeArr (where), homeHide, homeH (heights), homeColW (column widths),
 // homeSplit (two panes in a row), wfHide, wfOrder, wfSize.
 function editOn(){ return document.body.classList.contains("editing"); }
+// Back to the default. "page" is the page that is showing: Home's own arrangement, or what was
+// moved, hidden and resized on any other page. "all" is every page, and the wide-window extras too.
+function layoutReset(scope){
+  const cur = $(".view:not(.hidden)"), view = cur ? cur.id.replace(/^view-/, "") : "";
+  if(scope === "all") ["wfHide", "wfOrder", "wfSize", "pageEdit", "pageOrder", "homeArr", "homeHide", "homeH", "homeColW", "homeSplit"].forEach(k=>{ delete state[k]; });
+  else if(view === "home") ["homeArr", "homeHide", "homeH", "homeColW", "homeSplit"].forEach(k=>{ delete state[k]; });
+  else for(const key of ["pageEdit", "pageOrder"]){ const o = state[key]; if(o) for(const k in o) if(k.startsWith(view + ">")) delete o[k]; }
+  save();
+  try{ htArrange.sig = ""; htArrange(true); htPlay(); }catch(e){}
+  try{ peApply(); }catch(e){}
+  try{ wfDraw(); htMenuFit(); }catch(e){}
+  try{ editTray(); }catch(e){}
+  toast(scope === "all" ? "Layout reset on every page." : "This page's layout is back to the default.");
+}
 function editSet(on){
   on = !!on && document.body.dataset.skin === "term";
   document.body.classList.toggle("editing", on);
@@ -16049,7 +16096,7 @@ function editTray(){
     .concat(WF.filter(d=>wh[d.id] && (!d.pages || d.pages.includes(view)) && !(d.not && d.not.includes(view))).map(d=>`<button type="button" class="add" data-editshow="wf:${d.id}">+ ${tE(d.title)}</button>`));
   const html = `<div class="in"><b>Editing</b><span class="how">${view === "home" ? "Drag a pane by its header." : "Drag a pane by its move tab."} x hides it. The corner resizes it.</span>`
     + (chips.length ? `<span class="lab">Hidden</span>${chips.join("")}` : `<span class="lab">Nothing here is hidden</span>`)
-    + `<span class="sp"></span><button type="button" class="quiet" data-editreset="1">${editTray.sure ? "Press again to reset everything" : "Reset layout"}</button><button type="button" class="go" data-editdone="1">Done</button></div>`;
+    + `<span class="sp"></span><button type="button" class="quiet" data-editreset="page" title="Puts this page's panes back where they started">${editTray.sure === "page" ? "Press again to reset this page" : "Reset this page"}</button><button type="button" class="quiet" data-editreset="all" title="Puts every page back, and the wide-window extras">${editTray.sure === "all" ? "Press again to reset every page" : "Reset every page"}</button><button type="button" class="go" data-editdone="1">Done</button></div>`;
   if(el._html !== html){ el._html = html; el.innerHTML = html; }
   el.classList.remove("hidden");
 }
@@ -16057,8 +16104,9 @@ function editTrayClick(e){
   const b = e.target.closest("button"); if(!b) return; const d = b.dataset;
   if(d.editdone){ editSet(false); return; }
   if(d.editreset){
-    if(!editTray.sure){ editTray.sure = 1; editTray(); clearTimeout(editTray.t); editTray.t = setTimeout(()=>{ editTray.sure = 0; editTray(); }, 4000); return; }
-    editTray.sure = 0; ["wfHide", "wfOrder", "wfSize", "pageEdit", "pageOrder"].forEach(k=>{ delete state[k]; }); htArrReset(); peApply(); wfDraw(); toast("Layout reset, on every page."); return;
+    // the first press asks, the second does it; the ask lapses after four seconds
+    if(editTray.sure !== d.editreset){ editTray.sure = d.editreset; editTray(); clearTimeout(editTray.t); editTray.t = setTimeout(()=>{ editTray.sure = 0; editTray(); }, 4000); return; }
+    editTray.sure = 0; clearTimeout(editTray.t); layoutReset(d.editreset); return;
   }
   if(d.editshow){
     const kind = d.editshow.split(":")[0], id = d.editshow.slice(kind.length + 1);
@@ -16323,7 +16371,12 @@ function peAny(){ return editOn() || Object.keys(state.pageEdit || {}).length > 
     if(en){ delete en.w; delete en.mh; tidy(el.dataset.peKey); save(); peApply(); }
   });
 })();
-termDef(["edit"], "edit", "Turns edit mode on or off: move, hide, bring back and resize the panes on the page.", "App", ()=>({hint:`<u>enter</u> turns edit mode ${editOn() ? "off" : "on"}`, run:()=>editSet(!editOn()), quiet:true}), {bare:true});
+termDef(["edit"], "edit [reset|reset all]", "Turns edit mode on or off: move, hide, bring back and resize the panes on the page. edit reset puts this page back to the default, edit reset all every page.", "App", rest=>{
+  const w = String(rest || "").trim().toLowerCase().replace(/^-/, "");
+  if(w === "reset" || w === "reset all" || w === "reset-all") return {hint:`<u>enter</u> puts ${w === "reset" ? "this page" : "every page"} back to the default layout`, quiet:true, run:()=>layoutReset(w === "reset" ? "page" : "all")};
+  if(w) return "edit takes nothing, reset, or reset all";
+  return {hint:`<u>enter</u> turns edit mode ${editOn() ? "off" : "on"}`, run:()=>editSet(!editOn()), quiet:true};
+}, {soft:true});
 
 // ============ COFFER SECTIONS ============
 // Earn is what you can do for GP. Vault is what you've got, valued live from your bank. Flip is
@@ -20603,6 +20656,11 @@ function renderLookSettings(){
     brseg.innerHTML = BAR_STYLES.map(([id, label])=>`<button class="${id === cur ? "on" : ""}" data-bar="${id}">${label}</button>`).join("");
     brseg.querySelectorAll("[data-bar]").forEach(b=>b.onclick = ()=>{ state.barStyle = b.dataset.bar; save(); applySkin(); renderLookSettings(); });
   }
+  const lrb = $("#layoutResetBtn");
+  if(lrb) lrb.onclick = ()=>{
+    if(lrb.dataset.sure){ delete lrb.dataset.sure; lrb.textContent = "Reset every page's layout"; layoutReset("all"); return; }
+    lrb.dataset.sure = "1"; lrb.textContent = "Press again to reset"; setTimeout(()=>{ if(lrb.dataset.sure){ delete lrb.dataset.sure; lrb.textContent = "Reset every page's layout"; } }, 4000);
+  };
   const kseg = $("#bkSeg");
   if(kseg){
     kseg.innerHTML = COFFER_LAYOUTS.map(([id, label, what])=>`<button class="${id === cofferLayout() ? "on" : ""}" data-bk="${id}" title="${what}">${label}</button>`).join("");
