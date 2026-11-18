@@ -1,10 +1,9 @@
 
   /* ============ THEME ARTWORK, TERMINAL LOOK ============
      A theme can carry a picture: on the Character pane, a page's heading, and in Illustrated the
-     sidebar and the launch screen. Two sets, both made by ChatGPT's image tool for this app
-     (design/theme-art): low, the quiet single-object plates, and v1, the full paintings. Which
-     set is body[data-art-set]; how much shows is body[data-theme-art] (focused, illustrated, or
-     absent for off). The rules below are ChatGPT's, as delivered; inject.py writes the pictures in. */
+     sidebar and the launch screen. The pictures are ChatGPT's v1 paintings, made by its image
+     tool for this app (design/theme-art); Josh chose v1 over the later, quieter set on
+     2026-11-17. How much shows is body[data-theme-art] (focused, illustrated, or absent for off). The rules below are ChatGPT's, as delivered; inject.py writes the pictures in. */
 /*THEME_ART*/
   /* Optional Terminal artwork. Each compositor layer lives on the component that displays it. */
   body[data-skin="term"][data-theme-art="focused"]{

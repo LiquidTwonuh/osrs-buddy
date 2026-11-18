@@ -12,14 +12,11 @@ css = re.sub(r"/\*PHONE_SHARED:(.+?)\*/\n", lambda m: shared.replace("&", m.grou
 art = "data:image/png;base64," + base64.b64encode(open(r"C:\Projects\mortimeter\design\mortimer-icon\mortimeter-128.png", "rb").read()).decode("ascii")
 assert css.count("/*MORT_ART*/") == 1
 css = css.replace("/*MORT_ART*/", art)
-# theme artwork: the two sets of plates as data, one custom property per theme and set
+# theme artwork: the plates as data, one custom property per theme
 ART = r"C:\Projects\mortimeter\design\theme-art"
-def _uri(setname, tid): return "data:image/webp;base64," + base64.b64encode(open(os.path.join(ART, setname, tid + ".webp"), "rb").read()).decode("ascii")
 decl = []
-for tid in sorted(f[:-5] for f in os.listdir(os.path.join(ART, "low")) if f.endswith(".webp")):
-    if os.path.exists(os.path.join(ART, "v1", tid + ".webp")):
-        for setname in ("low", "v1"): decl.append('  body[data-skin="term"][data-art-set="%s"][data-theme="%s"]{--tm-scene:url("%s")}' % (setname, tid, _uri(setname, tid)))
-    else: decl.append('  body[data-skin="term"][data-theme="%s"]{--tm-scene:url("%s")}' % (tid, _uri("low", tid)))
+for tid in sorted(f[:-5] for f in os.listdir(ART) if f.endswith(".webp")):
+    decl.append('  body[data-skin="term"][data-theme="%s"]{--tm-scene:url("data:image/webp;base64,%s")}' % (tid, base64.b64encode(open(os.path.join(ART, tid + ".webp"), "rb").read()).decode("ascii")))
 assert css.count("/*THEME_ART*/") == 1
 css = css.replace("/*THEME_ART*/", "\n".join(decl))
 if not css.endswith("\n"): css += "\n"
