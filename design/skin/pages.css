@@ -35,3 +35,8 @@
   body[data-skin="term"] .toast{border-radius:9px; font-family:var(--fm); font-size:12.5px; box-shadow:0 10px 30px rgba(0,0,0,.5)}
   body[data-skin="term"] .alert{border-radius:8px}
   body[data-skin="term"] .alert .abtn{border-radius:6px}
+
+  /* Coffer, repeat runs: a one-line card keeps clear of its arrows and its hide button (the look's
+     own pane padding would otherwise put what a run pays underneath them) */
+  body[data-skin="term"] .panel.fr-mini{padding:12px 84px}
+  body[data-skin="term"] .panel.fr-mini.fr-round{padding-left:16px}

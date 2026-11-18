@@ -1280,7 +1280,15 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .fr-ord{position:absolute; right:12px; top:12px; display:flex; flex-direction:column; gap:3px; z-index:1}
   .fr-ord button{width:26px; height:20px; padding:0; display:grid; place-items:center; background:var(--inset); border:1px solid var(--border); color:var(--muted); border-radius:6px; font-size:9px; cursor:pointer; box-shadow:none; transition:color .18s, border-color .18s, transform .18s}
   .fr-ord button:hover:not(:disabled){color:var(--gold); border-color:var(--gold-dim); transform:translateY(-1px)} .fr-ord button:disabled{opacity:.3; cursor:default}
-  .fr-mini{position:relative; padding-right:48px} .fr-mini .fr-ord{top:50%; transform:translateY(-50%)}
+  .fr-mini{position:relative} .fr-mini .fr-ord{top:50%; transform:translateY(-50%)}
+  /* hide sits under the arrows on a full card, and beside them on a one-line card */
+  .fr-ord .fr-hide{font-size:10px}
+  .fr-ord .fr-hide:hover:not(:disabled){color:var(--red); border-color:var(--red)}
+  .fr-mini .fr-ord{display:grid; grid-template-columns:auto auto; gap:3px 4px; align-items:center}
+  .fr-mini .fr-ord .fr-hide{grid-column:1; grid-row:1 / span 2; order:-1; opacity:0; transition:opacity .18s, color .18s, border-color .18s}
+  .fr-mini:hover .fr-hide, .fr-mini .fr-hide:focus-visible{opacity:1}
+  @media (hover:none){ .fr-mini .fr-ord .fr-hide{opacity:1} }
+  .fr-mini .fr-ord button:not(.fr-hide){grid-column:2}
   .fr-top{text-align:center}
   .fr-top .eb{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
   .fr-top img{width:56px; height:56px; object-fit:contain; image-rendering:pixelated; margin:8px auto 2px; display:block; filter:drop-shadow(0 2px 2px rgba(0,0,0,.6))}
@@ -1293,7 +1301,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .fr-run .fr-picks{justify-content:center; margin:10px auto 0; max-width:820px}
   .fr-act{display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap; margin:14px 0 16px}
   .fr-act .st{font-size:12.5px; color:var(--muted)} .fr-act .st b{color:var(--green); font-weight:600}
-  .fr-mini{display:flex; align-items:center; justify-content:center; gap:12px; padding:12px 16px; cursor:pointer; color:var(--muted); font-size:13.5px}
+  .fr-mini, .panel.fr-mini{display:flex; align-items:center; justify-content:center; gap:12px; padding:12px 84px; cursor:pointer; color:var(--muted); font-size:13.5px}
   .fr-mini b{color:var(--text); font-weight:600} .fr-mini:hover{color:var(--text)}
   .fr-seg{display:flex; justify-content:center; width:max-content; margin:0 auto 14px}
   /* upgrades: the gear ladder and the skilling list */
@@ -1453,7 +1461,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   @media (max-width:700px){ .rk-figs{grid-template-columns:1fr 1fr} .rk-fig:nth-child(3){border-left:0} .rk-fig:nth-child(n+3){border-top:1px solid var(--border)} .rk-now .nx{margin-left:0; flex-basis:100%} .rk-ttl h3{font-size:23px} }
   @media (prefers-reduced-motion:reduce){ .rk-day.in, .rk-sk.in, .rk-sk.in .ring .v, .rk-flash{animation:none} .rk-chip, .rk-sk, .rk-sup, .rk-day b{transition:none} }
   /* a round in the list: tick, name, clock, pay */
-  .fr-round{justify-content:flex-start; cursor:default; text-align:left; gap:11px; transition:opacity .25s}
+  .fr-round, .panel.fr-round{justify-content:flex-start; cursor:default; text-align:left; gap:11px; padding-left:16px; transition:opacity .25s}
   .fr-round.wait{opacity:.62} .fr-round.short{opacity:.7}
   .fr-round .ic{font-size:18px; width:22px; flex:none; display:grid; place-items:center} .fr-round .ic img{width:18px; height:18px}
   .fr-round .tx{display:flex; flex-wrap:wrap; align-items:center; gap:3px 8px; min-width:0; flex:1} .fr-round .tx small{flex-basis:100%; font-size:12px; color:var(--muted)}
@@ -3117,6 +3125,11 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .toast{border-radius:9px; font-family:var(--fm); font-size:12.5px; box-shadow:0 10px 30px rgba(0,0,0,.5)}
   body[data-skin="term"] .alert{border-radius:8px}
   body[data-skin="term"] .alert .abtn{border-radius:6px}
+
+  /* Coffer, repeat runs: a one-line card keeps clear of its arrows and its hide button (the look's
+     own pane padding would otherwise put what a run pays underneath them) */
+  body[data-skin="term"] .panel.fr-mini{padding:12px 84px}
+  body[data-skin="term"] .panel.fr-mini.fr-round{padding-left:16px}
 
   /* ============ THE LOADING SCREEN, AS A TERMINAL STARTING UP ============ */
   .mt-boot-log{display:none}
@@ -4794,6 +4807,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .gl[data-g="heart"]{--g:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath d='M1 1h2v1h-2zM6 1h2v1h-2zM0 2h4v1h-4zM5 2h4v1h-4zM0 3h9v1h-9zM0 4h9v1h-9zM1 5h7v1h-7zM2 6h5v1h-5zM3 7h3v1h-3zM4 8h1v1h-1z'/%3E%3C/svg%3E")}
   body[data-skin="term"] .gl[data-g="pen"]{--g:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath d='M7 0h2v1h-2zM6 1h3v1h-3zM5 2h3v1h-3zM4 3h3v1h-3zM3 4h3v1h-3zM2 5h3v1h-3zM1 6h3v1h-3zM0 7h2v1h-2zM0 8h1v1h-1z'/%3E%3C/svg%3E")}
   body[data-skin="term"] .gl[data-g="books"]{--g:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath d='M0 1h4v1h-4zM5 1h4v1h-4zM0 2h1v1h-1zM3 2h1v1h-1zM5 2h1v1h-1zM8 2h1v1h-1zM0 3h1v1h-1zM3 3h1v1h-1zM5 3h1v1h-1zM8 3h1v1h-1zM0 4h1v1h-1zM3 4h1v1h-1zM5 4h1v1h-1zM8 4h1v1h-1zM0 5h1v1h-1zM3 5h1v1h-1zM5 5h1v1h-1zM8 5h1v1h-1zM0 6h1v1h-1zM3 6h3v1h-3zM8 6h1v1h-1zM0 7h4v1h-4zM5 7h4v1h-4z'/%3E%3C/svg%3E")}
+  body[data-skin="term"] .gl[data-g="skills"]{--g:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath d='M7 0h2v1h-2zM7 1h2v1h-2zM7 2h2v1h-2zM4 3h2v1h-2zM7 3h2v1h-2zM4 4h2v1h-2zM7 4h2v1h-2zM4 5h2v1h-2zM7 5h2v1h-2zM1 6h2v1h-2zM4 6h2v1h-2zM7 6h2v1h-2zM1 7h2v1h-2zM4 7h2v1h-2zM7 7h2v1h-2zM1 8h2v1h-2zM4 8h2v1h-2zM7 8h2v1h-2z'/%3E%3C/svg%3E")}
   body[data-skin="term"] .gl[data-g="book"]{--g:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath d='M0 1h3v1h-3zM6 1h3v1h-3zM0 2h1v1h-1zM3 2h1v1h-1zM5 2h1v1h-1zM8 2h1v1h-1zM0 3h1v1h-1zM4 3h1v1h-1zM8 3h1v1h-1zM0 4h1v1h-1zM4 4h1v1h-1zM8 4h1v1h-1zM0 5h1v1h-1zM4 5h1v1h-1zM8 5h1v1h-1zM0 6h1v1h-1zM4 6h1v1h-1zM8 6h1v1h-1zM0 7h4v1h-4zM5 7h4v1h-4z'/%3E%3C/svg%3E")}
   body[data-skin="term"] .gl[data-g="joy"]{--g:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath d='M3 0h3v1h-3zM3 1h3v1h-3zM3 2h3v1h-3zM4 3h1v1h-1zM4 4h1v1h-1zM4 5h1v1h-1zM1 6h7v1h-7zM0 7h1v1h-1zM8 7h1v1h-1zM0 8h9v1h-9z'/%3E%3C/svg%3E")}
   body[data-skin="term"] .gl[data-g="wrench"]{--g:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath d='M5 0h2v1h-2zM4 1h1v1h-1zM4 2h1v1h-1zM7 2h1v1h-1zM4 3h4v1h-4zM3 4h2v1h-2zM2 5h2v1h-2zM1 6h2v1h-2zM0 7h2v1h-2zM0 8h1v1h-1z'/%3E%3C/svg%3E")}
@@ -14890,7 +14904,7 @@ function htPlay(){
 // that reads the text reads what it always did, and the Classic look shows it as it was. A
 // picture emoji with no glyph yet is greyed rather than left in full colour. What someone typed
 // (a note, a journal line, the terminal's own log) is left alone.
-var GLYPH_OF = {"📌": "pin", "🏆": "trophy:a", "✅": "check:g", "⬜": "box", "📁": "folder", "📜": "scroll", "🧭": "compass", "📈": "chartup:g", "📉": "chartdown:r", "🔥": "flame:o", "🎯": "target", "⚔": "swords", "💤": "sleep", "📝": "note", "🗒": "note", "🥇": "medal:a", "🏅": "medal:a", "🎖": "medal:a", "📊": "bars", "💀": "skull", "⭐": "star:a", "🎨": "palette", "🗺": "marker", "💎": "gem:c", "🎆": "spark:a", "✨": "spark:a", "🎉": "spark:a", "🌱": "sprout:g", "🌿": "sprout:g", "⚙": "gear", "💬": "chat", "☕": "cup", "📅": "cal", "📆": "cal", "🗓": "cal", "🧾": "receipt", "⚡": "bolt:a", "🔒": "lock", "🔓": "unlock", "🪙": "coin:a", "💰": "coin:a", "🛡": "shield", "📋": "clip", "⏸": "pause", "🎵": "music", "📥": "inbox", "📱": "phone", "❤": "heart:r", "👑": "crown:a", "✍": "pen", "📚": "books", "📖": "book", "🕹": "joy", "🛠": "wrench", "➕": "plus", "⚠": "warn:o", "❗": "bang:r", "❓": "quest", "❔": "quest", "⛏": "pick", "👁": "eye", "🧗": "peak", "👍": "up:g", "👎": "down:r", "🐉": "dragon", "🐒": "monkey", "🍴": "cutlery", "🦇": "bat", "💡": "bulb:a", "🏠": "home", "🖼": "pic", "🏛": "bank", "🏦": "bank", "🗝": "key", "🏷": "tag", "🥖": "loaf:a", "🔨": "hammer"};
+var GLYPH_OF = {"📌": "pin", "🏆": "trophy:a", "✅": "check:g", "⬜": "box", "📁": "folder", "📜": "scroll", "🧭": "compass", "📈": "chartup:g", "📉": "chartdown:r", "🔥": "flame:o", "🎯": "target", "⚔": "swords", "💤": "sleep", "📝": "note", "🗒": "note", "🥇": "medal:a", "🏅": "medal:a", "🎖": "medal:a", "📊": "bars", "💀": "skull", "⭐": "star:a", "🎨": "palette", "🗺": "marker", "💎": "gem:c", "🎆": "spark:a", "✨": "spark:a", "🎉": "spark:a", "🌱": "sprout:g", "🌿": "sprout:g", "⚙": "gear", "💬": "chat", "☕": "cup", "📅": "cal", "📆": "cal", "🗓": "cal", "🧾": "receipt", "⚡": "bolt:a", "🔒": "lock", "🔓": "unlock", "🪙": "coin:a", "💰": "coin:a", "🛡": "shield", "📋": "clip", "⏸": "pause", "🎵": "music", "📥": "inbox", "📱": "phone", "❤": "heart:r", "👑": "crown:a", "✍": "pen", "📚": "skills", "📖": "book", "🕹": "joy", "🛠": "wrench", "➕": "plus", "⚠": "warn:o", "❗": "bang:r", "❓": "quest", "❔": "quest", "⛏": "pick", "👁": "eye", "🧗": "peak", "👍": "up:g", "👎": "down:r", "🐉": "dragon", "🐒": "monkey", "🍴": "cutlery", "🦇": "bat", "💡": "bulb:a", "🏠": "home", "🖼": "pic", "🏛": "bank", "🏦": "bank", "🗝": "key", "🏷": "tag", "🥖": "loaf:a", "🔨": "hammer"};
 var glyphRe = null, glyphQueue = [], glyphTimer = 0;
 function glyphSkip(el){ return !el || !!el.closest(".gl, .gl-raw, script, style, textarea, select, svg, [contenteditable], .le-text, .note, .ht-log .m, .ht-log .q, #mkHost"); }
 function glyphText(node){
@@ -16039,7 +16053,7 @@ function renderRuns(){
           <div class="fr-pact"><button class="${rdy ? "primary" : "ghost"} small" data-frpick1="${pt.id}" title="${rdy ? "Log this patch and plant it again" : "Not grown yet. Log it anyway and plant again"}">${verb}</button><button class="ghost small x" data-frclear1="${pt.id}" title="Forget this planting">✕</button></div>`
         : on ? `<div class="eta"><span class="muted">nothing planted</span></div><div class="fr-pact"><button class="ghost small" data-frplant1="${pt.id}">Planted ${escapeHtml(c.n)}</button></div>` : ""}
       </div>`; }).join("");
-    const ord = `<span class="fr-ord"><button data-frup="${k.id}" ${ki===0?"disabled":""} title="Move up" aria-label="Move up">▲</button><button data-frdn="${k.id}" ${ki===order.length-1?"disabled":""} title="Move down" aria-label="Move down">▼</button></span>`;
+    const ord = `<span class="fr-ord"><button data-frup="${k.id}" ${ki===0?"disabled":""} title="Move up" aria-label="Move up">▲</button><button data-frdn="${k.id}" ${ki===order.length-1?"disabled":""} title="Move down" aria-label="Move down">▼</button><button class="fr-hide" data-frhide="${k.id}" title="Hide this from your routine. Change routine brings it back." aria-label="Hide from your routine">✕</button></span>`;
     const open = r.open ? r.open[k.id] : undefined;
     const folded = open === false || (open === undefined && !have.length && !plots.length);
     if(folded) return `<div class="panel fr-mini" data-frkind="${k.id}" data-fropen="${k.id}" title="Open this run"><span>${k.icon}</span><b>${k.label}</b><span>${have.length ? `${have.length} of ${patches.length} patches` : "no patches ticked yet"}</span><span>· tap to open</span>${ord}</div>`;
@@ -16081,7 +16095,7 @@ function renderRuns(){
   // a daily or a timed round: the tick, the clock, what it pays
   const roundCard = (m, ki, order)=>{
     const st = roundStatus(m), ok = m.gap.ok, sk = mmgCatSkill(m), key = escapeHtml(m.key);
-    const ord = `<span class="fr-ord"><button data-frup="${key}" ${ki===0?"disabled":""} title="Move up" aria-label="Move up">▲</button><button data-frdn="${key}" ${ki===order.length-1?"disabled":""} title="Move down" aria-label="Move down">▼</button></span>`;
+    const ord = `<span class="fr-ord"><button data-frup="${key}" ${ki===0?"disabled":""} title="Move up" aria-label="Move up">▲</button><button data-frdn="${key}" ${ki===order.length-1?"disabled":""} title="Move down" aria-label="Move down">▼</button><button class="fr-hide" data-frhide="${key}" title="Hide this from your routine. Change routine brings it back." aria-label="Hide from your routine">✕</button></span>`;
     return `<div class="panel fr-mini fr-round ${ok ? (st.up ? "up" : "wait") : "short"}" data-frkind="${key}">
       <button class="rd-tick ${st.up ? "" : "on"}" data-rdtick="${key}" ${ok ? "" : "disabled"} title="${st.up ? "Done it? Tick it" : "Untick"}">${st.up ? "○" : "✓"}</button>
       <span class="ic">${sk ? `<img src="${skillIconUrl(sk)}" alt="" class="cf-skico">` : "🌱"}</span>
@@ -16255,6 +16269,15 @@ function renderRuns(){
   };
   $$("#runsView [data-frup]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); move(b.dataset.frup, -1); });
   $$("#runsView [data-frdn]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); move(b.dataset.frdn, 1); });
+  // hide: out of the routine, the same as unticking it under Change routine
+  $$("#runsView [data-frhide]").forEach(b=>b.onclick = e=>{
+    e.stopPropagation();
+    const r = runsState(), id = b.dataset.frhide, card = b.closest("[data-frkind]"), nm = card && card.querySelector("b");
+    const shown = $$("#runsView [data-frkind]").map(x=>x.dataset.frkind);
+    r.routine = (Array.isArray(r.routine) ? r.routine : shown).filter(x=>x !== id);
+    save(); renderRuns(); try{ renderRoundsHome(); htLater(); }catch(err){}
+    toast(`${nm ? nm.textContent : "That run"} is hidden. Change routine brings it back.`);
+  });
   $$("#runsView [data-frdel]").forEach(b=>b.onclick = ()=>{ const r = runsState(); const i = r.log.findIndex(e=>String(e.t)===b.dataset.frdel); if(i > -1) r.log.splice(i, 1); save(); renderRuns(); });
 }
 
