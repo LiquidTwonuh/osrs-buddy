@@ -2910,6 +2910,17 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .pw-item .pw-name small{margin-left:8px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold-dim)}
   .pw-item .pbtn{background:transparent; border:1px solid var(--border); color:var(--muted); cursor:pointer; padding:2px 8px}
   .pw-item .pbtn:hover{color:var(--gold); border-color:var(--gold-dim)}
+  /* late nights: the ask at the top of Scroll, the picker in the day popup */
+  .late-ask{display:grid; gap:6px; margin:10px 0 2px}
+  .late-row{display:flex; align-items:center; justify-content:space-between; gap:8px 14px; flex-wrap:wrap; padding:8px 12px; border:1px solid var(--gold-dim); background:var(--panel); font-size:13px; line-height:1.45}
+  .late-q{flex:1 1 320px; min-width:0; color:var(--muted)}
+  .late-q b{color:var(--gold); font-weight:600}
+  .late-btns{display:flex; gap:6px; flex:none}
+  .late-how{margin:2px 0 6px; font-size:12px; line-height:1.45; color:var(--muted)}
+  .late-chips{display:flex; flex-wrap:wrap; gap:5px; margin:4px 0 8px}
+  .late-acts{display:flex; flex-wrap:wrap; gap:6px; padding-top:7px; border-top:1px solid var(--border)}
+  .late-tag{font-size:11px; padding:1px 6px; border:1px solid var(--border); color:var(--muted)}
+  .daypop.late{max-height:min(460px, calc(100vh - 20px))}
   /*SKIN_TERM_START*/
   /* ============ THE TERMINAL LOOK ============
      One block, at the end of the sheet so it wins ties. Everything here sits under
@@ -5279,6 +5290,8 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
 
     </div>
 
+    <div class="late-ask hidden" id="lateAsk"></div>
+
     <!-- Sections. The heatmap leads because it's the reason anyone opens this page. -->
     <div class="scroll-sec" data-ssec="heat">
     <div class="panel">
@@ -7567,7 +7580,8 @@ function prioWeekCtx(){
   const auto = (state.scroll && state.scroll.autoOn !== false && state.scroll.auto) || {}; let types = {}, skills = {};
   try{ types = mergedTypesByDate(); skills = skillsByDate(); }catch(e){}
   const tagged = {}; ((state.scroll && state.scroll.log) || []).forEach(e=>(e && e.prios || []).forEach(id=>{ tagged[e.date + "|" + id] = 1; }));
-  return {auto, types, skills, tagged, isos:prioWeekIsos()};
+  const late = {}; ((state.scroll && state.scroll.log) || []).forEach(e=>{ if(e && e.late){ late[e.date] = 1; (e.skills || []).forEach(k=>{ late[e.date + "|" + k] = 1; }); } });
+  return {auto, types, skills, tagged, late, isos:prioWeekIsos()};
 }
 // what one day did for one priority: whether it counts as a day worked, and how much it added
 function prioDayGain(p, iso, ctx){
@@ -7576,6 +7590,7 @@ function prioDayGain(p, iso, ctx){
   if(p.metric && p.kind === "skill"){
     const sk = (a && a.skills) || {}, x = p.metric === "overall" ? Object.values(sk).reduce((n, v)=>n + Math.max(0, v), 0) : (sk[p.metric] || 0);
     if(x > 0){ did = 1; amt = x; }
+    else if(ctx.late && (p.metric === "overall" ? ctx.late[iso] : ctx.late[iso + "|" + skillColorKey(p.metric)])) did = 1;   // a late night: the day counts, no XP
   } else if(p.metric && p.kind === "boss"){ const k = (a && a.bosses && a.bosses[p.metric]) || 0; if(k > 0){ did = 1; amt = k; } }
   else if(p.metric && p.kind === "activity"){ if(/clue/.test(p.metric) && a && a.clues > 0){ did = 1; amt = a.clues; } }
   else if(p.metric && p.kind === "tag"){ if((ctx.types[iso] || []).includes(p.metric) || (SKILL_COLOR[p.metric] && tagHit(ctx.skills[iso] || [], p.metric))) did = 1; }
@@ -7813,6 +7828,7 @@ function renderScroll(){
   renderScrollStats();
   renderPriorities();
   renderGlance();
+  renderLateAsk();
   renderPrioPicker();
   populatePrioMetric();
   syncPrioSettingsInputs();
@@ -8117,6 +8133,130 @@ async function fetchSnapshots(name, deep){
   }catch(e){ if(!all.length) return null; }
   return all.length ? all.sort((a,b)=> new Date(a.createdAt)-new Date(b.createdAt)) : null;
 }
+// ============ LATE NIGHTS ============
+// The hiscores only move when you log out, so a session that runs past midnight lands whole on
+// the later day and the day it started on looks empty. A late night is a journal entry on that
+// earlier day (late:true): the skills you say you trained, and no XP. The XP stays, whole, on the
+// later day, so nothing is counted twice. Because it is a journal entry, the heat map colours
+// it, it counts as a day played, and it syncs and backs up like any other entry.
+// It is only ever made by hand. The most the app does is ask (lateSuspects): XP that was first
+// seen before LATE_HOUR, on a day whose eve shows nothing at all.
+// LATE_NAME is the working name for it everywhere on screen; change it here.
+const LATE_NAME = "Late night", LATE_HOUR = 4, LATE_ASK_DAYS = 7;
+let lateSel = null;   // {iso, set, game, more, had, ask} while the picker is open
+function latePrevDay(iso){ return isoDate(new Date(parseISO(iso).getTime() - 432e5)); }
+function lateNextDay(iso){ return isoDate(new Date(parseISO(iso).getTime() + 1296e5)); }
+function lateEntry(iso){ return ((state.scroll && state.scroll.log) || []).find(e=>e && e.late && e.date === iso) || null; }
+function lateKeys(){ return SKILL_ORDER.map(skillColorKey).filter(k=>SKILL_COLOR[k]); }
+// what the game saw on a day as journal skill names, most XP first; early: only what came in before LATE_HOUR
+function lateGameSkills(iso, early){
+  const sc = state.scroll || {}, a = sc.autoOn !== false && sc.auto && sc.auto[iso]; if(!a) return [];
+  const src = early ? (a.early && a.early.skills) || {} : a.skills || {};
+  const out = Object.entries(src).filter(e=>e[1] > 0).sort((x, y)=>y[1] - x[1]).map(e=>skillColorKey(e[0])).filter(k=>SKILL_COLOR[k]);
+  if(!out.length && (early ? a.early && a.early.kc > 0 : Object.values(a.bosses || {}).some(v=>v > 0))) out.push("Combat");
+  return out;
+}
+function lateText(iso){ return `Played late. The XP is counted on ${fmtDay(lateNextDay(iso))}.`; }
+function lateRedraw(){ try{ renderScroll(); }catch(e){} try{ htLater(); }catch(e){} }
+function lateSet(iso, skills){
+  const sc = state.scroll; sc.log = sc.log || [];
+  const list = [...new Set(skills || [])].filter(k=>SKILL_COLOR[k]), e = lateEntry(iso);
+  if(e){ e.skills = list; e.types = list.length ? [] : ["skilling"]; if(!e.text || /^Played late\./.test(e.text)) e.text = lateText(iso); e.editedAt = Date.now(); }
+  else sc.log.push({id:"l" + Date.now() + Math.random().toString(36).slice(2, 5), date:iso, text:lateText(iso), skills:list, types:list.length ? [] : ["skilling"], prios:[], late:true, createdAt:Date.now()});
+  if(sc.lateNo) delete sc.lateNo[iso];
+  save(); lateRedraw();
+}
+function lateClear(iso){
+  const sc = state.scroll, i = (sc.log || []).findIndex(e=>e && e.late && e.date === iso); if(i < 0) return false;
+  sc.log.splice(i, 1); save(); lateRedraw(); return true;
+}
+function lateDismiss(iso){ const sc = state.scroll; (sc.lateNo = sc.lateNo || {})[iso] = 1; save(); lateRedraw(); }
+// The days worth asking about, newest first: XP first seen before LATE_HOUR, and the day before has
+// nothing from the game and nothing in the journal. Only the last LATE_ASK_DAYS days.
+function lateSuspects(){
+  const sc = state.scroll || {}, auto = (sc.autoOn !== false && sc.auto) || {}, no = sc.lateNo || {}, out = [];
+  const cut = isoDate(new Date(Date.now() - LATE_ASK_DAYS * 864e5)), logged = new Set((sc.log || []).map(e=>e && e.date));
+  for(const next in auto){
+    const a = auto[next]; if(next < cut || !a || !a.early) continue;
+    const iso = latePrevDay(next); if(no[iso] || logged.has(iso)) continue;
+    const b = auto[iso]; if(b && (Object.values(b.skills || {}).some(v=>v > 0) || Object.values(b.bosses || {}).some(v=>v > 0) || b.clues > 0 || b.minis > 0)) continue;
+    const skills = lateGameSkills(next, true); if(!skills.length) continue;
+    out.push({iso, next, skills, xp:Object.values(a.early.skills || {}).reduce((n, v)=>n + v, 0), at:a.early.at});
+  }
+  return out.sort((x, y)=>x.iso < y.iso ? 1 : -1);
+}
+// the picker, in the day popup
+function dayPopPlace(pop, anchor, w){
+  pop.__anchor = anchor;
+  const r = anchor.getBoundingClientRect(), pw = Math.min(w || 266, window.innerWidth - 20);
+  pop.style.width = pw + "px";
+  pop.style.left = Math.max(10, Math.min(r.left + r.width / 2 - pw / 2, window.innerWidth - pw - 10)) + "px";
+  pop.style.top = (r.bottom + 8) + "px";
+  const ph = pop.offsetHeight;
+  if(r.bottom + 8 + ph > window.innerHeight - 10) pop.style.top = Math.max(10, r.top - ph - 8) + "px";
+}
+function lateOpen(iso, anchor){
+  const pop = $("#dayPop"); if(!pop) return;
+  const e = lateEntry(iso), game = lateGameSkills(lateNextDay(iso));
+  lateSel = {iso, set:new Set(e ? e.skills || [] : game), game, more:false, had:!!e, ask:lateSuspects().some(x=>x.iso === iso)};
+  if(anchor && anchor.isConnected) pop.__anchor = anchor;
+  pop.classList.remove("hidden");
+  lateDraw();
+}
+function lateDraw(){
+  const pop = $("#dayPop"), L = lateSel; if(!pop || !L) return;
+  const next = lateNextDay(L.iso), first = [...new Set([...L.game, ...L.set])], rest = lateKeys().filter(k=>!first.includes(k));
+  const chip = k=>`<span class="act-chip ${L.set.has(k) ? "on" : ""}" data-latesk="${escapeHtml(k)}" style="--c:${SKILL_COLOR[k]}"><span class="dot" style="background:${swatchBg(k)}"></span>${escapeHtml(k)}</span>`;
+  pop.classList.add("late");
+  pop.innerHTML = `<div class="dp-head"><span>${LATE_NAME}, ${fmtDay(L.iso)}</span><button class="dp-x" data-latex="1" aria-label="Close">✕</button></div>
+    <p class="late-how">Pick what you trained that night. No XP is added to this day. It stays on ${fmtDay(next)}.</p>
+    ${L.game.length ? "" : `<p class="late-how">Nothing has come in from the game for ${fmtDay(next)} yet, so nothing is filled in.</p>`}
+    <div class="late-chips">${first.map(chip).join("")}${L.more ? rest.map(chip).join("") : rest.length ? `<button type="button" class="ghost small" data-latemore="1">${first.length ? "More skills" : "Pick skills"}</button>` : ""}</div>
+    <div class="late-acts"><button type="button" class="small" data-latesave="1">${L.had ? "Save" : "Mark this day"}</button>${
+      L.had ? `<button type="button" class="ghost small" data-lateundo="1">Take it back</button>` : ""}${
+      L.ask && !L.had ? `<button type="button" class="ghost small" data-lateno="${L.iso}">Not a late night</button>` : ""}<button type="button" class="ghost small" data-latex="1">Cancel</button></div>`;
+  if(pop.__anchor && pop.__anchor.isConnected) dayPopPlace(pop, pop.__anchor, 330);
+}
+// the ask, at the top of Scroll
+function renderLateAsk(){
+  const el = $("#lateAsk"); if(!el) return;
+  const list = lateSuspects();
+  el.classList.toggle("hidden", !list.length);
+  el.innerHTML = list.slice(0, 2).map(x=>{
+    const when = new Date(x.at).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+    return `<div class="late-row"><span class="late-q"><b>${LATE_NAME}?</b> On ${fmtDay(x.next)}, ${x.xp ? "+" + fmt(x.xp) + " xp" : "boss kills"} had come in by ${escapeHtml(when)}, and ${fmtDay(x.iso)} shows nothing. If you were playing that night, you can mark it as played.</span>
+      <span class="late-btns"><button type="button" class="small" data-lateask="${x.iso}">Pick skills</button><button type="button" class="ghost small" data-lateno="${x.iso}">No</button></span></div>`;
+  }).join("");
+}
+(function lateWire(){
+  // In the capture phase, so the page's own click handler does not close the popup under us
+  document.addEventListener("click", ev=>{
+    const t = ev.target.closest && ev.target.closest("[data-dplate],[data-lateask],[data-lateno],[data-latesk],[data-latemore],[data-latesave],[data-lateundo],[data-latex]"); if(!t) return;
+    ev.stopPropagation(); ev.preventDefault();
+    const d = t.dataset, L = lateSel, pop = document.getElementById("dayPop");
+    if(d.dplate){ lateOpen(d.dplate, pop && pop.__anchor && pop.__anchor.isConnected ? pop.__anchor : t); return; }
+    if(d.lateask){ lateOpen(d.lateask, t); return; }
+    if(d.lateno){ lateSel = null; closeDayPopover(); lateDismiss(d.lateno); toast(`Left as it is. ${fmtDay(d.lateno)} will not be asked about again.`); return; }
+    if(!L) return;
+    if(d.latesk){ if(L.set.has(d.latesk)) L.set.delete(d.latesk); else L.set.add(d.latesk); lateDraw(); }
+    else if(d.latemore){ L.more = true; lateDraw(); }
+    else if(d.latesave){ lateSel = null; closeDayPopover(); lateSet(L.iso, [...L.set]); toast(`${fmtDay(L.iso)} marked as played${L.set.size ? "" : ", no skills picked"}. No XP added.`); }
+    else if(d.lateundo){ lateSel = null; closeDayPopover(); lateClear(L.iso); toast(`${LATE_NAME} taken back for ${fmtDay(L.iso)}.`); }
+    else if(d.latex){ lateSel = null; closeDayPopover(); }
+  }, true);
+})();
+// a day word for the late command: yesterday, today, a weekday (the most recent one), or a date
+function lateDayArg(w){
+  w = String(w || "").toLowerCase(); if(!w) return "";
+  if(w === "yesterday" || w === "y") return latePrevDay(todayISO());
+  if(w === "today") return todayISO();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(w)) return w <= todayISO() ? w : "";
+  const i = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].findIndex(d=>w.length >= 3 && (d === w || ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][["sun", "mon", "tue", "wed", "thu", "fri", "sat"].indexOf(d)] === w));
+  if(i < 0) return "";
+  let iso = todayISO(); for(let n = 0; n < 7; n++){ if(parseISO(iso).getDay() === i) return iso; iso = latePrevDay(iso); }
+  return "";
+}
+
 // Each consecutive pair's gains are attributed to the LATER point's date. The points are WOM
 // snapshots plus, in the desktop app, readings from RuneLite (see autoPoints). The two can
 // disagree for a while: the hiscores only update when you log out, so a WOM snapshot taken while
@@ -8140,16 +8280,18 @@ function deriveAutoDays(snaps){
   for(const g in F) for(const k in (first[g] || {})) gain(first, g, k);
   for(let i=1;i<snaps.length;i++){
     const B=snaps[i].data||{};
-    const iso=isoDate(new Date(snaps[i].createdAt));
+    const at=new Date(snaps[i].createdAt), iso=isoDate(at), early=at.getHours()<LATE_HOUR;
     const fromIso=isoDate(new Date(snaps[i-1].createdAt));
+    // what was first seen before LATE_HOUR, kept apart so the app can ask about a late night
+    const seenEarly=(k,g,d)=>{ if(!early) return; const e=d.early||(d.early={skills:{}, kc:0, at:0}); if(k) e.skills[k]=(e.skills[k]||0)+g; else e.kc+=g; e.at=Math.max(e.at, +at); };
     const d=out[iso]||(out[iso]={types:new Set(), skills:{}, bosses:{}, clues:0, clueTiers:{}, minis:0, spanFrom:fromIso});
     if(fromIso<d.spanFrom) d.spanFrom=fromIso;
     for(const k in (B.skills||{})){ if(k==="overall") continue;
       const g=gain(B,"skills",k);
-      if(g>0){ d.skills[k]=(d.skills[k]||0)+g; d.types.add(COMBAT_SKILLS.has(k)?"combat":"skilling"); } }
+      if(g>0){ d.skills[k]=(d.skills[k]||0)+g; d.types.add(COMBAT_SKILLS.has(k)?"combat":"skilling"); seenEarly(k,g,d); } }
     for(const k in (B.bosses||{})){
       const g=gain(B,"bosses",k);
-      if(g>0){ d.bosses[k]=(d.bosses[k]||0)+g; d.types.add("combat"); } }
+      if(g>0){ d.bosses[k]=(d.bosses[k]||0)+g; d.types.add("combat"); seenEarly("",g,d); } }
     for(const k in (B.activities||{})){
       const g=gain(B,"activities",k);
       if(g<=0) continue;
@@ -8344,7 +8486,8 @@ function autoGainsHtml(iso){
   if(a.clues>0) rows.push(`<b>+${a.clues}</b> clue${a.clues>1?"s":""}`);
   if(a.minis>0) rows.push(`<b>+${fmt(a.minis)}</b> minigame score`);
   if(!rows.length) return "";
-  const span = a.spanFrom && a.spanFrom!==iso ? ` <span class="muted">(since ${fmtDay(a.spanFrom)})</span>` : "";
+  const span = (a.spanFrom && a.spanFrom!==iso ? ` <span class="muted">(since ${fmtDay(a.spanFrom)})</span>` : "")
+    + (lateEntry(latePrevDay(iso)) ? ` <span class="muted">(includes the night before)</span>` : "");
   return `<div class="dp-auto"><div class="dp-auto-h">📊 From the game${span}</div>${rows.map(r=>`<div>${r}</div>`).join("")}</div>`;
 }
 // Day list for the ribbon window, oldest → newest.
@@ -8436,7 +8579,7 @@ function openDayPopover(iso, anchor){
     const sw=entryTagList(e).map(t=>`<span class="sw" style="background:${entryTagColor(t)}"></span>`).join("");
     const tags=entryTagList(e).map(t=>entryTagLabel(t)).join(" · ");
     const pt=prioTagsHtml(e);
-    const mt=e.milestone?'<span class="mile-tag">🏆 milestone</span>':"";
+    const mt=(e.milestone?'<span class="mile-tag">🏆 milestone</span>':"")+(e.late?`${e.milestone?" ":""}<span class="late-tag">${LATE_NAME.toLowerCase()}</span>`:"");
     return `<div class="dp-entry"><div class="dp-sw">${sw||'<span class="sw" style="background:var(--swempty)"></span>'}</div>
       <div class="grow" style="min-width:0"><div>${e.text?escapeHtml(e.text):'<span class="muted">(no note)</span>'}</div>
       ${(mt||pt)?`<div style="margin-top:3px">${mt}${mt&&pt?" ":""}${pt}</div>`:""}
@@ -8448,9 +8591,10 @@ function openDayPopover(iso, anchor){
   // what you trained, not what you were doing.
   const logBtn = `<button class="ghost small" data-dplog="${iso}" style="margin-top:6px">✎ ${
     entries.length ? "Add a note" : "Log what you did"}</button>`;
+  const lateBtn = iso <= todayISO() ? ` <button class="ghost small" data-dplate="${iso}" style="margin-top:6px" title="Played past midnight, so the XP landed on the next day? Mark this day as played and pick the skills. No XP is added.">${lateEntry(iso) ? LATE_NAME + ": change" : LATE_NAME}</button>` : "";
   const inner = (body || auto)
-    ? body + auto + logBtn
-    : `<div class="muted small" style="padding:4px 0">Nothing logged this day.</div>` + logBtn;
+    ? body + auto + logBtn + lateBtn
+    : `<div class="muted small" style="padding:4px 0">Nothing logged this day.</div>` + logBtn + lateBtn;
   const isMile = entries.some(e=>e.milestone);
   // why this day has a ring
   const msKeys = msDayMap()[iso] || [];
@@ -8458,15 +8602,8 @@ function openDayPopover(iso, anchor){
       msTierOfDay(iso)==="nn"?"🎆":msTierOfDay(iso)==="diamond"?"💎":"🥇"} Milestone${msKeys.length>1?"s":""}</div>${
       msKeys.map(k=>{ const i=milestoneInfo(k); return `<div>${i.tier==="nn"?"🎆":i.icon} ${escapeHtml(i.title)}</div>`; }).join("")}</div>` : "";
   pop.innerHTML = `<div class="dp-head"><span>${isMile?"🏆 ":""}${fmtDay(iso)}</span><button class="dp-x" id="dpX" aria-label="Close">✕</button></div>${dayBadgesHtml(iso)}${inner}${msHtml}`;
-  pop.classList.remove("hidden");
-  const r=anchor.getBoundingClientRect();
-  const pw=Math.min(266, window.innerWidth-20);
-  pop.style.width=pw+"px";
-  let left=Math.max(10, Math.min(r.left+r.width/2-pw/2, window.innerWidth-pw-10));
-  pop.style.left=left+"px";
-  pop.style.top=(r.bottom+8)+"px";
-  const ph=pop.offsetHeight;
-  if(r.bottom+8+ph > window.innerHeight-10) pop.style.top=Math.max(10, r.top-ph-8)+"px";
+  pop.classList.remove("hidden", "late"); lateSel = null;
+  dayPopPlace(pop, anchor);
   $("#dpX").onclick=(e)=>{ e.stopPropagation(); closeDayPopover(); };
   // ✎ per entry: close the popover, jump to the composer with that entry loaded —
   // works from any day on any heatmap (Scroll calendar/bars AND the Home widget)
@@ -8626,7 +8763,7 @@ function renderLogList(){
         const sw=entryTagList(e).map(t=>`<span class="sw" style="background:${entryTagColor(t)}" title="${entryTagLabel(t)}"></span>`).join("");
         const tags=entryTagList(e).map(t=>entryTagLabel(t)).join(" · ");
         const pt=prioTagsHtml(e);
-        const mt=e.milestone?'<span class="mile-tag">🏆 milestone</span>':"";
+        const mt=(e.milestone?'<span class="mile-tag">🏆 milestone</span>':"")+(e.late?`${e.milestone?" ":""}<span class="late-tag">${LATE_NAME.toLowerCase()}</span>`:"");
         return `<div class="log-entry">
           <div class="swatches">${sw||'<span class="sw" style="background:var(--swempty)"></span>'}</div>
           <div class="grow" style="min-width:0">
@@ -14847,8 +14984,10 @@ function htMenu(){
   const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && !prioTarget(x) && prioBucket(x) !== "someday" && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 8);
   if(al.length) sec.dust = `<div class="grp">Gathering dust</div>` + al.map((x, i)=>{ const d = prioDays(x); return opt(`data-hprio="${escapeHtml(x.id)}" title="Worked on it today? Click to say so"`, "Return-to", x.label, "y", d == null ? "no record" : d + (d === 1 ? " day" : " days"), "warn", i >= 4); }).join("");
   if(wait.length) sec.soon = `<div class="grp">Ready soon</div>` + wait.slice(0, 8).map((m, i)=>{ const v = termVerb(m); return opt(`data-hgo="${escapeHtml(m.key)}" title="Open it in Coffer"`, v.act, v.tgt, v.kind, roundWhen(m.st.next), "", i >= 4); }).join("");
+  const lates = lateSuspects().slice(0, 2);
+  if(lates.length) sec.late = `<div class="grp">${LATE_NAME}?</div>` + lates.map(x=>opt(`data-hlate="${x.iso}" title="XP came in before ${LATE_HOUR}am on ${escapeHtml(fmtDay(x.next))} and this day shows nothing. Click to mark it as played."`, "Mark", fmtDay(x.iso), "y", "played late?", "warn")).join("");
   // back after a while, what went stale comes before what was gained
-  const order = R.idle != null && R.idle >= 3 ? ["now", "week", "dust", "gain", "near", "goals", "soon"] : ["now", "week", "gain", "near", "goals", "dust", "soon"];
+  const order = R.idle != null && R.idle >= 3 ? ["now", "late", "week", "dust", "gain", "near", "goals", "soon"] : ["now", "late", "week", "gain", "near", "goals", "dust", "soon"];
   const body = order.map(k=>sec[k] || "").join("");
   el.innerHTML = `<div class="ttl">Debrief<small class="${R.idle === 0 ? "" : "none"}">${escapeHtml(tag)}</small></div><p class="lead">${lead}</p>`
     + (body ? body + `<i class="end"></i>` : `<div class="nil">Nothing is waiting on you. Pick a routine in Coffer or set a goal, and it shows up here.</div>`);
@@ -14859,6 +14998,7 @@ function htMenu(){
     else if(d.hgo) cofferGoRound(d.hgo);
     else if(d.hprio){ const x = (state.priorities || []).find(y=>String(y.id) === d.hprio); if(x){ prioTick(x); save(); renderPriorities(); renderGlance(); termLog("g", `You return to ${x.label}.`); } }
     else if(d.hgoal) switchView("goals");
+    else if(d.hlate){ e.stopPropagation(); lateOpen(d.hlate, b); }
     else if(d.skillinfo) openSkillModal(d.skillinfo);
     else if(d.bossinfo) openBossModal(d.bossinfo);
   };
@@ -15228,6 +15368,20 @@ termDef(["touch"], "touch <priority>", "Says you worked on a priority today, so 
   return {hint:`<u>enter</u> marks <span class="y">${tE(p.label)}</span> as worked on today`, fill:"touch " + String(p.label).toLowerCase(), run:()=>{
     const d = prioDays(p); prioTick(p); save(); try{ renderPriorities(); renderGlance(); htLater(); }catch(e){}
     termOut(`You return to <span class="y">${tE(p.label)}</span>.${d ? ` It had been ${d} day${d === 1 ? "" : "s"}.` : ""}`);
+  }};
+}, {soft:true});
+termDef(["late"], "late [day] [skills]", "Marks a day as played when you played past midnight and the XP landed on the next day. No XP is added. With no day it means yesterday. late -undo takes it back.", "Write", rest=>{
+  const words = String(rest || "").trim().split(/[\s,]+/).filter(Boolean);
+  const undo = words[0] === "-undo" || words[0] === "undo"; if(undo) words.shift();
+  let iso = lateDayArg(words[0]); if(iso) words.shift(); else iso = latePrevDay(todayISO());
+  const found = words.map(w=>termSkillFind(w)), bad = words.find((w, i)=>!found[i]);
+  if(bad) return `No skill called ${bad}. Try: late yesterday mining magic`;
+  const day = fmtDay(iso);
+  if(undo) return {hint:`<u>enter</u> takes the mark off ${tE(day)}`, run:()=>{ termOut(lateClear(iso) ? `Taken back. ${tE(day)} is no longer marked.` : `${tE(day)} was not marked.`); }};
+  const skills = found.length ? found.map(skillColorKey).filter(k=>SKILL_COLOR[k]) : lateGameSkills(lateNextDay(iso));
+  return {hint:`<u>enter</u> marks ${tE(day)} as played${skills.length ? ": " + tE(skills.join(", ")) : ""}, no XP added`, run:()=>{
+    lateSet(iso, skills);
+    termOut(`${tE(day)} marked as played${skills.length ? `: <span class="g">${tE(skills.join(", "))}</span>` : ", no skills picked"}. No XP added. It stays on ${tE(fmtDay(lateNextDay(iso)))}.`);
   }};
 }, {soft:true});
 termDef(["tick"], "tick <action>", "Ticks a routine that is ready, the same as typing the start of it.", "Write", rest=>{
