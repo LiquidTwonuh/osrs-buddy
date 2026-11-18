@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progress bars</title>
+<style>
+  /* Progress bars, twenty ways (Josh, 2026-11-18: "im not entirely keen on the dotted version...
+     as many types of bars as you think possible... if we like multiple can make it an option").
+     Every card is the same four skill cells and the same three day rows, drawn with one bar style.
+     A is what the app does today. Click a card to mark it; the marked letters collect in the strip.
+     Built by tools/mock-bars.py, which writes the theme colours in from design/skin. */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#000; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
+  button{font:inherit}
+  .mk-strip{position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-height:36px; padding:6px 16px; background:#0a0a0a; border-bottom:1px solid #242424; color:#8c8c8c; font:12px/1.35 "Segoe UI",system-ui,sans-serif}
+  .mk-strip b{color:#d8d8d8; font-weight:600; margin-right:8px}
+  .mk-strip span.k{margin:0 2px 0 10px}
+  .mk-strip button{color:#b4b4b4; background:none; border:1px solid #333; padding:3px 9px; cursor:pointer}
+  .mk-strip button.on{color:#000; background:#d8d8d8; border-color:#d8d8d8}
+  .mk-strip .picks{margin-left:auto; color:#d8d8d8}
+  .mk-note{padding:9px 16px 10px; background:#0a0a0a; border-bottom:1px solid #242424; color:#9a9a9a; font:12.5px/1.5 "Segoe UI",system-ui,sans-serif}
+  .mk-note b{color:#d8d8d8; font-weight:600}
+
+  .W{
+    --fs:"Bahnschrift","DIN Alternate","Inter","Segoe UI",system-ui,sans-serif;
+    --fm:"Cascadia Mono","Cascadia Code","SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+    --faint:color-mix(in srgb, var(--muted) 56%, var(--bg));
+    --line:color-mix(in srgb, var(--border) 58%, var(--bg));
+    --track:color-mix(in srgb, var(--text) 9%, transparent);
+    --k-g:#70cf6a;
+    min-height:100vh; padding:14px 16px 40px; background:var(--bg); color:var(--text); font:13px/1.4 var(--fs);
+  }
+  .W[data-th="mortimer"]{--bg:#0b1513; --panel:#11201d; --border:#2a443f; --gold:#66cbb9; --gold-dim:#4a9c8f; --text:#e0e6d9; --muted:#8fa39c;}
+  .W[data-th="night"]{--bg:#060707; --panel:#0c0e0e; --border:#242a29; --gold:#66cbb9; --gold-dim:#45948a; --text:#e7e9e4; --muted:#8b918e;}
+  .W[data-th="black"]{--bg:#000000; --panel:#070707; --border:#232426; --gold:#f2f3f4; --gold-dim:#9a9da1; --text:#cfd1d4; --muted:#878a8e;}
+  .W[data-th="crystal"]{--bg:#0a0d10; --panel:#111519; --border:#2c343d; --gold:#8dcde8; --gold-dim:#6693a7; --text:#e2e7e7; --muted:#a2b0b4;}
+  .W[data-th="parchment"]{--bg:#100e0a; --panel:#191611; --border:#3d372c; --gold:#d9bd71; --gold-dim:#9d8852; --text:#e7e6df; --muted:#abaea7;}
+  .W[data-th="fire"]{--bg:#100c0a; --panel:#191411; --border:#3d322c; --gold:#ef9a56; --gold-dim:#ac6f3f; --text:#e8e3dd; --muted:#adaaa4;}
+  .W[data-th="law"]{--bg:#0a0b10; --panel:#111219; --border:#2c2f3d; --gold:#8ca8ec; --gold-dim:#6579aa; --text:#e2e4e7; --muted:#a2acb5;}
+  .W[data-th="nature"]{--bg:#0a100d; --panel:#111914; --border:#2c3d33; --gold:#70c39b; --gold-dim:#518d70; --text:#e0e6e2; --muted:#9fafac;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(430px, 1fr)); gap:10px}
+  .card{position:relative; border:1px solid var(--line); background:color-mix(in srgb, var(--panel) 50%, transparent); cursor:pointer; transition:border-color .16s}
+  .card:hover{border-color:var(--gold-dim)}
+  .card.on{border-color:var(--gold); box-shadow:inset 0 0 0 1px var(--gold)}
+  .card h3{display:flex; align-items:baseline; gap:10px; margin:0; padding:7px 12px; border-bottom:1px solid var(--line); font:500 11px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  .card h3 b{color:var(--gold); font-weight:600}
+  .card h3 small{margin-left:auto; font:11.5px var(--fs); letter-spacing:0; text-transform:none; color:var(--faint)}
+  .card.on h3::after{content:"marked"; margin-left:8px; color:var(--gold)}
+  .cells{display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid var(--line)}
+  .cell{position:relative; display:grid; grid-template-columns:1fr auto; align-items:center; gap:2px 10px; padding:10px 12px 12px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); min-width:0; --c:var(--gold)}
+  .cell:nth-child(2n){border-right:0} .cell:nth-last-child(-n+2){border-bottom:0}
+  .cell.near{--c:var(--k-g)}
+  .cell .nm{min-width:0; font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .cell .nm small{display:block; font:12px var(--fm); color:var(--faint); font-weight:400}
+  .cell.near .nm small{color:var(--k-g)}
+  .cell .lv{font:600 26px var(--fm); color:var(--c)}
+  .bar{grid-column:1 / -1; display:block; position:relative; margin-top:5px; height:4px}
+  .days{padding:9px 12px 11px; display:grid; gap:5px; font:12.5px var(--fm)}
+  .day{display:grid; grid-template-columns:52px 1fr 54px; align-items:center; gap:10px; --c:var(--gold)}
+  .day .d{color:var(--muted)} .day .x{text-align:right; font-weight:600}
+  .day .bar{grid-column:auto; margin:0}
+  .txt{font:12px/1 var(--fm); color:var(--c); white-space:nowrap; overflow:hidden; height:auto !important}
+  .txt u{text-decoration:none; color:var(--faint)}
+
+  /* ---- the twenty ---- */
+  /* A  dotted, as now */
+  .vA .bar{background:repeating-linear-gradient(90deg, var(--track) 0 4px, transparent 4px 6px)}
+  .vA .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 6px)}
+  /* B  hairline */
+  .vB .bar{height:2px; background:var(--track)} .vB .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:var(--c)}
+  /* C  solid */
+  .vC .bar{background:var(--track)} .vC .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:var(--c)}
+  /* D  solid with a cursor at the tip */
+  .vD .bar{height:3px; background:var(--track)} .vD .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:color-mix(in srgb, var(--c) 62%, var(--bg))}
+  .vD .bar::after{content:""; position:absolute; top:-3px; bottom:-3px; left:calc(var(--p) * 100% - 1px); width:2px; background:var(--c)}
+  /* E  chunky blocks */
+  .vE .bar{height:7px; background:repeating-linear-gradient(90deg, var(--track) 0 9px, transparent 9px 12px)}
+  .vE .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:repeating-linear-gradient(90deg, var(--c) 0 9px, transparent 9px 12px)}
+  /* F  ten cells, a tenth each */
+  .vF .bar{height:6px; background:repeating-linear-gradient(90deg, var(--track) 0 calc(10% - 3px), transparent calc(10% - 3px) 10%)}
+  .vF .bar::before{content:""; position:absolute; inset:0; background:repeating-linear-gradient(90deg, var(--c) 0 calc(10% - 3px), transparent calc(10% - 3px) 10%); clip-path:inset(0 calc(100% - var(--p) * 100%) 0 0)}
+  /* G  ticks */
+  .vG .bar{height:9px; background:repeating-linear-gradient(90deg, var(--track) 0 1px, transparent 1px 4px)}
+  .vG .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:repeating-linear-gradient(90deg, var(--c) 0 1px, transparent 1px 4px)}
+  /* H  fades up to the tip */
+  .vH .bar{background:var(--track)} .vH .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:linear-gradient(90deg, color-mix(in srgb, var(--c) 18%, transparent), var(--c))}
+  /* I  thin line, lit tip */
+  .vI .bar{height:1px; margin-top:8px; background:var(--track)} .vI .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:color-mix(in srgb, var(--c) 70%, transparent)}
+  .vI .bar::after{content:""; position:absolute; top:-2px; left:calc(var(--p) * 100% - 5px); width:5px; height:5px; background:var(--c); box-shadow:0 0 9px 1px var(--c)}
+  /* J  long dashes */
+  .vJ .bar{height:3px; background:repeating-linear-gradient(90deg, var(--track) 0 14px, transparent 14px 17px)}
+  .vJ .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:repeating-linear-gradient(90deg, var(--c) 0 14px, transparent 14px 17px)}
+  /* K  ruler: solid, with quarter marks */
+  .vK .bar{height:5px; background:var(--track)} .vK .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:var(--c)}
+  .vK .bar::after{content:""; position:absolute; inset:-2px 0; background:linear-gradient(90deg, transparent calc(25% - 1px), var(--bg) calc(25% - 1px) 25%, transparent 25% calc(50% - 1px), var(--bg) calc(50% - 1px) 50%, transparent 50% calc(75% - 1px), var(--bg) calc(75% - 1px) 75%, transparent 75%)}
+  /* L, M, P  written in characters (filled in by the script) */
+  /* N  the cell's own bottom edge */
+  .vN .cell .bar{position:absolute; left:0; right:0; bottom:-1px; margin:0; height:2px; background:none}
+  .vN .cell .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:var(--c)}
+  .vN .cell{padding-bottom:10px}
+  .vN .day .bar{height:2px; background:var(--track)} .vN .day .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:var(--c)}
+  /* O  the cell fills, no bar */
+  .vO .cell .bar{position:absolute; inset:0; margin:0; height:auto; z-index:0; background:linear-gradient(90deg, color-mix(in srgb, var(--c) 15%, transparent) calc(var(--p) * 100%), transparent 0)}
+  .vO .cell .bar::after{content:""; position:absolute; top:0; bottom:0; left:calc(var(--p) * 100%); width:1px; background:color-mix(in srgb, var(--c) 55%, transparent)}
+  .vO .cell > :not(.bar){position:relative; z-index:1}
+  .vO .cell{padding-bottom:10px}
+  .vO .day .bar{height:12px; background:linear-gradient(90deg, color-mix(in srgb, var(--c) 30%, transparent) calc(var(--p) * 100%), var(--track) 0)}
+  /* Q  five pips */
+  .vQ .bar{height:8px; background:repeating-linear-gradient(90deg, transparent 0 1px, var(--track) 1px calc(20% - 5px), transparent calc(20% - 5px) 20%); outline:0}
+  .vQ .bar::before{content:""; position:absolute; inset:0; background:repeating-linear-gradient(90deg, var(--c) 0 calc(20% - 4px), transparent calc(20% - 4px) 20%); clip-path:inset(0 calc(100% - var(--p) * 100%) 0 0)}
+  /* R  hazard stripes */
+  .vR .bar{height:6px; background:var(--track)} .vR .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:repeating-linear-gradient(-45deg, var(--c) 0 3px, color-mix(in srgb, var(--c) 35%, transparent) 3px 6px)}
+  /* S  outlined: an empty frame that fills */
+  .vS .bar{height:8px; border:1px solid color-mix(in srgb, var(--c) 45%, transparent)} .vS .bar::before{content:""; position:absolute; inset:1px auto 1px 1px; width:calc(var(--p) * (100% - 2px)); background:var(--c)}
+  /* T  a meter up the side of the cell */
+  .vT .cell{padding-right:34px; padding-bottom:10px}
+  .vT .cell .bar{position:absolute; right:12px; top:9px; bottom:9px; left:auto; width:4px; height:auto; margin:0; background:var(--track)}
+  .vT .cell .bar::before{content:""; position:absolute; inset:auto 0 0 0; height:calc(var(--p) * 100%); background:var(--c)}
+  .vT .day .bar{background:var(--track)} .vT .day .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:var(--c)}
+  /* U  two tones: this level solid, the tip brighter */
+  .vU .bar{height:5px; background:var(--track)} .vU .bar::before{content:""; position:absolute; inset:0 auto 0 0; width:calc(var(--p) * 100%); background:linear-gradient(90deg, color-mix(in srgb, var(--c) 45%, var(--bg)) calc(100% - 10px), var(--c) 0)}
+  @media (max-width:520px){ .grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="mk-strip"><b>Progress bars</b><span class="k">theme</span><span id="ths"></span><span class="picks" id="picks">Click a card to mark the ones you like</span></div>
+<div class="mk-note"><b>A</b> is what the app draws today. Each card is the same four skills (8%, 47%, 81% and one 96% that is close to a level, in green) and the same three days, so only the bar changes. Any of these could be the only style, or several could be a choice in Settings, Look.</div>
+<div class="W" id="W" data-th="mortimer"><div class="grid" id="grid"></div></div>
+<script>
+const V = [
+  ["A", "Dotted", "as it is now"], ["B", "Hairline", "one thin solid line"], ["C", "Solid", "a plain filled bar"], ["D", "Cursor", "dim fill, a bright mark at the tip"],
+  ["E", "Blocks", "chunky cells"], ["F", "Ten cells", "each cell is a tenth"], ["G", "Ticks", "fine upright marks"], ["H", "Fade", "brightens toward the tip"],
+  ["I", "Lit tip", "a thread with a glowing end"], ["J", "Dashes", "long dashes"], ["K", "Ruler", "solid, cut at each quarter"], ["L", "Brackets", "typed: [####....]"],
+  ["M", "Shade blocks", "typed: block characters"], ["N", "Bottom edge", "the cell's own border fills"], ["O", "Cell fill", "the whole cell tints, no bar"], ["P", "Percent", "typed: a number and a short bar"],
+  ["Q", "Five pips", "each pip is a fifth"], ["R", "Stripes", "slanted stripes"], ["S", "Frame", "an outline that fills"], ["T", "Side meter", "fills upward at the cell's edge"], ["U", "Two tone", "dim fill, bright last stretch"]
+];
+const SK = [["Mining", "57,995 to 69", 68, .08, 0], ["Smithing", "16,825 to 66", 65, .47, 0], ["Woodcutting", "2,467 to 47", 46, .81, 0], ["Runecraft", "185 to 48", 47, .96, 1]];
+const DAYS = [["mon 16", .86, "+204K"], ["tue 17", 1, "+237K"], ["wed 18", .64, "+152K"]];
+const chars = (v, p, n)=>{
+  const k = Math.round(p * n);
+  if(v === "L") return "[" + "#".repeat(k) + "<u>" + ".".repeat(n - k) + "</u>]";
+  if(v === "M") return "█".repeat(k) + "<u>" + "░".repeat(n - k) + "</u>";
+  const m = Math.round(p * 10); return String(Math.round(p * 100)).padStart(3, " ") + "% " + "▰".repeat(m) + "<u>" + "▱".repeat(10 - m) + "</u>";
+};
+const bar = (v, p, n)=>"LMP".includes(v) ? `<span class="bar txt">${chars(v, p, n)}</span>` : `<span class="bar" style="--p:${p}"></span>`;
+document.getElementById("grid").innerHTML = V.map(([v, name, what])=>`<div class="card v${v}" data-v="${v}"><h3><b>${v}</b>${name}<small>${what}</small></h3>
+  <div class="cells">${SK.map(([n, sub, lv, p, near])=>`<div class="cell${near ? " near" : ""}"><span class="nm">${n}<small>${sub}</small></span><b class="lv">${lv}</b>${bar(v, p, 24)}</div>`).join("")}</div>
+  <div class="days">${DAYS.map(([d, p, x])=>`<div class="day"><span class="d">${d}</span>${bar(v, p, 30)}<span class="x">${x}</span></div>`).join("")}</div></div>`).join("");
+const TH = [["mortimer", "Mortimer"], ["night", "Night"], ["black", "Abyss"], ["crystal", "Crystal"], ["parchment", "Gilded"], ["fire", "Fire"], ["law", "Law"], ["nature", "Nature"]];
+const W = document.getElementById("W");
+document.getElementById("ths").innerHTML = TH.map(([id, label], i)=>`<button data-th="${id}" class="${i ? "" : "on"}">${label}</button>`).join("");
+document.addEventListener("click", e=>{
+  const t = e.target.closest("[data-th]");
+  if(t && t.tagName === "BUTTON"){ W.dataset.th = t.dataset.th; document.querySelectorAll("#ths button").forEach(b=>b.classList.toggle("on", b === t)); return; }
+  const c = e.target.closest(".card"); if(!c) return;
+  c.classList.toggle("on");
+  const on = [...document.querySelectorAll(".card.on")].map(x=>x.dataset.v + " " + V.find(y=>y[0] === x.dataset.v)[1]);
+  document.getElementById("picks").textContent = on.length ? "Marked: " + on.join(", ") : "Click a card to mark the ones you like";
+});
+</script>
+</body>
+</html>
