@@ -1,0 +1,44 @@
+
+  /* ============ PROGRESS BARS, SIX WAYS ============
+     Josh picked six from the mockup (design/mockups/bars.html) on 2026-11-18 and asked for them as
+     a choice: body[data-bars], set in Settings, Look and in setup. Every bar in this look is a
+     track with a fill inside it (.bar > i, .wf-m > i, and Coffer's .cf-ltrack with .cf-lbar), so a
+     style only has to say how those two are drawn. Dotted is the look's own drawing, in comp.css,
+     and needs nothing here. --bc is a fill's colour, so a style can glow in it. */
+  body[data-skin="term"] :is(.bar, .wf-m) > i{--bc:var(--gold)}
+  body[data-skin="term"] :is(.bar.full, .bar.ready) > i, body[data-skin="term"] .ht-sk.near .bar > i{--bc:var(--k-g)}
+  body[data-skin="term"] .wf-m > i{--bc:var(--c, var(--gold))}
+
+  /* solid: the cells go, the bar is one piece */
+  body[data-skin="term"]:is([data-bars="solid"], [data-bars="hair"], [data-bars="lit"]) :is(.bar, .wf-m, .cf-lbar),
+  body[data-skin="term"]:is([data-bars="solid"], [data-bars="hair"], [data-bars="lit"]) .cf-ltrack::before{-webkit-mask:none !important; mask:none !important}
+
+  /* ten cells: each cell is a tenth */
+  body[data-skin="term"][data-bars="ten"] :is(.bar, .wf-m, .cf-lbar), body[data-skin="term"][data-bars="ten"] .cf-ltrack::before{
+    -webkit-mask:repeating-linear-gradient(90deg, #000 0 calc(10% - 2px), transparent calc(10% - 2px) 10%) !important; mask:repeating-linear-gradient(90deg, #000 0 calc(10% - 2px), transparent calc(10% - 2px) 10%) !important}
+  body[data-skin="term"][data-bars="ten"] .ht-sk .bar{height:5px}
+
+  /* hairline and lit tip: a thin line down the middle of the room the bar had */
+  body[data-skin="term"]:is([data-bars="hair"], [data-bars="lit"]) :is(.bar, .wf-m){display:flex !important; align-items:center; background:linear-gradient(var(--bl), var(--bl)) center / 100% var(--bt) no-repeat !important}
+  body[data-skin="term"]:is([data-bars="hair"], [data-bars="lit"]) :is(.bar, .wf-m) > i{flex:none; height:var(--bt) !important; background:var(--bc) !important}
+  body[data-skin="term"][data-bars="hair"]{--bt:2px; --bl:color-mix(in srgb, var(--text) 11%, transparent)}
+  body[data-skin="term"]:is([data-bars="hair"], [data-bars="lit"]) .cf-ltrack::before{height:2px; margin-top:-1px}
+  body[data-skin="term"]:is([data-bars="hair"], [data-bars="lit"]) .cf-lbar{height:2px; top:10px}
+
+  /* lit tip: a bright thread with a glowing end (turned up at Josh's asking: the line glows too) */
+  body[data-skin="term"][data-bars="lit"]{--bt:2px; --bl:color-mix(in srgb, var(--text) 16%, transparent)}
+  body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m){overflow:visible !important}
+  body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m) > i{position:relative; box-shadow:0 0 7px color-mix(in srgb, var(--bc) 75%, transparent), 0 0 2px var(--bc)}
+  body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m) > i::after{content:""; position:absolute; right:-2px; top:50%; width:6px; height:6px; margin-top:-3px;
+    background:color-mix(in srgb, var(--bc) 45%, #fff); box-shadow:0 0 12px 3px var(--bc), 0 0 4px 1px color-mix(in srgb, var(--bc) 40%, #fff)}
+  body[data-skin="term"][data-bars="lit"] .cf-lbar{background:var(--gold); box-shadow:0 0 7px color-mix(in srgb, var(--gold) 75%, transparent)}
+  body[data-skin="term"][data-bars="lit"] .ht-sk .bar{height:6px}
+
+  /* brackets: as if typed, [#####.....] */
+  body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m){position:relative; box-sizing:border-box; padding:0 8px; overflow:visible !important; -webkit-mask:none !important; mask:none !important;
+    background:radial-gradient(circle, var(--faint) 0 1px, transparent 1.4px) 0 50% / 7px 7px repeat-x content-box !important}
+  body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m) > i{background:repeating-linear-gradient(90deg, var(--bc) 0 5px, transparent 5px 7px) !important}
+  body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m)::before, body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m)::after{position:absolute; top:50%; transform:translateY(-50%); font:11px/1 var(--fm); color:var(--gold-dim); pointer-events:none}
+  body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m)::before{content:"["; left:0}
+  body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m)::after{content:"]"; right:0}
+  body[data-skin="term"][data-bars="brackets"] .ht-sk .bar{height:8px}

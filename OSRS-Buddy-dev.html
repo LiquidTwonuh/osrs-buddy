@@ -4972,6 +4972,50 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   @media (max-width:1100px){ body[data-skin="term"] .bq-podium{grid-template-columns:1fr} }
   @media (max-width:900px){ body[data-skin="term"] .bq-prev{position:static; flex-basis:100%} body[data-skin="term"] .tt-lines{grid-template-columns:1fr} }
 
+  /* ============ PROGRESS BARS, SIX WAYS ============
+     Josh picked six from the mockup (design/mockups/bars.html) on 2026-11-18 and asked for them as
+     a choice: body[data-bars], set in Settings, Look and in setup. Every bar in this look is a
+     track with a fill inside it (.bar > i, .wf-m > i, and Coffer's .cf-ltrack with .cf-lbar), so a
+     style only has to say how those two are drawn. Dotted is the look's own drawing, in comp.css,
+     and needs nothing here. --bc is a fill's colour, so a style can glow in it. */
+  body[data-skin="term"] :is(.bar, .wf-m) > i{--bc:var(--gold)}
+  body[data-skin="term"] :is(.bar.full, .bar.ready) > i, body[data-skin="term"] .ht-sk.near .bar > i{--bc:var(--k-g)}
+  body[data-skin="term"] .wf-m > i{--bc:var(--c, var(--gold))}
+
+  /* solid: the cells go, the bar is one piece */
+  body[data-skin="term"]:is([data-bars="solid"], [data-bars="hair"], [data-bars="lit"]) :is(.bar, .wf-m, .cf-lbar),
+  body[data-skin="term"]:is([data-bars="solid"], [data-bars="hair"], [data-bars="lit"]) .cf-ltrack::before{-webkit-mask:none !important; mask:none !important}
+
+  /* ten cells: each cell is a tenth */
+  body[data-skin="term"][data-bars="ten"] :is(.bar, .wf-m, .cf-lbar), body[data-skin="term"][data-bars="ten"] .cf-ltrack::before{
+    -webkit-mask:repeating-linear-gradient(90deg, #000 0 calc(10% - 2px), transparent calc(10% - 2px) 10%) !important; mask:repeating-linear-gradient(90deg, #000 0 calc(10% - 2px), transparent calc(10% - 2px) 10%) !important}
+  body[data-skin="term"][data-bars="ten"] .ht-sk .bar{height:5px}
+
+  /* hairline and lit tip: a thin line down the middle of the room the bar had */
+  body[data-skin="term"]:is([data-bars="hair"], [data-bars="lit"]) :is(.bar, .wf-m){display:flex !important; align-items:center; background:linear-gradient(var(--bl), var(--bl)) center / 100% var(--bt) no-repeat !important}
+  body[data-skin="term"]:is([data-bars="hair"], [data-bars="lit"]) :is(.bar, .wf-m) > i{flex:none; height:var(--bt) !important; background:var(--bc) !important}
+  body[data-skin="term"][data-bars="hair"]{--bt:2px; --bl:color-mix(in srgb, var(--text) 11%, transparent)}
+  body[data-skin="term"]:is([data-bars="hair"], [data-bars="lit"]) .cf-ltrack::before{height:2px; margin-top:-1px}
+  body[data-skin="term"]:is([data-bars="hair"], [data-bars="lit"]) .cf-lbar{height:2px; top:10px}
+
+  /* lit tip: a bright thread with a glowing end (turned up at Josh's asking: the line glows too) */
+  body[data-skin="term"][data-bars="lit"]{--bt:2px; --bl:color-mix(in srgb, var(--text) 16%, transparent)}
+  body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m){overflow:visible !important}
+  body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m) > i{position:relative; box-shadow:0 0 7px color-mix(in srgb, var(--bc) 75%, transparent), 0 0 2px var(--bc)}
+  body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m) > i::after{content:""; position:absolute; right:-2px; top:50%; width:6px; height:6px; margin-top:-3px;
+    background:color-mix(in srgb, var(--bc) 45%, #fff); box-shadow:0 0 12px 3px var(--bc), 0 0 4px 1px color-mix(in srgb, var(--bc) 40%, #fff)}
+  body[data-skin="term"][data-bars="lit"] .cf-lbar{background:var(--gold); box-shadow:0 0 7px color-mix(in srgb, var(--gold) 75%, transparent)}
+  body[data-skin="term"][data-bars="lit"] .ht-sk .bar{height:6px}
+
+  /* brackets: as if typed, [#####.....] */
+  body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m){position:relative; box-sizing:border-box; padding:0 8px; overflow:visible !important; -webkit-mask:none !important; mask:none !important;
+    background:radial-gradient(circle, var(--faint) 0 1px, transparent 1.4px) 0 50% / 7px 7px repeat-x content-box !important}
+  body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m) > i{background:repeating-linear-gradient(90deg, var(--bc) 0 5px, transparent 5px 7px) !important}
+  body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m)::before, body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m)::after{position:absolute; top:50%; transform:translateY(-50%); font:11px/1 var(--fm); color:var(--gold-dim); pointer-events:none}
+  body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m)::before{content:"["; left:0}
+  body[data-skin="term"][data-bars="brackets"] :is(.bar, .wf-m)::after{content:"]"; right:0}
+  body[data-skin="term"][data-bars="brackets"] .ht-sk .bar{height:8px}
+
   /* ============ GLYPHS (written by glyphs.py; edit the drawings there) ============ */
   body[data-skin="term"] .gl{display:inline-block; width:18px; height:18px; vertical-align:-4px; overflow:hidden; text-indent:-99em; white-space:nowrap; background:currentColor; -webkit-mask:var(--g) center / contain no-repeat; mask:var(--g) center / contain no-repeat; flex:0 0 auto; text-align:left}
   body[data-skin="term"] .gl.x1{width:9px; height:9px; vertical-align:-1px} body[data-skin="term"] .gl.x3{width:27px; height:27px; vertical-align:-7px} body[data-skin="term"] .gl.x4{width:36px; height:36px; vertical-align:-9px}
@@ -5209,6 +5253,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="set-row col term-only"><div class="lbl"><b>Command line</b><small>The line at the top of every page takes commands: cd scroll, log mined for an hour, stats mining, -help for the list. Press / or the key under Esc to start typing. On a wide window the console sits in its own column at the right of every page; the console button on the line shows and hides it, and dragging its header off floats it over the page. Off leaves the line as a plain path.</small></div><div class="seg" id="tpSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Console</b><small>Where the console sits. At the side is a column to the right of every page, when the window has room. Floating is a window you can move and resize. Hidden closes it. The shortcut shows and hides it from anywhere; drag the console's header to pull it off the side.</small></div><div class="row" style="gap:8px; flex-wrap:wrap; align-items:center"><div class="seg" id="conSeg"></div><button class="ghost small" id="conKeyBtn" title="Press this, then the keys you want"></button></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Bakery layout</b><small>How Coffer's Bakery is laid out. Board puts the best three side by side and the rest in tiles. Listing is one aligned table with the row you choose opened beside it. The same switch is on the page itself.</small></div><div class="seg" id="bkSeg"></div></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Progress bars</b><small>How a bar is drawn, everywhere one appears: under a skill, beside a day, on a goal.</small></div><div class="seg" id="barSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Backdrop</b><small>What sits behind the panes. Clean is no pattern, with a soft glow in the corners. Dots, Grid, Lines and Weave are faint patterns. Flat is the theme's plain colour.</small></div><div class="seg" id="bdSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Wide window</b><small>On a wide monitor, the room beside and under a page fills with extra panes. The most useful come first, so more room only ever adds less essential ones. A pane's x hides it.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="wfSeg"></div><button class="ghost small hidden" id="wfShowAll" title="Bring back the panes you hid"></button></div></div>
           </div>
@@ -6559,7 +6604,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","termLast","termKey","termCloseTips","backdrop","cofferLayout","pageEdit","pageOrder"];
+const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","termLast","termKey","termCloseTips","backdrop","cofferLayout","pageEdit","pageOrder","barStyle"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -10136,12 +10181,17 @@ const DEFAULT_THEME = "mortimer";
 // Clean keeps the glows and drops the pattern, and is what a save starts with (Josh, 2026-11-18);
 // Flat is the theme's plain colour.
 const BACKDROPS = [["clean", "Clean"], ["dots", "Dots"], ["grid", "Grid"], ["lines", "Lines"], ["weave", "Weave"], ["flat", "Flat"]];
+// How a progress bar is drawn in the Terminal look. The six Josh picked from the mockup
+// (design/mockups/bars.html, 2026-11-18); Lit tip is the one he liked most, so a save starts on it.
+// Dotted is what the look drew before this was a choice.
+const BAR_STYLES = [["lit", "Lit tip"], ["hair", "Hairline"], ["solid", "Solid"], ["ten", "Ten cells"], ["brackets", "Brackets"], ["dots", "Dotted"]];
 const SKINS = [["term", "Terminal", "Monospace, hairlines, a command line on Home."], ["classic", "Classic", "The look before the redesign, exactly as it was."]];
 function applySkin(){
   if(!state.skin){ state.skin = "term"; if(!state.theme || state.theme === "parchment") state.theme = "mortimer"; save(); }
   document.body.dataset.skin = state.skin === "classic" ? "classic" : "term";
   document.body.dataset.tiles = state.tiles === "orderly" ? "orderly" : "mosaic";
   document.body.dataset.backdrop = BACKDROPS.some(b=>b[0] === state.backdrop) ? state.backdrop : "clean";
+  document.body.dataset.bars = BAR_STYLES.some(b=>b[0] === state.barStyle) ? state.barStyle : "lit";
   let touch = false; try{ touch = matchMedia("(pointer:coarse)").matches || !!phonePreview; }catch(e){}
   document.body.classList.toggle("dock", touch);
   try{ homeHeatPlace(); htLater(); }catch(e){}
@@ -20440,6 +20490,12 @@ function renderLookSettings(){
     const kb = $("#conKeyBtn");
     if(kb){ kb.textContent = conKeyGrab ? "Press the keys, or Esc" : "Shortcut: " + termKeyText(); kb.onclick = ()=>{ conKeyGrab = true; kb.textContent = "Press the keys, or Esc"; kb.blur(); }; }
   }
+  const brseg = $("#barSeg");
+  if(brseg){
+    const cur = document.body.dataset.bars || "lit";
+    brseg.innerHTML = BAR_STYLES.map(([id, label])=>`<button class="${id === cur ? "on" : ""}" data-bar="${id}">${label}</button>`).join("");
+    brseg.querySelectorAll("[data-bar]").forEach(b=>b.onclick = ()=>{ state.barStyle = b.dataset.bar; save(); applySkin(); renderLookSettings(); });
+  }
   const kseg = $("#bkSeg");
   if(kseg){
     kseg.innerHTML = COFFER_LAYOUTS.map(([id, label, what])=>`<button class="${id === cofferLayout() ? "on" : ""}" data-bk="${id}" title="${what}">${label}</button>`).join("");
@@ -22992,6 +23048,8 @@ const SU_VIEW = {
       <div class="seg su-seg">${NUM_CHOICES.map(([id,label])=>`<button class="${id===num?"on":""}" data-sunum="${id}">${label}</button>`).join("")}</div>
       ${state.skin === "classic" ? "" : `<div class="su-lbl">Backdrop <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· what sits behind the panes. Clean has no pattern; the rest are faint ones</span></div>
       <div class="seg su-seg">${BACKDROPS.map(([id,label])=>`<button class="${(document.body.dataset.backdrop||"clean")===id?"on":""}" data-subd="${id}">${label}</button>`).join("")}</div>
+      <div class="su-lbl">Progress bars <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· how a bar is drawn, under a skill, beside a day, on a goal</span></div>
+      <div class="seg su-seg">${BAR_STYLES.map(([id,label])=>`<button class="${(document.body.dataset.bars||"lit")===id?"on":""}" data-subar="${id}">${label}</button>`).join("")}</div>
       <div class="su-lbl">Home layout <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· Mosaic's panes can be dragged, hidden and resized. Orderly keeps every edge on one grid</span></div>
       <div class="seg su-seg">${TILE_LAYOUTS.map(([id,label])=>`<button class="${(state.tiles==="orderly"?"orderly":"mosaic")===id?"on":""}" data-sutiles="${id}">${label}</button>`).join("")}</div>
       <div class="su-lbl">Wide window <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· on a big monitor, the spare room beside a page fills with extra panes</span></div>
@@ -23129,6 +23187,7 @@ const SU_WIRE = {
     const suPick = (attr, b)=>$$(`#suBody [${attr}]`).forEach(x=>x.classList.toggle("on", x===b));
     $$("#suBody [data-subd]").forEach(b=>b.onclick=()=>{ state.backdrop = b.dataset.subd; save(); applySkin(); suPick("data-subd", b); });
     $$("#suBody [data-sutiles]").forEach(b=>b.onclick=()=>{ setTiles(b.dataset.sutiles); suPick("data-sutiles", b); });
+    $$("#suBody [data-subar]").forEach(b=>b.onclick=()=>{ state.barStyle = b.dataset.subar; save(); applySkin(); suPick("data-subar", b); });
     $$("#suBody [data-suwf]").forEach(b=>b.onclick=()=>{ state.wideFill = b.dataset.suwf === "1"; save(); try{ wfDraw(); }catch(e){} suPick("data-suwf", b); });
     $$("#suBody [data-sucon]").forEach(b=>b.onclick=()=>{ conPrefer(b.dataset.sucon); suPick("data-sucon", b); });
     $$("#suBody [data-sutheme]").forEach(b=>b.onclick=()=>{
