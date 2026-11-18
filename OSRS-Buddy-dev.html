@@ -10183,16 +10183,16 @@ const DEFAULT_THEME = "mortimer";
 // Flat is the theme's plain colour.
 const BACKDROPS = [["clean", "Clean"], ["dots", "Dots"], ["grid", "Grid"], ["lines", "Lines"], ["weave", "Weave"], ["flat", "Flat"]];
 // How a progress bar is drawn in the Terminal look. The six Josh picked from the mockup
-// (design/mockups/bars.html, 2026-11-18); Lit tip is the one he liked most, so a save starts on it.
-// Dotted is what the look drew before this was a choice.
-const BAR_STYLES = [["lit", "Lit tip"], ["hair", "Hairline"], ["solid", "Solid"], ["ten", "Ten cells"], ["brackets", "Brackets"], ["dots", "Dotted"]];
+// (design/mockups/bars.html, 2026-11-18). A save starts on Solid, his call the same day (Lit tip was
+// the default for an hour). Dotted is what the look drew before this was a choice.
+const BAR_STYLES = [["solid", "Solid"], ["hair", "Hairline"], ["lit", "Lit tip"], ["ten", "Ten cells"], ["brackets", "Brackets"], ["dots", "Dotted"]];
 const SKINS = [["term", "Terminal", "Monospace, hairlines, a command line on Home."], ["classic", "Classic", "The look before the redesign, exactly as it was."]];
 function applySkin(){
   if(!state.skin){ state.skin = "term"; if(!state.theme || state.theme === "parchment") state.theme = "mortimer"; save(); }
   document.body.dataset.skin = state.skin === "classic" ? "classic" : "term";
   document.body.dataset.tiles = state.tiles === "orderly" ? "orderly" : "mosaic";
   document.body.dataset.backdrop = BACKDROPS.some(b=>b[0] === state.backdrop) ? state.backdrop : "clean";
-  document.body.dataset.bars = BAR_STYLES.some(b=>b[0] === state.barStyle) ? state.barStyle : "lit";
+  document.body.dataset.bars = BAR_STYLES.some(b=>b[0] === state.barStyle) ? state.barStyle : "solid";
   let touch = false; try{ touch = matchMedia("(pointer:coarse)").matches || !!phonePreview; }catch(e){}
   document.body.classList.toggle("dock", touch);
   try{ homeHeatPlace(); htLater(); }catch(e){}
@@ -20493,7 +20493,7 @@ function renderLookSettings(){
   }
   const brseg = $("#barSeg");
   if(brseg){
-    const cur = document.body.dataset.bars || "lit";
+    const cur = document.body.dataset.bars || "solid";
     brseg.innerHTML = BAR_STYLES.map(([id, label])=>`<button class="${id === cur ? "on" : ""}" data-bar="${id}">${label}</button>`).join("");
     brseg.querySelectorAll("[data-bar]").forEach(b=>b.onclick = ()=>{ state.barStyle = b.dataset.bar; save(); applySkin(); renderLookSettings(); });
   }
@@ -23050,7 +23050,7 @@ const SU_VIEW = {
       ${state.skin === "classic" ? "" : `<div class="su-lbl">Backdrop <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· what sits behind the panes. Clean has no pattern; the rest are faint ones</span></div>
       <div class="seg su-seg">${BACKDROPS.map(([id,label])=>`<button class="${(document.body.dataset.backdrop||"clean")===id?"on":""}" data-subd="${id}">${label}</button>`).join("")}</div>
       <div class="su-lbl">Progress bars <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· how a bar is drawn, under a skill, beside a day, on a goal</span></div>
-      <div class="seg su-seg">${BAR_STYLES.map(([id,label])=>`<button class="${(document.body.dataset.bars||"lit")===id?"on":""}" data-subar="${id}">${label}</button>`).join("")}</div>
+      <div class="seg su-seg">${BAR_STYLES.map(([id,label])=>`<button class="${(document.body.dataset.bars||"solid")===id?"on":""}" data-subar="${id}">${label}</button>`).join("")}</div>
       <div class="su-lbl">Home layout <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· Mosaic's panes can be dragged, hidden and resized. Orderly keeps every edge on one grid</span></div>
       <div class="seg su-seg">${TILE_LAYOUTS.map(([id,label])=>`<button class="${(state.tiles==="orderly"?"orderly":"mosaic")===id?"on":""}" data-sutiles="${id}">${label}</button>`).join("")}</div>
       <div class="su-lbl">Wide window <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· on a big monitor, the spare room beside a page fills with extra panes</span></div>
