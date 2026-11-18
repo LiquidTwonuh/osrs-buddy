@@ -14258,7 +14258,7 @@ setInterval(()=>{ if(document.hidden) return; const v = $("#view-home"); if(v &&
 
 // ============ CLAUDE, WITH YOUR OWN KEY ============
 // Optional, and off until a key is given (setup's Claude step, or Settings, Advanced). With a key,
-// a question typed into Home's terminal goes to Claude with a short description of the character.
+// a question asked in Home's terminal with -ask goes to Claude with the account and the quest it names.
 // Without one, or when the call fails, the answer comes from what the page knows (reldoAnswer).
 // The key is the user's own. It lives in its own localStorage entry on this device and never in
 // the save, so it does not travel in a backup file, a sync or a bug report, and it is sent to
@@ -14530,10 +14530,10 @@ function renderClaudeSetting(){
   const el = $("#claudeSetting"); if(!el) return;
   const on = claudeOn(), cur = claudeModel();
   el.innerHTML = `<div class="set-row col">
-      <div class="lbl"><b>Claude in the terminal</b><small>Optional. With your own Claude API key, a question typed on Home goes to Claude along with your levels. Without one it is answered on this device.</small></div>
+      <div class="lbl"><b>Claude in the terminal</b><small>Optional. With your own Claude API key, a question asked on Home with -ask goes to Claude along with your account. Without one it is answered on this device.</small></div>
       <div class="row cl-row"><input type="password" id="claudeKeyIn" placeholder="${on ? "A key is saved on this device" : "sk-ant-..."}" autocomplete="off" spellcheck="false"><button class="primary small" id="claudeSave">Check and save</button>${on ? `<button class="ghost small danger" id="claudeDrop">Remove key</button>` : ""}</div>
       <div class="seg" id="claudeModelSeg">${CLAUDE_MODELS.map(([id, label])=>`<button class="${id === cur ? "on" : ""}" data-claudemodel="${id}">${label}</button>`).join("")}</div>
-      <p class="set-note cl-note" id="claudeNote" style="margin-top:8px">${on ? "Connected. Questions on Home go to Claude." : "Not connected."}</p>
+      <p class="set-note cl-note" id="claudeNote" style="margin-top:8px">${on ? "Connected. -ask on Home goes to Claude." : "Not connected."}</p>
       <p class="set-note">The key is kept on this device only, apart from your save and your backups, and is sent to Anthropic and nowhere else. Each question is billed to your key: Opus is the most capable and costs the most, Haiku is the fastest and cheapest. Keys come from the <a href="https://platform.claude.com/" target="_blank" rel="noopener">Claude Console</a>.</p>
     </div>`;
   const inp = $("#claudeKeyIn"), btn = $("#claudeSave"), note = $("#claudeNote");
@@ -14634,7 +14634,7 @@ function termBrief(){
 // k "w" is a system notice. The one about Claude carries p, a question waiting on y or n: asked
 // at each launch until it is answered, never twice in the log, and not at all once a key is in
 // or the answer was no (state.term.ai). The header's "claude off" goes with a no.
-const TERM_AI_NOTICE = "Questions here are answered on this device. Claude can answer them instead, using your own Anthropic API key. The key is kept on this device and sent only to api.anthropic.com, and what you ask is billed to your Anthropic account.";
+const TERM_AI_NOTICE = "Questions asked here with -ask are answered on this device. Claude can answer them instead, using your own Anthropic API key. The key is kept on this device and sent only to api.anthropic.com, and what you ask is billed to your Anthropic account.";
 function termAiNotice(){
   const t = termState(); t.log = t.log.filter(e=>!e.p);
   if(typeof claudeOn !== "function" || termAi() || t.ai === "no") return;
@@ -14729,7 +14729,7 @@ function tlRender(){
 function tlHint(){
   const inp = $("#tlIn"), hint = $("#tlHint"); if(!inp || !hint) return;
   const r = termResolve(inp.value);
-  hint.innerHTML = r ? r.hint.replace("<u>enter</u>", "<u>go</u>") + (r.fill && r.fill.toLowerCase() !== inp.value.trim().toLowerCase() ? ` <span class="fill">tap to complete</span>` : "") : `a command, a note or a question. <u>-help</u> lists the commands`;
+  hint.innerHTML = r ? r.hint.replace("<u>enter</u>", "<u>go</u>") + (r.fill && r.fill.toLowerCase() !== inp.value.trim().toLowerCase() ? ` <span class="fill">tap to complete</span>` : "") : `a command. <u>-help</u> lists them, -note keeps a note, -ask asks a question`;
 }
 function tlOpen(){
   const el = $("#termLine"), inp = $("#tlIn"); if(!el || !inp) return;
@@ -15597,7 +15597,7 @@ function termTop(){
     ai.classList.toggle("hidden", !can || (!termAi() && termState().ai === "no"));
     ai.classList.toggle("on", termAi());
     ai.textContent = termAi() ? "claude on" : "claude off";
-    ai.title = termAi() ? "Questions go to Claude with your stats. Click to change it." : "Questions are answered on this device. Click to connect Claude.";
+    ai.title = termAi() ? "-ask goes to Claude with your account. Click to change it." : "-ask is answered on this device. Click to connect Claude.";
     ai.onclick = e=>{ e.preventDefault(); e.stopPropagation(); if(typeof claudeOpen === "function") claudeOpen(); };
   }
 }
@@ -15615,6 +15615,16 @@ function termNote(text){
   }};
 }
 function termAskCmd(q){ return {hint:`<u>enter</u> asks ${termAi() ? "Claude" : "Mortimer"}`, ask:true, run:()=>termAsk(q)}; }
+// Ask mode: -ask on its own, and every line that is not a command is a question until -ask again.
+// It lasts the session only, so a restart is back to the safe side and nothing is sent by accident.
+var termAskMode = false;
+function termAskToggle(){
+  return {hint:`<u>enter</u> turns ask mode ${termAskMode ? "off" : "on"}`, run:()=>{
+    termAskMode = !termAskMode;
+    termOut(termAskMode ? `Ask mode on. Every line that is not a command is a question for ${termAi() ? "Claude" : "Mortimer (Claude is not connected)"} until -ask again.` : "Ask mode off. Questions go with -ask again.");
+    try{ termHint(); }catch(e){}
+  }};
+}
 // What a line means, in the order it is tried: a command word, the start of an action that is
 // ready, a page, a skill, a question, and failing all of those a note. The hint beside the line
 // says which before Enter is pressed, so nothing is a surprise.
@@ -15624,8 +15634,6 @@ function termLoose(raw){
   if(termAiPending() && /^(y|yes|n|no)$/.test(low)){ const yes = low[0] === "y"; return {hint:`<u>enter</u> ${yes ? "opens the Claude setup" : "leaves Claude off"}`, run:()=>termAiAnswer(yes)}; }
   if(low === "claude") return {hint:`<u>enter</u> opens the Claude setup`, run:()=>{ const t = termState(); if(t.ai === "no"){ delete t.ai; save(); } termTop(); claudeOpen(); }};
   if(low === "clear") return {hint:`<u>enter</u> clears the log`, run:()=>{ termState().log = []; save(); termRenderLog(); }};
-  if(low.startsWith("note ") && v.length > 5) return termNote(v.slice(5).trim());
-  if(low.startsWith("ask ") && v.length > 4) return termAskCmd(v.slice(4).trim());
   const ly = low.match(/^layout\s+(.+)$/);
   if(ly){
     const t = TILE_LAYOUTS.find(x=>x[0].startsWith(ly[1]));
@@ -15647,17 +15655,22 @@ function termLoose(raw){
     const sk = live && live.skills ? SKILL_ORDER.find(k=>frSkName(k).toLowerCase().startsWith(low) || k.startsWith(low)) : null;
     if(sk) return {hint:`<u>enter</u> opens <span class="g">${frSkName(sk)}</span>`, fill:frSkName(sk), run:()=>openSkillModal(sk)};
   }
-  if(/\?\s*$/.test(v) || /^(can|could|do|does|did|how|what|whats|what's|where|which|when|why|who|is|are|am|should|will|would)\b/i.test(v)) return termAskCmd(v);
-  return termNote(v);
+  // in ask mode a line that is nothing else is a question. Otherwise plain text is a mistake, not a
+  // note and never a question: notes take -note and questions -ask, so nothing is kept or sent to
+  // Claude by accident (Josh, 2026-11-18)
+  if(termAskMode) return termAskCmd(v);
+  const q = /\?\s*$/.test(v) || /^(can|could|do|does|did|how|what|whats|what's|where|which|when|why|who|is|are|am|should|will|would)\b/i.test(v);
+  const msg = q ? `A question goes with -ask: -ask ${v}` : "Not a command. -note keeps it, -ask asks it, -help lists the commands.";
+  return {hint:tE(msg), cmd:true, run:()=>termOut(`<span class="warn">${tE(msg)}</span>`)};
 }
 function termHint(){
   const inp = $("#htIn"), hint = $("#htHint"); if(!inp || !hint) return;
   const r = termResolve(inp.textContent);
-  hint.innerHTML = r ? r.hint : "a command, a note or a question. -help lists the commands";
+  hint.innerHTML = r ? r.hint : "a command. -help lists them, -note keeps a note, -ask asks a question";
 }
 function termHelp(){
   const acts = [...new Set(termRounds().filter(m=>m.st.up).map(m=>termVerb(m).act.toLowerCase()))];
-  termLog("s", "Type a note and press Enter to keep it in Notes. " + (acts.length ? `Type the start of an action to tick it: ${acts.join(", ")}. ` : "") + "A page or a skill opens it. A question gets an answer. Also: theme and a name, layout mosaic or orderly, claude, clear. Tab completes, the up arrow brings back the last line.");
+  termLog("s", "-note keeps a note in Notes. -ask asks a question; on its own it turns ask mode on, where every line is a question. " + (acts.length ? `Type the start of an action to tick it: ${acts.join(", ")}. ` : "") + "A page or a skill opens it. Also: theme and a name, layout mosaic or orderly, claude, clear. Plain text that is none of these is an error, not a note. Tab completes, the up arrow brings back the last line.");
 }
 function termAsk(q){
   termLog("q", q);
@@ -15948,7 +15961,7 @@ termDef(["fill"], "fill on | off", "Turns the extra panes on a wide window on or
 termDef(["panes"], "panes reset", "Puts Home's panes back where they started.", "App", rest=>rest.trim().toLowerCase() === "reset" ? {hint:`<u>enter</u> puts Home's panes back`, run:()=>{ htArrReset(); termOut("Home's panes are back where they started."); }} : "panes takes reset", {soft:true});
 termDef(["reload", "refresh"], "reload", "Reads your stats from the hiscores again.", "App", ()=>state.username ? {hint:`<u>enter</u> reads your stats again`, run:()=>{ termOut("Reading your stats from the hiscores."); loadCharacter({name:state.username, live:true}); }} : "No character is loaded yet.", {bare:true});
 termDef(["claude"], "claude", "Opens the setup for answers from Claude, with your own key.", "App", ()=>termLoose("claude"), {bare:true});
-termDef(["ask"], "ask <question>", "Asks a question. A line that ends in a question mark does the same.", "App", rest=>rest.trim() ? termAskCmd(rest.trim()) : "ask needs a question: ask what should i train");
+termDef(["ask"], "ask [question]", "Asks a question: Claude with a key, this device without. On its own it turns ask mode on or off, where every line that is not a command is a question.", "App", rest=>rest.trim() ? termAskCmd(rest.trim()) : termAskToggle());
 termDef(["clear", "cls"], "clear", "Empties the log.", "App", ()=>termLoose("clear"), {bare:true});
 termDef(["history"], "history", "The last lines you ran.", "App", ()=>({hint:`<u>enter</u> lists the last lines you ran`, run:()=>termOut(termHist.slice(-12, -1).map(h=>termLn(termBtn(h, h))).join("") || "Nothing yet.")}), {bare:true});
 termDef(["echo"], "echo <text>", "Prints the text back. Useful in an alias.", "App", rest=>({hint:`<u>enter</u> prints it`, run:()=>termOut(tE(rest))}));
@@ -16042,7 +16055,7 @@ function tpIdle(){ const h = $("#tpHint"), inp = $("#tpIn"); if(h && inp && docu
 function tpLines(n, fresh){
   const who = escapeHtml(termWho()), list = termState().log.filter(e=>!e.b || e.i).slice(-n);
   return list.map((e, i)=>termLineHtml(e, who, fresh && i === list.length - 1)).join("")
-    || `<div class="s"><time></time><span>Nothing here yet. Type a command, a note or a question. -help lists the commands.</span></div>`;
+    || `<div class="s"><time></time><span>Nothing here yet. Type a command. -help lists them, -note keeps a note, -ask asks a question.</span></div>`;
 }
 function tpRender(fresh){
   const out = $("#tpOut"), log = $("#tpLog"); if(!out || !log) return;
@@ -16067,7 +16080,7 @@ function tpFocus(){ const inp = (tfOn() && $("#tfIn")) || (trShown && $("#trIn")
 function tpKeys(inp, hint, bar){
   const show = ()=>{
     const r = termResolve(inp.value);
-    hint.innerHTML = r ? r.hint : `a command, a note or a question. <u>-help</u> lists the commands`;
+    hint.innerHTML = r ? r.hint : `a command. <u>-help</u> lists them, -note keeps a note, -ask asks a question`;
     if(bar){ const el = $("#termPath"); if(el) el.classList.toggle("has", !!inp.value); }
   };
   inp.addEventListener("input", show);
@@ -23444,12 +23457,12 @@ const SU_VIEW = {
         + opt("Bakery layout", "How Coffer lays out its money makers. Board is cards and tiles. Listing is one aligned table.", seg(COFFER_LAYOUTS, "data-subak", cofferLayout())))
       + grp("Console",
           opt("Where it sits", "In a column beside every page, as a window you can move, or put away.", seg([["side", "At the side"], ["float", "Floating"], ["off", "Hidden"]], "data-sucon", conWhere()))
-        + `<p class="su-note sul-tip">It takes a command, a note or a question. Drag its header to float it, and its x closes it. <b>${escapeHtml(termKeyText())}</b> brings it back from anywhere. The shortcut can be changed in Settings, Look.</p>`) : "");
+        + `<p class="su-note sul-tip">It takes a command: -note keeps a note, -ask asks a question. Drag its header to float it, and its x closes it. <b>${escapeHtml(termKeyText())}</b> brings it back from anywhere. The shortcut can be changed in Settings, Look.</p>`) : "");
   },
   ai: ()=>`<h3 class="su-h">Claude in the terminal <span class="su-opt">Optional</span></h3>
-      <p class="su-p">Home has a terminal. Type a question there and it is answered on this device, from what the app knows. Give it your own Claude API key and the question goes to Claude instead, along with your levels, so it can answer nearly anything about the game for your account.</p>
+      <p class="su-p">Home has a terminal. Ask a question there with -ask and it is answered on this device, from what the app knows. Give it your own Claude API key and the question goes to Claude instead, along with your levels, so it can answer nearly anything about the game for your account.</p>
       <div class="su-row cl-row"><input type="password" id="suAiKey" placeholder="${claudeOn() ? "A key is saved on this device" : "sk-ant-..."}" autocomplete="off" spellcheck="false"><button class="primary" id="suAiSave">Check and save</button></div>
-      <div class="su-note cl-note" id="suAiNote">${claudeOn() ? "Connected. Questions on Home go to Claude." : "No key yet. Skip this step and nothing changes."}</div>
+      <div class="su-note cl-note" id="suAiNote">${claudeOn() ? "Connected. -ask on Home goes to Claude." : "No key yet. Skip this step and nothing changes."}</div>
       <div class="su-safe"><b>What happens to the key.</b> It is kept on this device only, apart from your save and your backups, and it is sent to Anthropic and nowhere else. Each question is billed to your key. Keys come from the <a href="https://platform.claude.com/" target="_blank" rel="noopener">Claude Console</a>. You can add, change or remove it later in Settings, Advanced.</div>`,
   done: ()=>{
     const did = Object.values(su.did);
@@ -23468,7 +23481,7 @@ const SU_WIRE = {
     const go = async ()=>{
       const k = inp.value.trim(); if(!k) return;
       btn.disabled = true; note.className = "su-note cl-note"; note.textContent = "Checking the key with Anthropic.";
-      try{ await claudeTest(k); claudeSetKey(k); inp.value = ""; inp.placeholder = "A key is saved on this device"; note.className = "su-note cl-note ok"; note.textContent = "Connected. Questions on Home go to Claude."; suDid("ai", "Claude connected to the terminal"); }
+      try{ await claudeTest(k); claudeSetKey(k); inp.value = ""; inp.placeholder = "A key is saved on this device"; note.className = "su-note cl-note ok"; note.textContent = "Connected. -ask on Home goes to Claude."; suDid("ai", "Claude connected to the terminal"); }
       catch(e){ note.className = "su-note cl-note bad"; note.textContent = "That did not work: " + (e && e.message || e) + "."; }
       btn.disabled = false;
     };
