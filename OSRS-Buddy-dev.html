@@ -8141,8 +8141,8 @@ async function fetchSnapshots(name, deep){
 // it, it counts as a day played, and it syncs and backs up like any other entry.
 // It is only ever made by hand. The most the app does is ask (lateSuspects): XP that was first
 // seen before LATE_HOUR, on a day whose eve shows nothing at all.
-// LATE_NAME is the working name for it everywhere on screen; change it here.
-const LATE_NAME = "Late night", LATE_HOUR = 4, LATE_ASK_DAYS = 7;
+// On screen it is called a carry over (Josh's pick, 2026-11-18): LATE_NAME, in one place.
+const LATE_NAME = "Carry over", LATE_HOUR = 4, LATE_ASK_DAYS = 7;
 let lateSel = null;   // {iso, set, game, more, had, ask} while the picker is open
 function latePrevDay(iso){ return isoDate(new Date(parseISO(iso).getTime() - 432e5)); }
 function lateNextDay(iso){ return isoDate(new Date(parseISO(iso).getTime() + 1296e5)); }
@@ -8214,7 +8214,7 @@ function lateDraw(){
     <div class="late-chips">${first.map(chip).join("")}${L.more ? rest.map(chip).join("") : rest.length ? `<button type="button" class="ghost small" data-latemore="1">${first.length ? "More skills" : "Pick skills"}</button>` : ""}</div>
     <div class="late-acts"><button type="button" class="small" data-latesave="1">${L.had ? "Save" : "Mark this day"}</button>${
       L.had ? `<button type="button" class="ghost small" data-lateundo="1">Take it back</button>` : ""}${
-      L.ask && !L.had ? `<button type="button" class="ghost small" data-lateno="${L.iso}">Not a late night</button>` : ""}<button type="button" class="ghost small" data-latex="1">Cancel</button></div>`;
+      L.ask && !L.had ? `<button type="button" class="ghost small" data-lateno="${L.iso}">Not a carry over</button>` : ""}<button type="button" class="ghost small" data-latex="1">Cancel</button></div>`;
   if(pop.__anchor && pop.__anchor.isConnected) dayPopPlace(pop, pop.__anchor, 330);
 }
 // the ask, at the top of Scroll
@@ -14985,7 +14985,7 @@ function htMenu(){
   if(al.length) sec.dust = `<div class="grp">Gathering dust</div>` + al.map((x, i)=>{ const d = prioDays(x); return opt(`data-hprio="${escapeHtml(x.id)}" title="Worked on it today? Click to say so"`, "Return-to", x.label, "y", d == null ? "no record" : d + (d === 1 ? " day" : " days"), "warn", i >= 4); }).join("");
   if(wait.length) sec.soon = `<div class="grp">Ready soon</div>` + wait.slice(0, 8).map((m, i)=>{ const v = termVerb(m); return opt(`data-hgo="${escapeHtml(m.key)}" title="Open it in Coffer"`, v.act, v.tgt, v.kind, roundWhen(m.st.next), "", i >= 4); }).join("");
   const lates = lateSuspects().slice(0, 2);
-  if(lates.length) sec.late = `<div class="grp">${LATE_NAME}?</div>` + lates.map(x=>opt(`data-hlate="${x.iso}" title="XP came in before ${LATE_HOUR}am on ${escapeHtml(fmtDay(x.next))} and this day shows nothing. Click to mark it as played."`, "Mark", fmtDay(x.iso), "y", "played late?", "warn")).join("");
+  if(lates.length) sec.late = `<div class="grp">${LATE_NAME}?</div>` + lates.map(x=>opt(`data-hlate="${x.iso}" title="XP came in before ${LATE_HOUR}am on ${escapeHtml(fmtDay(x.next))} and this day shows nothing. Click to mark it as played."`, "Mark", fmtDay(x.iso), "y", "carry over?", "warn")).join("");
   // back after a while, what went stale comes before what was gained
   const order = R.idle != null && R.idle >= 3 ? ["now", "late", "week", "dust", "gain", "near", "goals", "soon"] : ["now", "late", "week", "gain", "near", "goals", "dust", "soon"];
   const body = order.map(k=>sec[k] || "").join("");
@@ -15370,12 +15370,12 @@ termDef(["touch"], "touch <priority>", "Says you worked on a priority today, so 
     termOut(`You return to <span class="y">${tE(p.label)}</span>.${d ? ` It had been ${d} day${d === 1 ? "" : "s"}.` : ""}`);
   }};
 }, {soft:true});
-termDef(["late"], "late [day] [skills]", "Marks a day as played when you played past midnight and the XP landed on the next day. No XP is added. With no day it means yesterday. late -undo takes it back.", "Write", rest=>{
+termDef(["carry", "late"], "carry [day] [skills]", "A carry over: marks a day as played when you played past midnight and the XP landed on the next day. No XP is added. With no day it means yesterday. carry -undo takes it back.", "Write", rest=>{
   const words = String(rest || "").trim().split(/[\s,]+/).filter(Boolean);
   const undo = words[0] === "-undo" || words[0] === "undo"; if(undo) words.shift();
   let iso = lateDayArg(words[0]); if(iso) words.shift(); else iso = latePrevDay(todayISO());
   const found = words.map(w=>termSkillFind(w)), bad = words.find((w, i)=>!found[i]);
-  if(bad) return `No skill called ${bad}. Try: late yesterday mining magic`;
+  if(bad) return `No skill called ${bad}. Try: carry yesterday mining magic`;
   const day = fmtDay(iso);
   if(undo) return {hint:`<u>enter</u> takes the mark off ${tE(day)}`, run:()=>{ termOut(lateClear(iso) ? `Taken back. ${tE(day)} is no longer marked.` : `${tE(day)} was not marked.`); }};
   const skills = found.length ? found.map(skillColorKey).filter(k=>SKILL_COLOR[k]) : lateGameSkills(lateNextDay(iso));
