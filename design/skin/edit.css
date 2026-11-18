@@ -1,0 +1,49 @@
+
+  /* ============ EDIT MODE ============
+     body.editing is set by the Edit button on the path line or the edit command. While it is on,
+     panes are outlined, each shows an x and a corner to pull, and a bar at the bottom of the
+     window lists what is hidden. Outside edit mode none of this shows. */
+  body[data-skin="term"] .ht-park{display:contents}
+  body[data-skin="term"] .pane-off{display:none !important}
+  body[data-skin="term"] #homeTerm section, body[data-skin="term"] .wf{position:relative}
+  body[data-skin="term"] :is(.pane-x, .pane-grip, .wf-grip){display:none}
+
+  /* the button on the path line */
+  body[data-skin="term"] .tp-edit{flex:none; min-height:0; margin:0 0 0 12px; padding:0 8px; background:none; border:1px solid var(--line); box-shadow:none; color:var(--muted); font:inherit; line-height:1.5; cursor:pointer; transition:color .14s, border-color .14s, background .14s}
+  body[data-skin="term"] .tp-edit:hover, body[data-skin="term"] .tp-edit:focus-visible{border-color:var(--gold); color:var(--gold); outline:0}
+  body[data-skin="term"] .tp-edit.on{background:var(--gold); border-color:var(--gold); color:var(--bg); font-weight:600}
+
+  /* panes while editing */
+  body[data-skin="term"].editing #homeTerm[data-arr] .ht-cols section, body[data-skin="term"].editing .wf{outline:1px dashed color-mix(in srgb, var(--gold) 50%, transparent); outline-offset:-1px}
+  body[data-skin="term"].editing #homeTerm[data-arr] :is(.ht-lab, .ht-menu .ttl, .ht-term .top){padding-right:34px}
+  body[data-skin="term"].editing #homeTerm[data-arr] .hs-id .ht-name button{right:32px}
+  body[data-skin="term"].editing #homeTerm[data-arr] .pane-x{display:block; position:absolute; top:4px; right:5px; z-index:5; width:22px; height:22px; min-height:0; margin:0; padding:0;
+    background:color-mix(in srgb, var(--bg) 70%, transparent); border:1px solid var(--line); box-shadow:none; color:var(--muted); font:12px var(--fm); line-height:1; cursor:pointer; transition:color .14s, border-color .14s}
+  body[data-skin="term"].editing #homeTerm[data-arr] .pane-x:hover, body[data-skin="term"].editing #homeTerm[data-arr] .pane-x:focus-visible{border-color:var(--k-o); color:var(--k-o); outline:0}
+  body[data-skin="term"].editing #homeTerm[data-arr] .pane-grip, body[data-skin="term"].editing .wf-grip{display:block; position:absolute; right:0; bottom:0; z-index:5; width:20px; height:20px; touch-action:none;
+    background:linear-gradient(135deg, transparent 0 50%, color-mix(in srgb, var(--gold) 75%, transparent) 50% 62%, transparent 62% 74%, color-mix(in srgb, var(--gold) 75%, transparent) 74% 86%, transparent 86%)}
+  body[data-skin="term"].editing #homeTerm[data-arr] .pane-grip{cursor:nwse-resize}
+  body[data-skin="term"].editing .wf-grip{cursor:ns-resize}
+  body[data-skin="term"].editing :is(.pane-grip, .wf-grip):hover{background:linear-gradient(135deg, transparent 0 50%, var(--gold) 50% 62%, transparent 62% 74%, var(--gold) 74% 86%, transparent 86%)}
+  body[data-skin="term"].editing .wf-x{opacity:1}
+  body[data-skin="term"].editing .wf-h{cursor:grab; -webkit-user-select:none; user-select:none}
+  body[data-skin="term"] .wf.drag-src{opacity:.38}
+
+  /* the bar at the bottom */
+  body[data-skin="term"] .edit-tray{position:fixed; left:16px; right:16px; bottom:14px; z-index:60; display:flex; justify-content:center; pointer-events:none}
+  body[data-skin="term"] .edit-tray .in{pointer-events:auto; display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; box-sizing:content-box; width:max-content; min-width:0; max-width:min(1100px, calc(100% - 22px)); padding:8px 10px;
+    background:color-mix(in srgb, var(--bg) 94%, transparent); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); border:1px solid var(--gold);
+    font:12.5px/1.4 var(--fm); color:var(--muted); animation:editUp .22s cubic-bezier(.2,.7,.2,1)}
+  body[data-skin="term"] .edit-tray.hidden{display:none}
+  @keyframes editUp{from{opacity:0; transform:translateY(10px)}}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .edit-tray{animation:none} }
+  body[data-skin="term"] .edit-tray b{font-weight:600; letter-spacing:.12em; text-transform:uppercase; font-size:10.5px; color:var(--gold)}
+  body[data-skin="term"] .edit-tray .how{color:var(--faint)}
+  body[data-skin="term"] .edit-tray .lab{padding-left:6px; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint)}
+  body[data-skin="term"] .edit-tray .sp{flex:1 1 0; min-width:0}
+  body[data-skin="term"] .edit-tray button{min-height:26px; margin:0; padding:0 10px; background:none; border:1px solid var(--line); box-shadow:none; color:var(--text); font:inherit; cursor:pointer; transition:color .14s, border-color .14s, background .14s}
+  body[data-skin="term"] .edit-tray button:hover, body[data-skin="term"] .edit-tray button:focus-visible{border-color:var(--gold); color:var(--gold); outline:0}
+  body[data-skin="term"] .edit-tray button.add{color:var(--k-g)}
+  body[data-skin="term"] .edit-tray button.quiet{color:var(--muted)}
+  body[data-skin="term"] .edit-tray button.go{background:var(--gold); border-color:var(--gold); color:var(--bg); font-weight:600}
+  body[data-skin="term"] .edit-tray button.go:hover{background:color-mix(in srgb, var(--gold) 86%, var(--text)); color:var(--bg)}

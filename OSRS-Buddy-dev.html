@@ -4076,6 +4076,55 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .ht-log .tc:hover, body[data-skin="term"] .ht-log .tc:focus-visible{color:var(--text); text-decoration:underline; outline:0}
   body[data-skin="term"] .ht-log .o .bar{display:inline-block; width:90px; height:8px; vertical-align:middle; background:linear-gradient(90deg, var(--gold) var(--p), var(--line) var(--p))}
 
+  /* ============ EDIT MODE ============
+     body.editing is set by the Edit button on the path line or the edit command. While it is on,
+     panes are outlined, each shows an x and a corner to pull, and a bar at the bottom of the
+     window lists what is hidden. Outside edit mode none of this shows. */
+  body[data-skin="term"] .ht-park{display:contents}
+  body[data-skin="term"] .pane-off{display:none !important}
+  body[data-skin="term"] #homeTerm section, body[data-skin="term"] .wf{position:relative}
+  body[data-skin="term"] :is(.pane-x, .pane-grip, .wf-grip){display:none}
+
+  /* the button on the path line */
+  body[data-skin="term"] .tp-edit{flex:none; min-height:0; margin:0 0 0 12px; padding:0 8px; background:none; border:1px solid var(--line); box-shadow:none; color:var(--muted); font:inherit; line-height:1.5; cursor:pointer; transition:color .14s, border-color .14s, background .14s}
+  body[data-skin="term"] .tp-edit:hover, body[data-skin="term"] .tp-edit:focus-visible{border-color:var(--gold); color:var(--gold); outline:0}
+  body[data-skin="term"] .tp-edit.on{background:var(--gold); border-color:var(--gold); color:var(--bg); font-weight:600}
+
+  /* panes while editing */
+  body[data-skin="term"].editing #homeTerm[data-arr] .ht-cols section, body[data-skin="term"].editing .wf{outline:1px dashed color-mix(in srgb, var(--gold) 50%, transparent); outline-offset:-1px}
+  body[data-skin="term"].editing #homeTerm[data-arr] :is(.ht-lab, .ht-menu .ttl, .ht-term .top){padding-right:34px}
+  body[data-skin="term"].editing #homeTerm[data-arr] .hs-id .ht-name button{right:32px}
+  body[data-skin="term"].editing #homeTerm[data-arr] .pane-x{display:block; position:absolute; top:4px; right:5px; z-index:5; width:22px; height:22px; min-height:0; margin:0; padding:0;
+    background:color-mix(in srgb, var(--bg) 70%, transparent); border:1px solid var(--line); box-shadow:none; color:var(--muted); font:12px var(--fm); line-height:1; cursor:pointer; transition:color .14s, border-color .14s}
+  body[data-skin="term"].editing #homeTerm[data-arr] .pane-x:hover, body[data-skin="term"].editing #homeTerm[data-arr] .pane-x:focus-visible{border-color:var(--k-o); color:var(--k-o); outline:0}
+  body[data-skin="term"].editing #homeTerm[data-arr] .pane-grip, body[data-skin="term"].editing .wf-grip{display:block; position:absolute; right:0; bottom:0; z-index:5; width:20px; height:20px; touch-action:none;
+    background:linear-gradient(135deg, transparent 0 50%, color-mix(in srgb, var(--gold) 75%, transparent) 50% 62%, transparent 62% 74%, color-mix(in srgb, var(--gold) 75%, transparent) 74% 86%, transparent 86%)}
+  body[data-skin="term"].editing #homeTerm[data-arr] .pane-grip{cursor:nwse-resize}
+  body[data-skin="term"].editing .wf-grip{cursor:ns-resize}
+  body[data-skin="term"].editing :is(.pane-grip, .wf-grip):hover{background:linear-gradient(135deg, transparent 0 50%, var(--gold) 50% 62%, transparent 62% 74%, var(--gold) 74% 86%, transparent 86%)}
+  body[data-skin="term"].editing .wf-x{opacity:1}
+  body[data-skin="term"].editing .wf-h{cursor:grab; -webkit-user-select:none; user-select:none}
+  body[data-skin="term"] .wf.drag-src{opacity:.38}
+
+  /* the bar at the bottom */
+  body[data-skin="term"] .edit-tray{position:fixed; left:16px; right:16px; bottom:14px; z-index:60; display:flex; justify-content:center; pointer-events:none}
+  body[data-skin="term"] .edit-tray .in{pointer-events:auto; display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; box-sizing:content-box; width:max-content; min-width:0; max-width:min(1100px, calc(100% - 22px)); padding:8px 10px;
+    background:color-mix(in srgb, var(--bg) 94%, transparent); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); border:1px solid var(--gold);
+    font:12.5px/1.4 var(--fm); color:var(--muted); animation:editUp .22s cubic-bezier(.2,.7,.2,1)}
+  body[data-skin="term"] .edit-tray.hidden{display:none}
+  @keyframes editUp{from{opacity:0; transform:translateY(10px)}}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .edit-tray{animation:none} }
+  body[data-skin="term"] .edit-tray b{font-weight:600; letter-spacing:.12em; text-transform:uppercase; font-size:10.5px; color:var(--gold)}
+  body[data-skin="term"] .edit-tray .how{color:var(--faint)}
+  body[data-skin="term"] .edit-tray .lab{padding-left:6px; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint)}
+  body[data-skin="term"] .edit-tray .sp{flex:1 1 0; min-width:0}
+  body[data-skin="term"] .edit-tray button{min-height:26px; margin:0; padding:0 10px; background:none; border:1px solid var(--line); box-shadow:none; color:var(--text); font:inherit; cursor:pointer; transition:color .14s, border-color .14s, background .14s}
+  body[data-skin="term"] .edit-tray button:hover, body[data-skin="term"] .edit-tray button:focus-visible{border-color:var(--gold); color:var(--gold); outline:0}
+  body[data-skin="term"] .edit-tray button.add{color:var(--k-g)}
+  body[data-skin="term"] .edit-tray button.quiet{color:var(--muted)}
+  body[data-skin="term"] .edit-tray button.go{background:var(--gold); border-color:var(--gold); color:var(--bg); font-weight:600}
+  body[data-skin="term"] .edit-tray button.go:hover{background:color-mix(in srgb, var(--gold) 86%, var(--text)); color:var(--bg)}
+
   /* ============ GLYPHS (written by glyphs.py; edit the drawings there) ============ */
   body[data-skin="term"] .gl{display:inline-block; width:18px; height:18px; vertical-align:-4px; overflow:hidden; text-indent:-99em; white-space:nowrap; background:currentColor; -webkit-mask:var(--g) center / contain no-repeat; mask:var(--g) center / contain no-repeat; flex:0 0 auto; text-align:left}
   body[data-skin="term"] .gl.x1{width:9px; height:9px; vertical-align:-1px} body[data-skin="term"] .gl.x3{width:27px; height:27px; vertical-align:-7px} body[data-skin="term"] .gl.x4{width:36px; height:36px; vertical-align:-9px}
@@ -4395,7 +4444,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <nav class="term-tabs term-only hidden" id="termTabs" aria-label="Sections of this page"></nav>
     </div>
 
-    <div class="term-path term-only" id="termPath"><label class="tp-row" for="tpIn"><span class="tp-pre" id="tpPre"></span><span class="cur" aria-hidden="true">_</span><input id="tpIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command line"><span class="tp-hint" id="tpHint"></span></label><div class="tp-out ht-log hidden" id="tpOut" aria-live="polite"></div></div>
+    <div class="term-path term-only" id="termPath"><label class="tp-row" for="tpIn"><span class="tp-pre" id="tpPre"></span><span class="cur" aria-hidden="true">_</span><input id="tpIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command line"><span class="tp-hint" id="tpHint"></span><button type="button" class="tp-edit" id="tpEdit" title="Move, hide, bring back and resize the panes">edit</button></label><div class="tp-out ht-log hidden" id="tpOut" aria-live="polite"></div></div>
     <div class="pagehead classic-only">
       <div class="ph-row">
         <span class="ph-line"></span>
@@ -5650,7 +5699,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap"];
+const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -13409,7 +13458,10 @@ function htArrClean(a, key){
   while(out.length > HT_ARR[key].max){ const x = out.pop(); out[out.length - 1].push(...x); }
   return out;
 }
-function htArrGet(key){ return htArrClean(state.homeArr && state.homeArr[key], key) || JSON.parse(JSON.stringify(HT_ARR[key].def)); }
+function htArrGet(key){
+  const full = htArrClean(state.homeArr && state.homeArr[key], key) || JSON.parse(JSON.stringify(HT_ARR[key].def)), hide = state.homeHide || {};
+  return full.map(c=>c.map(r=>r.filter(p=>!hide[p])).filter(r=>r.length)).filter(c=>c.length);
+}
 // which arrangement applies: "w", "m", "" for none (stacked, Orderly), null when Home is not on screen
 function htArrKey(){
   const b = document.body.dataset, v = $("#view-home"), w = v ? v.clientWidth : 0;
@@ -13423,38 +13475,54 @@ function htArrRects(){ const m = {}; for(const s of document.querySelectorAll("#
 function htArrange(anim){
   const root = $("#homeTerm"); if(!root) return;
   const key = htArrKey(); if(key == null) return;
-  if(!key){ if(root.dataset.arr){ delete root.dataset.arr; htArrange.sig = ""; } return; }
-  const arr = htArrGet(key), sig = key + JSON.stringify(arr);
+  const hide = state.homeHide || {};
+  for(const p in HT_PANES){ const sec = root.querySelector("section.hs-" + p); if(sec){ sec.dataset.pane = p; sec.classList.toggle("pane-off", !!hide[p]); } }
+  if(!key){
+    if(root.dataset.arr){ delete root.dataset.arr; htArrange.sig = ""; root.querySelectorAll("section[data-pane]").forEach(sec=>{ sec.style.minHeight = ""; }); }
+    return;
+  }
+  const arr = htArrGet(key), hs = state.homeH || {}, sp = state.homeSplit || {}, cwAll = (state.homeColW || {})[key], cw = Array.isArray(cwAll) && cwAll.length === arr.length ? cwAll : null;
+  const sig = key + JSON.stringify([arr, hs, sp, cw]);
   if(root.dataset.arr === key && htArrange.sig === sig) return;
   const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const was = anim && !calm ? htArrRects() : null, focus = document.activeElement;
   let cols = root.querySelector(":scope > .ht-cols");
   if(!cols){ cols = document.createElement("div"); cols.className = "ht-cols"; root.insertBefore(cols, root.firstChild); }
+  let park = root.querySelector(":scope > .ht-park");
+  if(!park){ park = document.createElement("div"); park.className = "ht-park"; root.appendChild(park); }
   const lim = HT_ARR[key], made = [];
-  for(const col of arr){
-    const c = document.createElement("div"); c.className = "ht-colx"; let cw = 0, grows = 0;
+  arr.forEach((col, ci)=>{
+    const c = document.createElement("div"); c.className = "ht-colx"; let wide = 0, grows = 0;
     for(const row of col){
       const r = document.createElement("div"); r.className = "ht-rowx"; let g = 0, w = 0;
       for(const p of row){
         const sec = root.querySelector("section.hs-" + p); if(!sec) continue;
-        sec.dataset.pane = p; sec.style.flexGrow = HT_PANES[p].w; g = Math.max(g, HT_PANES[p].g); w += HT_PANES[p].w; r.appendChild(sec);
+        sec.style.flexGrow = sp[p] || HT_PANES[p].w; sec.style.minHeight = hs[p] ? hs[p] + "px" : "";
+        g = Math.max(g, HT_PANES[p].g); w += HT_PANES[p].w; htPaneCtl(sec, p); r.appendChild(sec);
       }
-      r.style.flexGrow = g; grows += g; cw = Math.max(cw, w); c.appendChild(r);
+      r.style.flexGrow = g; grows += g; wide = Math.max(wide, w); c.appendChild(r);
     }
     if(!grows && c.lastChild) c.lastChild.style.flexGrow = 1;
-    c.style.flexGrow = Math.max(lim.lo, Math.min(lim.hi, cw)); made.push(c);
-  }
+    c.style.flexGrow = cw ? cw[ci] : Math.max(lim.lo, Math.min(lim.hi, wide)); made.push(c);
+  });
+  // a hidden pane waits out of sight, still in the page so its contents keep being drawn
+  for(const p in hide){ const sec = hide[p] && root.querySelector("section.hs-" + p); if(sec) park.appendChild(sec); }
   cols.replaceChildren(...made);
   root.dataset.arr = key; htArrange.sig = sig;
   if(focus && focus !== document.activeElement && root.contains(focus)) try{ focus.focus({preventScroll:true}); }catch(e){}
   // each pane glides from where it was to where it is now
-  if(was) for(const sec of root.querySelectorAll("section[data-pane]")){
-    const a = was[sec.dataset.pane], b = sec.getBoundingClientRect(); if(!a || !sec.animate) continue;
+  if(was) for(const sec of root.querySelectorAll(".ht-cols section[data-pane]")){
+    const a = was[sec.dataset.pane], b = sec.getBoundingClientRect(); if(!a || !sec.animate || !a.width) continue;
     const dx = a.left - b.left, dy = a.top - b.top;
     if(Math.abs(dx) > 1 || Math.abs(dy) > 1) sec.animate([{transform:`translate(${dx}px, ${dy}px)`}, {transform:"none"}], {duration:320, easing:"cubic-bezier(.2,.7,.2,1)"});
   }
 }
-function htArrReset(){ delete state.homeArr; save(); htArrange(true); try{ htPlay(); }catch(e){} htMenuFit(); }
+// the two things edit mode puts on a Home pane: a way to hide it and a corner to pull
+function htPaneCtl(sec, p){
+  if(sec.querySelector(":scope > .pane-x")) return;
+  sec.insertAdjacentHTML("beforeend", `<button type="button" class="pane-x" data-panehide="${p}" title="Hide this pane. The bar at the bottom brings it back." aria-label="Hide ${HT_PANES[p].n}">x</button><span class="pane-grip" data-panegrip="${p}" title="Drag to resize. Double-click for automatic."></span>`);
+}
+function htArrReset(){ ["homeArr", "homeHide", "homeH", "homeColW", "homeSplit"].forEach(k=>{ delete state[k]; }); save(); htArrange(true); try{ htPlay(); }catch(e){} htMenuFit(); try{ editTray(); }catch(e){} }
 // Home re-arranges when the width it has crosses a line, and the debrief refits when heights change
 function htArrWatch(){
   const v = $("#view-home"); if(htArrWatch.on || !v || typeof ResizeObserver !== "function") return;
@@ -13541,6 +13609,7 @@ function htDragEnd(commit){
   if(d.scroll) clearInterval(d.scroll);
   d.ghost.remove(); d.mark.remove(); d.src.classList.remove("drag-src"); document.body.classList.remove("ht-dragging");
   if(!commit || !d.drop) return;
+  if(d.drop.res.length !== d.arr.length && state.homeColW) delete state.homeColW[d.key];
   (state.homeArr || (state.homeArr = {}))[d.key] = d.drop.res; save();
   htArrange(true); try{ htPlay(); }catch(e){} htMenuFit();
   if(!state.homeArrTold){ state.homeArrTold = 1; save(); toast("Pane moved. Settings, Look has a reset if you want the usual arrangement back."); }
@@ -13621,6 +13690,8 @@ const WF = [], WF_SKIP = new Set(["quests", "mockups", "board", "start", "ask", 
 const WF_COL = 400, WF_PAGE_MIN = 1150;
 function wfAdd(def){ WF.push(def); }
 const wfEsc = t=>escapeHtml(String(t == null ? "" : t));
+// how much a pane shows at each of its three sizes
+const wfN = (sz, small, usual, large)=>sz <= 1 ? small : sz >= 3 ? large : usual;
 // a row: what, which, and a figure at the right. attrs makes it a button that does something
 function wfRow(a, b, v, o){
   o = o || {};
@@ -13651,43 +13722,43 @@ function wfCells(days, weeks){
 }
 
 // ---- tier 1: useful ----
-wfAdd({id:"journal", tier:1, title:"Latest in the journal", pages:["scroll", "home"], draw(){
-  const es = ((state.scroll && state.scroll.log) || []).filter(e=>e && e.date).sort((a, b)=>a.date < b.date ? 1 : a.date > b.date ? -1 : (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 6);
+wfAdd({id:"journal", tier:1, title:"Latest in the journal", pages:["scroll", "home"], sizes:true, draw(v, sz){
+  const es = ((state.scroll && state.scroll.log) || []).filter(e=>e && e.date).sort((a, b)=>a.date < b.date ? 1 : a.date > b.date ? -1 : (b.createdAt || 0) - (a.createdAt || 0)).slice(0, wfN(sz, 3, 6, 12));
   if(!es.length) return null;
   const day = iso=>parseISO(iso).toLocaleDateString([], {weekday:"short", day:"numeric"}).toLowerCase();
   return {sub:`${(state.scroll.log || []).length} entries`, html:es.map(e=>wfRow(day(e.date), e.text || "(no note)", "", {ka:"d", kb:"t", attrs:'data-wfgo="scroll:journal" title="Open the journal"'})).join("")};
 }});
-wfAdd({id:"trophies", tier:1, title:"Trophies nearly earned", pages:["scroll", "home"], draw(){
+wfAdd({id:"trophies", tier:1, title:"Trophies nearly earned", pages:["scroll", "home"], sizes:true, draw(v, sz){
   if(!(live && live.skills)) return null;
-  const rows = PRESTIGE.filter(p=>!p.hideUntil || p.hideUntil()).map(p=>({p, st:prestigeState(p)})).filter(r=>!r.st.done && !r.st.binary && r.st.pct > 0).sort((a, b)=>b.st.pct - a.st.pct).slice(0, 4);
+  const rows = PRESTIGE.filter(p=>!p.hideUntil || p.hideUntil()).map(p=>({p, st:prestigeState(p)})).filter(r=>!r.st.done && !r.st.binary && r.st.pct > 0).sort((a, b)=>b.st.pct - a.st.pct).slice(0, wfN(sz, 2, 4, 8));
   if(!rows.length) return null;
   return {sub:"closest first", html:rows.map(r=>wfRow("", r.p.name, r.st.pct + "%", {kb:"t", attrs:'data-wfgo="scroll:trophies" title="Open Trophies"'}) + wfMeter(r.st.pct)).join("")};
 }});
-wfAdd({id:"ready", tier:1, title:"Ready now", not:["home", "coffer"], draw(){
+wfAdd({id:"ready", tier:1, title:"Ready now", not:["home", "coffer"], sizes:true, draw(v, sz){
   const rows = termRounds(); if(!rows.length) return null;
   const up = rows.filter(m=>m.st.up), wait = rows.filter(m=>!m.st.up);
   return {sub:up.length ? `${up.length} ready` : "nothing yet", html:
-    up.slice(0, 5).map(m=>{ const v = termVerb(m); return wfRow(v.act, v.tgt, "ready", {kb:"c", kv:"g", attrs:`data-wftick="${wfEsc(m.key)}" title="Done it? Click to tick it"`}); }).join("")
-    + wait.slice(0, Math.max(1, 4 - up.length)).map(m=>{ const v = termVerb(m); return wfRow(v.act, v.tgt, roundWhen(m.st.next), {kb:"c", attrs:`data-wfround="${wfEsc(m.key)}" title="Open it in Coffer"`}); }).join("")};
+    up.slice(0, wfN(sz, 3, 5, 10)).map(m=>{ const v = termVerb(m); return wfRow(v.act, v.tgt, "ready", {kb:"c", kv:"g", attrs:`data-wftick="${wfEsc(m.key)}" title="Done it? Click to tick it"`}); }).join("")
+    + wait.slice(0, Math.max(1, wfN(sz, 2, 4, 8) - up.length)).map(m=>{ const v = termVerb(m); return wfRow(v.act, v.tgt, roundWhen(m.st.next), {kb:"c", attrs:`data-wfround="${wfEsc(m.key)}" title="Open it in Coffer"`}); }).join("")};
 }});
-wfAdd({id:"near", tier:1, title:"Closest level ups", not:["home", "skills"], draw(){
-  const near = htNear(5); if(!near.length) return null;
+wfAdd({id:"near", tier:1, title:"Closest level ups", not:["home", "skills"], sizes:true, draw(v, sz){
+  const near = htNear(wfN(sz, 3, 5, 10)); if(!near.length) return null;
   return {sub:"", html:near.map(x=>wfRow("Train", frSkName(x.k), `${fmt(x.p.toNext)} xp to ${x.p.next}`, {kb:"g", attrs:`data-skillinfo="${x.k}" title="Open ${wfEsc(frSkName(x.k))}"`})).join("")};
 }});
-wfAdd({id:"goals", tier:1, title:"Goals", not:["home", "goals"], draw(){
+wfAdd({id:"goals", tier:1, title:"Goals", not:["home", "goals"], sizes:true, draw(v, sz){
   const gs = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct);
   if(!gs.length) return null;
-  return {sub:`${gs.length} open`, html:gs.slice(0, 4).map(({g, p})=>wfRow(p.custom ? "Finish" : "Reach", g.label, p.custom && p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : Math.round(p.pct) + "%", {kb:"y", attrs:'data-wfgo="goals" title="Open Goals"'}) + wfMeter(p.pct, "var(--k-y)")).join("")};
+  return {sub:`${gs.length} open`, html:gs.slice(0, wfN(sz, 2, 4, 8)).map(({g, p})=>wfRow(p.custom ? "Finish" : "Reach", g.label, p.custom && p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : Math.round(p.pct) + "%", {kb:"y", attrs:'data-wfgo="goals" title="Open Goals"'}) + wfMeter(p.pct, "var(--k-y)")).join("")};
 }});
-wfAdd({id:"dust", tier:1, title:"Gathering dust", not:["home"], draw(){
-  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 4);
+wfAdd({id:"dust", tier:1, title:"Gathering dust", not:["home"], sizes:true, draw(v, sz){
+  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, wfN(sz, 2, 4, 8));
   if(!al.length) return null;
   return {sub:"", html:al.map(x=>{ const d = prioDays(x); return wfRow("Return-to", x.label, d == null ? "no record" : d + (d === 1 ? " day" : " days"), {kb:"y", kv:"o", attrs:'data-wfgo="scroll:prio" title="Open Priorities"'}); }).join("")};
 }});
 
 // ---- tier 2: nice to have ----
-wfAdd({id:"bestdays", tier:2, title:"Best days", draw(){
-  const days = wfDays(), top = Object.keys(days).sort((a, b)=>days[b].xp - days[a].xp).slice(0, 5);
+wfAdd({id:"bestdays", tier:2, title:"Best days", sizes:true, draw(v, sz){
+  const days = wfDays(), top = Object.keys(days).sort((a, b)=>days[b].xp - days[a].xp).slice(0, wfN(sz, 3, 5, 10));
   if(top.length < 2) return null;
   return {sub:"by experience", html:top.map(iso=>wfRow(parseISO(iso).toLocaleDateString([], {day:"numeric", month:"short"}), wfSkillNames(days[iso].skills), "+" + fmt(days[iso].xp), {ka:"d", kb:"t"})).join("")};
 }});
@@ -13706,10 +13777,10 @@ wfAdd({id:"weeks2", tier:2, title:"This week and last", draw(){
   const top = Math.max(a, b, 1);
   return {sub:"experience", html:wfRow("Last 7 days", "", fmt(a)) + wfMeter(a / top * 100) + wfRow("The 7 before", "", b ? fmt(b) : "no record") + wfMeter(b / top * 100, "var(--gold-dim)")};
 }});
-wfAdd({id:"kc", tier:2, title:"Kill counts", not:["home"], draw(){
+wfAdd({id:"kc", tier:2, title:"Kill counts", not:["home"], sizes:true, draw(v, sz){
   const bs = Object.entries((live && live.bosses) || {}).filter(([k, e])=>e && e.kills > 0).sort((a, b)=>b[1].kills - a[1].kills);
   if(!bs.length) return null;
-  return {sub:`${bs.length} boss${bs.length === 1 ? "" : "es"}`, html:bs.slice(0, 6).map(([k, e])=>wfRow("", nice(k), fmt(e.kills), {kb:"t", attrs:`data-bossinfo="${wfEsc(k)}" title="Open ${wfEsc(nice(k))}"`})).join("")};
+  return {sub:`${bs.length} boss${bs.length === 1 ? "" : "es"}`, html:bs.slice(0, wfN(sz, 3, 6, 12)).map(([k, e])=>wfRow("", nice(k), fmt(e.kills), {kb:"t", attrs:`data-bossinfo="${wfEsc(k)}" title="Open ${wfEsc(nice(k))}"`})).join("")};
 }});
 wfAdd({id:"cal", tier:2, title:"The month as a calendar", pages:["scroll"], wide:true, draw(){
   const days = wfDays(), now = parseISO(todayISO()), y = now.getFullYear(), m = now.getMonth(), n = new Date(y, m + 1, 0).getDate(), lead = (new Date(y, m, 1).getDay() + 6) % 7;
@@ -13754,13 +13825,13 @@ wfAdd({id:"capes", tier:3, title:"Capes", not:["skills"], draw(){
   return {sub:`${n99} of ${lv.length}`, html:`<div class="wf-capes">${lv.map(([k, l])=>`<i class="${l >= 99 ? "got" : ""}" style="--v:${Math.round(l / 99 * 100)}" title="${wfEsc(frSkName(k))} ${l}"></i>`).join("")}</div>`
     + (next ? `<p class="wf-p">Nearest: <b>${wfEsc(frSkName(next[0]))}</b>, ${next[1]}. A square per skill, fuller the closer it is to 99.</p>` : `<p class="wf-p">Every skill at 99.</p>`)};
 }});
-wfAdd({id:"trained", tier:3, title:"Most trained, 30 days", not:["home"], draw(){
+wfAdd({id:"trained", tier:3, title:"Most trained, 30 days", not:["home"], sizes:true, draw(v, sz){
   const days = wfDays(), tot = {}; for(let i = 0; i < 30; i++){ const d = days[wfIsoBack(i)]; if(d) d.skills.forEach(([k, x])=>tot[k] = (tot[k] || 0) + x); }
-  const list = Object.entries(tot).sort((a, b)=>b[1] - a[1]).slice(0, 12); if(list.length < 3) return null;
+  const list = Object.entries(tot).sort((a, b)=>b[1] - a[1]).slice(0, wfN(sz, 6, 12, 24)); if(list.length < 3) return null;
   return {sub:"every skill", html:list.map(([k, x])=>wfRow("", frSkName(k), "+" + htShort(x), {kb:"t", attrs:`data-skillinfo="${k}" title="Open ${wfEsc(frSkName(k))}"`}) + wfMeter(x / list[0][1] * 100, "var(--k-g)")).join("")};
 }});
-wfAdd({id:"weeks20", tier:3, title:"Twenty weeks", not:["home", "scroll"], draw(){
-  const c = wfCells(wfDays(), 20); if(!c.max) return null;
+wfAdd({id:"weeks20", tier:3, title:"Twenty weeks", not:["home", "scroll"], sizes:true, draw(v, sz){
+  const c = wfCells(wfDays(), wfN(sz, 12, 20, 30)); if(!c.max) return null;
   return {sub:"a square a day", html:`<div class="wf-grid" style="--wk:20">${c.html}</div>`};
 }});
 
@@ -13769,17 +13840,19 @@ function wfList(view){
   const hide = state.wfHide || {}, out = [];
   WF.forEach((d, i)=>{
     if(hide[d.id] || (d.pages && !d.pages.includes(view)) || (d.not && d.not.includes(view))) return;
-    let r = null; try{ r = d.draw(view); }catch(e){ console.error("extra", d.id, e); }
+    let r = null; try{ r = d.draw(view, (state.wfSize || {})[d.id] || 2); }catch(e){ console.error("extra", d.id, e); }
     if(r && r.html) out.push({d, i, own:d.pages ? 0 : 1, sub:r.sub || "", html:r.html});
   });
-  return out.sort((a, b)=>a.d.tier - b.d.tier || a.own - b.own || a.i - b.i);
+  // an order of your own (edit mode) comes before the usual one: tier, then a page's own first
+  const ord = Array.isArray(state.wfOrder) ? state.wfOrder : null, rank = id=>{ const k = ord ? ord.indexOf(id) : -1; return k < 0 ? 1e4 : k; };
+  return out.sort((a, b)=>(ord ? rank(a.d.id) - rank(b.d.id) : 0) || a.d.tier - b.d.tier || a.own - b.own || a.i - b.i);
 }
 // writes a list of extras into a container, touching only what changed so nothing flickers
 function wfFillInto(el, list){
   const ids = list.map(x=>x.d.id).join(",");
   if(el.dataset.ids !== ids){
     el.dataset.ids = ids;
-    el.innerHTML = list.map((x, i)=>`<section class="wf" data-wf="${x.d.id}" data-tier="${x.d.tier}" style="--i:${i}"><h2 class="wf-h">${wfEsc(x.d.title)} <small></small><button class="wf-x" data-wfhide="${x.d.id}" title="Hide this pane. Settings, Look brings it back." aria-label="Hide ${wfEsc(x.d.title)}">x</button></h2><div class="wf-b"></div></section>`).join("");
+    el.innerHTML = list.map((x, i)=>`<section class="wf" data-wf="${x.d.id}" data-tier="${x.d.tier}" style="--i:${i}"><h2 class="wf-h">${wfEsc(x.d.title)} <small></small><button class="wf-x" data-wfhide="${x.d.id}" title="Hide this pane. Settings, Look brings it back." aria-label="Hide ${wfEsc(x.d.title)}">x</button></h2><div class="wf-b"></div>${x.d.sizes ? `<span class="wf-grip" data-wfgrip="${x.d.id}" title="Drag down for more rows, up for fewer."></span>` : ""}</section>`).join("");
   }
   list.forEach((x, i)=>{
     const sec = el.children[i]; if(!sec) return;
@@ -13805,7 +13878,7 @@ function wfDraw(){
   content.classList.toggle("wf-on", !!cols); side.classList.toggle("hidden", !cols);
   if(!cols){ side.dataset.ids = ""; side.innerHTML = ""; }
   under.classList.add("hidden"); content.classList.remove("wf-u");
-  if(!list.length){ under.dataset.ids = ""; under.innerHTML = ""; return; }
+  if(!list.length){ under.dataset.ids = ""; under.innerHTML = ""; try{ editTray(); }catch(e){} return; }
   // the page may grow a little too: up to 1500, or what the columns leave it
   let mw = inner.clientWidth;
   if(cols){
@@ -13824,6 +13897,7 @@ function wfDraw(){
     wfFillInto(under, pool);
   } else { under.dataset.ids = ""; under.innerHTML = ""; }
   if(cols) wfFillInto(side, useUnder ? list.filter(x=>!x.d.wide) : list);
+  try{ editTray(); }catch(e){}
 }
 function wfLater(){ if(wfLater.q) return; wfLater.q = setTimeout(()=>{ wfLater.q = 0; try{ wfDraw(); }catch(e){ console.error(e); } }, 60); }
 (function wfWire(){
@@ -14489,6 +14563,148 @@ function tpFocus(){ const inp = $("#tpIn"); if(!inp || !tpOn()) return false; tr
   });
   tpApply();
 })();
+
+// ============ EDIT MODE ============
+// Josh, 2026-11-17: an edit button, or an edit command, for full customization, with resizing,
+// and what is saved must still be there after the app closes. The Edit button on the path line
+// (or the edit command) turns it on. While it is on: a pane's header drags it, its x hides it,
+// its corner resizes it, and a bar at the bottom lists what is hidden, to bring back. Home's panes
+// and the extra panes of a wide window both take part. Everything is kept in the save, in keys
+// the characters share: homeArr (where), homeHide, homeH (heights), homeColW (column widths),
+// homeSplit (two panes in a row), wfHide, wfOrder, wfSize.
+function editOn(){ return document.body.classList.contains("editing"); }
+function editSet(on){
+  on = !!on && document.body.dataset.skin === "term";
+  document.body.classList.toggle("editing", on);
+  const b = $("#tpEdit"); if(b){ b.textContent = on ? "done" : "edit"; b.classList.toggle("on", on); }
+  editTray();
+  try{ wfDraw(); htMenuFit(); }catch(e){}
+}
+function editTray(){
+  let el = $("#editTray");
+  if(!editOn()){ if(el) el.classList.add("hidden"); return; }
+  if(!el){ el = document.createElement("div"); el.id = "editTray"; el.className = "edit-tray"; document.body.appendChild(el); el.addEventListener("click", editTrayClick); }
+  const cur = $(".view:not(.hidden)"), view = cur ? cur.id.replace(/^view-/, "") : "", hh = state.homeHide || {}, wh = state.wfHide || {};
+  const chips = (view === "home" ? Object.keys(HT_PANES).filter(p=>hh[p]).map(p=>`<button type="button" class="add" data-editshow="home:${p}">+ ${tE(HT_PANES[p].n)}</button>`) : [])
+    .concat(WF.filter(d=>wh[d.id] && (!d.pages || d.pages.includes(view)) && !(d.not && d.not.includes(view))).map(d=>`<button type="button" class="add" data-editshow="wf:${d.id}">+ ${tE(d.title)}</button>`));
+  const html = `<div class="in"><b>Editing</b><span class="how">Drag a pane by its header. x hides it. The corner resizes it.</span>`
+    + (chips.length ? `<span class="lab">Hidden</span>${chips.join("")}` : `<span class="lab">Nothing here is hidden</span>`)
+    + `<span class="sp"></span><button type="button" class="quiet" data-editreset="1">${editTray.sure ? "Press again to reset everything" : "Reset layout"}</button><button type="button" class="go" data-editdone="1">Done</button></div>`;
+  if(el._html !== html){ el._html = html; el.innerHTML = html; }
+  el.classList.remove("hidden");
+}
+function editTrayClick(e){
+  const b = e.target.closest("button"); if(!b) return; const d = b.dataset;
+  if(d.editdone){ editSet(false); return; }
+  if(d.editreset){
+    if(!editTray.sure){ editTray.sure = 1; editTray(); clearTimeout(editTray.t); editTray.t = setTimeout(()=>{ editTray.sure = 0; editTray(); }, 4000); return; }
+    editTray.sure = 0; ["wfHide", "wfOrder", "wfSize"].forEach(k=>{ delete state[k]; }); htArrReset(); wfDraw(); toast("Layout reset."); return;
+  }
+  if(d.editshow){
+    const [kind, id] = d.editshow.split(":");
+    if(kind === "home"){ if(state.homeHide) delete state.homeHide[id]; save(); htArrange(true); try{ htPlay(); }catch(err){} htMenuFit(); }
+    else { if(state.wfHide) delete state.wfHide[id]; save(); wfDraw(); }
+    editTray();
+  }
+}
+(function editWire(){
+  // the button on the path line, and hiding a Home pane
+  document.addEventListener("click", e=>{
+    const t = e.target; if(!t.closest) return;
+    if(t.closest("#tpEdit")){ e.preventDefault(); editSet(!editOn()); return; }
+    const x = t.closest("[data-panehide]");
+    if(x && editOn()){ (state.homeHide || (state.homeHide = {}))[x.dataset.panehide] = 1; save(); htArrange(true); try{ htPlay(); }catch(err){} htMenuFit(); editTray(); }
+  });
+  let g = null, wp = null, wd = null;
+  const flex = el=>parseFloat(el.style.flexGrow) || 1;
+  document.addEventListener("pointerdown", e=>{
+    if(!editOn() || e.button !== 0 || !e.target.closest) return;
+    const hg = e.target.closest("[data-panegrip]"), wg = e.target.closest("[data-wfgrip]");
+    if(hg){
+      // a Home pane's corner: down and up is its height; sideways is the split with the pane beside it, or else its column's width
+      const root = $("#homeTerm"), key = root && root.dataset.arr, sec = hg.closest("section"); if(!key || !sec) return;
+      const row = sec.parentElement, col = row.parentElement, cols = [...col.parentElement.children], sib = sec.nextElementSibling;
+      e.preventDefault();
+      g = {kind:"home", key, p:hg.dataset.panegrip, sec, sib, cols, ci:cols.indexOf(col), x:e.clientX, y:e.clientY, h0:sec.getBoundingClientRect().height,
+        w0:sec.getBoundingClientRect().width, w1:sib ? sib.getBoundingClientRect().width : 0, cw:cols.map(c=>c.getBoundingClientRect().width), moved:false};
+      document.body.classList.add("ht-dragging"); return;
+    }
+    if(wg){ e.preventDefault(); const id = wg.dataset.wfgrip; g = {kind:"wf", id, y:e.clientY, s0:(state.wfSize || {})[id] || 2, moved:false}; document.body.classList.add("ht-dragging"); return; }
+    const h = e.target.closest("#wideFill .wf-h, #wideUnder .wf-h");
+    if(h && !e.target.closest("button")) wp = {el:h.closest(".wf"), x:e.clientX, y:e.clientY};
+  });
+  document.addEventListener("pointermove", e=>{
+    if(g && g.kind === "home"){
+      const dx = e.clientX - g.x, dy = e.clientY - g.y; g.moved = g.moved || Math.abs(dx) > 3 || Math.abs(dy) > 3; if(!g.moved) return;
+      if(Math.abs(dy) > 3){ g.h = Math.max(60, Math.round(g.h0 + dy)); g.sec.style.minHeight = g.h + "px"; }
+      if(Math.abs(dx) > 3){
+        if(g.sib){ const a = Math.max(110, Math.min(g.w0 + g.w1 - 110, g.w0 + dx)); g.split = [Math.round(a), Math.round(g.w0 + g.w1 - a)]; g.sec.style.flexGrow = g.split[0]; g.sib.style.flexGrow = g.split[1]; }
+        else if(g.cols.length > 1){
+          const total = g.cw.reduce((a, b)=>a + b, 0), mine = Math.max(190, Math.min(total - 190 * (g.cols.length - 1), g.cw[g.ci] + dx)), rest = total - g.cw[g.ci], left = total - mine;
+          g.colw = g.cw.map((w, i)=>Math.round(i === g.ci ? mine : w / rest * left)); g.cols.forEach((c, i)=>{ c.style.flexGrow = g.colw[i]; });
+        }
+      }
+      return;
+    }
+    if(g && g.kind === "wf"){
+      const step = Math.max(1, Math.min(3, g.s0 + Math.round((e.clientY - g.y) / 46)));
+      if(step !== ((state.wfSize || {})[g.id] || 2)){ g.moved = true; (state.wfSize || (state.wfSize = {}))[g.id] = step; wfDraw(); }
+      return;
+    }
+    if(wp && !wd && Math.hypot(e.clientX - wp.x, e.clientY - wp.y) > 6){
+      const ghost = document.createElement("div"); ghost.className = "ht-ghost"; ghost.textContent = "// " + (wp.el.querySelector(".wf-h").firstChild.textContent || "").trim();
+      const mark = document.createElement("div"); mark.className = "ht-mark"; document.body.append(mark, ghost);
+      wp.el.classList.add("drag-src"); document.body.classList.add("ht-dragging"); wd = {el:wp.el, ghost, mark, drop:null}; wp = null;
+    }
+    if(wd){
+      wd.ghost.style.transform = `translate(${Math.round(e.clientX + 14)}px, ${Math.round(e.clientY + 12)}px)`;
+      // onto the top half of another pane goes before it, onto the bottom half after it
+      const hit = [...wd.el.parentElement.children].find(p=>{ if(p === wd.el || p.classList.contains("off")) return false; const r = p.getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom; });
+      wd.drop = null;
+      if(hit){ const r = hit.getBoundingClientRect(), after = e.clientY > r.top + r.height / 2, st = wd.mark.style; wd.drop = {id:hit.dataset.wf, after};
+        st.left = r.left + "px"; st.width = r.width + "px"; st.height = "4px"; st.top = (after ? r.bottom + 3 : r.top - 7) + "px"; }
+      wd.mark.classList.toggle("on", !!wd.drop);
+    }
+  });
+  const end = ()=>{
+    document.body.classList.remove("ht-dragging"); wp = null;
+    if(g && g.kind === "home"){
+      const d = g; g = null; if(!d.moved) return;
+      if(d.h){ (state.homeH || (state.homeH = {}))[d.p] = d.h; }
+      if(d.split){ const sp = state.homeSplit || (state.homeSplit = {}); sp[d.p] = d.split[0]; sp[d.sib.dataset.pane] = d.split[1]; }
+      if(d.colw){ (state.homeColW || (state.homeColW = {}))[d.key] = d.colw; }
+      save(); htArrange.sig = ""; htArrange(); try{ htPlay(); }catch(err){} htMenuFit(); wfLater(); return;
+    }
+    if(g && g.kind === "wf"){ const d = g; g = null; if(d.moved) save(); return; }
+    if(wd){
+      const d = wd; wd = null; d.ghost.remove(); d.mark.remove(); d.el.classList.remove("drag-src");
+      if(!d.drop) return;
+      // what is on screen, in its new order, leads; everything else keeps its place behind it
+      const shown = $$("#wideFill .wf, #wideUnder .wf").map(p=>p.dataset.wf).filter(id=>id !== d.el.dataset.wf), at = shown.indexOf(d.drop.id);
+      shown.splice(at + (d.drop.after ? 1 : 0), 0, d.el.dataset.wf);
+      const prev = Array.isArray(state.wfOrder) ? state.wfOrder : WF.slice().sort((a, b)=>a.tier - b.tier).map(x=>x.id);
+      state.wfOrder = shown.concat(prev.filter(id=>!shown.includes(id))); save(); wfDraw();
+    }
+  };
+  document.addEventListener("pointerup", end);
+  document.addEventListener("pointercancel", end);
+  // a double-click on a corner goes back to automatic
+  document.addEventListener("dblclick", e=>{
+    if(!editOn() || !e.target.closest) return;
+    const hg = e.target.closest("[data-panegrip]"), wg = e.target.closest("[data-wfgrip]");
+    if(hg){ const p = hg.dataset.panegrip, root = $("#homeTerm"), sec = hg.closest("section"), sib = sec && (sec.nextElementSibling || sec.previousElementSibling);
+      if(state.homeH) delete state.homeH[p]; if(state.homeSplit){ delete state.homeSplit[p]; if(sib && sib.dataset.pane) delete state.homeSplit[sib.dataset.pane]; }
+      if(state.homeColW && root) delete state.homeColW[root.dataset.arr];
+      save(); htArrange.sig = ""; htArrange(); try{ htPlay(); }catch(err){} htMenuFit(); }
+    if(wg){ if(state.wfSize) delete state.wfSize[wg.dataset.wfgrip]; save(); wfDraw(); }
+  });
+  document.addEventListener("keydown", e=>{
+    if(e.key !== "Escape" || !editOn() || htDrag || g || wd) return;
+    const t = e.target, tag = t && t.tagName; if(/^(INPUT|TEXTAREA|SELECT)$/.test(tag || "") || (t && t.isContentEditable) || document.body.classList.contains("modal")) return;
+    editSet(false);
+  });
+})();
+termDef(["edit"], "edit", "Turns edit mode on or off: move, hide, bring back and resize the panes on the page.", "App", ()=>({hint:`<u>enter</u> turns edit mode ${editOn() ? "off" : "on"}`, run:()=>editSet(!editOn()), quiet:true}), {bare:true});
 
 // ============ COFFER SECTIONS ============
 // Earn is what you can do for GP. Vault is what you've got, valued live from your bank. Flip is
@@ -18526,7 +18742,7 @@ function renderLookSettings(){
     if(sa){ sa.classList.toggle("hidden", !hid); sa.textContent = `Show ${hid} hidden`; sa.onclick = ()=>{ delete state.wfHide; save(); wfDraw(); renderLookSettings(); }; }
   }
   const trs = $("#tilesReset");
-  if(trs){ trs.classList.toggle("hidden", !(state.homeArr && tcur === "mosaic")); trs.onclick = ()=>{ htArrReset(); renderLookSettings(); }; }
+  if(trs){ trs.classList.toggle("hidden", !((state.homeArr || state.homeHide || state.homeH || state.homeColW || state.homeSplit) && tcur === "mosaic")); trs.onclick = ()=>{ htArrReset(); renderLookSettings(); }; }
   const cur = state.theme || DEFAULT_THEME;
   tp.innerHTML = THEMES.map(([id,label,ic])=>`<button class="su-theme ${id===cur?"on":""}" data-settheme="${id}"><img src="${WIKI+ic}" alt=""><span>${label}</span></button>`).join("");
   tp.querySelectorAll("[data-settheme]").forEach(b=>b.onclick=()=>{ if(state.theme !== b.dataset.settheme){ state.theme = b.dataset.settheme; save(); applyTheme(); } renderLookSettings(); });
