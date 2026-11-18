@@ -3579,6 +3579,14 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .ht-log .yn button:hover, body[data-skin="term"] .ht-log .yn button:focus-visible{border-color:var(--gold); color:var(--gold); outline:0}
   @media (pointer:coarse){ body[data-skin="term"] .ht-log .yn button{min-height:34px; padding:0 14px} }
 
+  /* ---- game pictures (gameIc): a boss beside its kill count, a skill or a boss on a Debrief row
+     and a wide-window row, and one inside each vitals orb ---- */
+  body[data-skin="term"] .gic{width:16px; height:16px; object-fit:contain; flex:none; vertical-align:-3px; margin-right:6px}
+  body[data-skin="term"] .ht-kc button .gic{align-self:center; width:18px; height:18px; margin-right:0}
+  body[data-skin="term"] .wf-r .gic{align-self:center; margin-right:0}
+  body[data-skin="term"] .orb-w{position:relative; display:inline-flex; flex:none}
+  body[data-skin="term"] .orb-ic{position:absolute; left:50%; top:50%; width:20px; height:20px; margin:-10px 0 0 -10px; z-index:1; pointer-events:none; filter:drop-shadow(0 1px 2px rgba(0,0,0,.65))}
+
   /* ============ THE PHONE, FOLDED AND UNFOLDED ============
      Not the desktop squeezed. Sized against the Galaxy Z Fold 8 Ultra to start: the cover screen
      (1080 by 2520, about 380 page pixels wide) and the inner screen (2504 by 2256, about 750 to
@@ -6222,6 +6230,12 @@ function metricIconUrl(kind, key){
   if(METRIC_FILE[key]) return WIKI + encodeURI(METRIC_FILE[key]);
   const file = key.split("_").map((w,i)=> (i>0&&SMALLWORDS.has(w)) ? w : w.charAt(0).toUpperCase()+w.slice(1)).join("_") + "_icon.png";
   return WIKI + encodeURI(file);
+}
+// A small game picture beside a name: a skill's, a boss's or an activity's icon, or a named wiki
+// file. Loaded live from the wiki like every other picture here; if it fails it takes itself out.
+function gameIc(kind, key, cls){
+  const src = kind === "file" ? WIKI + encodeURI(key) : kind === "skill" ? skillIconUrl(key) : metricIconUrl(kind, key);
+  return `<img class="gic${cls ? " " + cls : ""}" src="${src}" alt="" loading="lazy" onerror="this.remove()">`;
 }
 function metricEmoji(kind, key){
   if(kind==="skill") return "📈";
@@ -14517,12 +14531,12 @@ function tlKeys(){
   if(window.visualViewport){ visualViewport.addEventListener("resize", tlKeys); visualViewport.addEventListener("scroll", tlKeys); }
 })();
 function htShort(n){ return n >= 1e6 ? (n / 1e6).toFixed(n >= 1e8 ? 0 : 1) + "M" : n >= 1e4 ? Math.round(n / 1e3) + "K" : fmt(n); }
-function htOrb(label, text, frac, col, id, short, attrs){
+function htOrb(label, text, frac, col, id, short, attrs, ic){
   frac = Math.max(0, Math.min(1, frac || 0));
   const top = 4 + 38 * (1 - frac);
-  return `<div class="ht-orb" style="--oc:${col}"${attrs || ""}><svg viewBox="0 0 46 46" aria-hidden="true"><defs><clipPath id="htoc${id}"><circle cx="23" cy="23" r="19"/></clipPath></defs>
+  return `<div class="ht-orb" style="--oc:${col}"${attrs || ""}><span class="orb-w">${ic || ""}<svg viewBox="0 0 46 46" aria-hidden="true"><defs><clipPath id="htoc${id}"><circle cx="23" cy="23" r="19"/></clipPath></defs>
     <g clip-path="url(#htoc${id})"><g class="lvl" style="--dy:${(38 * frac).toFixed(1)}px"><rect x="0" y="${top.toFixed(1)}" width="46" height="46" fill="${col}" opacity=".26"/><rect x="0" y="${top.toFixed(1)}" width="46" height="1.5" fill="${col}"/></g></g>
-    <circle class="rim" cx="23" cy="23" r="22.5"/></svg><div><div class="num">${text}</div><div class="lab">${label}</div><div class="lab-s">${short || ""}</div></div></div>`;
+    <circle class="rim" cx="23" cy="23" r="22.5"/></svg></span><div><div class="num">${text}</div><div class="lab">${label}</div><div class="lab-s">${short || ""}</div></div></div>`;
 }
 // Total experience fills toward the next round figure rather than toward every skill at 99, which
 // took tens of millions before the orb showed anything: each million under 10M, then each 5M,
@@ -14556,10 +14570,10 @@ function renderHomeTerm(){
   if(overall){
     const band = htXpBand(overall.experience), near = htNear()[0];
     $("#htOrbs").innerHTML =
-        htOrb("Combat level", `${m.combat != null ? escapeHtml(String(m.combat)) : "?"}<small>/126</small>`, (m.combat || 0) / 126, "#e0685c", 1, "combat")
-      + htOrb("Total skill level", `${fmt(overall.level)}<small>/${fmt(MAX_TOTAL_LEVEL)}</small>`, overall.level / MAX_TOTAL_LEVEL, "var(--k-c)", 2, "total level", ` title="Every skill level added together, of ${fmt(MAX_TOTAL_LEVEL)}"`)
-      + htOrb(`Total experience, next ${band.hi / 1e6}M`, htShort(overall.experience), band.frac, "var(--k-y)", 3, "total xp", ` title="${fmt(overall.experience)} experience. The orb fills toward ${band.hi / 1e6}M."`)
-      + (near ? htOrb(`Closest level, ${frSkName(near.k)} ${near.p.next}`, `${fmt(near.p.toNext)}<small>xp</small>`, near.p.frac, "var(--k-g)", 4, `to ${frSkName(near.k).toLowerCase()} ${near.p.next}`, ` data-skillinfo="${near.k}" role="button" tabindex="0" title="Open ${frSkName(near.k)}"`) : "");
+        htOrb("Combat level", `${m.combat != null ? escapeHtml(String(m.combat)) : "?"}<small>/126</small>`, (m.combat || 0) / 126, "#e0685c", 1, "combat", "", gameIc("file", "Combat_icon.png", "orb-ic"))
+      + htOrb("Total skill level", `${fmt(overall.level)}<small>/${fmt(MAX_TOTAL_LEVEL)}</small>`, overall.level / MAX_TOTAL_LEVEL, "var(--k-c)", 2, "total level", ` title="Every skill level added together, of ${fmt(MAX_TOTAL_LEVEL)}"`, gameIc("file", "Stats_icon.png", "orb-ic"))
+      + htOrb(`Total experience, next ${band.hi / 1e6}M`, htShort(overall.experience), band.frac, "var(--k-y)", 3, "total xp", ` title="${fmt(overall.experience)} experience. The orb fills toward ${band.hi / 1e6}M."`, gameIc("file", "XP_drops_icon.png", "orb-ic"))
+      + (near ? htOrb(`Closest level, ${frSkName(near.k)} ${near.p.next}`, `${fmt(near.p.toNext)}<small>xp</small>`, near.p.frac, "var(--k-g)", 4, `to ${frSkName(near.k).toLowerCase()} ${near.p.next}`, ` data-skillinfo="${near.k}" role="button" tabindex="0" title="Open ${frSkName(near.k)}"`, gameIc("skill", near.k, "orb-ic")) : "");
     $("#htOrbs").onclick = e=>{ const t = e.target.closest("[data-skillinfo]"); if(t) openSkillModal(t.dataset.skillinfo); };
   }
   else $("#htOrbs").innerHTML = "";
@@ -14578,7 +14592,7 @@ function renderHomeTerm(){
     const bosses = Object.entries(live.bosses || {}).filter(([k, e])=>e && e.kills > 0).sort((a, b)=>b[1].kills - a[1].kills);
     $("#htKcSub").textContent = bosses.length ? `${bosses.length} boss${bosses.length === 1 ? "" : "es"}` : "";
     $("#htKc").innerHTML = bosses.length
-      ? bosses.map(([k, e])=>{ const d = dropProgress(k); return `<button data-bossinfo="${k}"><span>${escapeHtml(nice(k))}</span>${d ? `<small>${d.got} of ${d.total} drops</small>` : ""}<b>${fmt(e.kills)}</b></button>`; }).join("")
+      ? bosses.map(([k, e])=>{ const d = dropProgress(k); return `<button data-bossinfo="${k}">${gameIc("boss", k)}<span>${escapeHtml(nice(k))}</span>${d ? `<small>${d.got} of ${d.total} drops</small>` : ""}<b>${fmt(e.kills)}</b></button>`; }).join("")
       : `<div class="ht-none" style="grid-column:1/-1">No boss kills on the hiscores yet. They appear here once you have some.</div>`;
     $("#htKc").onclick = e=>{ const t = e.target.closest("[data-bossinfo]"); if(t) openBossModal(t.dataset.bossinfo); };
     $("#htClues").innerHTML = `<span>Clues</span>` + ["beginner", "easy", "medium", "hard", "elite", "master"].map(t=>{
@@ -14858,7 +14872,7 @@ const wfN = (sz, small, usual, large)=>sz <= 1 ? small : sz >= 3 ? large : usual
 // a row: what, which, and a figure at the right. attrs makes it a button that does something
 function wfRow(a, b, v, o){
   o = o || {};
-  const inner = `<span class="a ${o.ka || ""}">${wfEsc(a)}</span><span class="b ${o.kb || ""}">${wfEsc(b)}</span><span class="v ${o.kv || ""}">${wfEsc(v)}</span>`;
+  const inner = `<span class="a ${o.ka || ""}">${wfEsc(a)}</span>${o.ic || ""}<span class="b ${o.kb || ""}">${wfEsc(b)}</span><span class="v ${o.kv || ""}">${wfEsc(v)}</span>`;
   return o.attrs ? `<button class="wf-r" ${o.attrs}>${inner}</button>` : `<div class="wf-r">${inner}</div>`;
 }
 const wfMeter = (pct, col)=>`<div class="wf-m"><i style="--p:${Math.max(0, Math.min(100, pct)).toFixed(1)}%${col ? `; --c:${col}` : ""}"></i></div>`;
@@ -14910,7 +14924,7 @@ wfAdd({id:"week", tier:1, title:"This week", not:["home", "goals"], sizes:true, 
 }});
 wfAdd({id:"near", tier:1, title:"Closest level ups", not:["home", "skills"], sizes:true, draw(v, sz){
   const near = htNear(wfN(sz, 3, 5, 10)); if(!near.length) return null;
-  return {sub:"", html:near.map(x=>wfRow("Train", frSkName(x.k), `${fmt(x.p.toNext)} xp to ${x.p.next}`, {kb:"g", attrs:`data-skillinfo="${x.k}" title="Open ${wfEsc(frSkName(x.k))}"`})).join("")};
+  return {sub:"", html:near.map(x=>wfRow("Train", frSkName(x.k), `${fmt(x.p.toNext)} xp to ${x.p.next}`, {kb:"g", ic:gameIc("skill", x.k), attrs:`data-skillinfo="${x.k}" title="Open ${wfEsc(frSkName(x.k))}"`})).join("")};
 }});
 wfAdd({id:"goals", tier:1, title:"Goals", not:["home", "goals"], sizes:true, draw(v, sz){
   const gs = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct);
@@ -14947,7 +14961,7 @@ wfAdd({id:"weeks2", tier:2, title:"This week and last", draw(){
 wfAdd({id:"kc", tier:2, title:"Kill counts", not:["home"], sizes:true, draw(v, sz){
   const bs = Object.entries((live && live.bosses) || {}).filter(([k, e])=>e && e.kills > 0).sort((a, b)=>b[1].kills - a[1].kills);
   if(!bs.length) return null;
-  return {sub:`${bs.length} boss${bs.length === 1 ? "" : "es"}`, html:bs.slice(0, wfN(sz, 3, 6, 12)).map(([k, e])=>wfRow("", nice(k), fmt(e.kills), {kb:"t", attrs:`data-bossinfo="${wfEsc(k)}" title="Open ${wfEsc(nice(k))}"`})).join("")};
+  return {sub:`${bs.length} boss${bs.length === 1 ? "" : "es"}`, html:bs.slice(0, wfN(sz, 3, 6, 12)).map(([k, e])=>wfRow("", nice(k), fmt(e.kills), {kb:"t", ic:gameIc("boss", k), attrs:`data-bossinfo="${wfEsc(k)}" title="Open ${wfEsc(nice(k))}"`})).join("")};
 }});
 wfAdd({id:"cal", tier:2, title:"The month as a calendar", pages:["scroll"], wide:true, draw(){
   const days = wfDays(), now = parseISO(todayISO()), y = now.getFullYear(), m = now.getMonth(), n = new Date(y, m + 1, 0).getDate(), lead = (new Date(y, m, 1).getDay() + 6) % 7;
@@ -15128,7 +15142,7 @@ function htRecent(){
 function htMenu(){
   const el = $("#htMenu"); if(!el) return;
   const rows = termRounds(), up = rows.filter(m=>m.st.up), wait = rows.filter(m=>!m.st.up);
-  const opt = (attrs, act, tgt, kind, st, cls, x)=>`<button class="ht-opt${x ? " xh" : ""}"${x ? ' data-x="1"' : ""} ${attrs}><span class="act">${escapeHtml(act)}</span><span class="t ${kind}">${escapeHtml(tgt)}</span><span class="st ${cls || ""}">${escapeHtml(st)}</span></button>`;
+  const opt = (attrs, act, tgt, kind, st, cls, x, ic)=>`<button class="ht-opt${x ? " xh" : ""}"${x ? ' data-x="1"' : ""} ${attrs}><span class="act">${escapeHtml(act)}</span><span class="t ${kind}">${ic || ""}${escapeHtml(tgt)}</span><span class="st ${cls || ""}">${escapeHtml(st)}</span></button>`;
   const R = htRecent(), has = !!(live && live.skills);
   const names = ks=>{ const n = ks.map(frSkName); return n.length <= 1 ? (n[0] || "") : n.length <= 3 ? n.slice(0, -1).join(", ") + " and " + n[n.length - 1] : `${n[0]}, ${n[1]} and ${n.length - 2} more`; };
   const whenDay = iso=>parseISO(iso).toLocaleDateString([], {weekday:"short", day:"numeric", month:"short"});
@@ -15151,11 +15165,11 @@ function htMenu(){
       .sort((a, b)=>b.up - a.up || b.xp - a.xp).slice(0, 8);
     const kills = Object.entries(R.boss).sort((a, b)=>b[1] - a[1]).slice(0, 4);
     if(g.length || kills.length) sec.gain = `<div class="grp">${R.idle != null && R.idle <= 1 ? "Gained, last 7 days" : "Where you left off"}</div>`
-      + g.map((x, i)=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Gained", frSkName(x.k), "g", x.up ? `+${x.up} level${x.up === 1 ? "" : "s"}, now ${x.now}` : `+${htShort(x.xp)} xp`, x.up ? "ready" : "", i >= 4)).join("")
-      + kills.map(([b, n], i)=>opt(`data-bossinfo="${escapeHtml(b)}" title="Open ${escapeHtml(nice(b))}"`, "Killed", nice(b), "y", `${fmt(n)} kill${n === 1 ? "" : "s"}`, "", i >= 2)).join("");
+      + g.map((x, i)=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Gained", frSkName(x.k), "g", x.up ? `+${x.up} level${x.up === 1 ? "" : "s"}, now ${x.now}` : `+${htShort(x.xp)} xp`, x.up ? "ready" : "", i >= 4, gameIc("skill", x.k))).join("")
+      + kills.map(([b, n], i)=>opt(`data-bossinfo="${escapeHtml(b)}" title="Open ${escapeHtml(nice(b))}"`, "Killed", nice(b), "y", `${fmt(n)} kill${n === 1 ? "" : "s"}`, "", i >= 2, gameIc("boss", b))).join("");
   }
   const near = htNear(8);
-  if(near.length) sec.near = `<div class="grp">Closest level ups</div>` + near.map((x, i)=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Train", frSkName(x.k), "g", `${fmt(x.p.toNext)} xp to ${x.p.next}`, "", i >= 3)).join("");
+  if(near.length) sec.near = `<div class="grp">Closest level ups</div>` + near.map((x, i)=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Train", frSkName(x.k), "g", `${fmt(x.p.toNext)} xp to ${x.p.next}`, "", i >= 3, gameIc("skill", x.k))).join("");
   const goals = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct).slice(0, 8);
   if(goals.length) sec.goals = `<div class="grp">Goals you are tracking</div>` + goals.map(({g, p}, i)=>opt(`data-hgoal="1" title="Open Goals"`, p.custom ? "Finish" : "Reach", g.label, "y", p.custom ? (p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : "to-do") : Math.round(p.pct) + "%", "", i >= 4)).join("");
   const wk = prioWeekList();
