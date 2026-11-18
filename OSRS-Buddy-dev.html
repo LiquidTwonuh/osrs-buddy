@@ -3879,27 +3879,27 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
      Josh, 2026-11-17: bigger, more like the original Home, always the biggest element. The pane
      gets the widest column (HT_PANES in the page's script) and most of any spare height; a cell
      shows a larger icon, the name with what is left to the next level under it, and a larger
-     level. The sizes follow the pane's own width. */
-  body[data-skin="term"] .ht-sk{grid-template-columns:26px minmax(0,1fr) auto; column-gap:10px; row-gap:7px; min-height:58px; padding:10px 12px}
-  body[data-skin="term"] .ht-sk img{width:26px; height:26px}
-  body[data-skin="term"] .ht-sk .nm{display:flex; flex-direction:column; gap:2px; min-width:0; overflow:hidden; font-size:14px; line-height:1.15; color:var(--text)}
-  body[data-skin="term"] .ht-sk .nm small{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:11.5px var(--fm); color:var(--faint); font-variant-numeric:tabular-nums}
-  body[data-skin="term"] .ht-sk .lv{font-size:25px}
-  body[data-skin="term"] .ht-sk .bar{height:4px}
+     level. The sizes follow the pane's own width. Made a step bigger again on 2026-11-18 at his asking. */
+  body[data-skin="term"] .ht-sk{grid-template-columns:30px minmax(0,1fr) auto; column-gap:11px; row-gap:8px; min-height:66px; padding:12px 14px}
+  body[data-skin="term"] .ht-sk img{width:30px; height:30px}
+  body[data-skin="term"] .ht-sk .nm{display:flex; flex-direction:column; gap:2px; min-width:0; overflow:hidden; font-size:15.5px; line-height:1.15; color:var(--text)}
+  body[data-skin="term"] .ht-sk .nm small{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:12.5px var(--fm); color:var(--faint); font-variant-numeric:tabular-nums}
+  body[data-skin="term"] .ht-sk .lv{font-size:29px}
+  body[data-skin="term"] .ht-sk .bar{height:5px}
   body[data-skin="term"] .ht-sk.near .nm small{color:var(--k-g)}
   @container (min-width:620px){
-    body[data-skin="term"] .ht-sk{grid-template-columns:30px minmax(0,1fr) auto; column-gap:12px; min-height:66px; padding:12px 15px}
-    body[data-skin="term"] .ht-sk img{width:30px; height:30px}
-    body[data-skin="term"] .ht-sk .nm{font-size:15px}
-    body[data-skin="term"] .ht-sk .nm small{font-size:12px}
-    body[data-skin="term"] .ht-sk .lv{font-size:29px}
+    body[data-skin="term"] .ht-sk{grid-template-columns:34px minmax(0,1fr) auto; column-gap:13px; min-height:76px; padding:14px 17px}
+    body[data-skin="term"] .ht-sk img{width:34px; height:34px}
+    body[data-skin="term"] .ht-sk .nm{font-size:16.5px}
+    body[data-skin="term"] .ht-sk .nm small{font-size:13px}
+    body[data-skin="term"] .ht-sk .lv{font-size:34px}
   }
   /* a narrow pane shows the skills the way the game does: the icon and the number */
   @container (max-width:470px){
-    body[data-skin="term"] .ht-sk{grid-template-columns:22px 1fr auto; column-gap:8px; min-height:50px; padding:8px 10px}
-    body[data-skin="term"] .ht-sk img{width:22px; height:22px}
+    body[data-skin="term"] .ht-sk{grid-template-columns:26px 1fr auto; column-gap:9px; min-height:58px; padding:10px 11px}
+    body[data-skin="term"] .ht-sk img{width:26px; height:26px}
     body[data-skin="term"] .ht-sk .nm{display:none}
-    body[data-skin="term"] .ht-sk .lv{font-size:21px; justify-self:end}
+    body[data-skin="term"] .ht-sk .lv{font-size:25px; justify-self:end}
   }
 
   /* ============ WRAPPED, IN THE TERMINAL LOOK ============
