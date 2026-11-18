@@ -17,12 +17,37 @@
   body[data-skin="term"] .tp-hint .c{color:var(--k-c)} body[data-skin="term"] .tp-hint .y{color:var(--k-y)} body[data-skin="term"] .tp-hint .o{color:var(--k-o)} body[data-skin="term"] .tp-hint .g{color:var(--k-g)}
   body[data-skin="term"] .term-path.tp-off .tp-row{cursor:default}
   body[data-skin="term"] .term-path.tp-off #tpIn, body[data-skin="term"] .term-path.tp-off .tp-hint{display:none}
-  /* what a line printed */
-  body[data-skin="term"] .tp-out{position:absolute; left:-1px; right:-1px; top:calc(100% + 5px); z-index:2; min-height:0; max-height:min(52vh, 460px); padding:10px 12px;
+  /* The console under the bar. It opens (.open) when the mouse rests on the bar, when the bar is
+     typed in, and when a line has just run: the row grows from nothing, so it slides, not pops. */
+  body[data-skin="term"] .tp-out{position:absolute; left:-1px; right:-1px; top:calc(100% + 5px); z-index:2; display:grid; grid-template-rows:0fr; opacity:0; visibility:hidden; pointer-events:none;
+    font:12.5px/1.5 var(--fm); white-space:normal;
+    transition:grid-template-rows .3s cubic-bezier(.2,.7,.2,1), opacity .2s ease, visibility 0s linear .3s}
+  body[data-skin="term"] .tp-out.open{grid-template-rows:1fr; opacity:1; visibility:visible; pointer-events:auto; transition:grid-template-rows .3s cubic-bezier(.2,.7,.2,1), opacity .2s ease, visibility 0s}
+  body[data-skin="term"] .tp-in{min-height:0; overflow:hidden; display:flex; flex-direction:column;
     background:color-mix(in srgb, var(--bg) 93%, transparent); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
-    border:1px solid color-mix(in srgb, var(--gold) 45%, transparent); font:12.5px/1.5 var(--fm); white-space:normal; animation:tpDrop .2s cubic-bezier(.2,.7,.2,1)}
-  @keyframes tpDrop{from{opacity:0; transform:translateY(-6px)}}
-  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .tp-out{animation:none} }
+    border:1px solid color-mix(in srgb, var(--gold) 45%, transparent); box-shadow:0 14px 34px rgba(0,0,0,.34)}
+  body[data-skin="term"] .tp-log{min-height:0; max-height:min(46vh, 420px); padding:9px 12px 10px}
+  body[data-skin="term"] :is(.tp-oh, .tf-h){flex:none; display:flex; align-items:center; gap:10px; padding:5px 8px 5px 12px; border-bottom:1px solid var(--line); cursor:grab; -webkit-user-select:none; user-select:none; touch-action:none}
+  body[data-skin="term"] :is(.tp-oh, .tf-h) .lab{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  body[data-skin="term"] :is(.tp-oh, .tf-h) :is(.how, .tf-path){min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11.5px; color:var(--faint)}
+  body[data-skin="term"] :is(.tp-oh, .tf-h) .sp{flex:1 1 0}
+  body[data-skin="term"] :is(.tp-oh, .tf-h) button{flex:none; min-height:0; margin:0; padding:0 8px; background:none; border:1px solid var(--line); box-shadow:none; color:var(--muted); font:inherit; font-size:11.5px; line-height:1.6; cursor:pointer; transition:color .14s, border-color .14s}
+  body[data-skin="term"] :is(.tp-oh, .tf-h) button:hover, body[data-skin="term"] :is(.tp-oh, .tf-h) button:focus-visible{border-color:var(--gold); color:var(--gold); outline:0}
+  body[data-skin="term"].dock .tp-oh{display:none}
+
+  /* the console off the bar: floats over the page, moved by its header, resized by its corner */
+  body[data-skin="term"] .term-float{position:fixed; z-index:55; display:flex; flex-direction:column; min-width:320px; min-height:190px; max-width:calc(100vw - 16px); max-height:calc(100vh - 16px);
+    resize:both; overflow:hidden; font:12.5px/1.5 var(--fm);
+    background:color-mix(in srgb, var(--bg) 94%, transparent); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
+    border:1px solid color-mix(in srgb, var(--gold) 55%, transparent); box-shadow:0 20px 54px rgba(0,0,0,.5); animation:tfIn .24s cubic-bezier(.2,.7,.2,1)}
+  body:not([data-skin="term"]) .term-float{display:none}
+  @keyframes tfIn{from{opacity:0; transform:translateY(8px) scale(.985)}}
+  body[data-skin="term"] .tf-log{flex:1 1 auto; min-height:0; max-height:none; padding:9px 12px 10px}
+  body[data-skin="term"] .tf-row{flex:none; display:flex; align-items:baseline; gap:8px; margin:0; padding:7px 26px 7px 12px; border-top:1px solid var(--line); cursor:text; white-space:nowrap}
+  body[data-skin="term"] .tf-row > b{font-weight:600; color:var(--gold)}
+  body[data-skin="term"] #tfIn{flex:1 1 80px; min-width:60px; width:auto; height:auto; min-height:0; margin:0; padding:0; background:none; border:0; outline:0; box-shadow:none; color:var(--me); caret-color:var(--me); font:inherit}
+  body[data-skin="term"] .term-float:focus-within{border-color:var(--gold)}
+  @media (prefers-reduced-motion:reduce){ body[data-skin="term"] .tp-out, body[data-skin="term"] .tp-out.open{transition:none} body[data-skin="term"] .term-float{animation:none} }
 
   /* two kinds of line the command language adds to the log: the line as typed, and what it printed */
   body[data-skin="term"] .ht-log .x span{color:var(--faint)}
