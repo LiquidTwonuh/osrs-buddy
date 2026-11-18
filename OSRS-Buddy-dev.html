@@ -4145,6 +4145,28 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .edit-tray button.go{background:var(--gold); border-color:var(--gold); color:var(--bg); font-weight:600}
   body[data-skin="term"] .edit-tray button.go:hover{background:color-mix(in srgb, var(--gold) 86%, var(--text)); color:var(--bg)}
 
+  /* ---- any other page (peApply): a container whose panes have been moved or resized lays them
+     out as a wrapping row, each pane full width unless it was made narrower ---- */
+  body[data-skin="term"] .pe-c{display:flex; flex-wrap:wrap; gap:var(--gap); align-items:stretch; align-content:flex-start}
+  body[data-skin="term"] .pe-c::before{content:""; flex:1 1 100%; height:0; margin-bottom:calc(var(--gap) * -1); order:-1}
+  body[data-skin="term"] .pe-c > *{flex:1 1 100%; min-width:0; margin-top:0 !important; margin-bottom:0 !important}
+  body[data-skin="term"] .pe-c > [data-pe-w="half"]{flex:1 1 calc(50% - var(--gap))}
+  body[data-skin="term"] .pe-c > [data-pe-w="third"]{flex:1 1 calc(33.333% - var(--gap))}
+  body[data-skin="term"] .pe-c > [data-pe-w="twothird"]{flex:2 1 calc(66.666% - var(--gap))}
+  body[data-skin="term"] .pe-item{position:relative}
+  body[data-skin="term"].editing .pe-item{outline:1px dashed color-mix(in srgb, var(--gold) 50%, transparent); outline-offset:-1px}
+  body[data-skin="term"] summary{position:relative}
+  body[data-skin="term"] .pe-x{position:absolute; top:4px; right:5px; z-index:6; width:22px; height:22px; min-height:0; margin:0; padding:0;
+    background:color-mix(in srgb, var(--bg) 80%, transparent); border:1px solid var(--line); box-shadow:none; color:var(--muted); font:12px var(--fm); line-height:1; cursor:pointer; transition:color .14s, border-color .14s}
+  body[data-skin="term"] .pe-x:hover, body[data-skin="term"] .pe-x:focus-visible{border-color:var(--k-o); color:var(--k-o); outline:0}
+  body[data-skin="term"] .pe-move{position:absolute; top:4px; right:32px; z-index:6; height:22px; padding:0 8px; background:color-mix(in srgb, var(--bg) 80%, transparent); border:1px solid var(--line);
+    color:var(--muted); font:11px/20px var(--fm); letter-spacing:.08em; cursor:grab; -webkit-user-select:none; user-select:none; touch-action:none; transition:color .14s, border-color .14s}
+  body[data-skin="term"] .pe-move:hover{border-color:var(--gold); color:var(--gold)}
+  body[data-skin="term"] .pe-grip{position:absolute; right:0; bottom:0; z-index:6; width:20px; height:20px; cursor:nwse-resize; touch-action:none;
+    background:linear-gradient(135deg, transparent 0 50%, color-mix(in srgb, var(--gold) 75%, transparent) 50% 62%, transparent 62% 74%, color-mix(in srgb, var(--gold) 75%, transparent) 74% 86%, transparent 86%)}
+  body[data-skin="term"] .pe-grip:hover{background:linear-gradient(135deg, transparent 0 50%, var(--gold) 50% 62%, transparent 62% 74%, var(--gold) 74% 86%, transparent 86%)}
+  body[data-skin="term"] .pe-item.drag-src{opacity:.38}
+
   /* ============ PALETTES FOR THE TERMINAL LOOK ============
      Seventeen themes redone for this look by ChatGPT from the theme kit (tools/theme-kit.py);
      this is the set Josh approved on 2026-11-18, taken as delivered. Scoped to the Terminal
@@ -5187,7 +5209,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="set-row col term-only"><div class="lbl"><b>Command line</b><small>The line at the top of every page takes commands: cd scroll, log mined for an hour, stats mining, -help for the list. Press / or the key under Esc to start typing. On a wide window the console sits in its own column at the right of every page; the console button on the line shows and hides it, and dragging its header off floats it over the page. Off leaves the line as a plain path.</small></div><div class="seg" id="tpSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Console</b><small>Where the console sits. At the side is a column to the right of every page, when the window has room. Floating is a window you can move and resize. Hidden closes it. The shortcut shows and hides it from anywhere; drag the console's header to pull it off the side.</small></div><div class="row" style="gap:8px; flex-wrap:wrap; align-items:center"><div class="seg" id="conSeg"></div><button class="ghost small" id="conKeyBtn" title="Press this, then the keys you want"></button></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Bakery layout</b><small>How Coffer's Bakery is laid out. Board puts the best three side by side and the rest in tiles. Listing is one aligned table with the row you choose opened beside it. The same switch is on the page itself.</small></div><div class="seg" id="bkSeg"></div></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Backdrop</b><small>What sits behind the panes. Dots, Grid, Lines and Weave are faint patterns. Clean keeps the soft glow in the corners and drops the pattern. Flat is the theme's plain colour.</small></div><div class="seg" id="bdSeg"></div></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Backdrop</b><small>What sits behind the panes. Clean is no pattern, with a soft glow in the corners. Dots, Grid, Lines and Weave are faint patterns. Flat is the theme's plain colour.</small></div><div class="seg" id="bdSeg"></div></div>
             <div class="set-row col term-only"><div class="lbl"><b>Wide window</b><small>On a wide monitor, the room beside and under a page fills with extra panes. The most useful come first, so more room only ever adds less essential ones. A pane's x hides it.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="wfSeg"></div><button class="ghost small hidden" id="wfShowAll" title="Bring back the panes you hid"></button></div></div>
           </div>
           <div class="set-group">
@@ -5273,7 +5295,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <nav class="term-tabs term-only hidden" id="termTabs" aria-label="Sections of this page"></nav>
     </div>
 
-    <div class="term-path term-only" id="termPath"><label class="tp-row" for="tpIn"><span class="tp-pre" id="tpPre"></span><span class="cur" aria-hidden="true">_</span><input id="tpIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command line"><span class="tp-hint" id="tpHint"></span><button type="button" class="tp-edit" id="tpCon" title="Show or hide the console">console</button><button type="button" class="tp-edit" id="tpEdit" title="Move, hide, bring back and resize the panes">edit</button></label><div class="tp-out" id="tpOut"><div class="tp-in"><div class="tp-oh" data-tfpull="1" title="Drag this off the bar to float the console over the page"><span class="lab">// console</span><span class="how">drag it off the bar to float it</span><span class="sp"></span><button type="button" data-tfpop="1" title="Float the console over the page, where it can be moved and resized">pop out</button></div><div class="tp-log ht-log" id="tpLog" aria-live="polite"></div></div></div></div>
+    <div class="term-path term-only" id="termPath"><label class="tp-row" for="tpIn"><span class="tp-pre" id="tpPre"></span><span class="cur" aria-hidden="true">_</span><input id="tpIn" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command line"><span class="tp-hint" id="tpHint"></span><button type="button" class="tp-edit" id="tpCon" title="Show or hide the console">console</button><button type="button" class="tp-edit" id="tpEdit" title="Move, hide, bring back and resize the panes, on any page">edit</button></label><div class="tp-out" id="tpOut"><div class="tp-in"><div class="tp-oh" data-tfpull="1" title="Drag this off the bar to float the console over the page"><span class="lab">// console</span><span class="how">drag it off the bar to float it</span><span class="sp"></span><button type="button" data-tfpop="1" title="Float the console over the page, where it can be moved and resized">pop out</button></div><div class="tp-log ht-log" id="tpLog" aria-live="polite"></div></div></div></div>
     <div class="pagehead classic-only">
       <div class="ph-row">
         <span class="ph-line"></span>
@@ -6537,7 +6559,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","termLast","termKey","termCloseTips","backdrop","cofferLayout"];
+const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","termLast","termKey","termCloseTips","backdrop","cofferLayout","pageEdit","pageOrder"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -10111,14 +10133,15 @@ const DEFAULT_THEME = "mortimer";
 // 2026-11-17, kept whole. The first time a save meets the new look it moves onto it, and off
 // Gilded (the old default) onto Mortimer; a theme somebody picked on purpose is left alone.
 // What sits behind the panes in the Terminal look: a pattern over the theme's two soft glows.
-// Clean keeps the glows and drops the pattern; Flat is the theme's plain colour.
-const BACKDROPS = [["dots", "Dots"], ["grid", "Grid"], ["lines", "Lines"], ["weave", "Weave"], ["clean", "Clean"], ["flat", "Flat"]];
+// Clean keeps the glows and drops the pattern, and is what a save starts with (Josh, 2026-11-18);
+// Flat is the theme's plain colour.
+const BACKDROPS = [["clean", "Clean"], ["dots", "Dots"], ["grid", "Grid"], ["lines", "Lines"], ["weave", "Weave"], ["flat", "Flat"]];
 const SKINS = [["term", "Terminal", "Monospace, hairlines, a command line on Home."], ["classic", "Classic", "The look before the redesign, exactly as it was."]];
 function applySkin(){
   if(!state.skin){ state.skin = "term"; if(!state.theme || state.theme === "parchment") state.theme = "mortimer"; save(); }
   document.body.dataset.skin = state.skin === "classic" ? "classic" : "term";
   document.body.dataset.tiles = state.tiles === "orderly" ? "orderly" : "mosaic";
-  document.body.dataset.backdrop = BACKDROPS.some(b=>b[0] === state.backdrop) ? state.backdrop : "dots";
+  document.body.dataset.backdrop = BACKDROPS.some(b=>b[0] === state.backdrop) ? state.backdrop : "clean";
   let touch = false; try{ touch = matchMedia("(pointer:coarse)").matches || !!phonePreview; }catch(e){}
   document.body.classList.toggle("dock", touch);
   try{ homeHeatPlace(); htLater(); }catch(e){}
@@ -14363,6 +14386,7 @@ function termPathSet(name){
   const tb = $("#tbPath"); if(tb) tb.innerHTML = `<u>${path}</u><span class="cur">_</span>`;
   const fp = $("#tfPath"); if(fp) fp.innerHTML = path;
   try{ trApply(name); }catch(e){}
+  try{ if(peAny()) peLater(); if(editOn()) setTimeout(editTray, 60); }catch(e){}
 }
 // The page's sections as a row of tabs under the top bar of a phone. They are the sidebar's own
 // buttons at one remove: a tap here clicks the one there, so nothing can drift apart.
@@ -15767,6 +15791,13 @@ function conOpen(where){
   if(!trShown && !tpHomeLogSeen()) tfSet(true);
   tpFocus();
 }
+// sets where the console should be without forcing it onto the page that happens to be showing
+function conPrefer(where){
+  const f = state.termFloat || (state.termFloat = {}), r = state.termRail || (state.termRail = {});
+  f.on = where === "float" && !document.body.classList.contains("dock"); r.on = where !== "off"; state.termLast = where === "float" ? "float" : "side";
+  save(); tfApply(); trApply(); tpRender();
+}
+function conWhere(){ return (state.termFloat && state.termFloat.on) ? "float" : state.termRail && state.termRail.on === false ? "off" : "side"; }
 function conToggle(){
   if(!tpOn()) return;
   const a = document.activeElement, inside = a && a.closest && a.closest("#termRail, #termFloat");
@@ -15895,6 +15926,7 @@ function editSet(on){
   document.body.classList.toggle("editing", on);
   const b = $("#tpEdit"); if(b){ b.textContent = on ? "done" : "edit"; b.classList.toggle("on", on); }
   editTray();
+  try{ peApply(); }catch(e){ console.error(e); }
   try{ wfDraw(); htMenuFit(); }catch(e){}
 }
 function editTray(){
@@ -15903,8 +15935,9 @@ function editTray(){
   if(!el){ el = document.createElement("div"); el.id = "editTray"; el.className = "edit-tray"; document.body.appendChild(el); el.addEventListener("click", editTrayClick); }
   const cur = $(".view:not(.hidden)"), view = cur ? cur.id.replace(/^view-/, "") : "", hh = state.homeHide || {}, wh = state.wfHide || {};
   const chips = (view === "home" ? Object.keys(HT_PANES).filter(p=>hh[p]).map(p=>`<button type="button" class="add" data-editshow="home:${p}">+ ${tE(HT_PANES[p].n)}</button>`) : [])
+    .concat(Object.keys(state.pageEdit || {}).filter(k=>k.startsWith(view + ">") && state.pageEdit[k].h).map(k=>`<button type="button" class="add" data-editshow="pe:${tE(k)}">+ ${tE(state.pageEdit[k].t || "pane")}</button>`))
     .concat(WF.filter(d=>wh[d.id] && (!d.pages || d.pages.includes(view)) && !(d.not && d.not.includes(view))).map(d=>`<button type="button" class="add" data-editshow="wf:${d.id}">+ ${tE(d.title)}</button>`));
-  const html = `<div class="in"><b>Editing</b><span class="how">Drag a pane by its header. x hides it. The corner resizes it.</span>`
+  const html = `<div class="in"><b>Editing</b><span class="how">${view === "home" ? "Drag a pane by its header." : "Drag a pane by its move tab."} x hides it. The corner resizes it.</span>`
     + (chips.length ? `<span class="lab">Hidden</span>${chips.join("")}` : `<span class="lab">Nothing here is hidden</span>`)
     + `<span class="sp"></span><button type="button" class="quiet" data-editreset="1">${editTray.sure ? "Press again to reset everything" : "Reset layout"}</button><button type="button" class="go" data-editdone="1">Done</button></div>`;
   if(el._html !== html){ el._html = html; el.innerHTML = html; }
@@ -15915,11 +15948,12 @@ function editTrayClick(e){
   if(d.editdone){ editSet(false); return; }
   if(d.editreset){
     if(!editTray.sure){ editTray.sure = 1; editTray(); clearTimeout(editTray.t); editTray.t = setTimeout(()=>{ editTray.sure = 0; editTray(); }, 4000); return; }
-    editTray.sure = 0; ["wfHide", "wfOrder", "wfSize"].forEach(k=>{ delete state[k]; }); htArrReset(); wfDraw(); toast("Layout reset."); return;
+    editTray.sure = 0; ["wfHide", "wfOrder", "wfSize", "pageEdit", "pageOrder"].forEach(k=>{ delete state[k]; }); htArrReset(); peApply(); wfDraw(); toast("Layout reset, on every page."); return;
   }
   if(d.editshow){
-    const [kind, id] = d.editshow.split(":");
-    if(kind === "home"){ if(state.homeHide) delete state.homeHide[id]; save(); htArrange(true); try{ htPlay(); }catch(err){} htMenuFit(); }
+    const kind = d.editshow.split(":")[0], id = d.editshow.slice(kind.length + 1);
+    if(kind === "pe"){ const en = (state.pageEdit || {})[id]; if(en){ delete en.h; if(!en.w && !en.mh) delete state.pageEdit[id]; } save(); peApply(); try{ wfLater(); }catch(err){} }
+    else if(kind === "home"){ if(state.homeHide) delete state.homeHide[id]; save(); htArrange(true); try{ htPlay(); }catch(err){} htMenuFit(); }
     else { if(state.wfHide) delete state.wfHide[id]; save(); wfDraw(); }
     editTray();
   }
@@ -16019,6 +16053,164 @@ function editTrayClick(e){
     if(e.key !== "Escape" || !editOn() || htDrag || g || wd) return;
     const t = e.target, tag = t && t.tagName; if(/^(INPUT|TEXTAREA|SELECT)$/.test(tag || "") || (t && t.isContentEditable) || document.body.classList.contains("modal")) return;
     editSet(false);
+  });
+})();
+// ============ EDITING ANY PAGE ============
+// Home has its own arranger (htArrange) and the wide-window extras theirs (wfDraw). This is
+// everything else: on any other page, each top-level pane (a .panel that is not inside another)
+// takes part in edit mode. Its x hides it, its move tab drags it among its neighbours, its corner
+// resizes it: sideways in steps (a third, a half, two thirds, full; panes narrower than full sit
+// side by side), downwards as a minimum height.
+// Pages redraw themselves all the time, so nothing is moved in the document. A pane is known by
+// its page, its container and its heading (peKey); what was changed lives in the save
+// (pageEdit: key -> {h hidden, w width, mh min height, t title}; pageOrder: container -> keys) and
+// peApply puts it back, as classes and CSS order, after every redraw (a MutationObserver calls it).
+// Panes inside a container that is already a grid or a row can be hidden but not moved or resized.
+const PE_SKIP = new Set(["home", "start", "arcade", "survivors", "rhythm", "museum", "patch"]);
+const PE_W = [["third", 1 / 3], ["half", 1 / 2], ["twothird", 2 / 3], ["", 1]];
+function peView(){ const cur = $(".view:not(.hidden)"); return cur && !PE_SKIP.has(cur.id.replace(/^view-/, "")) ? cur : null; }
+function peTitle(p){
+  const h = p.querySelector(":scope > .section-title h3, :scope > summary h3, :scope > .goals-head h2, :scope > h2, :scope > h3, :scope > .bq-lens .bq-lab") || p.querySelector("h2, h3");
+  const sm = h ? null : p.querySelector(":scope > summary");
+  return (h || sm) ? (h || sm).textContent.replace(/[^\p{L}\p{N}&:,'() -]+/gu, " ").replace(/\s+/g, " ").trim().slice(0, 60) : "";
+}
+// the panes of a page, grouped by the element that holds them
+function peScan(view){
+  const groups = new Map(), vid = view.id.replace(/^view-/, "");
+  view.querySelectorAll(".panel").forEach(p=>{
+    const c = p.parentElement; if(!c || c.closest(".panel") || p.closest(".wf-under, .wf-side, .hidden")) return;
+    let g = groups.get(c);
+    if(!g){
+      const ck = vid + ">" + (c === view ? "" : c.id || c.dataset.ssec || String(c.className).split(" ")[0] || "c");
+      g = {c, ck, items:[], seen:{}, free:c.classList.contains("pe-c") || getComputedStyle(c).display === "block"}; groups.set(c, g);
+    }
+    let t = peTitle(p), k = t || "#" + g.items.filter(x=>!x.title).length;
+    if(g.seen[k]){ g.seen[k]++; k += "~" + g.seen[k]; } else g.seen[k] = 1;
+    g.items.push({el:p, title:t || (p.textContent || "").replace(/[^\p{L}\p{N}&:,'() -]+/gu, " ").replace(/\s+/g, " ").trim().split(" ").slice(0, 5).join(" ") || "Untitled pane", key:g.ck + "|" + k});
+  });
+  return [...groups.values()];
+}
+function peApply(){
+  if(document.body.dataset.skin !== "term") return;
+  const view = peView(); if(!view) return;
+  const st = state.pageEdit || {}, ord = state.pageOrder || {}, editing = editOn();
+  peScan(view).forEach(g=>{
+    const saved = g.free && ord[g.ck], flex = g.free && (editing || !!saved || g.items.some(it=>st[it.key] && st[it.key].w));
+    g.c.classList.toggle("pe-c", !!flex);
+    g.items.forEach(it=>{
+      const el = it.el, e = st[it.key] || {};
+      el.dataset.peKey = it.key; el.dataset.peTitle = it.title; el.classList.add("pe-item");
+      if(g.free) delete el.dataset.peFixed; else el.dataset.peFixed = "1";
+      el.classList.toggle("pane-off", !!e.h);
+      if(e.w && g.free) el.dataset.peW = e.w; else delete el.dataset.peW;
+      if(e.mh && g.free){ el.style.minHeight = e.mh + "px"; el.dataset.peMh = "1"; } else if(el.dataset.peMh){ el.style.minHeight = ""; delete el.dataset.peMh; }
+      // the controls: in a folded <details> only its summary shows, so they go there
+      const host = el.tagName === "DETAILS" ? el.querySelector(":scope > summary") || el : el;
+      if(editing && !host.querySelector(":scope > .pe-x")){
+        host.insertAdjacentHTML("beforeend", `<button type="button" class="pe-x" data-pex="1" title="Hide this pane. The bar at the bottom brings it back." aria-label="Hide this pane">✕</button>`
+          + (g.free ? `<span class="pe-move" data-pemove="1" title="Drag to move this pane">move</span><i class="pe-grip" data-pegrip="1" title="Drag sideways to make it narrower or wider, down to make it taller. Double-click to go back to automatic."></i>` : ""));
+      } else if(!editing) host.querySelectorAll(":scope > .pe-x, :scope > .pe-move, :scope > .pe-grip").forEach(x=>x.remove());
+    });
+    // order: every child of the container gets a CSS order; the panes take the saved sequence, in the places panes sit
+    const kids = [...g.c.children];
+    if(saved){
+      const byKey = {}; g.items.forEach(it=>{ byKey[it.key] = it.el; });
+      const seq = saved.filter(k=>byKey[k]).map(k=>byKey[k]); g.items.forEach(it=>{ if(!seq.includes(it.el)) seq.push(it.el); });
+      const slots = []; kids.forEach((k, i)=>{ if(byKey[k.dataset.peKey] === k) slots.push(i); else { k.style.order = i; k.dataset.peO = "1"; } });
+      seq.forEach((el, n)=>{ el.style.order = slots[n]; el.dataset.peO = "1"; });
+    } else kids.forEach(k=>{ if(k.dataset.peO){ k.style.order = ""; delete k.dataset.peO; } });
+  });
+}
+function peLater(){ if(peLater.q) return; peLater.q = setTimeout(()=>{ peLater.q = 0; try{ peApply(); }catch(e){ console.error(e); } }, 40); }
+// whether anything on any page has been changed, so an untouched app does no work on redraws
+function peAny(){ return editOn() || Object.keys(state.pageEdit || {}).length > 0 || Object.keys(state.pageOrder || {}).length > 0; }
+(function peWire(){
+  try{ const root = $(".content-inner"); if(root && window.MutationObserver) new MutationObserver(()=>{ if(peAny()) peLater(); }).observe(root, {childList:true, subtree:true}); }catch(e){}
+  const entry = el=>{ const st = state.pageEdit || (state.pageEdit = {}); return st[el.dataset.peKey] || (st[el.dataset.peKey] = {t:el.dataset.peTitle}); };
+  const tidy = k=>{ const st = state.pageEdit || {}, e = st[k]; if(e && !e.h && !e.w && !e.mh) delete st[k]; };
+  document.addEventListener("click", e=>{
+    const x = e.target.closest && e.target.closest("[data-pex]"); if(!x || !editOn()) return;
+    e.preventDefault(); e.stopPropagation();
+    const el = x.closest(".pe-item"); if(!el) return;
+    entry(el).h = 1; save(); peApply(); editTray(); try{ wfLater(); }catch(err){}
+  }, true);
+  let g = null, mv = null;
+  document.addEventListener("pointerdown", e=>{
+    if(!editOn() || e.button !== 0 || !e.target.closest) return;
+    const grip = e.target.closest("[data-pegrip]"), move = e.target.closest("[data-pemove]");
+    if(grip){
+      const el = grip.closest(".pe-item"), r = el.getBoundingClientRect(); e.preventDefault(); e.stopPropagation();
+      g = {el, x:e.clientX, y:e.clientY, w0:r.width, h0:r.height, cw:el.parentElement.clientWidth, w:el.dataset.peW || "", moved:false};
+      document.body.classList.add("ht-dragging");
+    } else if(move){
+      const el = move.closest(".pe-item"); e.preventDefault(); e.stopPropagation();
+      mv = {el, x:e.clientX, y:e.clientY, drag:false, drop:null};
+    }
+  }, true);
+  document.addEventListener("pointermove", e=>{
+    if(g){
+      const dx = e.clientX - g.x, dy = e.clientY - g.y; g.moved = g.moved || Math.abs(dx) > 4 || Math.abs(dy) > 4; if(!g.moved) return;
+      if(Math.abs(dx) > 4){
+        // the nearest of a third, a half, two thirds and full to where the corner has been pulled
+        const f = (g.w0 + dx) / g.cw, best = PE_W.slice().sort((a, b)=>Math.abs(a[1] - f) - Math.abs(b[1] - f))[0][0];
+        g.nw = best; if(best) g.el.dataset.peW = best; else delete g.el.dataset.peW;
+      }
+      if(Math.abs(dy) > 6){ g.mh = Math.max(60, Math.round(g.h0 + dy)); g.el.style.minHeight = g.mh + "px"; g.el.dataset.peMh = "1"; }
+      return;
+    }
+    if(!mv) return;
+    if(!mv.drag && Math.hypot(e.clientX - mv.x, e.clientY - mv.y) > 6){
+      mv.drag = true; mv.ghost = document.createElement("div"); mv.ghost.className = "ht-ghost"; mv.ghost.textContent = "// " + (mv.el.dataset.peTitle || "pane");
+      mv.mark = document.createElement("div"); mv.mark.className = "ht-mark"; document.body.append(mv.mark, mv.ghost);
+      mv.el.classList.add("drag-src"); document.body.classList.add("ht-dragging");
+    }
+    if(!mv.drag) return;
+    mv.ghost.style.transform = `translate(${Math.round(e.clientX + 14)}px, ${Math.round(e.clientY + 12)}px)`;
+    // onto another pane of the same container: before it or after it, by which half the pointer is over
+    const hit = [...mv.el.parentElement.children].find(p=>{ if(p === mv.el || !p.classList.contains("pe-item") || p.classList.contains("pane-off")) return false; const r = p.getBoundingClientRect(); return r.height > 0 && e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom; });
+    mv.drop = null;
+    if(hit){
+      const r = hit.getBoundingClientRect(), side = r.width < hit.parentElement.clientWidth * .8, after = side ? e.clientX > r.left + r.width / 2 : e.clientY > r.top + r.height / 2, m = mv.mark.style;
+      mv.drop = {key:hit.dataset.peKey, after};
+      if(side){ m.top = r.top + "px"; m.height = r.height + "px"; m.width = "4px"; m.left = (after ? r.right + 3 : r.left - 7) + "px"; }
+      else { m.left = r.left + "px"; m.width = r.width + "px"; m.height = "4px"; m.top = (after ? r.bottom + 3 : r.top - 7) + "px"; }
+    }
+    mv.mark.classList.toggle("on", !!mv.drop);
+  });
+  const end = ()=>{
+    if(g){
+      const d = g; g = null; document.body.classList.remove("ht-dragging"); if(!d.moved) return;
+      const en = entry(d.el);
+      if(d.nw !== undefined){
+        if(d.nw) en.w = d.nw; else delete en.w;
+        // made narrower: the pane after it comes up beside it, taking the rest of the row
+        if(d.nw && d.nw !== d.w){
+          const sibs = [...d.el.parentElement.children].filter(p=>p.classList.contains("pe-item") && !p.classList.contains("pane-off")).sort((a, b)=>(+a.style.order || 0) - (+b.style.order || 0)), nx = sibs[sibs.indexOf(d.el) + 1];
+          if(nx && !nx.dataset.peW && !nx.dataset.peFixed) entry(nx).w = d.nw === "third" ? "twothird" : d.nw === "twothird" ? "third" : "half";
+        }
+      }
+      if(d.mh) en.mh = d.mh;
+      tidy(d.el.dataset.peKey); save(); peApply(); try{ wfLater(); }catch(err){}
+      return;
+    }
+    if(mv){
+      const d = mv; mv = null; if(!d.drag) return;
+      d.ghost.remove(); d.mark.remove(); d.el.classList.remove("drag-src"); document.body.classList.remove("ht-dragging");
+      if(!d.drop) return;
+      const c = d.el.parentElement, grp = peScan(peView() || document.body).find(x=>x.c === c); if(!grp) return;
+      // the panes as they stand on screen, the dragged one taken out and put back beside the one it was dropped on
+      const keys = grp.items.map(it=>it.el).sort((a, b)=>(a.style.order === "" ? [...c.children].indexOf(a) : +a.style.order) - (b.style.order === "" ? [...c.children].indexOf(b) : +b.style.order)).map(el=>el.dataset.peKey).filter(k=>k !== d.el.dataset.peKey);
+      const at = keys.indexOf(d.drop.key); if(at < 0) return;
+      keys.splice(at + (d.drop.after ? 1 : 0), 0, d.el.dataset.peKey);
+      (state.pageOrder || (state.pageOrder = {}))[grp.ck] = keys; save(); peApply();
+    }
+  };
+  document.addEventListener("pointerup", end);
+  document.addEventListener("pointercancel", end);
+  document.addEventListener("dblclick", e=>{
+    const grip = e.target.closest && e.target.closest("[data-pegrip]"); if(!grip || !editOn()) return;
+    const el = grip.closest(".pe-item"), st = state.pageEdit || {}, en = st[el.dataset.peKey];
+    if(en){ delete en.w; delete en.mh; tidy(el.dataset.peKey); save(); peApply(); }
   });
 })();
 termDef(["edit"], "edit", "Turns edit mode on or off: move, hide, bring back and resize the panes on the page.", "App", ()=>({hint:`<u>enter</u> turns edit mode ${editOn() ? "off" : "on"}`, run:()=>editSet(!editOn()), quiet:true}), {bare:true});
@@ -20214,7 +20406,7 @@ function renderLookSettings(){
   }
   const cseg = $("#conSeg");
   if(cseg){
-    const cur = tfOn() ? "float" : state.termRail && state.termRail.on === false ? "off" : "side";
+    const cur = conWhere();
     cseg.innerHTML = [["side", "At the side"], ["float", "Floating"], ["off", "Hidden"]].map(([id, label])=>`<button class="${id === cur ? "on" : ""}" data-con="${id}">${label}</button>`).join("");
     cseg.querySelectorAll("[data-con]").forEach(b=>b.onclick = ()=>{ if(b.dataset.con === "off") conClose(); else conOpen(b.dataset.con); renderLookSettings(); });
     const kb = $("#conKeyBtn");
@@ -20227,7 +20419,7 @@ function renderLookSettings(){
   }
   const bseg = $("#bdSeg");
   if(bseg){
-    const cur = document.body.dataset.backdrop || "dots";
+    const cur = document.body.dataset.backdrop || "clean";
     bseg.innerHTML = BACKDROPS.map(([id, label])=>`<button class="${id === cur ? "on" : ""}" data-bd="${id}">${label}</button>`).join("");
     bseg.querySelectorAll("[data-bd]").forEach(b=>b.onclick = ()=>{ state.backdrop = b.dataset.bd; save(); applySkin(); renderLookSettings(); });
   }
@@ -22770,9 +22962,17 @@ const SU_VIEW = {
         : `<p class="su-note" style="margin-top:4px">A phone setting. On a computer, Ctrl and plus or minus does the same.</p>`}
       <div class="su-lbl">Numbers</div>
       <div class="seg su-seg">${NUM_CHOICES.map(([id,label])=>`<button class="${id===num?"on":""}" data-sunum="${id}">${label}</button>`).join("")}</div>
-      ${state.skin === "classic" ? "" : `<div class="su-lbl">Bakery layout <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· how Coffer lays out its money makers. Board is cards and tiles, Listing is one aligned table</span></div>
-      <div class="seg su-seg">${COFFER_LAYOUTS.map(([id,label])=>`<button class="${cofferLayout()===id?"on":""}" data-subak="${id}">${label}</button>`).join("")}</div>`}
-      ${state.skin === "classic" ? "" : `<p class="su-note" style="margin-top:14px">In the Terminal look a console sits at the side of every page: type a command, a note or a question. Drag its header to float it, and its x closes it. <b>${escapeHtml(termKeyText())}</b> brings it back from anywhere, and so does Settings, Look, where the shortcut can be changed.</p>`}`;
+      ${state.skin === "classic" ? "" : `<div class="su-lbl">Backdrop <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· what sits behind the panes. Clean has no pattern; the rest are faint ones</span></div>
+      <div class="seg su-seg">${BACKDROPS.map(([id,label])=>`<button class="${(document.body.dataset.backdrop||"clean")===id?"on":""}" data-subd="${id}">${label}</button>`).join("")}</div>
+      <div class="su-lbl">Home layout <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· Mosaic's panes can be dragged, hidden and resized. Orderly keeps every edge on one grid</span></div>
+      <div class="seg su-seg">${TILE_LAYOUTS.map(([id,label])=>`<button class="${(state.tiles==="orderly"?"orderly":"mosaic")===id?"on":""}" data-sutiles="${id}">${label}</button>`).join("")}</div>
+      <div class="su-lbl">Wide window <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· on a big monitor, the spare room beside a page fills with extra panes</span></div>
+      <div class="seg su-seg"><button class="${state.wideFill!==false?"on":""}" data-suwf="1">Fill it</button><button class="${state.wideFill===false?"on":""}" data-suwf="0">Leave it empty</button></div>
+      <div class="su-lbl">Bakery layout <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· how Coffer lays out its money makers. Board is cards and tiles, Listing is one aligned table</span></div>
+      <div class="seg su-seg">${COFFER_LAYOUTS.map(([id,label])=>`<button class="${cofferLayout()===id?"on":""}" data-subak="${id}">${label}</button>`).join("")}</div>
+      <div class="su-lbl">Console <span class="small muted" style="font-weight:normal; text-transform:none; letter-spacing:0">· where the console sits: in a column beside every page, as a window you can move, or put away</span></div>
+      <div class="seg su-seg">${[["side","At the side"],["float","Floating"],["off","Hidden"]].map(([id,label])=>`<button class="${conWhere()===id?"on":""}" data-sucon="${id}">${label}</button>`).join("")}</div>`}
+      ${state.skin === "classic" ? "" : `<p class="su-note" style="margin-top:14px">The console takes a command, a note or a question. Drag its header to float it, and its x closes it. <b>${escapeHtml(termKeyText())}</b> brings it back from anywhere, and so does Settings, Look, where the shortcut can be changed.</p>`}`;
   },
   ai: ()=>`<h3 class="su-h">Claude in the terminal <span class="su-opt">Optional</span></h3>
       <p class="su-p">Home has a terminal. Type a question there and it is answered on this device, from what the app knows. Give it your own Claude API key and the question goes to Claude instead, along with your levels, so it can answer nearly anything about the game for your account.</p>
@@ -22898,6 +23098,11 @@ const SU_WIRE = {
     $$("#suBody [data-suskin]").forEach(b=>b.onclick=()=>{ setSkin(b.dataset.suskin); suDid("skin", "Look set to " + (b.dataset.suskin === "classic" ? "Classic" : "Terminal")); renderSetup(); });
     $$("#suBody [data-suart]").forEach(b=>b.onclick=()=>{ state.themeArt = b.dataset.suart; save(); applyTheme(); $$("#suBody [data-suart]").forEach(x=>x.classList.toggle("on", x===b)); });
     $$("#suBody [data-subak]").forEach(b=>b.onclick=()=>{ cofferLayoutSet(b.dataset.subak); $$("#suBody [data-subak]").forEach(x=>x.classList.toggle("on", x===b)); });
+    const suPick = (attr, b)=>$$(`#suBody [${attr}]`).forEach(x=>x.classList.toggle("on", x===b));
+    $$("#suBody [data-subd]").forEach(b=>b.onclick=()=>{ state.backdrop = b.dataset.subd; save(); applySkin(); suPick("data-subd", b); });
+    $$("#suBody [data-sutiles]").forEach(b=>b.onclick=()=>{ setTiles(b.dataset.sutiles); suPick("data-sutiles", b); });
+    $$("#suBody [data-suwf]").forEach(b=>b.onclick=()=>{ state.wideFill = b.dataset.suwf === "1"; save(); try{ wfDraw(); }catch(e){} suPick("data-suwf", b); });
+    $$("#suBody [data-sucon]").forEach(b=>b.onclick=()=>{ conPrefer(b.dataset.sucon); suPick("data-sucon", b); });
     $$("#suBody [data-sutheme]").forEach(b=>b.onclick=()=>{
       if(state.theme !== b.dataset.sutheme){
         state.theme = b.dataset.sutheme; save(); applyTheme();

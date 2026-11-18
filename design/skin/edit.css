@@ -47,3 +47,25 @@
   body[data-skin="term"] .edit-tray button.quiet{color:var(--muted)}
   body[data-skin="term"] .edit-tray button.go{background:var(--gold); border-color:var(--gold); color:var(--bg); font-weight:600}
   body[data-skin="term"] .edit-tray button.go:hover{background:color-mix(in srgb, var(--gold) 86%, var(--text)); color:var(--bg)}
+
+  /* ---- any other page (peApply): a container whose panes have been moved or resized lays them
+     out as a wrapping row, each pane full width unless it was made narrower ---- */
+  body[data-skin="term"] .pe-c{display:flex; flex-wrap:wrap; gap:var(--gap); align-items:stretch; align-content:flex-start}
+  body[data-skin="term"] .pe-c::before{content:""; flex:1 1 100%; height:0; margin-bottom:calc(var(--gap) * -1); order:-1}
+  body[data-skin="term"] .pe-c > *{flex:1 1 100%; min-width:0; margin-top:0 !important; margin-bottom:0 !important}
+  body[data-skin="term"] .pe-c > [data-pe-w="half"]{flex:1 1 calc(50% - var(--gap))}
+  body[data-skin="term"] .pe-c > [data-pe-w="third"]{flex:1 1 calc(33.333% - var(--gap))}
+  body[data-skin="term"] .pe-c > [data-pe-w="twothird"]{flex:2 1 calc(66.666% - var(--gap))}
+  body[data-skin="term"] .pe-item{position:relative}
+  body[data-skin="term"].editing .pe-item{outline:1px dashed color-mix(in srgb, var(--gold) 50%, transparent); outline-offset:-1px}
+  body[data-skin="term"] summary{position:relative}
+  body[data-skin="term"] .pe-x{position:absolute; top:4px; right:5px; z-index:6; width:22px; height:22px; min-height:0; margin:0; padding:0;
+    background:color-mix(in srgb, var(--bg) 80%, transparent); border:1px solid var(--line); box-shadow:none; color:var(--muted); font:12px var(--fm); line-height:1; cursor:pointer; transition:color .14s, border-color .14s}
+  body[data-skin="term"] .pe-x:hover, body[data-skin="term"] .pe-x:focus-visible{border-color:var(--k-o); color:var(--k-o); outline:0}
+  body[data-skin="term"] .pe-move{position:absolute; top:4px; right:32px; z-index:6; height:22px; padding:0 8px; background:color-mix(in srgb, var(--bg) 80%, transparent); border:1px solid var(--line);
+    color:var(--muted); font:11px/20px var(--fm); letter-spacing:.08em; cursor:grab; -webkit-user-select:none; user-select:none; touch-action:none; transition:color .14s, border-color .14s}
+  body[data-skin="term"] .pe-move:hover{border-color:var(--gold); color:var(--gold)}
+  body[data-skin="term"] .pe-grip{position:absolute; right:0; bottom:0; z-index:6; width:20px; height:20px; cursor:nwse-resize; touch-action:none;
+    background:linear-gradient(135deg, transparent 0 50%, color-mix(in srgb, var(--gold) 75%, transparent) 50% 62%, transparent 62% 74%, color-mix(in srgb, var(--gold) 75%, transparent) 74% 86%, transparent 86%)}
+  body[data-skin="term"] .pe-grip:hover{background:linear-gradient(135deg, transparent 0 50%, var(--gold) 50% 62%, transparent 62% 74%, var(--gold) 74% 86%, transparent 86%)}
+  body[data-skin="term"] .pe-item.drag-src{opacity:.38}
