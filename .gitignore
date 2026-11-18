@@ -28,3 +28,6 @@ FOR-CHATGPT-themes/
 
 # ChatGPT's theme packages as delivered (large previews and full-size plates); what the app uses is in design/skin and design/theme-art
 handoff/terminal-*/
+
+# phone and desktop builds made in a session, sent to Josh directly; releases go on GitHub Releases
+output/

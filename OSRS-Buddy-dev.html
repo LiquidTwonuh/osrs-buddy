@@ -9844,6 +9844,7 @@ const MUSEUM = [
   ["2026-09-13-v1.6.jpg", "13 September 2026", "v1.6. The journal, and Home that counts your entries."],
   ["2026-09-24-v1.7-the-map.jpg", "24 September 2026", "v1.7. The Map replaces the quest planner; Achievements replaces the collection log."],
   ["2026-10-18-osrs-buddy-1.8-home.jpg", "18 October 2026", "The last day as OSRS Buddy. The Coffer was built, the phone could update itself, and the name was decided that night."],
+  ["2026-11-18-mortimeter-1.0-home.jpg", "18 November 2026", "Mortimeter 1.0, the first release under the new name. The Terminal look: panes you arrange yourself, and a console on every page."],
 ];
 function renderMuseum(){
   const el = $("#museumList"); if(!el) return;
@@ -21927,10 +21928,22 @@ const APP_VERSION = "2.0";
 function verLabel(v){ const m = /^(\d+)(\.\d+.*)?$/.exec(String(v || "")); if(!m || +m[1] < 2) return String(v || ""); return (+m[1] - 1) + (m[2] || ""); }
 const APP_LABEL = verLabel(APP_VERSION);
 const PATCH_NOTES = [
-  {v:"2.0", date:"in progress", title:"Farewell Buddy, hello Mortimeter", notes:[
+  {v:"2.0", date:"November 18, 2026", title:"Farewell Buddy, hello Mortimeter", notes:[
     "The app is now Mortimeter. OSRS Buddy was one letter away from OSBuddy, a third-party client from years ago that this app has nothing to do with, and the name needed to be ours. Nothing about your save, your backups or your files changes.",
     "Mortimeter is Mortimer, the Slayer master, plus meter, because the app measures your account.",
     "The gold theme the app started with is now called Gilded. The About panel remembers the old name and dates. Anyone whose save is older than the rename finds a new trophy in the cabinet.",
+    "A new look, Terminal: monospace headings, thin lines and square corners, with a command line at the top of every page. Classic, the look the app had before, is one click away in Settings, Look, and nothing about it has changed.",
+    "Home in the Terminal look is panes you arrange yourself. Press edit on the top line, then drag a pane by its header, hide it with its x, or pull its corner to resize it. Skills is the biggest pane. Every other page can be edited the same way, and Reset this page or Reset every page puts things back.",
+    "The console takes commands, notes and questions: cd scroll, stats mining, log mined for an hour, and -help for the full list. On a wide window it sits in its own column at the right of every page. Drag its header to float it, its x closes it, and Ctrl+Shift+T brings it back.",
+    "A wide window fills itself. On a big monitor the room beside and under a page fills with extra panes, the most useful first, and any of them can be hidden.",
+    "Eighteen themes: Mortimer, Night, Abyss, Crystal, Gilded and thirteen runes. Most carry a painting on Home's Character pane. Settings, Look also chooses the backdrop behind the panes and how progress bars are drawn.",
+    "Priorities are built around the week. Each one sits in Main focus, Keep warm or Someday, and can carry a weekly target that counts itself from your experience and kills. Ideas lists thirteen to start from, and weekly targets can be switched off.",
+    "Carry over: when a session runs past midnight, the XP lands on the next day and the day you started on looks empty. Mark that day as played, pick the skills, and it counts without adding any XP. The app asks when it thinks this has happened.",
+    "The Bakery, Coffer's front page, comes two ways: Board, with the best three side by side and the rest as tiles, or Listing, one aligned table with the row you pick opened beside it. Tune shows your answers as lines you can press or type into.",
+    "New page: Skills. Every skill with your level, and a page for each with the wiki's training guide laid out as a ladder, with you marked on it. Beside the grid: your closest level ups, what you gained lately, skills gone quiet, the next base level and quests waiting on a level. Tap a skill requirement anywhere in the app and the guide for that stretch opens.",
+    "New page: Upgrades. The wiki's gear progression for melee, ranged and magic as a ladder: the rung your levels reach, what changes on the next one, and what each piece costs today. A fourth tab covers skilling outfits and tools.",
+    "The setup walkthrough's Look and feel step now covers the look, theme, backdrop, progress bars, layouts and the console, each with a line saying what it does.",
+    "Phones: on a foldable the app refits itself when you open or shut it.",
     "New section: Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
     "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
     "The phone can take the app itself from your PC. Pair them, tap Update app from PC, and it keeps that copy and runs it from then on, so a change doesn't mean installing an APK again. If a copy ever fails to load, the built-in one comes back by itself.",
