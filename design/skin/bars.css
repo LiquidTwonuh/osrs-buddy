@@ -25,13 +25,14 @@
   body[data-skin="term"]:is([data-bars="hair"], [data-bars="lit"]) .cf-ltrack::before{height:2px; margin-top:-1px}
   body[data-skin="term"]:is([data-bars="hair"], [data-bars="lit"]) .cf-lbar{height:2px; top:10px}
 
-  /* lit tip: a bright thread with a glowing end (turned up at Josh's asking: the line glows too) */
+  /* lit tip: a bright thread with a glowing end. Josh asked for it brighter than the mockup, then
+     for the glow to come back down: the line has a faint glow and the tip a modest one. */
   body[data-skin="term"][data-bars="lit"]{--bt:2px; --bl:color-mix(in srgb, var(--text) 16%, transparent)}
   body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m){overflow:visible !important}
-  body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m) > i{position:relative; box-shadow:0 0 7px color-mix(in srgb, var(--bc) 75%, transparent), 0 0 2px var(--bc)}
-  body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m) > i::after{content:""; position:absolute; right:-2px; top:50%; width:6px; height:6px; margin-top:-3px;
-    background:color-mix(in srgb, var(--bc) 45%, #fff); box-shadow:0 0 12px 3px var(--bc), 0 0 4px 1px color-mix(in srgb, var(--bc) 40%, #fff)}
-  body[data-skin="term"][data-bars="lit"] .cf-lbar{background:var(--gold); box-shadow:0 0 7px color-mix(in srgb, var(--gold) 75%, transparent)}
+  body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m) > i{position:relative; box-shadow:0 0 4px color-mix(in srgb, var(--bc) 40%, transparent)}
+  body[data-skin="term"][data-bars="lit"] :is(.bar, .wf-m) > i::after{content:""; position:absolute; right:-2px; top:50%; width:5px; height:5px; margin-top:-2.5px;
+    background:color-mix(in srgb, var(--bc) 65%, #fff); box-shadow:0 0 7px 1px color-mix(in srgb, var(--bc) 75%, transparent)}
+  body[data-skin="term"][data-bars="lit"] .cf-lbar{background:var(--gold); box-shadow:0 0 4px color-mix(in srgb, var(--gold) 40%, transparent)}
   body[data-skin="term"][data-bars="lit"] .ht-sk .bar{height:6px}
 
   /* brackets: as if typed, [#####.....] */
