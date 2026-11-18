@@ -3548,6 +3548,11 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
      After Josh's notes of 2026-11-17. Two panes size their insides by their own width rather
      than the window's (container queries), since a pane can be narrow in a wide window. */
   body[data-skin="term"] #view-home{container:home / inline-size}
+  /* The page's scrollbar keeps its lane whether or not it shows, so the width Home has does not
+     change with it. Home stretched to the foot of the window took the scrollbar away, the page
+     widened, Home's height changed, the stretch was measured again, and the two chased each other
+     round many times a second: the terminal's first answer from Claude set it off (2026-11-18). */
+  html:has(body[data-skin="term"]){scrollbar-gutter:stable}
   body[data-skin="term"] .hs-menu{container:htmenu / inline-size}
   body[data-skin="term"] .hs-orbs{container:htorbs / inline-size}
 
@@ -14270,8 +14275,170 @@ function claudeSetKey(k){
 }
 function claudeOn(){ return !!claudeKey(); }
 function claudeModel(){ const m = state.claudeModel; return CLAUDE_MODELS.some(x=>x[0] === m) ? m : CLAUDE_MODELS[0][0]; }
-function claudeSystem(){
-  const m = state.playerMeta || {}, out = [];
+// ---- what Claude is told ----
+// A question goes with the account as the app knows it (levels, quests, goals, diaries, the
+// routine) and, when it names a quest, that quest in full: requirements against the levels, the
+// quests it needs and which are done, rewards, and its steps with the player's ticks. Anything
+// else Claude can read while it answers, through three tools that look in the save on this device:
+// one quest, the quest list, or a section of the account. Nothing leaves that is not already here.
+const CLAUDE_SECTIONS = ["skills", "bosses", "goals", "notes", "diaries", "routine", "collection_log", "priorities", "setup"];
+function claudeTools(){
+  const obj = (props, req)=>({type:"object", properties:props, required:req, additionalProperties:false});
+  return [
+    {name:"quest", strict:true, description:"Everything the app knows about one Old School RuneScape quest for this player: its status, each requirement against their levels, the quests it needs and which are done, rewards, and the quest's steps with the ones the player has ticked. Use it whenever a quest comes up and its details are not already given.",
+     input_schema:obj({name:{type:"string", description:"The quest's name as the OSRS Wiki spells it, for example Dragon Slayer II"}}, ["name"])},
+    {name:"quest_list", strict:true, description:"The player's quests by status: done, in_progress (started in game, not finished), ready (every requirement met and not yet done), blocked (something missing, and what), or all.",
+     input_schema:obj({status:{type:"string", enum:["done", "in_progress", "ready", "blocked", "all"]}}, ["status"])},
+    {name:"account", strict:true, description:"One section of the player's account as the app keeps it. skills: every level and XP. bosses: kill counts. goals: their to-do list with progress. notes: what they have written down. diaries: achievement diary tasks done by region and tier, with the tasks left. routine: the recurring activities they track and when each was last done. collection_log: how many unique items they have. priorities: what they are focusing on. setup: how they told the app they like to play.",
+     input_schema:obj({section:{type:"string", enum:CLAUDE_SECTIONS}}, ["section"])},
+  ];
+}
+// quest names as typed: apostrophes and punctuation ignored, roman numerals as digits
+function claudeQNorm(s){ return qNorm(String(s || "").replace(/['\u2019]/g, "")); }
+function claudeQuestFind(name){
+  const db = questDB(); if(!db) return null;
+  const k = claudeQNorm(name).trim(); if(!k) return null;
+  return db.order.find(n=>claudeQNorm(n).trim() === k) || db.order.find(n=>claudeQNorm(qpLabel(n)).trim() === k)
+    || db.order.find(n=>claudeQNorm(n).trim().startsWith(k)) || db.order.find(n=>claudeQNorm(n).includes(" " + k + " ")) || null;
+}
+// the quest a question is about: the longest name it contains, else the planner's target when
+// it talks about a quest or a step without naming one
+function claudeQuestIn(text){
+  const db = questDB(); if(!db) return null;
+  const t = claudeQNorm(text); let best = null;
+  db.order.forEach(n=>{ const nn = claudeQNorm(n); if(nn.trim().length > 3 && t.includes(nn) && (!best || nn.length > claudeQNorm(best).length)) best = n; });
+  return best;
+}
+function claudeQuestFor(q){
+  const named = claudeQuestIn(q) || (claudeAsk.last ? claudeQuestIn(claudeAsk.last.q) : null);
+  if(named) return named;
+  const t = state.qpTarget, db = questDB();
+  if(t && t !== "__ALL__" && db && db.quests[t] && /\b(quest|steps?|next|stuck|where|guide)\b/i.test(q || "")) return t;
+  return null;
+}
+function claudeQp(){ const db = questDB(); return db ? db.order.filter(questDone).reduce((a, n)=>a + (db.quests[n].qpGain || 0), 0) : 0; }
+function claudeStepsText(n){
+  const mode = state.qpStepsMode === "full" ? "full" : "quick";
+  let tkey = mode === "full" ? n + "|full" : n, label = mode === "full" ? "walkthrough" : "quick guide";
+  const ours = QSTEPS && QSTEPS.quests && QSTEPS.quests[n], saved = state.questGuides || {};
+  let secs = ours && ours[mode] ? ours[mode] : (saved[tkey] || {}).sections;
+  if(!secs && mode === "full"){ secs = ours && ours.quick ? ours.quick : (saved[n] || {}).sections; if(secs){ tkey = n; label = "quick guide"; } }
+  if(!secs) return "Steps: not on this device for this quest. The OSRS Wiki's quick guide has them.";
+  const ticks = ((state.questSteps || {})[tkey]) || {};
+  let idx = 0, total = 0, done = 0; const lines = [];
+  secs.forEach(sec=>{
+    if(sec.h) lines.push(`[${sec.h}]`);
+    (sec.steps || []).forEach(st=>{
+      const i = idx++, t = qsClean(st.t);
+      if(st.note){ lines.push("  note: " + t); return; }
+      total++; const on = !!ticks[i]; if(on) done++;
+      lines.push(`  ${on ? "[x]" : "[ ]"} ${total}. ${t}`);
+    });
+  });
+  let body = lines.join("\n"); if(body.length > 9000) body = body.slice(0, 9000) + "\n  (the rest of the steps are cut off here)";
+  return `Steps (the ${label} from the OSRS Wiki, as the app shows them; [x] is a step the player has ticked, ${done} of ${total} ticked${done && done < total ? ", so the first unticked step is where they are" : ""}):\n` + body;
+}
+function claudeQuestText(n){
+  const db = questDB(); if(!db) return "The quest list has not loaded on this device yet.";
+  const q = db.quests[n]; if(!q) return `No quest called "${n}" in the app's list.`;
+  const st = questStatus(n, db), out = [];
+  const stTxt = st === "done" ? "complete (ticked in the app)" : questInProgress(n) ? "in progress (started in game, not finished)" : !(live && live.skills) ? "unknown, the player's levels are not loaded" : st === "ready" ? "ready to start, every requirement is met" : "blocked";
+  out.push(`Quest: ${n}. ${[q.difficulty, q.length ? q.length + " length" : ""].filter(Boolean).join(", ")}. Status: ${stTxt}.`);
+  const bits = Object.entries(q.reqs || {}).map(([s, l])=>{
+    if(!SKILL_ORDER.includes(s)) return `${l} ${nice(s)}`;
+    const have = lvlOf(s), boost = q.boostable && q.boostable[s] ? ", boostable" : "";
+    return `${l} ${frSkName(s)} (has ${have}${have >= l ? ", met" : ", short by " + (l - have)}${boost})`;
+  });
+  if(q.qp) bits.unshift(`${q.qp} quest points (has ${claudeQp()})`);
+  out.push("Requirements: " + (bits.length ? bits.join("; ") : "none") + ".");
+  const pre = q.prereqs || [];
+  out.push("Quests needed first: " + (pre.length ? pre.map(p=>`${p} (${questDone(p) ? "done" : "not done"})`).join(", ") : "none") + ".");
+  const rw = Object.entries(q.rewards || {}).map(([s, a])=>`${Number(a).toLocaleString("en-US")} ${nice(s)} XP`);
+  if(q.qpGain) rw.unshift(`${q.qpGain} quest point${q.qpGain === 1 ? "" : "s"}`);
+  (q.items || []).forEach(it=>{ if(it && it.n) rw.push(it.n); });
+  (q.unlocks || []).forEach(u=>rw.push(u));
+  if(rw.length) out.push("Rewards: " + rw.join(", ") + ".");
+  const kids = qpChildren(n, db);
+  if(kids.length) out.push("Needed for: " + kids.slice(0, 12).join(", ") + (kids.length > 12 ? ` and ${kids.length - 12} more` : "") + ".");
+  out.push(claudeStepsText(n));
+  return out.join("\n");
+}
+function claudeQuestList(which){
+  const db = questDB(); if(!db) return "The quest list has not loaded on this device yet.";
+  const rows = db.order.map(n=>({n, st:questStatus(n, db), prog:questInProgress(n)}));
+  const pick = which === "done" ? rows.filter(r=>r.st === "done") : which === "in_progress" ? rows.filter(r=>r.prog) : which === "ready" ? rows.filter(r=>r.st === "ready") : which === "blocked" ? rows.filter(r=>r.st === "blocked") : rows;
+  const what = String(which).replace("_", " ");
+  if(!pick.length) return `No quests are ${what}.`;
+  return `${pick.length} quest${pick.length === 1 ? "" : "s"} (${what}):\n` + pick.map(r=>`${r.n}: ${r.st}${r.prog ? ", in progress" : ""}${r.st === "blocked" ? " (missing " + questMissingText(r.n, db) + ")" : ""}`).join("\n");
+}
+function claudeSection(sec){
+  const when = ms=>ms ? new Date(ms).toISOString().slice(0, 10) : "";
+  if(sec === "skills"){
+    if(!(live && live.skills)) return "The player's levels are not loaded.";
+    return "Skills (level, XP):\n" + SKILL_ORDER.map(k=>`${frSkName(k)}: ${lvlOf(k)}, ${liveSkillXp(k).toLocaleString("en-US")} XP`).join("\n");
+  }
+  if(sec === "bosses"){
+    const rows = Object.entries((live && live.bosses) || {}).filter(([k, e])=>e && e.kills > 0).sort((a, b)=>b[1].kills - a[1].kills);
+    return rows.length ? "Kill counts:\n" + rows.map(([k, e])=>`${nice(k)}: ${e.kills}`).join("\n") : "No kill counts are recorded.";
+  }
+  if(sec === "goals"){
+    const gs = state.goals || []; if(!gs.length) return "The to-do list is empty.";
+    return "Goals (" + gs.length + "):\n" + gs.map(g=>{
+      let p = {}; try{ p = goalProgress(g) || {}; }catch(e){}
+      const prog = p.done ? "done" : p.hasSteps ? `${p.doneSteps} of ${p.totalSteps} steps` : p.cur != null && g.target != null ? `${Number(p.cur).toLocaleString("en-US")} of ${Number(g.target).toLocaleString("en-US")}` : p.pct != null ? Math.round(p.pct) + "%" : "open";
+      return `${g.label || g.kind}: ${prog}${g.note ? " (note: " + g.note + ")" : ""}${g.addedAt ? ", added " + when(g.addedAt) : ""}`;
+    }).join("\n");
+  }
+  if(sec === "notes"){
+    const ns = (state.notes || []).filter(n=>n && String(n.text || "").trim()); if(!ns.length) return "There are no notes.";
+    return "Notes, newest first (" + ns.length + "):\n" + ns.slice(0, 40).map(n=>`${when(n.updatedAt || n.createdAt)}: ${String(n.text || "").slice(0, 300)}`).join("\n");
+  }
+  if(sec === "diaries"){
+    let dd = null; try{ dd = diaryData(); }catch(e){}
+    if(!dd) return "The diaries have not loaded on this device yet.";
+    const task = t=>typeof t === "string" ? t : (t && (t.t || t.task || t.text || t.name)) || JSON.stringify(t);
+    const lines = [];
+    dd.regions.forEach(r=>{
+      lines.push(`${r.name}: ${r.done} of ${r.total} tasks${r.complete ? ", complete" : ""}`);
+      r.tiers.forEach(t=>{
+        const left = t.known ? t.tasks.filter((x, i)=>!t.flags[i]) : [];
+        lines.push(`  ${t.tier}: ${t.done} of ${t.total}${t.complete ? ", complete" : t.known ? "" : " (which ones is not known, only the count)"}` + (left.length ? ". Left: " + left.map(task).join("; ") : ""));
+      });
+    });
+    let body = lines.join("\n"); if(body.length > 12000) body = body.slice(0, 12000) + "\n(cut off here)";
+    return "Achievement diaries:\n" + body;
+  }
+  if(sec === "routine"){
+    let rs = []; try{ rs = termRounds(); }catch(e){}
+    if(!rs.length) return "No recurring activities are tracked.";
+    return "Routine:\n" + rs.map(m=>{ const last = (state.rounds || {})[m.key]; return `${m.name}: ${m.st && m.st.up ? "ready to do now" : "not yet due"}${m.every ? ", every " + m.every : ""}${last ? ", last done " + when(last) : ", never ticked"}`; }).join("\n");
+  }
+  if(sec === "collection_log"){
+    const c = state.clog; if(!c) return "No collection log has been imported.";
+    return `Collection log: ${c.obtained != null ? c.obtained : "?"} of ${c.total != null ? c.total : "?"} unique items obtained.`;
+  }
+  if(sec === "priorities"){
+    const ps = state.priorities || []; if(!ps.length) return "No priorities are set.";
+    return "Priorities:\n" + ps.map(p=>`${p.label || p.text || p.name || p.metric || p.kind}${p.kind && p.metric ? ` (${p.kind}: ${nice(String(p.metric))})` : ""}`).join("\n");
+  }
+  if(sec === "setup"){
+    const pf = Object.assign({}, COFFER_DEFAULTS, (state.coffer || {}).prefs || {}), m = state.playerMeta || {};
+    const tiers = Object.entries(pf.skillTiers || {}).map(([k, v])=>`${frSkName(k)} ${v}`).join(", ");
+    return `How they play, as told to the app: account type ${m.type || "regular"}; members ${pf.members}; ironman ${pf.iron}; style ${pf.style}; pace ${pf.pace}; session length ${pf.session}; stage ${pf.stage}; prefers ${pf.xp === "gp" ? "money" : "XP"}; wilderness ${pf.wildy}; market flipping ${pf.market}; reach ${pf.reach}; goal "${pf.goal || ""}"; money floor ${pf.floor}.` + (tiers ? ` Skills they love, like or hate: ${tiers}.` : "");
+  }
+  return "No section called " + sec + ". The sections are " + CLAUDE_SECTIONS.join(", ") + ".";
+}
+function claudeTool(name, input){
+  try{
+    input = input || {};
+    if(name === "quest"){ const n = claudeQuestFind(input.name); return n ? claudeQuestText(n) : `No quest called "${String(input.name || "").slice(0, 80)}" in the app's list of ${(questDB() || {order:[]}).order.length} quests. Try the name as the OSRS Wiki spells it, or quest_list.`; }
+    if(name === "quest_list") return claudeQuestList(String(input.status || "all"));
+    if(name === "account") return claudeSection(String(input.section || ""));
+    return `There is no tool called ${name}.`;
+  }catch(e){ return "That could not be read on this device: " + String(e && e.message || e); }
+}
+function claudeSystem(q){
+  const m = state.playerMeta || {}, out = [], db = questDB();
   if(live && live.skills){
     const o = live.skills.overall;
     out.push(`Character: ${termWho()}, ${m.type && m.type !== "regular" ? nice(m.type) : "main"} account, combat level ${m.combat != null ? m.combat : "unknown"}, total level ${o ? o.level : "unknown"}.`);
@@ -14280,11 +14447,22 @@ function claudeSystem(){
     if(bosses.length) out.push("Kill counts: " + bosses.map(([k, e])=>`${nice(k)} ${e.kills}`).join(", ") + ".");
   }
   else out.push("No character is loaded, so the player's levels are not known.");
-  const qd = Object.keys(state.questsDone || {}).filter(k=>state.questsDone[k]).length;
-  if(qd) out.push(`Quests marked done in the app: ${qd}.`);
+  if(db){
+    const done = db.order.filter(questDone), ready = db.order.filter(n=>questStatus(n, db) === "ready"), prog = db.order.filter(questInProgress);
+    out.push(`Quests: ${done.length} of ${db.order.length} done, ${claudeQp()} quest points. Ready to start now: ${ready.length}${ready.length ? " (" + ready.slice(0, 8).join(", ") + (ready.length > 8 ? ", ..." : "") + ")" : ""}.` + (prog.length ? ` Started in game but not finished: ${prog.slice(0, 10).join(", ")}.` : ""));
+    const t = state.qpTarget;
+    if(t && t !== "__ALL__" && db.quests[t]) out.push(`The quest picked as the target in the app's planner: ${t} (${questStatus(t, db)}).`);
+  }
+  else { const qd = Object.keys(state.questsDone || {}).filter(k=>state.questsDone[k]).length; if(qd) out.push(`Quests marked done in the app: ${qd}.`); }
+  const open = (state.goals || []).filter(g=>{ try{ return !goalProgress(g).done; }catch(e){ return true; } });
+  if(open.length) out.push("Open goals in their to-do list: " + open.slice(0, 8).map(g=>g.label || g.kind).join(", ") + (open.length > 8 ? ` and ${open.length - 8} more` : "") + ".");
+  try{ const dd = diaryData(); if(dd) out.push("Achievement diary tasks done: " + dd.regions.map(r=>`${r.name} ${r.done}/${r.total}`).join(", ") + "."); }catch(e){}
   const up = termRounds().filter(x=>x.st.up).map(x=>x.name);
   if(up.length) out.push("Ready to do now in their routine: " + up.join(", ") + ".");
-  return "You are Mortimer, the helper inside Mortimeter, a companion app for Old School RuneScape. You are answering in a small terminal on the app's Home page, so keep answers short: a few plain sentences or a short list, with no headings and no tables. Answer for this player's account using the details below, and when something is out of reach say which level, quest or item is missing. Old School RuneScape changes often. If you are not sure a detail is current, say so and point to the Old School RuneScape Wiki rather than guessing.\n\n<player>\n" + out.join("\n") + "\n</player>";
+  if(state.clog && state.clog.obtained != null) out.push(`Collection log: ${state.clog.obtained} of ${state.clog.total} unique items.`);
+  if((state.notes || []).length) out.push(`Notes kept in the app: ${state.notes.length}.`);
+  const named = claudeQuestFor(q), quest = named ? claudeQuestText(named) : "";
+  return "You are Mortimer, the helper inside Mortimeter, a companion app for Old School RuneScape. You are answering in a small terminal on the app's Home page, so keep answers short: a few plain sentences or a short list, with no headings and no tables. Answer for this player's account using the details below. The tools read the player's save on their device: use them when the question needs something not given here (another quest, its steps, the quest list, a goal, a diary, the routine) rather than guessing about this player's progress, and when a quest's steps are given, say which step they are on. When something is out of reach say which level, quest or item is missing. Old School RuneScape changes often. If you are not sure a game detail is current, say so and point to the Old School RuneScape Wiki rather than guessing.\n\n<player>\n" + out.join("\n") + "\n</player>" + (quest ? "\n\n<quest>\n" + quest + "\n</quest>" : "");
 }
 function claudeBody(model, system, text, max){
   // thinking is left to the model; effort low keeps a short answer quick and cheap
@@ -14319,9 +14497,23 @@ function claudeText(data){
 }
 async function claudeAsk(q){
   const key = claudeKey(); if(!key) throw new Error("no key is set");
+  // the steps file, so a named quest goes with its steps; a slow read does not hold the question
+  try{ await Promise.race([questStepsDbEnsure(), sleep(2500)]); }catch(e){}
   const last = claudeAsk.last;
   const text = (last ? `Earlier I asked: ${last.q}\nYou answered: ${last.a}\n\nNow I am asking: ` : "") + q;
-  const a = claudeText(await claudeCall(key, claudeBody(claudeModel(), claudeSystem(), text, 16000)));
+  const body = claudeBody(claudeModel(), claudeSystem(q), text, 16000);
+  body.tools = claudeTools();
+  // Claude may read the save a few times before it answers; each read is answered from this
+  // device and the whole exchange goes back, thinking included, as the API asks
+  let data = await claudeCall(key, body), rounds = 0;
+  while(data && data.stop_reason === "tool_use" && rounds++ < 6){
+    const uses = (data.content || []).filter(b=>b && b.type === "tool_use");
+    if(!uses.length) break;
+    body.messages.push({role:"assistant", content:data.content});
+    body.messages.push({role:"user", content:uses.map(u=>({type:"tool_result", tool_use_id:u.id, content:claudeTool(u.name, u.input)}))});
+    data = await claudeCall(key, body);
+  }
+  const a = claudeText(data);
   claudeAsk.last = {q, a:a.slice(0, 1500)};
   return a;
 }
@@ -14754,9 +14946,13 @@ function htArrReset(){ ["homeArr", "homeHide", "homeH", "homeColW", "homeSplit"]
 // the difference and the row below the opposite, and neither is squeezed under what it holds.
 // A row the user sized by hand only moves if it is within a few pixels. Run after every layout.
 const HT_SNAP = 96;   // on a 1440-tall window the two lines sit about 70px apart
-function htSnap(){
+function htUnsnap(){
   const root = $("#homeTerm"); if(!root) return;
   root.querySelectorAll(".ht-rowx[data-snap]").forEach(r=>{ r.style.flexBasis = ""; r.style.flexGrow = r.dataset.snap; delete r.dataset.snap; });
+}
+function htSnap(){
+  const root = $("#homeTerm"); if(!root) return;
+  htUnsnap();
   if(!root.dataset.arr) return;
   const cols = [...root.querySelectorAll(":scope > .ht-cols > .ht-colx")]; if(cols.length < 2) return;
   const rowsOf = c=>[...c.children].filter(r=>r.classList.contains("ht-rowx") && r.offsetHeight > 0);
@@ -15134,7 +15330,9 @@ function wfDraw(){
   const active = document.body.dataset.skin === "term" && state.wideFill !== false && !!view && !WF_SKIP.has(view) && !document.body.classList.contains("dock");
   const nMax = active ? Math.max(0, Math.min(4, Math.floor((avail - WF_PAGE_MIN + gap) / (WF_COL + gap)))) : 0;
   let list = active ? wfList(view) : [];
-  htStretch(false);
+  // measured from a clean slate: the last draw's stretch and its seam snaps are undone first, or
+  // the height read here depends on the draw before and two answers take turns
+  htStretch(false); try{ htUnsnap(); }catch(e){}
   // no room for a column beside the page: the page itself takes the whole width
   content.classList.toggle("wf-stretch", active && !(nMax && list.length));
   const clear = el=>{ el.dataset.ids = ""; el.innerHTML = ""; };
@@ -15181,7 +15379,19 @@ function wfDraw(){
   try{ htSnap(); htMenuFit(); }catch(e){}
   try{ editTray(); }catch(e){}
 }
-function wfLater(){ if(wfLater.q) return; wfLater.q = setTimeout(()=>{ wfLater.q = 0; try{ wfDraw(); }catch(e){ console.error(e); } }, 60); }
+// A layout that depends on its own result can chase itself (see the scrollbar-gutter rule in the
+// stylesheet). As a second guard the observer's calls are counted, and a burst of them is let
+// settle: six in just over a second, and the observer is ignored for four seconds. A real resize,
+// a page switch or anything else that asks for a draw is never held back.
+function wfLater(fromObserver){
+  if(fromObserver){
+    const now = Date.now();
+    if(wfLater.quietUntil && now < wfLater.quietUntil) return;
+    const h = wfLater.hits = (wfLater.hits || []).filter(t=>now - t < 1200); h.push(now);
+    if(h.length >= 6){ wfLater.quietUntil = now + 4000; wfLater.hits = []; return; }
+  }
+  if(wfLater.q) return; wfLater.q = setTimeout(()=>{ wfLater.q = 0; try{ wfDraw(); }catch(e){ console.error(e); } }, 60);
+}
 (function wfWire(){
   const act = e=>{
     const hide = e.target.closest("[data-wfhide]");
@@ -15194,8 +15404,8 @@ function wfLater(){ if(wfLater.q) return; wfLater.q = setTimeout(()=>{ wfLater.q
     else if(d.wfgo){ const [v, sec] = d.wfgo.split(":"); if(v === "scroll" && sec){ if($(".view:not(.hidden)").id !== "view-scroll") switchView("scroll"); setScrollSec(sec); } else switchView(v); }
   };
   ["wideFill", "wideUnder"].forEach(id=>{ const el = document.getElementById(id); if(el) el.addEventListener("click", act); });
-  addEventListener("resize", wfLater);
-  if(typeof ResizeObserver === "function"){ const ro = new ResizeObserver(wfLater); const c = $(".content"); if(c) ro.observe(c); $$(".view").forEach(v=>ro.observe(v)); }
+  addEventListener("resize", ()=>{ wfLater.quietUntil = 0; wfLater(); });
+  if(typeof ResizeObserver === "function"){ const ro = new ResizeObserver(()=>wfLater(true)); const c = $(".content"); if(c) ro.observe(c); $$(".view").forEach(v=>ro.observe(v)); }
   setInterval(()=>{ if(!document.hidden && $(".content.wf-on")) wfLater(); }, 30000);   // the clock, and what has become ready
   wfLater();
 })();
@@ -15398,13 +15608,13 @@ function termPages(){
   return out;
 }
 function termNote(text){
-  return {hint:`<u>enter</u> keeps it as a note`, run:()=>{
+  return {hint:`<u>enter</u> keeps it as a note`, note:true, run:()=>{
     state.notes = state.notes || [];
     state.notes.unshift({id:"n" + Date.now() + Math.random().toString(36).slice(2, 5), text, color:NOTE_COLORS[state.notes.length % NOTE_COLORS.length], createdAt:Date.now(), updatedAt:Date.now()});
     termLog("m", text); try{ renderNotes(); }catch(e){}
   }};
 }
-function termAskCmd(q){ return {hint:`<u>enter</u> asks ${termAi() ? "Claude" : "Mortimer"}`, run:()=>termAsk(q)}; }
+function termAskCmd(q){ return {hint:`<u>enter</u> asks ${termAi() ? "Claude" : "Mortimer"}`, ask:true, run:()=>termAsk(q)}; }
 // What a line means, in the order it is tried: a command word, the start of an action that is
 // ready, a page, a skill, a question, and failing all of those a note. The hint beside the line
 // says which before Enter is pressed, so nothing is a surprise.
@@ -15469,7 +15679,10 @@ function termExec(v, clear){
   const r = termResolve(v); if(!r) return;
   termHist.push(v); if(termHist.length > 30) termHist.shift(); termHistAt = -1;
   if(clear) clear();
-  if(r.cmd && !r.quiet) termLog("x", v);
+  // every line typed shows in the log as a line of yours, whatever it turned out to be: a command,
+  // a page, a skill, an action. A question logs itself (q) and so does a note (m); a quiet command
+  // keeps out. Only a question ever goes to Claude.
+  if(!r.quiet && !r.ask && !r.note) termLog("x", v);
   try{ r.run(); }catch(e){ console.error(e); termLog("s", "That did not work."); }
 }
 function termRun(){
