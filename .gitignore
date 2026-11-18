@@ -25,3 +25,6 @@ app/src-tauri/icons-kk/
 
 # the package for ChatGPT is built by tools/theme-kit.py from design/theme-kit
 FOR-CHATGPT-themes/
+
+# ChatGPT's theme packages as delivered (large previews and full-size plates); what the app uses is in design/skin and design/theme-art
+handoff/terminal-*/

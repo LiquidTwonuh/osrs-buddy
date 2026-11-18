@@ -5,13 +5,23 @@ import io, base64, os, sys, re
 HERE = os.path.dirname(os.path.abspath(__file__))
 P = r"C:\Projects\mortimeter\OSRS-Buddy-dev.html"
 A, B = "  /*SKIN_TERM_START*/\n", "  /*SKIN_TERM_END*/\n"
-css = "".join(io.open(os.path.join(HERE, f), encoding="utf-8").read() for f in ("term.css", "home.css", "pages.css", "setup.css", "comp.css", "notes.css", "tiles.css", "home2.css", "phone.css", "arrange.css", "skills.css", "wrapped.css", "wrapped2.css", "fill.css", "cmdline.css", "edit.css", "glyphs.css") if os.path.exists(os.path.join(HERE, f)))
+css = "".join(io.open(os.path.join(HERE, f), encoding="utf-8").read() for f in ("term.css", "home.css", "pages.css", "setup.css", "comp.css", "notes.css", "tiles.css", "home2.css", "phone.css", "arrange.css", "skills.css", "wrapped.css", "wrapped2.css", "fill.css", "cmdline.css", "edit.css", "palettes.css", "art.css", "glyphs.css") if os.path.exists(os.path.join(HERE, f)))
 shared = io.open(os.path.join(HERE, "phone_shared.css"), encoding="utf-8").read()
 assert css.count("/*PHONE_SHARED:") == 2
 css = re.sub(r"/\*PHONE_SHARED:(.+?)\*/\n", lambda m: shared.replace("&", m.group(1)), css)
 art = "data:image/png;base64," + base64.b64encode(open(r"C:\Projects\mortimeter\design\mortimer-icon\mortimeter-128.png", "rb").read()).decode("ascii")
 assert css.count("/*MORT_ART*/") == 1
 css = css.replace("/*MORT_ART*/", art)
+# theme artwork: the two sets of plates as data, one custom property per theme and set
+ART = r"C:\Projects\mortimeter\design\theme-art"
+def _uri(setname, tid): return "data:image/webp;base64," + base64.b64encode(open(os.path.join(ART, setname, tid + ".webp"), "rb").read()).decode("ascii")
+decl = []
+for tid in sorted(f[:-5] for f in os.listdir(os.path.join(ART, "low")) if f.endswith(".webp")):
+    if os.path.exists(os.path.join(ART, "v1", tid + ".webp")):
+        for setname in ("low", "v1"): decl.append('  body[data-skin="term"][data-art-set="%s"][data-theme="%s"]{--tm-scene:url("%s")}' % (setname, tid, _uri(setname, tid)))
+    else: decl.append('  body[data-skin="term"][data-theme="%s"]{--tm-scene:url("%s")}' % (tid, _uri("low", tid)))
+assert css.count("/*THEME_ART*/") == 1
+css = css.replace("/*THEME_ART*/", "\n".join(decl))
 if not css.endswith("\n"): css += "\n"
 assert css.count("{") == css.count("}"), ("braces", css.count("{"), css.count("}"))
 s = io.open(P, encoding="utf-8").read()
