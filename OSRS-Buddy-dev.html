@@ -2883,6 +2883,33 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   }
   /* narrower than a folded phone: give up and stack two columns */
   @media(max-width:330px){ .skills-grid{grid-template-columns:repeat(2,1fr)} }
+
+  /* ---- priorities: buckets and weekly targets (both looks) ---- */
+  .pw-bar{display:flex; align-items:center; justify-content:space-between; gap:10px 16px; flex-wrap:wrap; margin:4px 0 10px}
+  .pw-wk{font-size:12.5px; color:var(--muted)}
+  .pw-grp{margin-top:14px}
+  .pw-grp h4{display:flex; align-items:baseline; gap:10px; margin:0 0 6px; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--gold-dim)}
+  .pw-grp h4 small{font-size:12px; letter-spacing:0; text-transform:none; font-weight:400; color:var(--muted)}
+  .pw-row{flex-wrap:wrap}
+  .pw-row.met{border-color:color-mix(in srgb, var(--green) 45%, var(--border))}
+  .pw-week{display:flex; align-items:center; gap:9px; margin-top:6px}
+  .pw-dots{display:inline-flex; gap:3px; flex:none}
+  .pw-dots i{width:11px; height:11px; background:var(--dotdim)}
+  .pw-dots i.on{background:var(--gold)}
+  .pw-dots i.to{background:none; box-shadow:inset 0 0 0 1px var(--dotdim)}
+  .pw-dots i.now{outline:1px solid var(--text); outline-offset:1px}
+  .pw-txt{font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+  .pw-txt.ok{color:var(--green)} .pw-txt.late{color:var(--red)}
+  .pw-tgt{display:flex; align-items:center; gap:6px; flex:none; font-size:12.5px; color:var(--muted)}
+  .pw-tgt b{min-width:1.6em; text-align:center; color:var(--gold); font-variant-numeric:tabular-nums}
+  .pw-tgt select, .pw-bucket{flex:none; font-size:12.5px; padding:3px 6px}
+  .pw-list{display:grid; gap:6px; margin-top:8px}
+  .pw-item{display:flex; align-items:center; gap:10px; padding:7px 10px; border:1px solid var(--border)}
+  .pw-item.met{border-color:color-mix(in srgb, var(--green) 45%, var(--border))}
+  .pw-item .pw-name{flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .pw-item .pw-name small{margin-left:8px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold-dim)}
+  .pw-item .pbtn{background:transparent; border:1px solid var(--border); color:var(--muted); cursor:pointer; padding:2px 8px}
+  .pw-item .pbtn:hover{color:var(--gold); border-color:var(--gold-dim)}
   /*SKIN_TERM_START*/
   /* ============ THE TERMINAL LOOK ============
      One block, at the end of the sheet so it wins ties. Everything here sits under
@@ -4681,7 +4708,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     <div class="panel">
       <div class="section-title center" style="margin-top:0"><h3>Priorities</h3><span class="small muted" id="prioSub"></span></div>
       <p class="muted small" style="margin:0 auto 8px; max-width:560px; text-align:center">
-        Long-term focuses. Mapped ones auto-detect work from your XP/KC; tag a log entry or hit ✓ for the rest.
+        The things you do not want to slack on. Give each a weekly target and it counts itself from your experience and kills. Tag a journal entry or press ✓ for what the hiscores cannot see.
       </p>
       <div id="prioList"></div>
       <div class="sub-row">
@@ -4846,6 +4873,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
 
   <!-- VIEW: GOALS (to-do list + tracked-goal builder) -->
   <div class="view hidden" id="view-goals">
+    <div class="panel hidden" id="weekPanel"></div>
     <div class="panel">
       <div class="goals-head">
         <h2>🎯 Goals &amp; to-dos</h2>
@@ -6692,6 +6720,15 @@ function prioEffectiveTouch(p){
     const t = latestTagDate(p.metric);
     if(t && (!d || t>d)) d = t;
   }
+  // a linked skill or boss: the latest day the daily amounts show a gain counts as well
+  if(p.metric && (p.kind==="skill" || p.kind==="boss")){
+    const auto = (state.scroll && state.scroll.autoOn!==false && state.scroll.auto) || {}, today = todayISO();
+    for(const iso in auto){
+      if(iso > today || (d && iso <= d)) continue;
+      const a = auto[iso] || {}, v = p.kind==="skill" ? (p.metric==="overall" ? Object.values(a.skills||{}).some(n=>n>0) : (a.skills||{})[p.metric]) : (a.bosses||{})[p.metric];
+      if(v > 0 || v === true) d = iso;
+    }
+  }
   return d;
 }
 function prioDays(p){ const d = prioEffectiveTouch(p); return d ? Math.max(0, dayDiff(d, todayISO())) : null; } // null = unknown
@@ -6835,54 +6872,184 @@ function addPriority(){
   }
 }
 
+// ---- priorities, redone: a short focus list and weekly targets ----
+// Days-since told you what you had neglected but never what enough looks like. Now a priority
+// sits in one of three buckets (Main focus, up to three; Keep warm; Someday, which never nags)
+// and can carry a weekly target: so many days, or so much experience, or so many kills. The week
+// runs from the game's weekly reset, Wednesday. A day counts when the hiscores show a gain in the
+// linked skill or boss, when a journal entry is tagged to the priority, or when you press ✓.
+// state.prioTargets === false turns targets off and the page is days-since again.
+const PRIO_BUCKETS = [["focus", "Main focus", "Up to three. What matters most right now."], ["warm", "Keep warm", "What you do not want to let slide."], ["someday", "Someday", "Parked. No target and no nagging."]];
+const PRIO_UNITS = {days:"days", xp:"xp", kc:"kills"};
+function prioTargetsOn(){ return state.prioTargets !== false; }
+function prioBucket(p){ return p.bucket === "focus" || p.bucket === "someday" ? p.bucket : "warm"; }
+function prioUnits(p){ return p.kind === "skill" && p.metric ? ["days", "xp"] : p.kind === "boss" && p.metric ? ["days", "kc"] : ["days"]; }
+function prioTarget(p){
+  const t = p.target; if(!prioTargetsOn() || prioBucket(p) === "someday" || !t || !(t.n > 0)) return null;
+  return {n:+t.n, unit:prioUnits(p).includes(t.unit) ? t.unit : "days"};
+}
+// once: priorities from before this get a bucket from their rank and a starting target
+function prioMigrate(){
+  const ps = state.priorities || []; if(state.prioMig === 2 && ps.every(p=>p.bucket)) return;
+  let focus = ps.filter(p=>p.bucket === "focus").length;
+  ps.slice().sort((a, b)=>(b.weight || 5) - (a.weight || 5)).forEach(p=>{
+    if(!p.bucket){ const w = p.weight || 5; if(w >= 8 && focus < 3){ p.bucket = "focus"; focus++; } else p.bucket = w <= 3 ? "someday" : "warm"; }
+    if(p.target === undefined) p.target = p.bucket === "focus" ? {n:4, unit:"days"} : p.bucket === "warm" ? {n:2, unit:"days"} : null;
+  });
+  state.prioMig = 2; save();
+}
+function prioTick(p){ const d = todayISO(); touchPriority(p, d); const t = p.ticks || (p.ticks = []); if(!t.includes(d)) t.push(d); if(t.length > 40) t.splice(0, t.length - 40); }
+// the days of this week so far, oldest first, today last
+function prioWeekIsos(){
+  const t = parseISO(todayISO()), back = (t.getDay() - ROUND_WEEK_RESET_DOW + 7) % 7, out = [];
+  for(let k = back; k >= 0; k--) out.push(isoDate(new Date(t.getFullYear(), t.getMonth(), t.getDate() - k, 12)));
+  return out;
+}
+function prioWeekCtx(){
+  const auto = (state.scroll && state.scroll.autoOn !== false && state.scroll.auto) || {}; let types = {}, skills = {};
+  try{ types = mergedTypesByDate(); skills = skillsByDate(); }catch(e){}
+  const tagged = {}; ((state.scroll && state.scroll.log) || []).forEach(e=>(e && e.prios || []).forEach(id=>{ tagged[e.date + "|" + id] = 1; }));
+  return {auto, types, skills, tagged, isos:prioWeekIsos()};
+}
+// what one day did for one priority: whether it counts as a day worked, and how much it added
+function prioDayGain(p, iso, ctx){
+  let did = (p.ticks || []).includes(iso) || ctx.tagged[iso + "|" + p.id] || p.lastTouched === iso ? 1 : 0, amt = 0;
+  const a = ctx.auto[iso];
+  if(p.metric && p.kind === "skill"){
+    const sk = (a && a.skills) || {}, x = p.metric === "overall" ? Object.values(sk).reduce((n, v)=>n + Math.max(0, v), 0) : (sk[p.metric] || 0);
+    if(x > 0){ did = 1; amt = x; }
+  } else if(p.metric && p.kind === "boss"){ const k = (a && a.bosses && a.bosses[p.metric]) || 0; if(k > 0){ did = 1; amt = k; } }
+  else if(p.metric && p.kind === "activity"){ if(/clue/.test(p.metric) && a && a.clues > 0){ did = 1; amt = a.clues; } }
+  else if(p.metric && p.kind === "tag"){ if((ctx.types[iso] || []).includes(p.metric) || (SKILL_COLOR[p.metric] && tagHit(ctx.skills[iso] || [], p.metric))) did = 1; }
+  return {did, amt};
+}
+function prioWeek(p, ctx){
+  ctx = ctx || prioWeekCtx(); const t = prioTarget(p); let days = 0, amt = 0; const dots = [];
+  for(const iso of ctx.isos){ const g = prioDayGain(p, iso, ctx); days += g.did; amt += g.amt; dots.push(g.did); }
+  const have = !t || t.unit === "days" ? days : amt, want = t ? t.n : 0, done = !!t && have >= want, ahead = 7 - ctx.isos.length;
+  // late: a days target that cannot be reached any more even working every day that is left
+  const reach = days + ahead + (dots[dots.length - 1] ? 0 : 1);
+  return {t, have, want, done, days, amt, dots, ahead, late:!!t && !done && t.unit === "days" && reach < want, need:Math.max(0, want - have)};
+}
+function prioWeekText(w){
+  if(!w.t) return "";
+  return w.t.unit === "xp" ? `${htShort(w.have)} of ${htShort(w.want)} xp` : w.t.unit === "kc" ? `${fmt(w.have)} of ${fmt(w.want)} kills` : `${w.have} of ${w.want} day${w.want === 1 ? "" : "s"}`;
+}
+// seven squares, Wednesday to Tuesday: filled for a day worked, outlined for today, faint for days to come
+function prioDotsHtml(w){
+  let h = ""; const n = w.dots.length;
+  for(let k = 0; k < 7; k++) h += `<i class="${k < n ? (w.dots[k] ? "on" : "") : "to"}${k === n - 1 ? " now" : ""}" title="${"WTFSSMT"[k]}"></i>`;
+  return `<span class="pw-dots" aria-hidden="true">${h}</span>`;
+}
+// this week's targets, the ones still open first, Main focus ahead of Keep warm
+function prioWeekList(){
+  if(!prioTargetsOn()) return [];
+  prioMigrate(); const ctx = prioWeekCtx();
+  return (state.priorities || []).filter(p=>!prioSnoozed(p) && prioTarget(p)).map(p=>({p, w:prioWeek(p, ctx)}))
+    .sort((a, b)=>(a.w.done - b.w.done) || ((prioBucket(a.p) === "focus" ? 0 : 1) - (prioBucket(b.p) === "focus" ? 0 : 1)) || (b.w.need / b.w.want - a.w.need / a.w.want));
+}
+function prioVerb(p){ return p.kind === "skill" && p.metric ? "Train" : p.kind === "boss" && p.metric ? "Kill" : "Do"; }
+// "Train Mining" reads as Train, then Mining, rather than Train Train Mining
+function prioName(p){ const v = prioVerb(p), l = String(p.label || ""); return l.toLowerCase().startsWith(v.toLowerCase() + " ") ? l.slice(v.length + 1) : l; }
 function renderPriorities(){
   const el = $("#prioList"); if(!el) return;
-  const ps = [...state.priorities].sort((a,b)=> prioScore(b)-prioScore(a));
+  prioMigrate();
+  const on = prioTargetsOn(), ctx = prioWeekCtx(), ps = state.priorities;
   $("#prioSub").textContent = ps.length ? `${ps.length} tracked` : "";
-  if(!ps.length){ el.innerHTML = `<div class="empty">No priorities yet — add your first below.</div>`; return; }
-  el.innerHTML = ps.map(p=>`
-    <div class="hg-row prio-row ${prioSnoozed(p)?"snoozed":""}">
+  const left = 7 - ctx.isos.length;
+  const bar = `<div class="pw-bar"><span class="pw-wk">${on ? `This week began ${escapeHtml(fmtDay(ctx.isos[0]))}. ${left ? left + " day" + (left === 1 ? "" : "s") + " left after today." : "Today is its last day."}` : "Weekly targets are off. Each priority shows how long since you last touched it."}</span>
+    <div class="seg pw-seg"><button type="button" class="${on ? "on" : ""}" data-pwon="1">Weekly targets</button><button type="button" class="${on ? "" : "on"}" data-pwon="0">Off</button></div></div>`;
+  const row = p=>{
+    const b = prioBucket(p), w = prioWeek(p, ctx), lt = prioEffectiveTouch(p), tgt = on && b !== "someday";
+    const units = prioUnits(p), t = p.target && p.target.n > 0 ? {n:+p.target.n, unit:units.includes(p.target.unit) ? p.target.unit : "days"} : null;
+    return `<div class="hg-row prio-row pw-row ${prioSnoozed(p) ? "snoozed" : ""} ${w.done ? "met" : ""}" data-pid="${p.id}">
       ${prioIconHtml(p)}
       <div class="grow" style="min-width:0">
-        <div class="row" style="gap:8px"><span class="hg-name">${escapeHtml(p.label)}</span><span class="wtag">rank ${p.weight||5}</span></div>
-        <div class="small muted" style="margin-top:2px">${p.kind==="tag"&&p.metric?entryTagLabel(p.metric)+" · tracked from your log":p.metric?nice(p.metric)+" · auto-tracked":"manual"} · last touched ${(t=>!t?"unknown":(t===todayISO()?"today":fmtDay(t)))(prioEffectiveTouch(p))}</div>
+        <div class="row" style="gap:8px"><span class="hg-name">${escapeHtml(p.label)}</span></div>
+        <div class="small muted" style="margin-top:2px">${p.kind === "tag" && p.metric ? entryTagLabel(p.metric) + " · tracked from your log" : p.metric ? nice(p.metric) + " · auto-tracked" : "manual"} · last touched ${!lt ? "unknown" : lt === todayISO() ? "today" : escapeHtml(fmtDay(lt))}</div>
+        ${tgt && t ? `<div class="pw-week">${prioDotsHtml(w)}<span class="pw-txt ${w.done ? "ok" : w.late ? "late" : ""}">${escapeHtml(prioWeekText(w))}${w.done ? ", done" : w.late ? ", out of reach this week" : ""}</span></div>` : ""}
       </div>
-      ${dueBadge(p)}
+      ${tgt ? `<div class="pw-tgt" title="The weekly target">${t
+          ? `<button type="button" class="pbtn" data-pwstep="-1" title="Less">−</button><b>${t.unit === "xp" ? htShort(t.n) : fmt(t.n)}</b><button type="button" class="pbtn" data-pwstep="1" title="More">+</button>
+             ${units.length > 1 ? `<select data-pwunit title="What the target counts">${units.map(u=>`<option value="${u}" ${u === t.unit ? "selected" : ""}>${PRIO_UNITS[u]}</option>`).join("")}</select>` : `<span>days</span>`}<span>a week</span>`
+          : `<button type="button" class="ghost small" data-pwstep="1">Set a weekly target</button>`}</div>` : dueBadge(p)}
+      <select class="pw-bucket" data-pwbucket title="Which list it sits in">${PRIO_BUCKETS.map(([id, name])=>`<option value="${id}" ${id === b ? "selected" : ""}>${name}</option>`).join("")}</select>
       <button class="pbtn" data-ptouch="${p.id}" title="Mark as worked on today">✓</button>
-      <button class="pbtn" data-psnooze="${p.id}" title="${prioSnoozed(p)?"Unsnooze":"Snooze (pick how long)"}">💤</button>
-      <button class="pbtn" data-pedit="${p.id}" title="Edit — change rank, tracking, anything">✎</button>
+      <button class="pbtn" data-psnooze="${p.id}" title="${prioSnoozed(p) ? "Unsnooze" : "Snooze (pick how long)"}">💤</button>
+      <button class="pbtn" data-pedit="${p.id}" title="Edit: the name and what it tracks">✎</button>
       <button class="pbtn" data-pdel="${p.id}" title="Delete">✕</button>
-    </div>`).join("");
-  $$("#prioList [data-ptouch]").forEach(b=>b.onclick=()=>{
-    const p=state.priorities.find(x=>x.id===b.dataset.ptouch);
-    if(p){ touchPriority(p); save(); renderPriorities(); renderGlance(); }
-  });
-  // 💤 asks how long. It used to be a flat three days, which just meant the alert came back
-  // before the break was over.
-  $$("#prioList [data-psnooze]").forEach(b=>b.onclick=e=>{
-    e.stopPropagation();
-    const p=state.priorities.find(x=>x.id===b.dataset.psnooze); if(!p) return;
-    if(prioSnoozed(p)){ p.snoozeUntil=null; save(); renderPriorities(); renderGlance(); return; }
-    const row = b.closest(".prio-row");
-    if(row.querySelector(".qb-folds")) return;
-    const pick = document.createElement("div");
-    pick.className = "qb-folds";
-    pick.innerHTML = [[3,"3 days"],[7,"A week"],[30,"A month"],[3650,"Until I say"]].map(([d,t])=>
-      `<button class="ghost small" data-snz="${d}">💤 ${t}</button>`).join("") + `<button class="ghost small" data-snz="">Cancel</button>`;
-    row.appendChild(pick);
-    [...pick.querySelectorAll("[data-snz]")].forEach(x=>x.onclick=ev=>{
-      ev.stopPropagation();
-      if(x.dataset.snz){ const d=new Date(); d.setDate(d.getDate()+(+x.dataset.snz)); p.snoozeUntil=isoDate(d); save(); }
-      renderPriorities(); renderGlance();
-    });
-  });
-  $$("#prioList [data-pedit]").forEach(b=>b.onclick=()=>editPriority(b.dataset.pedit));
-  $$("#prioList [data-pdel]").forEach(b=>b.onclick=()=>{
-    state.priorities = state.priorities.filter(x=>x.id!==b.dataset.pdel);
-    logSelPrios.delete(b.dataset.pdel);
-    if(prioEditId===b.dataset.pdel) prioFormReset(); // don't leave the form editing a ghost
-    save(); renderPriorities(); renderGlance(); renderPrioPicker();
-  });
+    </div>`;
+  };
+  el.innerHTML = bar + (!ps.length ? `<div class="empty">No priorities yet. Add your first below.</div>` : PRIO_BUCKETS.map(([id, name, sub])=>{
+    const list = ps.filter(p=>prioBucket(p) === id).sort((a, b)=>on && id !== "someday" ? (prioWeek(a, ctx).done - prioWeek(b, ctx).done) || prioScore(b) - prioScore(a) : prioScore(b) - prioScore(a));
+    if(!list.length && id !== "focus") return "";
+    return `<div class="pw-grp"><h4>${name}<small>${sub}</small></h4>${list.map(row).join("") || `<div class="empty">Nothing in Main focus. Move a priority here with the menu on its row.</div>`}</div>`;
+  }).join(""));
+  const find = t=>{ const r = t.closest("[data-pid]"); return r ? state.priorities.find(x=>x.id === r.dataset.pid) : null; };
+  const again = ()=>{ save(); renderPriorities(); renderGlance(); try{ wfLater(); }catch(e){} };
+  el.onchange = e=>{
+    const p = find(e.target); if(!p) return;
+    if(e.target.matches("[data-pwbucket]")){
+      const to = e.target.value;
+      if(to === "focus" && prioBucket(p) !== "focus" && state.priorities.filter(x=>prioBucket(x) === "focus").length >= 3){ toast("Main focus holds three. Move one out first.", true); renderPriorities(); return; }
+      p.bucket = to; if(to !== "someday" && !(p.target && p.target.n > 0)) p.target = {n:to === "focus" ? 4 : 2, unit:"days"};
+      again();
+    } else if(e.target.matches("[data-pwunit]")){ const u = e.target.value; p.target = {n:u === "xp" ? 50000 : u === "kc" ? 10 : 3, unit:u}; again(); }
+  };
+  el.onclick = e=>{
+    const t = e.target.closest("button"); if(!t) return;
+    if(t.dataset.pwon){ state.prioTargets = t.dataset.pwon === "1"; again(); return; }
+    const p = find(t); if(!p) return;
+    if(t.dataset.pwstep){
+      const dir = +t.dataset.pwstep, cur = p.target && p.target.n > 0 ? p.target : null, unit = cur && prioUnits(p).includes(cur.unit) ? cur.unit : "days";
+      if(!cur){ p.target = {n:prioBucket(p) === "focus" ? 4 : 2, unit:"days"}; again(); return; }
+      const step = unit === "xp" ? (cur.n + (dir < 0 ? -1 : 0) >= 200000 ? 50000 : 10000) : unit === "kc" ? (cur.n + (dir < 0 ? -1 : 0) >= 20 ? 10 : cur.n + (dir < 0 ? -1 : 0) >= 5 ? 5 : 1) : 1;
+      let n = cur.n + dir * step; if(unit === "days") n = Math.min(7, n);
+      p.target = n <= 0 ? null : {n, unit}; again(); return;
+    }
+    if(t.dataset.ptouch){ prioTick(p); again(); return; }
+    if(t.dataset.pedit){ editPriority(p.id); return; }
+    if(t.dataset.pdel){
+      state.priorities = state.priorities.filter(x=>x.id !== p.id); logSelPrios.delete(p.id);
+      if(prioEditId === p.id) prioFormReset();   // don't leave the form editing a ghost
+      save(); renderPriorities(); renderGlance(); renderPrioPicker(); return;
+    }
+    if(t.dataset.psnooze){
+      // 💤 asks how long. A flat three days only meant the alert came back before the break was over.
+      e.stopPropagation();
+      if(prioSnoozed(p)){ p.snoozeUntil = null; again(); return; }
+      const rowEl = t.closest(".prio-row"); if(rowEl.querySelector(".qb-folds")) return;
+      const pick = document.createElement("div"); pick.className = "qb-folds";
+      pick.innerHTML = [[3, "3 days"], [7, "A week"], [30, "A month"], [3650, "Until I say"]].map(([d, tx])=>`<button class="ghost small" data-snz="${d}">💤 ${tx}</button>`).join("") + `<button class="ghost small" data-snz="">Cancel</button>`;
+      rowEl.appendChild(pick);
+      return;
+    }
+    if(t.dataset.snz !== undefined){
+      e.stopPropagation();
+      if(t.dataset.snz){ const d = new Date(); d.setDate(d.getDate() + (+t.dataset.snz)); p.snoozeUntil = isoDate(d); }
+      again();
+    }
+  };
+  renderWeekPanel();
+}
+// the week, at the top of Goals: one place for what there is to do
+function renderWeekPanel(){
+  const el = $("#weekPanel"); if(!el) return;
+  const list = prioWeekList();
+  el.classList.toggle("hidden", !list.length);
+  if(!list.length){ el.innerHTML = ""; return; }
+  const met = list.filter(x=>x.w.done).length;
+  el.innerHTML = `<div class="section-title" style="margin-top:0"><h3>This week</h3><span class="small muted">${met} of ${list.length} target${list.length === 1 ? "" : "s"} met</span><button type="button" class="ghost small right" data-wkedit="1">Edit priorities</button></div>
+    <div class="pw-list">${list.map(({p, w})=>`<div class="pw-item ${w.done ? "met" : ""}" data-pid="${p.id}">
+      ${prioIconHtml(p)}<span class="pw-name">${escapeHtml(p.label)}${prioBucket(p) === "focus" ? `<small>focus</small>` : ""}</span>${prioDotsHtml(w)}
+      <span class="pw-txt ${w.done ? "ok" : w.late ? "late" : ""}">${escapeHtml(prioWeekText(w))}</span>
+      <button type="button" class="pbtn" data-wktick="1" title="I worked on it today">✓</button></div>`).join("")}</div>`;
+  el.onclick = e=>{
+    const t = e.target.closest("button"); if(!t) return;
+    if(t.dataset.wkedit){ switchView("scroll"); setScrollSec("prio"); return; }
+    const r = t.closest("[data-pid]"), p = r && state.priorities.find(x=>x.id === r.dataset.pid);
+    if(p && t.dataset.wktick){ prioTick(p); save(); renderPriorities(); renderGlance(); try{ wfLater(); }catch(err){} }
+  };
 }
 
 // Home's alerts — only priorities that actually need attention nag you; ✓ / 💤 handled inline.
@@ -6915,7 +7082,7 @@ function renderGlance(){
   }).join("");
   $$("#glanceList [data-atouch]").forEach(b=>b.onclick=()=>{
     const p=state.priorities.find(x=>x.id===b.dataset.atouch);
-    if(p){ touchPriority(p); save(); renderPriorities(); renderGlance(); }
+    if(p){ prioTick(p); save(); renderPriorities(); renderGlance(); }
   });
   $$("#glanceList [data-asnooze]").forEach(b=>b.onclick=()=>{
     const p=state.priorities.find(x=>x.id===b.dataset.asnooze); if(!p) return;
@@ -13741,6 +13908,10 @@ wfAdd({id:"ready", tier:1, title:"Ready now", not:["home", "coffer"], sizes:true
     up.slice(0, wfN(sz, 3, 5, 10)).map(m=>{ const v = termVerb(m); return wfRow(v.act, v.tgt, "ready", {kb:"c", kv:"g", attrs:`data-wftick="${wfEsc(m.key)}" title="Done it? Click to tick it"`}); }).join("")
     + wait.slice(0, Math.max(1, wfN(sz, 2, 4, 8) - up.length)).map(m=>{ const v = termVerb(m); return wfRow(v.act, v.tgt, roundWhen(m.st.next), {kb:"c", attrs:`data-wfround="${wfEsc(m.key)}" title="Open it in Coffer"`}); }).join("")};
 }});
+wfAdd({id:"week", tier:1, title:"This week", not:["home", "goals"], sizes:true, draw(v, sz){
+  const list = prioWeekList(); if(!list.length) return null;
+  return {sub:`${list.filter(x=>x.w.done).length} of ${list.length} met`, html:list.slice(0, wfN(sz, 3, 5, 10)).map(({p, w})=>wfRow(w.done ? "Done" : prioVerb(p), w.done ? p.label : prioName(p), prioWeekText(w), {kb:"y", kv:w.done ? "g" : w.late ? "o" : "", attrs:'data-wfgo="scroll:prio" title="Open Priorities"'}) + wfMeter(w.want ? w.have / w.want * 100 : 0, w.done ? "var(--k-g)" : "var(--k-y)")).join("")};
+}});
 wfAdd({id:"near", tier:1, title:"Closest level ups", not:["home", "skills"], sizes:true, draw(v, sz){
   const near = htNear(wfN(sz, 3, 5, 10)); if(!near.length) return null;
   return {sub:"", html:near.map(x=>wfRow("Train", frSkName(x.k), `${fmt(x.p.toNext)} xp to ${x.p.next}`, {kb:"g", attrs:`data-skillinfo="${x.k}" title="Open ${wfEsc(frSkName(x.k))}"`})).join("")};
@@ -13751,7 +13922,7 @@ wfAdd({id:"goals", tier:1, title:"Goals", not:["home", "goals"], sizes:true, dra
   return {sub:`${gs.length} open`, html:gs.slice(0, wfN(sz, 2, 4, 8)).map(({g, p})=>wfRow(p.custom ? "Finish" : "Reach", g.label, p.custom && p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : Math.round(p.pct) + "%", {kb:"y", attrs:'data-wfgo="goals" title="Open Goals"'}) + wfMeter(p.pct, "var(--k-y)")).join("")};
 }});
 wfAdd({id:"dust", tier:1, title:"Gathering dust", not:["home"], sizes:true, draw(v, sz){
-  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, wfN(sz, 2, 4, 8));
+  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && !prioTarget(x) && prioBucket(x) !== "someday" && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, wfN(sz, 2, 4, 8));
   if(!al.length) return null;
   return {sub:"", html:al.map(x=>{ const d = prioDays(x); return wfRow("Return-to", x.label, d == null ? "no record" : d + (d === 1 ? " day" : " days"), {kb:"y", kv:"o", attrs:'data-wfgo="scroll:prio" title="Open Priorities"'}); }).join("")};
 }});
@@ -13969,11 +14140,13 @@ function htMenu(){
   if(near.length) sec.near = `<div class="grp">Closest level ups</div>` + near.map((x, i)=>opt(`data-skillinfo="${x.k}" title="Open ${frSkName(x.k)}"`, "Train", frSkName(x.k), "g", `${fmt(x.p.toNext)} xp to ${x.p.next}`, "", i >= 3)).join("");
   const goals = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct).slice(0, 8);
   if(goals.length) sec.goals = `<div class="grp">Goals you are tracking</div>` + goals.map(({g, p}, i)=>opt(`data-hgoal="1" title="Open Goals"`, p.custom ? "Finish" : "Reach", g.label, "y", p.custom ? (p.hasSteps ? `${p.doneSteps}/${p.totalSteps}` : "to-do") : Math.round(p.pct) + "%", "", i >= 4)).join("");
-  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 8);
+  const wk = prioWeekList();
+  if(wk.length) sec.week = `<div class="grp">This week</div>` + wk.slice(0, 8).map(({p, w}, i)=>opt(`data-hprio="${escapeHtml(p.id)}" title="Worked on it today? Click to say so"`, w.done ? "Done" : prioVerb(p), w.done ? p.label : prioName(p), "y", prioWeekText(w), w.done ? "ready" : w.late ? "warn" : "", i >= 4)).join("");
+  const al = (state.priorities || []).filter(x=>!prioSnoozed(x) && !prioTarget(x) && prioBucket(x) !== "someday" && prioTier(x) !== "ok").sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 8);
   if(al.length) sec.dust = `<div class="grp">Gathering dust</div>` + al.map((x, i)=>{ const d = prioDays(x); return opt(`data-hprio="${escapeHtml(x.id)}" title="Worked on it today? Click to say so"`, "Return-to", x.label, "y", d == null ? "no record" : d + (d === 1 ? " day" : " days"), "warn", i >= 4); }).join("");
   if(wait.length) sec.soon = `<div class="grp">Ready soon</div>` + wait.slice(0, 8).map((m, i)=>{ const v = termVerb(m); return opt(`data-hgo="${escapeHtml(m.key)}" title="Open it in Coffer"`, v.act, v.tgt, v.kind, roundWhen(m.st.next), "", i >= 4); }).join("");
   // back after a while, what went stale comes before what was gained
-  const order = R.idle != null && R.idle >= 3 ? ["now", "dust", "gain", "near", "goals", "soon"] : ["now", "gain", "near", "goals", "dust", "soon"];
+  const order = R.idle != null && R.idle >= 3 ? ["now", "week", "dust", "gain", "near", "goals", "soon"] : ["now", "week", "gain", "near", "goals", "dust", "soon"];
   const body = order.map(k=>sec[k] || "").join("");
   el.innerHTML = `<div class="ttl">Debrief<small class="${R.idle === 0 ? "" : "none"}">${escapeHtml(tag)}</small></div><p class="lead">${lead}</p>`
     + (body ? body + `<i class="end"></i>` : `<div class="nil">Nothing is waiting on you. Pick a routine in Coffer or set a goal, and it shows up here.</div>`);
@@ -13982,7 +14155,7 @@ function htMenu(){
     const b = e.target.closest(".ht-opt"); if(!b) return; const d = b.dataset;
     if(d.htick) roundTick(d.htick);
     else if(d.hgo) cofferGoRound(d.hgo);
-    else if(d.hprio){ const x = (state.priorities || []).find(y=>String(y.id) === d.hprio); if(x){ touchPriority(x); save(); renderPriorities(); renderGlance(); termLog("g", `You return to ${x.label}.`); } }
+    else if(d.hprio){ const x = (state.priorities || []).find(y=>String(y.id) === d.hprio); if(x){ prioTick(x); save(); renderPriorities(); renderGlance(); termLog("g", `You return to ${x.label}.`); } }
     else if(d.hgoal) switchView("goals");
     else if(d.skillinfo) openSkillModal(d.skillinfo);
     else if(d.bossinfo) openBossModal(d.bossinfo);
@@ -14351,7 +14524,7 @@ termDef(["touch"], "touch <priority>", "Says you worked on a priority today, so 
   const p = termPrioFind(rest);
   if(!p) return rest.trim() ? `No priority called ${rest.trim()}. dust lists them.` : "touch needs a priority: touch sailing";
   return {hint:`<u>enter</u> marks <span class="y">${tE(p.label)}</span> as worked on today`, fill:"touch " + String(p.label).toLowerCase(), run:()=>{
-    const d = prioDays(p); touchPriority(p); save(); try{ renderPriorities(); renderGlance(); htLater(); }catch(e){}
+    const d = prioDays(p); prioTick(p); save(); try{ renderPriorities(); renderGlance(); htLater(); }catch(e){}
     termOut(`You return to <span class="y">${tE(p.label)}</span>.${d ? ` It had been ${d} day${d === 1 ? "" : "s"}.` : ""}`);
   }};
 }, {soft:true});
@@ -14397,6 +14570,11 @@ termDef(["ready"], "ready", "What is ready now, and what comes next.", "Look up"
 termDef(["dust"], "dust", "The priorities you have not touched in a while.", "Look up", ()=>({hint:`<u>enter</u> lists what is gathering dust`, run:()=>{
   const al = (state.priorities || []).filter(x=>!prioSnoozed(x)).sort((a, b)=>prioScore(b) - prioScore(a)).slice(0, 8);
   termOut(al.length ? al.map(x=>{ const d = prioDays(x); return termLn(`${termBtn("touch " + String(x.label).toLowerCase(), x.label, "y")} <span class="${prioTier(x) === "ok" ? "dim" : "warn"}">${d == null ? "no record" : d + (d === 1 ? " day" : " days")}</span>`); }).join("") : "No priorities are set. Scroll, Priorities is where they live.");
+}}), {bare:true});
+termDef(["targets", "todo"], "targets", "This week's targets and how far along each is, then your open goals.", "Look up", ()=>({hint:`<u>enter</u> lists this week's targets`, run:()=>{
+  const list = prioWeekList(), goals = (state.goals || []).map(g=>({g, p:goalProgress(g)})).filter(x=>!x.p.done).sort((a, b)=>b.p.pct - a.p.pct);
+  termOut((list.length ? list.map(({p, w})=>termLn(`${termBtn("touch " + String(p.label).toLowerCase(), p.label, "y")} <span class="${w.done ? "g" : w.late ? "warn" : "dim"}">${tE(prioWeekText(w))}${w.done ? ", done" : ""}</span>`)).join("") : termLn(prioTargetsOn() ? "No weekly targets are set. Scroll, Priorities is where they live." : "Weekly targets are off."))
+    + (goals.length ? termLn(`<span class="dim">goals</span> ` + goals.slice(0, 4).map(({g, p})=>`${tE(g.label)} <span class="dim">${Math.round(p.pct)}%</span>`).join(", ") + ` ${termBtn("cd goals", "open")}`) : ""));
 }}), {bare:true});
 termDef(["today"], "today", "Experience gained today, and yesterday for comparison.", "Look up", ()=>({hint:`<u>enter</u> shows today so far`, run:()=>{
   const t = termDayXp(0), y = termDayXp(1);
