@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coffer, the skills you love up front</title>
+<style>
+  /* Coffer's Board, three ways (Josh, 2026-11-18: "from the skills you love feels so shelved ngl,
+     if I love them, why is it so far down and tiny UI?"). Today the podium is the best three by
+     gold, the loved skills come fourth as a strip of small tiles. Three directions, same sample
+     methods, same Terminal look, for 1.1:
+       A  Loves first   each loved skill is a column under the podium: the skill as a header with
+                        its level, its best method as a card, the next two as rows.
+       B  A loved seat  the podium grows a fourth seat: the best method from a loved skill stands
+                        beside the best three, marked with the heart. The loved skills then run as
+                        one wide shelf before More in your style.
+       C  Shelves       no More in your style at all: everything you can do, shelved by skill,
+                        loved skills first and twice the height, liked next, the rest after.
+     Figures are the real ones from Josh's screen on 2026-11-18. */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#000; -webkit-font-smoothing:antialiased}
+  button{font:inherit}
+  .mk-strip{position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-height:36px; padding:6px 16px; background:#0a0a0a; border-bottom:1px solid #242424; color:#8c8c8c; font:12px/1.35 "Segoe UI",system-ui,sans-serif}
+  .mk-strip b{color:#d8d8d8; font-weight:600; margin-right:8px}
+  .mk-strip span.k{margin:0 2px 0 10px}
+  .mk-strip button{color:#b4b4b4; background:none; border:1px solid #333; padding:3px 9px; cursor:pointer}
+  .mk-strip button.on{color:#000; background:#d8d8d8; border-color:#d8d8d8}
+  .mk-note{padding:9px 16px 10px; background:#0a0a0a; border-bottom:1px solid #242424; color:#9a9a9a; font:12.5px/1.5 "Segoe UI",system-ui,sans-serif; max-width:1100px}
+  .mk-note b{color:#d8d8d8; font-weight:600}
+  .hidden{display:none !important}
+
+  .W{
+    --fs:"Bahnschrift","DIN Alternate","Inter","Segoe UI",system-ui,sans-serif;
+    --fm:"Cascadia Mono","Cascadia Code","SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+    --bg:#0b1513; --panel:#11201d; --border:#2a443f; --gold:#66cbb9; --gold-dim:#4a9c8f; --text:#e0e6d9; --muted:#8fa39c;
+    --line:color-mix(in srgb, var(--border) 58%, var(--bg)); --track:color-mix(in srgb, var(--text) 9%, transparent);
+    --love:#e07a8a; --like:#d9b45a; --risk:#f39a40;
+    background:var(--bg); color:var(--text); font:14px/1.45 var(--fs); padding:18px 22px 60px; min-height:100vh
+  }
+  .W[data-th="night"]{--bg:#0d1117; --panel:#121923; --border:#263244; --gold:#6aa8ff; --gold-dim:#4e7fc4; --text:#e6edf3; --muted:#8b98a8}
+  .W[data-th="law"]{--bg:#0e0f14; --panel:#161722; --border:#2d2f45; --gold:#a9a0ff; --gold-dim:#7b74c4; --text:#e8e6f5; --muted:#9a97b3}
+  .W[data-th="parchment"]{--bg:#f3ead8; --panel:#fbf5e8; --border:#d8c9a8; --gold:#9a6a1a; --gold-dim:#b8903f; --text:#2c2418; --muted:#7a6a50}
+
+  .pane{background:var(--panel); border:1px solid var(--border); padding:12px 14px 14px; margin:0 0 10px}
+  .ttl{display:flex; align-items:baseline; gap:10px; margin:0 0 10px; font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  .ttl b{color:var(--gold); font-weight:500}
+  .ttl small{font:12.5px var(--fs); letter-spacing:0; text-transform:none; color:var(--muted)}
+  .ttl .sp{flex:1}
+  .ttl .ctl{display:flex; gap:4px}
+  .ttl .ctl span{border:1px solid var(--line); padding:1px 7px; font:11px var(--fm); letter-spacing:0; text-transform:none; color:var(--muted)}
+
+  /* cards and rows, as the Board draws them now */
+  .podium{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px}
+  .hero{border:1px solid var(--line); padding:12px 14px 10px; background:color-mix(in srgb, var(--panel) 60%, var(--bg))}
+  .hero.first{border-color:var(--gold-dim)}
+  .hero .top{display:flex; gap:8px; align-items:center; font:12px var(--fm); color:var(--muted)}
+  .hero .top b{color:var(--gold); font-weight:500}
+  .hero .nm{font:600 20px/1.2 var(--fm); margin:6px 0 4px; letter-spacing:-.3px}
+  .hero.first .nm{font-size:24px}
+  .gp{font:700 26px/1 var(--fm); color:var(--gold); letter-spacing:-.5px}
+  .gp small{font-size:12px; color:var(--muted); font-weight:500; margin-left:2px}
+  .hero.first .gp{font-size:32px}
+  .meter{display:block; height:2px; background:var(--track); margin:10px 0 8px; position:relative}
+  .meter::after{content:""; position:absolute; inset:0 auto 0 0; width:var(--p); background:var(--gold)}
+  .why{font-size:13px; color:var(--text)} .why i{font-style:normal; color:var(--risk); font:12px var(--fm); margin-left:8px}
+  .loc{font-size:12.5px; color:var(--muted); margin-top:4px}
+  .acts{display:flex; gap:6px; margin-top:10px; font:12px var(--fm); color:var(--muted)}
+  .acts span{border:1px solid var(--line); padding:2px 8px}
+  .acts .r{margin-left:auto; border:0; opacity:.6}
+  .tiles{display:grid; grid-template-columns:repeat(auto-fill, minmax(290px, 1fr)); gap:4px 26px}
+  .tile{padding:9px 0 8px; border-bottom:1px solid var(--line)}
+  .tile .tn{display:flex; justify-content:space-between; gap:8px; align-items:baseline}
+  .tile .tn b{font-weight:600; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .tile .tg{font:600 14px var(--fm); color:var(--gold); white-space:nowrap}
+  .tile .tg small{font-size:11px; color:var(--muted)}
+  .tile .ts{font-size:12.5px; color:var(--muted); margin-top:3px}
+  .tile .meter{margin:7px 0 6px}
+
+  /* the heart */
+  .lv{color:var(--love); font:11px var(--fm); letter-spacing:.08em; text-transform:uppercase}
+  .lk{color:var(--like); font:11px var(--fm); letter-spacing:.08em; text-transform:uppercase}
+
+  /* A: loves first, a column per loved skill */
+  .loves{display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:10px}
+  .lovecol{border:1px solid var(--line); border-top:2px solid var(--love); padding:12px 14px 10px; background:color-mix(in srgb, var(--panel) 60%, var(--bg))}
+  .lovecol .sk{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+  .lovecol .sk .ic{width:34px; height:34px; display:grid; place-items:center; border:1px solid var(--line); font-size:18px}
+  .lovecol .sk .nm{font:600 18px var(--fm); letter-spacing:-.3px}
+  .lovecol .sk .lvl{font:12px var(--fm); color:var(--muted)} .lovecol .sk .lvl b{color:var(--text); font-weight:600}
+  .lovecol .sk .lv{margin-left:auto}
+  .lovecol .best{padding:10px 12px 8px; border:1px solid var(--gold-dim); margin-bottom:6px}
+  .lovecol .best .nm{font:600 19px/1.2 var(--fm); margin-bottom:4px}
+  .lovecol .best .gp{font-size:26px}
+  .lovecol .tile{padding:7px 0}
+  .lovecol .more{font:12px var(--fm); color:var(--muted); margin-top:8px; display:flex; justify-content:space-between}
+  .lovecol .more u{text-decoration:none; color:var(--gold)}
+
+  /* B: the fourth seat */
+  .podium.four{grid-template-columns:1.25fr 1fr 1fr 1fr}
+  .hero.loved{border-color:var(--love); background:color-mix(in srgb, var(--love) 7%, var(--panel))}
+  .hero.loved .top b{color:var(--love)}
+  .shelf{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:10px}
+  .shelf .card{border:1px solid var(--line); padding:10px 12px 9px}
+  .shelf .card .sk{font:600 13px var(--fm); color:var(--love); margin-bottom:6px; display:flex; justify-content:space-between}
+  .shelf .card .sk small{color:var(--muted); font-weight:500}
+  .shelf .card .nm{font-weight:600; font-size:15px}
+  .shelf .card .gp{font-size:20px; margin-top:2px}
+
+  /* C: shelves by skill */
+  .shelves .shelfrow{display:grid; grid-template-columns:200px 1fr; gap:14px; padding:12px 0; border-top:1px solid var(--line); align-items:start}
+  .shelves .shelfrow:first-child{border-top:0}
+  .shelves .head .nm{font:600 20px var(--fm); letter-spacing:-.3px}
+  .shelves .head .lvl{font:12px var(--fm); color:var(--muted); margin-top:2px} .shelves .head .lvl b{color:var(--text)}
+  .shelves .head .tag{margin-top:8px}
+  .shelves .loved .head .nm{font-size:26px}
+  .shelves .items{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:8px}
+  .shelves .it{border:1px solid var(--line); padding:9px 11px 8px}
+  .shelves .loved .it{padding:14px 14px 12px; border-color:color-mix(in srgb, var(--love) 40%, var(--line))}
+  .shelves .it .nm{font-weight:600; font-size:14.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .shelves .loved .it .nm{font-size:17px; font-family:var(--fm)}
+  .shelves .it .gp{font-size:18px; margin-top:3px}
+  .shelves .loved .it .gp{font-size:24px}
+  .shelves .it .ts{font-size:12px; color:var(--muted); margin-top:3px}
+  .shelves .it .meter{margin:6px 0 4px}
+  .shelves .quiet{opacity:.78}
+  .shelves .quiet .items{grid-template-columns:repeat(auto-fill, minmax(200px, 1fr))}
+  .shelves .quiet .it .gp{font-size:15px}
+  @media (max-width:900px){ .podium, .podium.four{grid-template-columns:1fr} .shelves .shelfrow{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="mk-strip"><b>Coffer, the skills you love</b><span class="k">direction</span><button data-dir="A" class="on">A Loves first</button><button data-dir="B">B A loved seat</button><button data-dir="C">C Shelves</button><span class="k">theme</span><button data-th="mortimer" class="on">Mortimer</button><button data-th="night">Night</button><button data-th="law">Law</button><button data-th="parchment">Gilded</button></div>
+<div class="mk-note" id="noteA">Each skill you love gets a column straight under the podium: the skill and your level as the header, its best money maker as a card with the full figure, the next two as rows, and a line to the rest. Smithing and Runecraft, which you only like, stay in More in your style below. The podium itself is unchanged.</div>
+<div class="mk-note hidden" id="noteB">The podium grows a fourth seat. The best three by gold stay, and beside them stands the best method from a skill you love, with the heart on it, so a loved skill is never below the fold. Under the podium the loved skills run as one wide shelf, a card per skill with its best figure, before More in your style.</div>
+<div class="mk-note hidden" id="noteC">No More in your style at all. Everything you can do tonight is shelved by skill: the skills you love first and at twice the size, the ones you like next, everything else after and quieter. The podium stays on top as the summary; the shelves are the page.</div>
+
+<div class="W" data-th="mortimer">
+
+<!-- the podium, shared by A and C -->
+<div class="pane" id="podium">
+  <div class="ttl"><b>// best for you tonight</b><small>Mid game (your call) · combat 107, total 1,528, 109 quests, endgame gear in the bank</small><span class="sp"></span><span class="ctl"><span>⟲</span><span>all 12</span><span>▾</span></span></div>
+  <div class="podium" id="pod3">
+    <div class="hero first"><div class="top"><b>#1</b>Processing · high</div><div class="nm">Creating crystal keys</div><div class="gp">4,190,000<small>/hr</small></div><span class="meter" style="--p:100%"></span><div class="why">You have the levels<i>market risk</i></div><div class="loc">Grand Exchange</div><div class="acts"><span>pick</span><span>star</span><span>guide</span><span class="r">hide</span></div></div>
+    <div class="hero"><div class="top"><b>#2</b>Processing · high</div><div class="nm">Cutting raw yellowfin</div><div class="gp">2,926,000<small>/hr</small></div><span class="meter" style="--p:70%"></span><div class="why">You have the levels<i>market risk</i></div><div class="loc">Bank boat</div><div class="acts"><span>pick</span><span>star</span><span>guide</span><span class="r">hide</span></div></div>
+    <div class="hero"><div class="top"><b>#3</b>Processing · high</div><div class="nm">Crafting limestone bricks</div><div class="gp">2,720,000<small>/hr</small></div><span class="meter" style="--p:65%"></span><div class="why">You have the levels</div><div class="loc">Grand Exchange</div><div class="acts"><span>pick</span><span>star</span><span>guide</span><span class="r">hide</span></div></div>
+    <div class="hero loved hidden" id="seat4"><div class="top"><b>♥ loved</b>Combat · Ranged</div><div class="nm">Looting Branda the Fire Queen</div><div class="gp">1,909,000<small>/hr</small></div><span class="meter" style="--p:46%"></span><div class="why">Ranged, which you love</div><div class="loc">Asgarnian Ice Dungeon · a bit beyond mid game</div><div class="acts"><span>pick</span><span>star</span><span>guide</span><span class="r">hide</span></div></div>
+  </div>
+</div>
+
+<!-- A: loves first -->
+<div id="A">
+  <div class="pane">
+    <div class="ttl"><b>// the skills you love</b><small>your best money in each; the podium is gold alone, this is what you would rather be doing</small><span class="sp"></span><span class="ctl"><span>all</span><span>▾</span></span></div>
+    <div class="loves">
+      <div class="lovecol">
+        <div class="sk"><span class="ic">🏹</span><span><div class="nm">Ranged</div><div class="lvl">level <b>75</b> · 1,210,421 xp</div></span><span class="lv">♥ love</span></div>
+        <div class="best"><div class="top" style="font:12px var(--fm); color:var(--muted)">Combat · high</div><div class="nm">Looting Branda the Fire Queen</div><div class="gp">1,909,000<small>/hr</small></div><span class="meter" style="--p:46%"></span><div class="loc">Asgarnian Ice Dungeon · a bit beyond mid game</div></div>
+        <div class="tile"><div class="tn"><b>Killing Blood Moon</b><span class="tg">1,274,000<small>/hr</small></span></div><div class="ts">a bit beyond mid game</div></div>
+        <div class="tile"><div class="tn"><b>Killing Zulrah</b><span class="tg">1,160,000<small>/hr</small></span></div><div class="ts">You have the levels · Zul-Andra</div></div>
+        <div class="more"><span>5 more with Ranged</span><u>show them</u></div>
+      </div>
+      <div class="lovecol">
+        <div class="sk"><span class="ic">🎣</span><span><div class="nm">Fishing</div><div class="lvl">level <b>52</b> · 128,900 xp</div></span><span class="lv">♥ love</span></div>
+        <div class="best"><div class="top" style="font:12px var(--fm); color:var(--muted)">Skilling · low</div><div class="nm">Aerial fishing</div><div class="gp">1,046,000<small>/hr</small></div><span class="meter" style="--p:25%"></span><div class="loc">Lake Molch · you have the levels</div></div>
+        <div class="tile"><div class="tn"><b>Cutting raw yellowfin</b><span class="tg">2,926,000<small>/hr</small></span></div><div class="ts">already on the podium</div></div>
+        <div class="tile"><div class="tn"><b>Fishing anglerfish</b><span class="tg">612,000<small>/hr</small></span></div><div class="ts">needs 82 Fishing · 30 levels to go</div></div>
+        <div class="more"><span>3 more with Fishing</span><u>show them</u></div>
+      </div>
+      <div class="lovecol">
+        <div class="sk"><span class="ic">⚔️</span><span><div class="nm">Melee</div><div class="lvl">attack <b>85</b> · strength <b>90</b> · defence <b>80</b></div></span><span class="lv">♥ love</span></div>
+        <div class="best"><div class="top" style="font:12px var(--fm); color:var(--muted)">Combat · moderate</div><div class="nm">Killing Vorkath (Dragon hunter lance)</div><div class="gp">2,480,000<small>/hr</small></div><span class="meter" style="--p:59%"></span><div class="loc">Ungael · needs Dragon Slayer II</div></div>
+        <div class="tile"><div class="tn"><b>Killing brutal black dragons</b><span class="tg">1,080,000<small>/hr</small></span></div><div class="ts">You have the levels · Catacombs of Kourend</div></div>
+        <div class="tile"><div class="tn"><b>Killing Vyrewatch Sentinels</b><span class="tg">1,020,000<small>/hr</small></span></div><div class="ts">You have the levels · Darkmeyer</div></div>
+        <div class="more"><span>9 more with Melee</span><u>show them</u></div>
+      </div>
+    </div>
+  </div>
+  <div class="pane">
+    <div class="ttl"><b>// more in your style</b><small>measured against tonight's best</small><span class="sp"></span><span class="ctl"><span>⟲</span><span>all 16</span><span>▾</span></span></div>
+    <div class="tiles">
+      <div class="tile"><div class="tn"><b>Making mahogany planks</b><span class="tg">2,059,000<small>/hr</small></span></div><span class="meter" style="--p:49%"></span><div class="ts">You have the levels</div></div>
+      <div class="tile"><div class="tn"><b>Smelting mithril bars</b><span class="tg">1,609,000<small>/hr</small></span></div><span class="meter" style="--p:38%"></span><div class="ts">trains Smithing, which you like</div></div>
+      <div class="tile"><div class="tn"><b>Smelting steel bars</b><span class="tg">1,581,000<small>/hr</small></span></div><span class="meter" style="--p:37%"></span><div class="ts">trains Smithing, which you like</div></div>
+      <div class="tile"><div class="tn"><b>Sac jacking</b><span class="tg">1,944,000<small>/hr</small></span></div><span class="meter" style="--p:46%"></span><div class="ts">You have the levels</div></div>
+      <div class="tile"><div class="tn"><b>Buying mixed hide bases</b><span class="tg">1,629,000<small>/hr</small></span></div><span class="meter" style="--p:39%"></span><div class="ts">Hunter Guild</div></div>
+      <div class="tile"><div class="tn"><b>Guardians of the Rift</b><span class="tg">1,103,000<small>/hr</small></span></div><span class="meter" style="--p:26%"></span><div class="ts">trains Runecrafting, which you like</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- B: the fourth seat, then a shelf -->
+<div id="B" class="hidden">
+  <div class="pane">
+    <div class="ttl"><b>// the skills you love</b><small>the best in each, one card a skill</small><span class="sp"></span><span class="ctl"><span>all</span><span>▾</span></span></div>
+    <div class="shelf">
+      <div class="card"><div class="sk">♥ Ranged <small>level 75</small></div><div class="nm">Looting Branda the Fire Queen</div><div class="gp">1,909,000<small>/hr</small></div><span class="meter" style="--p:46%"></span><div class="ts" style="font-size:12.5px; color:var(--muted)">a bit beyond mid game · 6 more with Ranged</div></div>
+      <div class="card"><div class="sk">♥ Fishing <small>level 52</small></div><div class="nm">Aerial fishing</div><div class="gp">1,046,000<small>/hr</small></div><span class="meter" style="--p:25%"></span><div class="ts" style="font-size:12.5px; color:var(--muted)">Lake Molch · 4 more with Fishing</div></div>
+      <div class="card"><div class="sk">♥ Melee <small>85 / 90 / 80</small></div><div class="nm">Killing Vorkath (Dragon hunter lance)</div><div class="gp">2,480,000<small>/hr</small></div><span class="meter" style="--p:59%"></span><div class="ts" style="font-size:12.5px; color:var(--muted)">needs Dragon Slayer II · 11 more with Melee</div></div>
+      <div class="card"><div class="sk">♥ Woodcutting <small>level 46</small></div><div class="nm">Cutting teak logs</div><div class="gp">212,000<small>/hr</small></div><span class="meter" style="--p:5%"></span><div class="ts" style="font-size:12.5px; color:var(--muted)">Ape Atoll · 2 more with Woodcutting</div></div>
+    </div>
+  </div>
+  <div class="pane">
+    <div class="ttl"><b>// more in your style</b><small>measured against tonight's best</small><span class="sp"></span><span class="ctl"><span>⟲</span><span>all 16</span><span>▾</span></span></div>
+    <div class="tiles">
+      <div class="tile"><div class="tn"><b>Making mahogany planks</b><span class="tg">2,059,000<small>/hr</small></span></div><span class="meter" style="--p:49%"></span><div class="ts">You have the levels</div></div>
+      <div class="tile"><div class="tn"><b>Sac jacking</b><span class="tg">1,944,000<small>/hr</small></span></div><span class="meter" style="--p:46%"></span><div class="ts">You have the levels</div></div>
+      <div class="tile"><div class="tn"><b>Buying mixed hide bases</b><span class="tg">1,629,000<small>/hr</small></span></div><span class="meter" style="--p:39%"></span><div class="ts">Hunter Guild</div></div>
+      <div class="tile"><div class="tn"><b>Smelting mithril bars</b><span class="tg">1,609,000<small>/hr</small></span></div><span class="meter" style="--p:38%"></span><div class="ts">trains Smithing, which you like</div></div>
+      <div class="tile"><div class="tn"><b>Smelting steel bars</b><span class="tg">1,581,000<small>/hr</small></span></div><span class="meter" style="--p:37%"></span><div class="ts">trains Smithing, which you like</div></div>
+      <div class="tile"><div class="tn"><b>Guardians of the Rift</b><span class="tg">1,103,000<small>/hr</small></span></div><span class="meter" style="--p:26%"></span><div class="ts">trains Runecrafting, which you like</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- C: shelves by skill -->
+<div id="C" class="hidden">
+  <div class="pane">
+    <div class="ttl"><b>// everything you can do tonight, by skill</b><small>the skills you love first, then the ones you like, then the rest</small><span class="sp"></span><span class="ctl"><span>by skill</span><span>by gold</span><span>▾</span></span></div>
+    <div class="shelves">
+      <div class="shelfrow loved"><div class="head"><div class="nm">Ranged</div><div class="lvl">level <b>75</b> · 1,210,421 xp</div><div class="tag lv">♥ love</div></div>
+        <div class="items">
+          <div class="it"><div class="nm">Looting Branda the Fire Queen</div><div class="gp">1,909,000<small>/hr</small></div><span class="meter" style="--p:46%"></span><div class="ts">a bit beyond mid game</div></div>
+          <div class="it"><div class="nm">Killing Blood Moon</div><div class="gp">1,274,000<small>/hr</small></div><span class="meter" style="--p:30%"></span><div class="ts">a bit beyond mid game</div></div>
+          <div class="it"><div class="nm">Killing Zulrah</div><div class="gp">1,160,000<small>/hr</small></div><span class="meter" style="--p:28%"></span><div class="ts">Zul-Andra</div></div>
+          <div class="it"><div class="nm">Killing Lizardman Shamans</div><div class="gp">640,000<small>/hr</small></div><span class="meter" style="--p:15%"></span><div class="ts">Molch</div></div>
+        </div></div>
+      <div class="shelfrow loved"><div class="head"><div class="nm">Melee</div><div class="lvl">attack <b>85</b> · strength <b>90</b> · defence <b>80</b></div><div class="tag lv">♥ love</div></div>
+        <div class="items">
+          <div class="it"><div class="nm">Killing Vorkath (lance)</div><div class="gp">2,480,000<small>/hr</small></div><span class="meter" style="--p:59%"></span><div class="ts">needs Dragon Slayer II</div></div>
+          <div class="it"><div class="nm">Killing brutal black dragons</div><div class="gp">1,080,000<small>/hr</small></div><span class="meter" style="--p:26%"></span><div class="ts">Catacombs of Kourend</div></div>
+          <div class="it"><div class="nm">Killing Vyrewatch Sentinels</div><div class="gp">1,020,000<small>/hr</small></div><span class="meter" style="--p:24%"></span><div class="ts">Darkmeyer</div></div>
+          <div class="it"><div class="nm">Killing gargoyles</div><div class="gp">560,000<small>/hr</small></div><span class="meter" style="--p:13%"></span><div class="ts">Slayer Tower</div></div>
+        </div></div>
+      <div class="shelfrow loved"><div class="head"><div class="nm">Fishing</div><div class="lvl">level <b>52</b> · 128,900 xp</div><div class="tag lv">♥ love</div></div>
+        <div class="items">
+          <div class="it"><div class="nm">Cutting raw yellowfin</div><div class="gp">2,926,000<small>/hr</small></div><span class="meter" style="--p:70%"></span><div class="ts">Bank boat · #2 tonight</div></div>
+          <div class="it"><div class="nm">Aerial fishing</div><div class="gp">1,046,000<small>/hr</small></div><span class="meter" style="--p:25%"></span><div class="ts">Lake Molch</div></div>
+          <div class="it"><div class="nm">Fishing anglerfish</div><div class="gp">612,000<small>/hr</small></div><span class="meter" style="--p:15%"></span><div class="ts">needs 82 Fishing</div></div>
+        </div></div>
+      <div class="shelfrow"><div class="head"><div class="nm">Smithing</div><div class="lvl">level <b>65</b></div><div class="tag lk">like</div></div>
+        <div class="items">
+          <div class="it"><div class="nm">Smelting mithril bars</div><div class="gp">1,609,000<small>/hr</small></div><span class="meter" style="--p:38%"></span><div class="ts">Blast Furnace</div></div>
+          <div class="it"><div class="nm">Smelting steel bars</div><div class="gp">1,581,000<small>/hr</small></div><span class="meter" style="--p:37%"></span><div class="ts">Blast Furnace</div></div>
+          <div class="it"><div class="nm">Smithing cannonballs</div><div class="gp">390,000<small>/hr</small></div><span class="meter" style="--p:9%"></span><div class="ts">Edgeville</div></div>
+        </div></div>
+      <div class="shelfrow"><div class="head"><div class="nm">Runecraft</div><div class="lvl">level <b>47</b></div><div class="tag lk">like</div></div>
+        <div class="items">
+          <div class="it"><div class="nm">Guardians of the Rift</div><div class="gp">1,103,000<small>/hr</small></div><span class="meter" style="--p:26%"></span><div class="ts">Temple of the Eye</div></div>
+          <div class="it"><div class="nm">Crafting cosmic runes</div><div class="gp">420,000<small>/hr</small></div><span class="meter" style="--p:10%"></span><div class="ts">Zanaris</div></div>
+        </div></div>
+      <div class="shelfrow quiet"><div class="head"><div class="nm">Crafting</div><div class="lvl">level <b>61</b></div></div>
+        <div class="items">
+          <div class="it"><div class="nm">Creating crystal keys</div><div class="gp">4,190,000<small>/hr</small></div><div class="ts">#1 tonight · market risk</div></div>
+          <div class="it"><div class="nm">Crafting limestone bricks</div><div class="gp">2,720,000<small>/hr</small></div><div class="ts">#3 tonight</div></div>
+          <div class="it"><div class="nm">Tanning blue dragonhide</div><div class="gp">1,194,000<small>/hr</small></div><div class="ts">Al Kharid</div></div>
+          <div class="it"><div class="nm">Tanning green dragonhide</div><div class="gp">1,142,000<small>/hr</small></div><div class="ts">Al Kharid</div></div>
+        </div></div>
+      <div class="shelfrow quiet"><div class="head"><div class="nm">Construction</div><div class="lvl">level <b>72</b></div></div>
+        <div class="items">
+          <div class="it"><div class="nm">Making mahogany planks</div><div class="gp">2,059,000<small>/hr</small></div><div class="ts">Sawmill</div></div>
+        </div></div>
+      <div class="shelfrow quiet"><div class="head"><div class="nm">Hunter</div><div class="lvl">level <b>51</b></div></div>
+        <div class="items">
+          <div class="it"><div class="nm">Sac jacking</div><div class="gp">1,944,000<small>/hr</small></div><div class="ts">Hunter Guild</div></div>
+          <div class="it"><div class="nm">Buying mixed hide bases</div><div class="gp">1,629,000<small>/hr</small></div><div class="ts">Hunter Guild</div></div>
+        </div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+  document.querySelector(".mk-strip").addEventListener("click", e=>{
+    const b = e.target.closest("button"); if(!b) return; const d = b.dataset;
+    if(d.th){ document.querySelectorAll("[data-th]").forEach(x=>x.classList.toggle("on", x === b)); document.querySelector(".W").dataset.th = d.th; }
+    else if(d.dir){
+      document.querySelectorAll("[data-dir]").forEach(x=>x.classList.toggle("on", x === b));
+      ["A", "B", "C"].forEach(k=>{ document.getElementById(k).classList.toggle("hidden", k !== d.dir); document.getElementById("note" + k).classList.toggle("hidden", k !== d.dir); });
+      document.getElementById("seat4").classList.toggle("hidden", d.dir !== "B");
+      document.getElementById("pod3").classList.toggle("four", d.dir === "B");
+    }
+  });
+</script>
+</body>
+</html>

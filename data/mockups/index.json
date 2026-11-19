@@ -1,21 +1,9 @@
 [
   {
-    "file": "bakery.html",
-    "title": "The Bakery, two ways",
-    "desc": "Coffer's Bakery stopped being a page and became a list again: every method a row across the whole window. Two directions over the same sample methods. A, Board: the best three side by side, the rest as small tiles. B, Listing: one aligned table with the chosen row opened beside it. In both, tuning is a settings file you click or type into. Layout and theme switches in the top strip.",
-    "date": "2026-11-18"
-  },
-  {
-    "file": "bars.html",
-    "title": "Progress bars",
-    "desc": "Twenty-one ways to draw a progress bar, each on the same four skill cells and three day rows, so only the bar changes. A is what the app draws today. Click a card to mark the ones you like; the theme switch in the top strip shows them on eight palettes.",
-    "date": "2026-11-18"
-  },
-  {
-    "file": "wide-fill.html",
-    "title": "Filling a wide window",
-    "desc": "What goes in the empty part of a big monitor. Extras come in three tiers (useful, nice, fun) and fill in that order, so more room only ever adds less essential things. Two directions on the Scroll page: a side rail that is the same on every page, or each page growing its own extra panes. Window size and tier labels in the top strip.",
-    "date": "2026-11-17"
+    "file": "coffer-loves.html",
+    "title": "Coffer, the skills you love up front",
+    "desc": "Coffer's Board with the skills you love up front, three ways: a column per loved skill under the podium; a fourth, loved seat on the podium and a shelf; or everything shelved by skill, loved first and twice the size. Figures from Josh's own screen. For 1.1.",
+    "date": "2026-11-19"
   },
   {
     "file": "home-tiles.html",
@@ -76,5 +64,23 @@
     "title": "Big upgrades",
     "desc": "Account upgrades as a tier list. Kept for comparison.",
     "date": "2026-11-02"
+  },
+  {
+    "file": "bakery.html",
+    "title": "The Bakery, two ways",
+    "desc": "",
+    "date": "2026-11-18"
+  },
+  {
+    "file": "bars.html",
+    "title": "Progress bars",
+    "desc": "",
+    "date": "2026-11-18"
+  },
+  {
+    "file": "wide-fill.html",
+    "title": "Filling a wide window",
+    "desc": "",
+    "date": "2026-11-17"
   }
 ]
