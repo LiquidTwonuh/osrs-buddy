@@ -1004,6 +1004,41 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-opts{display:flex; flex-wrap:wrap; gap:8px; justify-content:center}
   .cf-opts button{padding:11px 18px; font-size:14px}
   .cf-opts button.on{border-color:var(--gold); color:var(--gold); background:color-mix(in oklab, var(--gold) 12%, var(--panel2))}
+  /* The quiz as a stage: centred in the page, large, one question at a time. Each step comes in
+     from the side it was reached from, the answers follow one after another, and the page behind
+     steps back. All of the motion is off under reduced motion. */
+  .cf-quiz.cf-stage{text-align:center; max-width:840px; margin:0 auto; padding:clamp(28px, 6vh, 64px) clamp(20px, 5vw, 60px) 30px; min-height:min(68vh, 760px); display:flex; flex-direction:column; justify-content:center}
+  .cf-stage .cf-prog{display:flex; gap:5px; justify-content:center; margin:0 auto 20px; width:min(100%, 440px)}
+  .cf-stage .cf-prog i{flex:1 1 0; height:3px; border-radius:2px; background:var(--border); transition:background .4s ease, transform .4s cubic-bezier(.2,.7,.2,1)}
+  .cf-stage .cf-prog i.done{background:color-mix(in oklab, var(--gold) 60%, var(--border))}
+  .cf-stage .cf-prog i.now{background:var(--gold); transform:scaleY(2)}
+  .cf-stage .cf-q{font-size:clamp(24px, 3.2vw, 34px); line-height:1.2; margin:10px auto 24px; max-width:660px}
+  .cf-stage .cf-q + .small{max-width:560px; margin-left:auto !important; margin-right:auto !important; font-size:13.5px}
+  .cf-stage .cf-opts{gap:10px}
+  .cf-stage .cf-opts button{padding:15px 26px; font-size:16px; border-radius:12px; transition:transform .25s cubic-bezier(.2,.7,.2,1), border-color .25s, background .25s, color .25s}
+  .cf-stage .cf-opts button:hover{transform:translateY(-2px)}
+  .cf-stage .cf-opts button.on{transform:translateY(-2px) scale(1.03)}
+  .cf-stage .cf-next{margin:28px auto 0; min-width:240px; padding:14px 30px; font-size:16px}
+  .cf-stage .cf-foot{margin-top:26px}
+  .cf-stage .cf-slide{max-width:540px}
+  .cf-stage .cf-slideval{font-size:26px}
+  .cf-stage .cf-tiers{max-width:840px}
+  .cf-stage .cf-tier{padding:7px 0}
+  @media (prefers-reduced-motion:no-preference){
+    .cf-stage > *{animation:cfRise .5s cubic-bezier(.2,.7,.2,1) both}
+    .cf-stage > :nth-child(2){animation-delay:.04s} .cf-stage > :nth-child(3){animation-delay:.08s} .cf-stage > :nth-child(4){animation-delay:.12s} .cf-stage > :nth-child(5){animation-delay:.16s} .cf-stage > :nth-child(6){animation-delay:.2s} .cf-stage > :nth-child(7){animation-delay:.24s}
+    .cf-stage.back > *{animation-name:cfRiseBack}
+    .cf-stage .cf-opts button, .cf-stage .cf-tier{animation:cfPop .45s cubic-bezier(.2,.7,.2,1) both; animation-delay:calc(.14s + var(--i, 0) * .05s)}
+    .cf-stage .cf-prog{animation-name:cfFade}
+  }
+  @keyframes cfRise{from{opacity:0; transform:translateX(26px)}}
+  @keyframes cfRiseBack{from{opacity:0; transform:translateX(-26px)}}
+  @keyframes cfPop{from{opacity:0; transform:translateY(10px) scale(.97)}}
+  @keyframes cfFade{from{opacity:0}}
+  /* while the questions are up, the header and the panes beside the page step back */
+  .wf-side, #wideUnder, #view-coffer > .panel:first-child{transition:opacity .6s ease, filter .6s ease}
+  body.cf-quizzing:has(#view-coffer:not(.hidden)) .wf-side, body.cf-quizzing:has(#view-coffer:not(.hidden)) #wideUnder{opacity:.18; filter:saturate(.4); pointer-events:none}
+  body.cf-quizzing:has(#view-coffer:not(.hidden)) #view-coffer > .panel:first-child{opacity:.35; filter:saturate(.5)}
   /* the one thing to press, well clear of the answers */
   .cf-next{margin-top:20px; min-width:190px; padding:11px 22px; font-size:14px}
   /* Back and Skip are escape hatches, not the main road: same line, quiet, out of the way */
@@ -1125,6 +1160,10 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-row .qp-pin{flex:none}
   /* the detail panel, laid out like a quest's details on Map */
   .cf-detail{border-color:color-mix(in oklab, var(--gold) 45%, var(--border))}
+  .bq-pane.folded{padding-top:8px; padding-bottom:8px}
+  .bq-pane.folded .section-title{margin:0; border:0; padding:0}
+  .bq-pane .bq-fold{min-width:28px; padding-left:8px; padding-right:8px}
+  @media (prefers-reduced-motion:no-preference){ .bq-pane > :not(.section-title){animation:cfFade .35s ease both} }
   .cf-report{margin-top:10px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--panel2); font-size:13px}
   .cf-report .seg{flex-wrap:wrap; margin:8px 0}
   .cf-report input{width:100%; box-sizing:border-box}
@@ -3389,7 +3428,11 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .qp-pin{border-radius:6px; background:transparent; border-color:var(--line)}
 
   /* the questions */
-  body[data-skin="term"] .cf-quiz{text-align:left; margin-left:0; padding:22px 20px}
+  body[data-skin="term"] .cf-quiz:not(.cf-stage){text-align:left; margin-left:0; padding:22px 20px}
+  body[data-skin="term"] .cf-stage{background:color-mix(in srgb, var(--panel) 70%, transparent)}
+  body[data-skin="term"] .cf-stage .cf-q{font-size:clamp(24px, 3vw, 32px); letter-spacing:-.6px}
+  body[data-skin="term"] .cf-stage .cf-opts button{border-radius:8px; font:15px var(--fm)}
+  body[data-skin="term"] .cf-stage .cf-next{border-radius:8px}
   body[data-skin="term"] .cf-step{font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
   body[data-skin="term"] .cf-q{font-size:20px; letter-spacing:-.4px; color:var(--text)}
   body[data-skin="term"] .cf-tiers{margin:0}
@@ -18131,6 +18174,21 @@ function cofferIsBoss(m){
   if(m.group !== "Combat" && !/\b(zalcano|tempoross|wintertodt|hespori)\b/.test(n)) return false;
   return cofferBossRes().some(r=>r.test(n));
 }
+// ---- one method, several write-ups ----
+// The wiki writes some methods up more than once: a boss per weapon (Vorkath with a lance, with a
+// crossbow), a raid per team size, and the Royal Titans as a page per titan. They are one thing
+// to the player, so the podium and the next-best list take one of a family, the best (Josh,
+// 2026-11-18: Branda and Eldric sat first and second).
+const COFFER_FAMILIES = [[/\b(branda|eldric|royal titans?)\b/i, "The Royal Titans"], [/\b(moons? of peril|blood moon|blue moon|eclipse moon)\b/i, "Moons of Peril"]];
+function cofferFamily(m){
+  const n = String(m && m.name || "");
+  for(const [re, fam] of COFFER_FAMILIES) if(re.test(n)) return fam;
+  return n.replace(/\s*\([^)]*\)\s*/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+}
+function cofferOnePerFamily(list, taken){
+  const seen = new Set(taken || []);
+  return list.filter(m=>{ const f = cofferFamily(m); if(seen.has(f)) return false; seen.add(f); return true; });
+}
 // hard filters: these decide whether a method is shown at all
 function cofferMatches(m, pf){
   if(pf.members === "no" && !m.f2p) return false;
@@ -18729,6 +18787,8 @@ function cofferTuneLine(text){
   if(!hit) return say(`${v}: ${COFFER_TKEY[id]} takes ${q.opts.map(o=>names[o[0]] || o[1]).join(", ")}`);
   cfEcho = `set ${COFFER_TKEY[id]} ${names[hit[0]] || hit[1]}`; cofferSet(id, hit[0]);
 }
+// which way the next question comes in from: Next slides from the right, Back from the left
+var cofferQuizDir = "fwd";
 function renderCoffer(){
   const el = $("#cofferView"); if(!el) return;
   const db = mmgDB();
@@ -18751,15 +18811,20 @@ function renderCoffer(){
           <div class="row small muted" style="justify-content:space-between"><span>Anything</span><span>${cfGp(CF_FLOOR[CF_FLOOR.length-1])}/hr</span></div>
         </div>`;
     } else if(qq.tiers){
-      body = `<div class="cf-tiers">${COFFER_TIER_SKILLS.map(k=>`<div class="cf-tier"><span class="cf-tiername"><img src="${cfSkillIcon(k)}" alt="" class="cf-skico">${nice(k)}${k === "melee" ? `<small class="muted"> Attack, Strength, Defence, Hitpoints</small>` : ""}</span>
+      body = `<div class="cf-tiers">${COFFER_TIER_SKILLS.map((k, i)=>`<div class="cf-tier" style="--i:${i}"><span class="cf-tiername"><img src="${cfSkillIcon(k)}" alt="" class="cf-skico">${nice(k)}${k === "melee" ? `<small class="muted"> Attack, Strength, Defence, Hitpoints</small>` : ""}</span>
           <span class="cf-tierbtns">${SKILL_TIERS.map(([t,label])=>`<button class="${pf.skillTiers[k]===t?"on "+t:""}" data-cftier="${k}" data-tier="${t}">${label}</button>`).join("")}</span></div>`).join("")}</div>`;
     } else if(qq.number){
       body = `<div class="cf-slide"><input type="text" id="cfGoal" inputmode="numeric" placeholder="e.g. 50m or 50000000" value="${escapeHtml(pf.goal || "")}" style="width:100%; text-align:center; font-size:16px"></div>`;
     } else {
-      body = `<div class="cf-opts">${qq.opts.map(([v,label])=>
-        `<button class="ghost ${pf[qq.id]===v?"on":""}" data-cfans="${v}">${label}</button>`).join("")}</div>`;
+      body = `<div class="cf-opts">${qq.opts.map(([v,label], i)=>
+        `<button class="ghost ${pf[qq.id]===v?"on":""}" data-cfans="${v}" style="--i:${i}">${label}</button>`).join("")}</div>`;
     }
-    el.innerHTML = `<div class="panel cf-quiz">
+    // The questions are a stage: centred, large, one at a time, and the page behind them steps
+    // back (Josh, 2026-11-18). The body class dims the header and the side panes while the Coffer
+    // page is the one showing; it comes off with the list.
+    document.body.classList.add("cf-quizzing");
+    el.innerHTML = `<div class="panel cf-quiz cf-stage ${cofferQuizDir}">
+      ${single ? "" : `<div class="cf-prog" aria-hidden="true">${COFFER_QUIZ.map((x, i)=>`<i class="${i < step ? "done" : i === step ? "now" : ""}"></i>`).join("")}</div>`}
       <div class="cf-step">${single ? "Change one answer" : `Question ${step+1} of ${COFFER_QUIZ.length}`}</div>
       <h3 class="cf-q">${qq.q}</h3>
       ${qq.hint ? `<div class="small muted" style="margin:-10px 0 14px">${qq.hint}${qq.id==="stage" ? ` Right now it says <b>${cofferStage(Object.assign({}, pf, {stage:"auto"})).autoLabel}</b> (${cofferStage(Object.assign({}, pf, {stage:"auto"})).why}).` : ""}</div>` : ""}
@@ -18785,6 +18850,7 @@ function renderCoffer(){
     const sl = $("#cfFloor");
     if(sl) sl.oninput = ()=>{ const v = CF_FLOOR[+sl.value]; $("#cfFloorVal").textContent = v ? cfGp(v) + " an hour or better" : "Anything's worth doing"; };
     const finish = ()=>{
+      document.body.classList.remove("cf-quizzing"); cofferQuizDir = "fwd";
       state.coffer.done = true; state.coffer.quizOpen = false; state.coffer.step = 0;
       if(!single){ state.coffer.tune = true; state.coffer.tuneIntro = !state.coffer.tuneSeen; state.coffer.tuneSeen = true; }
       state.coffer.single = false; save(); renderCoffer();
@@ -18793,14 +18859,15 @@ function renderCoffer(){
       if(sl) pf.floor = String(CF_FLOOR[+sl.value]);
       const g = $("#cfGoal"); if(g) pf.goal = cfParseGp(g.value);
       if(single || last){ finish(); return; }
-      state.coffer.step = step + 1; save(); renderCoffer();
+      cofferQuizDir = "fwd"; state.coffer.step = step + 1; save(); renderCoffer();
     };
-    if($("#cfBack")) $("#cfBack").onclick = ()=>{ state.coffer.step = step-1; save(); renderCoffer(); };
+    if($("#cfBack")) $("#cfBack").onclick = ()=>{ cofferQuizDir = "back"; state.coffer.step = step-1; save(); renderCoffer(); };
     $("#cfSkip").onclick = finish;
     return;
   }
 
   // ---- the curated page ----
+  document.body.classList.remove("cf-quizzing");
   const hiddenNames = cofferHidden(), hiddenSet = new Set(hiddenNames);
   const all = db.methods.filter(m=>!hiddenSet.has(m.name)).map(m=>Object.assign({}, m, {gap: mmgGaps(m)}));
   const byName = {}; all.forEach(m=>{ byName[m.name] = m; });
@@ -18823,11 +18890,13 @@ function renderCoffer(){
   const rot = (list, key)=>{ const k = list.length ? ((off[key] || 0) % list.length) : 0; return list.slice(k).concat(list.slice(0, k)); };
   // the podium always fills to three: the ones that fit your stage first, then the next best
   // you can do now, so hiding a method brings another one up instead of leaving a gap
-  let top = rot(fit, "top").slice(0, 3);
-  if(top.length < 3) top = top.concat(rot(rest, "top").slice(0, 3 - top.length));
-  if(top.length < 3) top = top.concat(close.slice(0, 3 - top.length));   // within reach, labelled with what it needs
+  // one of a family at a time: the Royal Titans, or Vorkath, take one place however many write-ups they have
+  const fams = ()=>top.map(cofferFamily);
+  let top = cofferOnePerFamily(rot(fit, "top")).slice(0, 3);
+  if(top.length < 3) top = top.concat(cofferOnePerFamily(rot(rest, "top"), fams()).slice(0, 3 - top.length));
+  if(top.length < 3) top = top.concat(cofferOnePerFamily(close, fams()).slice(0, 3 - top.length));   // within reach, labelled with what it needs
   const topSet = new Set(top.map(m=>m.name));
-  const more = rot(fit.filter(m=>!topSet.has(m.name)).concat(rest.filter(m=>!topSet.has(m.name))), "more").slice(0, 6);
+  const more = cofferOnePerFamily(rot(fit.filter(m=>!topSet.has(m.name)).concat(rest.filter(m=>!topSet.has(m.name))), "more"), fams()).slice(0, 6);
   const train = rot(close, "train").slice(0, 3);
   const sref = (key, n, len)=> len > n ? `<button class="ghost small cf-sref" data-cfsref="${key}" data-n="${n}" data-len="${len}" title="Show me different ones">⟲</button>` : "";
   const inTop = new Set(top.map(m=>m.name).concat(more.map(m=>m.name)));
@@ -18942,7 +19011,15 @@ function renderCoffer(){
     const icon = m=>cfRowIcon(m, groupIcon(m), "cf-skico");
     const acts = m=>{ const on = pins.includes(m.name), fav = cofferFavs().includes(m.name);
       return `<button class="bq-a${on ? " on" : ""}" data-cfpin="${esc(m.name)}" title="${on ? "On your picks. Press to take it off" : "Add to your picks, at the top of this page"}">${on ? "picked" : "pick"}</button><button class="bq-a${fav ? " on" : ""}" data-cffav="${esc(m.name)}" title="${fav ? "A favourite. Press to take the star off" : "Favourite: floats it up the lists"}">${fav ? "starred" : "star"}</button><a class="bq-a" href="${cofferGuideUrl(m)}" target="_blank" rel="noopener">guide</a><span class="grow"></span><button class="bq-a q" data-cfhide="${esc(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">hide</button>`; };
-    const pane = (title, sub, body, refresh, cls)=>`<div class="panel bq-pane ${cls || ""}"><div class="section-title" style="margin-top:0"><h3>${title}</h3><span class="small muted">${sub}</span>${refresh ? `<span class="grow"></span>${refresh}` : ""}</div>${body}</div>`;
+    // Each section can show everything it has (all) or fold to its title (the arrow); both are
+    // remembered per section in state.coffer.sec (Josh, 2026-11-18: the few were too few).
+    const S = k=>((state.coffer.sec || (state.coffer.sec = {}))[k] || {});
+    const pane = (title, sub, body, refresh, cls, key, n, shown)=>{
+      const s = key ? S(key) : {}, fold = !!(key && s.fold);
+      const ctl = !key ? "" : ((n > shown || s.all) ? `<button class="ghost small cf-sref bq-all" data-cfall="${key}" title="${s.all ? "Back to the few" : "Show every one of them"}">${s.all ? "fewer" : "all " + n}</button>` : "")
+        + `<button class="ghost small cf-sref bq-fold" data-cffold="${key}" title="${fold ? "Open this section" : "Fold it to its title"}">${fold ? "\u25B8" : "\u25BE"}</button>`;
+      return `<div class="panel bq-pane ${cls || ""}${fold ? " folded" : ""}"><div class="section-title" style="margin-top:0"><h3>${title}</h3><span class="small muted">${fold && n ? `${n} inside` : sub}</span><span class="grow"></span>${fold ? "" : (refresh || "")}${ctl}</div>${fold ? "" : body}</div>`;
+    };
     // ---- tuning: your answers as the lines of a settings file ----
     const tline = q=>{
       let v;
@@ -18978,17 +19055,22 @@ function renderCoffer(){
       </div>
     </div>`;
     // the skills you love, a couple of methods each, in one place rather than a section apiece
-    const seenB = new Set(top.concat(more).map(m=>m.name)), loved = [];
+    const seenB = new Set(top.concat(more).map(m=>m.name)), seenF = new Set(top.concat(more).map(cofferFamily)), loved = []; let lovedN = 0;
     if(!lens) Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k] === "love").forEach(k=>{
       const mine = m=>mmgTierSkill(m) === k || (m.skills || []).some(r=>cofferSkillKey(r.skill) === k && r.lvl >= 30);
-      ready.filter(m=>mine(m) && !seenB.has(m.name)).slice(0, 2).forEach(m=>{ seenB.add(m.name); loved.push(m); });
+      const all = ready.filter(m=>mine(m) && !seenB.has(m.name) && !seenF.has(cofferFamily(m))); lovedN += all.length;
+      all.slice(0, S("love").all ? all.length : 2).forEach(m=>{ seenB.add(m.name); seenF.add(cofferFamily(m)); loved.push(m); });
     });
+    // what each section holds in full, for its all button
+    const bestPool = cofferOnePerFamily(fit.concat(rest)), bestExtra = S("best").all ? bestPool.filter(m=>!topSet.has(m.name)) : [];
+    const morePool = cofferOnePerFamily(fit.filter(m=>!topSet.has(m.name)).concat(rest.filter(m=>!topSet.has(m.name))), fams()), moreShown = S("more").all ? morePool : more;
+    const trainShown = S("train").all ? close : train, roundsN = S("rounds").all ? rounds.length : 9;
     const trainOn = pf.reach !== "ready" && train.length;
     const bestTitle = lens ? `Best for ${nice(lens)}` : "Best for you tonight";
     const bestSub = lens ? `${fit.length} you can do now with ${nice(lens)}` : `${st.label}${st.auto ? "" : " (your call)"} · ${esc(st.why)}`;
     const topRef = sref("top", 3, fit.length >= 3 ? fit.length : fit.length + rest.length), moreRef = sref("more", 6, fit.length - top.length + rest.length);
-    const roundsHtml = rounds.length ? pane("Repeatables", "dailies and the ones that come back sooner; tick it when it is done", `<div class="rd-list bq-rounds">${rounds.slice(0, 9).map(m=>roundRowHtml(m, pins)).join("")}</div>`,
-      `<button class="ghost small cf-sref" data-cfsref="rounds" data-n="0" data-len="0" title="Check the clock again">⟲</button>`) : "";
+    const roundsHtml = rounds.length ? pane("Repeatables", "dailies and the ones that come back sooner; tick it when it is done", `<div class="rd-list bq-rounds">${rounds.slice(0, roundsN).map(m=>roundRowHtml(m, pins)).join("")}</div>`,
+      `<button class="ghost small cf-sref" data-cfsref="rounds" data-n="0" data-len="0" title="Check the clock again">⟲</button>`, "", "rounds", rounds.length, roundsN) : "";
     const empty = `<div class="empty">Nothing you can do yet fits those answers. Loosen one under Tune, or look under Worth training for.</div>`;
     if(TL === "board"){
       // Board: the best three side by side, everything else as small tiles. Kept quiet on purpose:
@@ -19009,10 +19091,10 @@ function renderCoffer(){
           <span class="bq-ts">${m.gap.ok ? esc(whyOf(m)[0] || m.loc || "You have the levels") : `<span class="bq-need">needs ${m.gap.text}</span>`}</span>
           <span class="bq-ta"><button class="${fav ? "on" : ""}" data-cffav="${esc(m.name)}" title="${fav ? "A favourite. Press to take the star off" : "Favourite: floats it up the lists"}">${fav ? "starred" : "star"}</button><button class="${on ? "on" : ""}" data-cfpin="${esc(m.name)}" title="${on ? "On your picks" : "Add to your picks"}">${on ? "picked" : "pick"}</button><button data-cfhide="${esc(m.name)}" title="Hide this one">hide</button></span></div>`; };
       const tiles = list=>`<div class="bq-tiles">${list.map(tile).join("")}</div>`;
-      bkMain = pane(bestTitle, bestSub, top.length ? `<div class="bq-podium">${top.map(hero).join("")}</div>` : empty, topRef)
-        + (more.length ? pane(lens ? `More with ${nice(lens)}` : "More in your style", lens ? "the rest of what this skill pays" : "measured against tonight's best", tiles(more), moreRef) : "")
-        + (loved.length ? pane("From the skills you love", "a couple each; pick a skill at the top to see only that one", tiles(loved)) : "")
-        + (trainOn ? pane("Worth training for", "big earners a session or two away", tiles(train), sref("train", 3, close.length)) : "")
+      bkMain = pane(bestTitle, bestSub, top.length ? `<div class="bq-podium">${top.map(hero).join("")}</div>${bestExtra.length ? tiles(bestExtra) : ""}` : empty, topRef, "", "best", bestPool.length, top.length + bestExtra.length)
+        + (moreShown.length ? pane(lens ? `More with ${nice(lens)}` : "More in your style", lens ? "the rest of what this skill pays" : "measured against tonight's best", tiles(moreShown), moreRef, "", "more", morePool.length, moreShown.length) : "")
+        + (loved.length ? pane("From the skills you love", S("love").all ? "every one the skills you love are the point of" : "a couple each; pick a skill at the top to see only that one", tiles(loved), "", "", "love", lovedN, loved.length) : "")
+        + (trainOn ? pane("Worth training for", "big earners a session or two away", tiles(trainShown), sref("train", 3, close.length), "", "train", close.length, trainShown.length) : "")
         + roundsHtml;
     } else {
       // Listing: one aligned table, the chosen row opened in the pane beside it
@@ -19122,6 +19204,8 @@ function renderCoffer(){
   }
   $("#cfRefresh").onclick = ()=>mmgDbEnsure(true);
   const cw = $("#cfWords"); if(cw) cw.onclick = ()=>{ state.coffer.words = !state.coffer.words; save(); renderCoffer(); };
+  $$("#cofferView [data-cfall]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); const k = b.dataset.cfall, sec = state.coffer.sec || (state.coffer.sec = {}); sec[k] = Object.assign({}, sec[k], {all:!(sec[k] || {}).all}); save(); renderCoffer(); });
+  $$("#cofferView [data-cffold]").forEach(b=>b.onclick = e=>{ e.stopPropagation(); const k = b.dataset.cffold, sec = state.coffer.sec || (state.coffer.sec = {}); sec[k] = Object.assign({}, sec[k], {fold:!(sec[k] || {}).fold}); save(); renderCoffer(); });
   $$("#cofferView [data-cfsref]").forEach(b=>b.onclick = ()=>{
     const key = b.dataset.cfsref, n = +b.dataset.n, len = +b.dataset.len;
     state.coffer.off = state.coffer.off || {};
