@@ -19063,7 +19063,7 @@ function renderCoffer(){
     });
     // what each section holds in full, for its all button
     const bestPool = cofferOnePerFamily(fit.concat(rest)), bestExtra = S("best").all ? bestPool.filter(m=>!topSet.has(m.name)) : [];
-    const morePool = cofferOnePerFamily(fit.filter(m=>!topSet.has(m.name)).concat(rest.filter(m=>!topSet.has(m.name))), fams()), moreShown = S("more").all ? morePool : more;
+    const morePool = cofferOnePerFamily(fit.filter(m=>!topSet.has(m.name)).concat(rest.filter(m=>!topSet.has(m.name))), fams()), moreShown = S("best").all ? [] : S("more").all ? morePool : more;   // Best on all already holds them
     const trainShown = S("train").all ? close : train, roundsN = S("rounds").all ? rounds.length : 9;
     const trainOn = pf.reach !== "ready" && train.length;
     const bestTitle = lens ? `Best for ${nice(lens)}` : "Best for you tonight";
