@@ -1,0 +1,40 @@
+name: Suggestion
+description: An idea, a correction, or something you would do differently. All of it is welcome.
+title: "[Suggestion] "
+labels: ["suggestion"]
+body:
+  - type: dropdown
+    id: page
+    attributes:
+      label: Which part of the app
+      options:
+        - Upgrades
+        - Coffer
+        - Home
+        - Quest Hub
+        - Skills
+        - Scroll
+        - Achievements
+        - Goals or Roadmap
+        - The terminal
+        - Settings or setup
+        - Somewhere else
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea, or what is wrong
+      description: Say it the way you would to a friend. A correction can be one line.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it would help
+      description: Optional, but it makes the case.
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Filled in by the app when you came from a Send a suggestion button.

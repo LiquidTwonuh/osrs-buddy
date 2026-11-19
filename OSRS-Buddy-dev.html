@@ -310,6 +310,14 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   @keyframes secretIn{from{opacity:0; transform:translateX(-12px); letter-spacing:.25em; filter:blur(3px)}}
   @keyframes secretGlow{0%,100%{text-shadow:0 0 6px var(--sglow)} 50%{text-shadow:0 0 14px var(--sglow), 0 0 30px color-mix(in srgb, var(--sglow) 55%, transparent)}}
   @media (prefers-reduced-motion:reduce){ .navitem.nav-secret{animation:none; text-shadow:0 0 8px var(--sglow)} }
+  /* a work-in-progress banner: the theme's colour down one edge, a slow sheen across it, a button */
+  .wip{position:relative; overflow:hidden; display:flex; align-items:center; gap:12px 16px; flex-wrap:wrap; padding:10px 14px; margin-top:10px; border-left:3px solid var(--gold); background:linear-gradient(90deg, color-mix(in srgb, var(--gold) 12%, var(--panel)), var(--panel) 65%)}
+  .wip::after{content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(100deg, transparent 35%, color-mix(in srgb, var(--gold) 16%, transparent) 50%, transparent 65%); transform:translateX(-100%)}
+  @media (prefers-reduced-motion:no-preference){ .wip::after{animation:wipSweep 7s ease-in-out 1.2s infinite} }
+  @keyframes wipSweep{0%{transform:translateX(-100%)} 45%,100%{transform:translateX(100%)}}
+  .wip-tag{font:600 10.5px var(--fm, ui-monospace, monospace); letter-spacing:.16em; text-transform:uppercase; color:var(--gold); white-space:nowrap}
+  .wip-txt{flex:1 1 320px; font-size:13.5px; color:var(--text)}
+  .wip-go{position:relative; z-index:1}
   /* the quiet row: Game corner sits under the list, dimmed, without a heading of its own */
   .nav-quiet{margin-top:14px; position:relative; color:var(--muted); font-weight:normal; font-size:12.5px; opacity:.55;
     transition:opacity .22s, color .18s, background .18s}
@@ -5447,6 +5455,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="set-row"><div class="lbl"><b id="updStatus">Mortimeter v<span id="updCur"></span></b><small>The version you are running.</small></div><button class="ghost small" id="updCheckBtn">Check for updates</button></div>
             <div class="set-row"><div class="lbl"><b>What's new</b><small>Patch notes for this and every previous version.</small></div><button class="ghost small" id="openPatch">Open</button></div>
             <div class="set-row"><div class="lbl"><b>Report a bug</b><small>Opens a GitHub issue with the app version filled in. Needs a free GitHub account.</small></div><a class="ghost small" id="bugBtn" target="_blank" rel="noopener" style="display:inline-block">Report</a></div>
+            <div class="set-row"><div class="lbl"><b>Send a suggestion</b><small>An idea or a correction, kept apart from the bugs. Opens a GitHub form with the app version filled in.</small></div><a class="ghost small" id="suggestBtn" target="_blank" rel="noopener" style="display:inline-block">Suggest</a></div>
             <p class="set-note" id="aboutOld">Mortimeter, formerly OSRS Buddy, 15 July to 18 October 2026.</p>
           </div>
         </section>
@@ -5995,6 +6004,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
         <p class="goals-blurb" id="gearBlurb"></p>
       </div>
     </div>
+    <div class="panel wip" id="gearWip"><span class="wip-tag">Work in progress</span><span class="wip-txt">Suggestions, corrections and any input are encouraged and appreciated.</span><a class="primary small wip-go" id="gearSuggest" target="_blank" rel="noopener" href="#">Send a suggestion</a></div>
     <div id="gearView"></div>
   </div>
   <div class="view hidden" id="view-mockups">
@@ -17646,6 +17656,7 @@ function gearCreditHtml(sec){
 }
 function renderGear(){
   const el = $("#gearView"); if(!el) return;
+  const sg = $("#gearSuggest"); if(sg && sg.getAttribute("href") === "#") sg.href = ghIssueUrl("suggestion.yml", {page: "Upgrades"});
   if(!GEAR_DATA){ el.innerHTML = `<div class="panel"><div class="empty">The gear data is missing from this build.</div></div>`; return; }
   const sec = gearSec(), old = $("#gearView .gu-rail"), keepX = old ? old.scrollLeft : null;
   el.innerHTML = (sec === "skilling" ? gearSkillingHtml() : gearStyleHtml(sec)) + gearCreditHtml(sec);
@@ -21290,14 +21301,19 @@ function openSettings(tab){
   renderClaudeSetting();
   settingsTab(typeof tab === "string" ? tab : "general"); renderBackups(); renderStorage(); renderCeSetting(); renderVaultSetting(); renderSyncSetting();
   renderDevSection(); devWireSettings();
-  const bb = $("#bugBtn");
-  if(bb){
-    const body = encodeURIComponent("**What happened**\n\n\n**What I expected**\n\n\n---\nversion: "+APP_LABEL+" (build "+APP_VERSION+")\nbrowser: "+navigator.userAgent);
-    bb.href = "https://github.com/"+GH_REPO+"/issues/new?labels=bug&body="+body;
-  }
+  const bb = $("#bugBtn"); if(bb) bb.href = ghIssueUrl("bug.yml", {device: ghDevice()});
+  const sg = $("#suggestBtn"); if(sg) sg.href = ghIssueUrl("suggestion.yml", {page: "Somewhere else"});
   $("#settingsWrap").classList.remove("hidden");
 }
 function closeSettings(){ $("#settingsWrap").classList.add("hidden"); }
+// A GitHub issue from one of the repo's forms, fields filled in. The form carries the label (bug,
+// suggestion), which a plain link only applies for people with write access to the repo, so a
+// stranger's report arrives sorted too. Needs a free GitHub account on their side.
+function ghDevice(){ return IS_ANDROID ? "Android" : ceDesktop() ? "Windows app" : "Browser: " + (navigator.userAgent.match(/(Edg|Chrome|Firefox|Safari)\/[\d.]+/) || [""])[0]; }
+function ghIssueUrl(template, fields){
+  const q = Object.assign({template, version: APP_LABEL + " (build " + APP_VERSION + ")"}, fields || {});
+  return "https://github.com/" + GH_REPO + "/issues/new?" + Object.keys(q).filter(k=>q[k]).map(k=>encodeURIComponent(k) + "=" + encodeURIComponent(q[k])).join("&");
+}
 
 // ---- skill info modal (Home → click a skill tile) ----
 function skillWeekXp(key){
