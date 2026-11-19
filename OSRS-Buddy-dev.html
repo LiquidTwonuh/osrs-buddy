@@ -5054,6 +5054,26 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .bq-tn b{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600}
   body[data-skin="term"] .bq-tg{font:600 13.5px var(--fm); color:var(--gold); white-space:nowrap} body[data-skin="term"] .bq-tg .muted{font-weight:400; font-size:11px}
   body[data-skin="term"] .bq-tile .bq-meter{grid-column:1 / -1; height:2px; margin:4px 0 3px}
+  /* the skills you love, a column each */
+  body[data-skin="term"] .bq-loves{display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:10px}
+  body[data-skin="term"] .bq-lovecol{min-width:0; padding:12px 14px 10px; border:1px solid var(--hair); border-top:2px solid var(--gold); background:color-mix(in srgb, var(--panel) 55%, transparent)}
+  body[data-skin="term"] .bq-lsk{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+  body[data-skin="term"] .bq-lsk .cf-skico{width:30px; height:30px; padding:4px; border:1px solid var(--line); object-fit:contain}
+  body[data-skin="term"] .bq-lsk span{display:flex; flex-direction:column; min-width:0}
+  body[data-skin="term"] .bq-lsk b{font:600 18px/1.15 var(--fm); letter-spacing:-.3px}
+  body[data-skin="term"] .bq-lsk small{font:12px var(--fm); color:var(--muted)} body[data-skin="term"] .bq-lsk small b{font:600 12px var(--fm); color:var(--text)}
+  body[data-skin="term"] .bq-heart{margin-left:auto; font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; font-style:normal; color:var(--gold-dim)}
+  body[data-skin="term"] .bq-heart::before{content:"\2665"; margin-right:5px; color:var(--gold)}
+  body[data-skin="term"] .bq-lbest{display:flex; flex-direction:column; gap:4px; padding:10px 12px 8px; margin-bottom:4px; border:1px solid color-mix(in srgb, var(--gold) 55%, var(--line)); cursor:pointer; transition:border-color .16s}
+  body[data-skin="term"] .bq-lbest:hover{border-color:var(--gold)}
+  body[data-skin="term"] .bq-lbest .bq-name{font-size:18px} body[data-skin="term"] .bq-lbest .bq-gp{font-size:26px}
+  body[data-skin="term"] .bq-lbest .bq-meter{margin:3px 0 2px}
+  body[data-skin="term"] .bq-lbest .bq-loc{color:var(--faint)} body[data-skin="term"] .bq-lbest .bq-loc::before{content:"\00b7\00a0"}
+  body[data-skin="term"] .bq-pod{margin-left:auto; font:11px var(--fm); color:var(--gold-dim); letter-spacing:.04em}
+  body[data-skin="term"] .bq-ltiles{grid-template-columns:minmax(0, 1fr)}
+  body[data-skin="term"] .bq-lmore{display:flex; width:100%; justify-content:space-between; margin:8px 0 0; padding:6px 2px 0; min-height:0; background:none; border:0; border-top:1px solid var(--line); box-shadow:none; color:var(--gold); font:12px var(--fm); cursor:pointer; text-align:left}
+  body[data-skin="term"] .bq-lmore::after{content:"lens"; color:var(--faint)}
+  @media (prefers-reduced-motion:no-preference){ body[data-skin="term"] .bq-lovecol{animation:cfFade .4s ease both} }
   body[data-skin="term"] .bq-ts{grid-column:1 / -1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12.5px; color:var(--faint)}
   body[data-skin="term"] .bq-ta{position:absolute; right:0; bottom:6px; display:flex; gap:4px; opacity:0; pointer-events:none; transition:opacity .14s}
   body[data-skin="term"] .bq-tile:hover .bq-ta, body[data-skin="term"] .bq-tile:focus-within .bq-ta{opacity:1; pointer-events:auto}
@@ -19119,9 +19139,44 @@ function renderCoffer(){
           <span class="bq-ts">${m.gap.ok ? esc(whyOf(m)[0] || m.loc || "You have the levels") : `<span class="bq-need">needs ${m.gap.text}</span>`}</span>
           <span class="bq-ta"><button class="${fav ? "on" : ""}" data-cffav="${esc(m.name)}" title="${fav ? "A favourite. Press to take the star off" : "Favourite: floats it up the lists"}">${fav ? "starred" : "star"}</button><button class="${on ? "on" : ""}" data-cfpin="${esc(m.name)}" title="${on ? "On your picks" : "Add to your picks"}">${on ? "picked" : "pick"}</button><button data-cfhide="${esc(m.name)}" title="Hide this one">hide</button></span></div>`; };
       const tiles = list=>`<div class="bq-tiles">${list.map(tile).join("")}</div>`;
+      // The skills you love, straight under the podium and a column each (Josh picked this of three
+      // mockups, 2026-11-18: "if I love them, why is it so far down and tiny"). The skill and your
+      // level as the header, its best money maker as a card with the full figure, the next two as
+      // rows, and a line to the rest, which turns the lens on that skill. One of a family a column,
+      // and the podium's own say so rather than hiding. More in your style skips what is here.
+      // A method sits in one column only: the skill it is filed under claims it first; a skill it
+      // merely asks for (30 or more) gets it only if nothing has claimed it yet.
+      const claimed = new Set();
+      const pickFor = (k, pool, own)=>cofferOnePerFamily(pool.filter(m=>!claimed.has(m.name) && (own ? mmgTierSkill(m) === k : mmgTierSkill(m) !== k && (m.skills || []).some(r=>cofferSkillKey(r.skill) === k && r.lvl >= 30))));
+      const takeInto = (c, list)=>{ const add = list.filter(m=>!c.list.some(x=>cofferFamily(x) === cofferFamily(m))); c.list = c.list.concat(add); add.forEach(m=>claimed.add(m.name)); };
+      const loveCols = (lens ? [] : Object.keys(pf.skillTiers).filter(k=>pf.skillTiers[k] === "love")).map(k=>({k, list:[]}));
+      loveCols.forEach(c=>takeInto(c, pickFor(c.k, ready, true)));
+      loveCols.forEach(c=>takeInto(c, pickFor(c.k, ready, false)));
+      loveCols.forEach(c=>{ if(c.list.length < 3){ takeInto(c, pickFor(c.k, close, true)); if(c.list.length < 3) takeInto(c, pickFor(c.k, close, false)); } });
+      const loveColsAll = loveCols.filter(c=>c.list.length); loveCols.length = 0; loveColsAll.forEach(c=>loveCols.push(c));
+      const loveShowN = c=>S("love").all ? c.list.length : Math.min(3, c.list.length);
+      const loveN = loveCols.reduce((a, c)=>a + c.list.length, 0), loveShown = loveCols.reduce((a, c)=>a + loveShowN(c), 0);
+      const loveNames = new Set(loveCols.flatMap(c=>c.list.slice(0, loveShowN(c)).map(m=>m.name)));
+      const loveCol = c=>{
+        const k = c.k, shown = c.list.slice(0, loveShowN(c)), best = shown[0], rest = shown.slice(1), left = c.list.length - shown.length;
+        const lvl = k === "melee" ? `attack <b>${lvlOf("attack")}</b> · strength <b>${lvlOf("strength")}</b> · defence <b>${lvlOf("defence")}</b>` : `level <b>${lvlOf(k)}</b>${live ? ` · ${fmt(liveSkillXp(k))} xp` : ""}`;
+        const card = m=>`<div class="bq-lbest${m.gap.ok ? "" : " short"}${pins.includes(m.name) ? " pinned" : ""}" data-cfopen="${esc(m.name)}" title="Open the full card">
+            <div class="bq-top"><span class="bq-cat">${esc(effort(m))}</span>${topSet.has(m.name) ? `<span class="bq-pod">on the podium</span>` : ""}</div>
+            <div class="bq-name">${esc(m.name)}</div><div class="bq-gp">${cofferPayHtml(m)}</div>
+            ${m.gap.ok ? `<span class="bq-meter" style="--p:${pctOf(m)}%"></span>` : ""}
+            <div class="bq-why">${m.gap.ok ? esc(whyOf(m)[0] || "You have the levels") : `<span class="bq-need">needs ${m.gap.text}</span>`}${m.loc ? ` <span class="bq-loc">${esc(m.loc)}</span>` : ""}</div>
+            <div class="bq-acts">${acts(m)}</div></div>`;
+        return `<div class="bq-lovecol">
+          <div class="bq-lsk"><img src="${cfSkillIcon(k)}" alt="" class="cf-skico"><span><b>${esc(nice(k))}</b><small>${lvl}</small></span><i class="bq-heart" title="A skill you love">love</i></div>
+          ${best ? card(best) : ""}
+          ${rest.length ? `<div class="bq-tiles bq-ltiles">${rest.map(tile).join("")}</div>` : ""}
+          ${left > 0 ? `<button type="button" class="bq-lmore" data-lens="${k}" title="See only ${esc(nice(k))}">${left} more with ${esc(nice(k))} ›</button>` : ""}
+        </div>`;
+      };
+      const moreB = moreShown.filter(m=>!loveNames.has(m.name)), morePoolB = morePool.filter(m=>!loveNames.has(m.name));
       bkMain = pane(bestTitle, bestSub, top.length ? `<div class="bq-podium">${top.map(hero).join("")}</div>${bestExtra.length ? tiles(bestExtra) : ""}` : empty, topRef, "", "best", bestPool.length, top.length + bestExtra.length)
-        + (moreShown.length ? pane(lens ? `More with ${nice(lens)}` : "More in your style", lens ? "the rest of what this skill pays" : "measured against tonight's best", tiles(moreShown), moreRef, "", "more", morePool.length, moreShown.length) : "")
-        + (loved.length ? pane("From the skills you love", S("love").all ? "every one the skills you love are the point of" : "a couple each; pick a skill at the top to see only that one", tiles(loved), "", "", "love", lovedN, loved.length) : "")
+        + (loveCols.length ? pane("The skills you love", S("love").all ? "everything each of them pays, best first" : "your best money in each; the podium is gold alone, this is what you would rather be doing", `<div class="bq-loves">${loveCols.map(loveCol).join("")}</div>`, "", "", "love", loveN, loveShown) : "")
+        + (moreB.length ? pane(lens ? `More with ${nice(lens)}` : "More in your style", lens ? "the rest of what this skill pays" : "measured against tonight's best", tiles(moreB), moreRef, "", "more", morePoolB.length, moreB.length) : "")
         + (trainOn ? pane("Worth training for", "big earners a session or two away", tiles(trainShown), sref("train", 3, close.length), "", "train", close.length, trainShown.length) : "")
         + roundsHtml;
     } else {
