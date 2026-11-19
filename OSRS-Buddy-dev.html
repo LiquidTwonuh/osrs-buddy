@@ -13444,8 +13444,8 @@ function renderQuestPlanner(){
     const b=$("#qpBuild"); if(b) b.onclick = qpLoad;
     return;
   }
-  const total = db.order.length, done = db.order.filter(questDone).length;
-  $("#qpSub").textContent = `${done}/${total} quests complete · data from ${fmtDay(isoDate(new Date(db.ts)))}`;
+  const cnt = questCounts(db);
+  $("#qpSub").textContent = `${cnt.done}/${cnt.total} quests complete${cnt.miniDone ? `, ${cnt.miniDone}/${cnt.miniTotal} miniquests` : ""} · data from ${fmtDay(isoDate(new Date(db.ts)))}`;
   setup.innerHTML = qpSyncHtml(db); qpSyncWire();
   const target = state.qpTarget;
   // the popular goals are for picking a first goal; once one is charted they fold away
@@ -14459,8 +14459,8 @@ function claudeSystem(q){
   }
   else out.push("No character is loaded, so the player's levels are not known.");
   if(db){
-    const done = db.order.filter(questDone), ready = db.order.filter(n=>questStatus(n, db) === "ready"), prog = db.order.filter(questInProgress);
-    out.push(`Quests: ${done.length} of ${db.order.length} done, ${claudeQp()} quest points. Ready to start now: ${ready.length}${ready.length ? " (" + ready.slice(0, 8).join(", ") + (ready.length > 8 ? ", ..." : "") + ")" : ""}.` + (prog.length ? ` Started in game but not finished: ${prog.slice(0, 10).join(", ")}.` : ""));
+    const cnt = questCounts(db), ready = db.order.filter(n=>questStatus(n, db) === "ready"), prog = db.order.filter(questInProgress);
+    out.push(`Quests: ${cnt.done} of ${cnt.total} done, counted as the game counts (Recipe for Disaster as one quest, miniquests apart${cnt.miniDone ? `; ${cnt.miniDone} miniquests done` : ""}), ${claudeQp()} quest points. Ready to start now: ${ready.length}${ready.length ? " (" + ready.slice(0, 8).join(", ") + (ready.length > 8 ? ", ..." : "") + ")" : ""}.` + (prog.length ? ` Started in game but not finished: ${prog.slice(0, 10).join(", ")}.` : ""));
     const t = state.qpTarget;
     if(t && t !== "__ALL__" && db.quests[t]) out.push(`The quest picked as the target in the app's planner: ${t} (${questStatus(t, db)}).`);
   }
@@ -15186,9 +15186,9 @@ function wfCells(days, weeks){
 // ---- tier 1: useful ----
 wfAdd({id:"questrec", tier:1, title:"Quest record", pages:["home"], draw(v, sz){
   const db = questDB(); if(!db) return null;
-  const c = state.ceSync || {}, on = ceDesktop() && !!c.path && !c.off, g = on ? c.game : null, conf = on ? (c.conflicts || []).length : 0, done = db.order.filter(questDone).length;
+  const c = state.ceSync || {}, on = ceDesktop() && !!c.path && !c.off, g = on ? c.game : null, conf = on ? (c.conflicts || []).length : 0, cnt = questCounts(db);
   const go = t=>({attrs:`data-wfgo="quests" title="${wfEsc(t || "Open Quest Hub")}"`});
-  const rows = [wfRow("Quest points", "", qpMyQp(db), go()), wfRow("Done here", `of ${db.order.length}`, done, go())];
+  const rows = [wfRow("Quest points", "", qpMyQp(db), go()), wfRow("Done here", `of ${cnt.total}`, cnt.done, go())];
   if(g && g.finished != null) rows.push(wfRow("Finished in game", g.at ? fmtDay(isoDate(new Date(g.at))) : "", g.finished, go()));
   if(conf) rows.push(wfRow("Ticked here, not in game", "", conf, go("Open Quest Hub to put it right")));
   const ready = db.order.filter(n=>questStatus(n, db) === "ready").length;
@@ -19689,11 +19689,12 @@ function qpPlanHtml(target, db){
 // fix to hand (Josh, 2026-11-18: the app said 188 points, the game 178).
 function qpSyncHtml(db){
   const c = state.ceSync || {}, on = ceDesktop() && !!c.path && !c.off, g = on ? c.game : null, conf = on ? (c.conflicts || []).length : 0;
-  const done = db.order.filter(questDone).length, qp = qpMyQp(db), e = escapeHtml;
+  const cnt = questCounts(db), done = cnt.done, qp = qpMyQp(db), e = escapeHtml;
   const when = ts=>{ const d = new Date(ts); return `${fmtDay(isoDate(d))} ${d.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}`; };
   const stat = (k, v, cls)=>`<div class="qp-stat ${cls || ""}"><div class="k">${k}</div><div class="v">${v}</div></div>`;
   const stats = stat("Quest points", qp) + stat("Done here", done)
     + (g && g.finished != null ? stat("Finished in game", g.finished) : "")
+    + (cnt.miniDone ? stat("Miniquests", cnt.miniDone) : "")
     + (g && g.prog ? stat("In progress", g.prog) : "")
     + (conf ? stat("Ticked here, not in game", conf, "warn") : "");
   let line = "", btns = "";
@@ -19957,6 +19958,24 @@ function questQpGain(n, db){
 }
 function qpMyQp(db){
   return Object.keys(db.quests).reduce((a,t)=>a+(questDone(t)?questQpGain(t, db):0), 0);
+}
+// Counted the way the game's quest list counts: a quest with subquests is one quest and its
+// subquests are not counted on their own, and miniquests are not counted at all. The app said
+// 109 where the game said 96: 96 quests, Recipe for Disaster's ten subquests and three
+// miniquests (Josh, 2026-11-18).
+function questCounted(n, db){
+  db = db || questDB(); const q = db && db.quests[n]; if(!q || q.mini) return false;
+  const i = n.indexOf("/"); return !(i > 0 && db.quests[n.slice(0, i)]);
+}
+function questCounts(db){
+  db = db || questDB(); const c = {done:0, total:0, miniDone:0, miniTotal:0}; if(!db) return c;
+  db.order.forEach(n=>{
+    const q = db.quests[n];
+    if(q.mini){ c.miniTotal++; if(questDone(n)) c.miniDone++; return; }
+    if(!questCounted(n, db)) return;
+    c.total++; if(questDone(n)) c.done++;
+  });
+  return c;
 }
 function qpQuestRow(t, db){
   const done = questDone(t);
@@ -23355,7 +23374,7 @@ async function ceSyncNow(opts){
     cfg.stamp = stamp; cfg.err = null;
     cfg.conflicts = pv.quests ? pv.quests.conflicts.map(c=>c.n) : [];
     // what the game's record said, for Quest Hub and the Home pane: finished, in progress, and when
-    if(pv.quests) cfg.game = {finished:pv.quests.add.length + pv.quests.same.length, prog:Object.keys(pv.quests.prog).length, untracked:pv.quests.untracked.length, at:ceTime(acc.quests && acc.quests.exported_at) || Date.now()};
+    if(pv.quests) cfg.game = {finished:pv.quests.add.concat(pv.quests.same).filter(n=>questCounted(n)).length, prog:Object.keys(pv.quests.prog).filter(n=>questCounted(n)).length, untracked:pv.quests.untracked.length, at:ceTime(acc.quests && acc.quests.exported_at) || Date.now()};
     if(res.changed) cfg.lastSync = Date.now();
     save();
     if(res.changed){
