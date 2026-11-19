@@ -5283,6 +5283,46 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] input[type=checkbox]:focus-visible{background:var(--gold)}
   body[data-skin="term"] .cf-lrow.short .cf-lname::after{content:""; display:inline-block; width:9px; height:9px; margin-left:4px; background:currentColor; --g:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath d='M2 0h5v1h-5zM1 1h1v1h-1zM7 1h1v1h-1zM1 2h1v1h-1zM7 2h1v1h-1zM0 3h9v1h-9zM0 4h1v1h-1zM8 4h1v1h-1zM0 5h1v1h-1zM4 5h1v1h-1zM8 5h1v1h-1zM0 6h1v1h-1zM4 6h1v1h-1zM8 6h1v1h-1zM0 7h1v1h-1zM8 7h1v1h-1zM0 8h9v1h-9z'/%3E%3C/svg%3E"); -webkit-mask:var(--g) center / contain no-repeat; mask:var(--g) center / contain no-repeat; opacity:.7}
   /*SKIN_TERM_END*/
+
+  /* ============ THE SECOND COLOUR ============
+     Josh picked "two colours" from design/mockups/themes-variety.html (2026-11-18): the accent
+     (--gold) keeps what you can press; a second colour, --acc2, takes the figures (levels, xp,
+     gold), the bars, the prompt and the small labels. A theme without a pair sets --acc2 to its
+     accent, so nothing changes for it. Night stops borrowing Mortimer's teal and gets moonlight.
+     Settings, Look has a hue slider that sets --acc2 per theme (state.acc2, body[data-acc2]);
+     lightness and chroma are fixed there, so any hue keeps its contrast on the dark grounds. */
+  body[data-skin="term"]{--acc2:var(--gold); --acc2-dim:var(--gold-dim)}
+  body[data-skin="term"][data-theme="mortimer"]{--acc2:#dba36a; --acc2-dim:#a77a4c}
+  body[data-skin="term"][data-theme="night"]{--gold:#b8c4e6; --gold-dim:#7f8aa8; --gold2:#a3afd0; --gold3:#4a5268; --glow:rgba(184,196,230,.12); --active:#171a22; --acc2:#e2b55b; --acc2-dim:#a8864a}
+  body[data-skin="term"][data-theme="black"]{--acc2:#b48cff; --acc2-dim:#7f63b8}
+  body[data-skin="term"][data-theme="crystal"]{--acc2:#d7a6ea; --acc2-dim:#9c77ad}
+  body[data-skin="term"][data-acc2]{--acc2:oklch(0.8 0.11 var(--acc2-h)); --acc2-dim:oklch(0.64 0.09 var(--acc2-h))}
+  /* figures */
+  body[data-skin="term"] .skx-r .v, body[data-skin="term"] .skx-kv b, body[data-skin="term"] .ht-sk .lv,
+  body[data-skin="term"] .bq-gp, body[data-skin="term"] .cf-hpay, body[data-skin="term"] .cf-hc.first .cf-hpay,
+  body[data-skin="term"] .bq-tg, body[data-skin="term"] .bq-ls td.gp, body[data-skin="term"] .ht-log .o b, body[data-skin="term"] .tf-row > b{color:var(--acc2)}
+  body[data-skin="term"] .skx-r .v.g{color:var(--k-g)} body[data-skin="term"] .skx-r .v.o{color:var(--k-o)}
+  /* bars */
+  body[data-skin="term"] .bar > i, body[data-skin="term"] .ht-sk .bar i, body[data-skin="term"] .ht-more .bar i{background:var(--acc2)}
+  body[data-skin="term"] :is(.bar, .wf-m) > i{--bc:var(--acc2)}
+  body[data-skin="term"] .wf-m > i{--bc:var(--c, var(--acc2))}
+  body[data-skin="term"] .ht-log .o .bar{background:linear-gradient(90deg, var(--acc2) var(--p), var(--line) var(--p))}
+  body[data-skin="term"] :is(.bar.full, .bar.ready) > i, body[data-skin="term"] .ht-sk.near .bar > i, body[data-skin="term"] .ht-more .blk:not(.wk) .bar i{background:var(--k-g); --bc:var(--k-g)}
+  /* the prompt */
+  body[data-skin="term"] .ht-say .who, body[data-skin="term"] .tt-ps, body[data-skin="term"] .tt-in > b, body[data-skin="term"] .term-dock button.cmd, body[data-skin="term"] .tl-who{color:var(--acc2)}
+  /* the small labels */
+  body[data-skin="term"] .section-title h3, body[data-skin="term"] .ht-lab, body[data-skin="term"] .sh-eyebrow, body[data-skin="term"] .cf-lenstitle,
+  body[data-skin="term"] .cf-step, body[data-skin="term"] .ht-menu .ttl, body[data-skin="term"] .wrap-title, body[data-skin="term"] :is(.tp-oh, .tf-h) .lab,
+  body[data-skin="term"] .bq-sec td, body[data-skin="term"] .bq-heart{color:var(--acc2-dim)}
+  body[data-skin="term"] .bq-heart::before{color:var(--acc2)}
+  /* Settings, Look: the hue slider */
+  .acc2-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .acc2-sw{flex:none; width:24px; height:24px; border-radius:50%; background:var(--acc2, var(--gold)); border:1px solid var(--line); box-shadow:0 0 0 3px color-mix(in srgb, var(--acc2, var(--gold)) 25%, transparent)}
+  .acc2-row input[type=range]{flex:1 1 200px; width:auto; height:10px; margin:0; border-radius:5px; appearance:none; -webkit-appearance:none; outline:0; cursor:pointer;
+    background:linear-gradient(90deg, oklch(.8 .11 0), oklch(.8 .11 60), oklch(.8 .11 120), oklch(.8 .11 180), oklch(.8 .11 240), oklch(.8 .11 300), oklch(.8 .11 360))}
+  .acc2-row input[type=range]::-webkit-slider-thumb{appearance:none; -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--acc2, var(--gold)); border:2px solid var(--bg); box-shadow:0 0 0 1px var(--text)}
+  .acc2-row input[type=range]::-moz-range-thumb{width:16px; height:16px; border-radius:50%; background:var(--acc2, var(--gold)); border:2px solid var(--bg); box-shadow:0 0 0 1px var(--text)}
+  .acc2-row small{font:12px var(--fm); color:var(--muted); min-width:3.5ch}
 </style>
 </head>
 <body>
@@ -5448,6 +5488,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
           <div class="set-group">
             <div class="set-h">Theme</div>
             <div class="su-themes set-themes" id="themePick"></div>
+            <div class="set-row col term-only"><div class="lbl"><b>Second colour</b><small>Beside the theme's accent, a second colour takes the figures, the bars, the prompt and the small labels. Slide to choose its hue for this theme; Theme's own puts the pair back.</small></div><div class="acc2-row"><i class="acc2-sw" id="acc2Sw"></i><input type="range" id="acc2Hue" min="0" max="359" step="1" aria-label="Hue of the second colour"><small id="acc2Val"></small><button class="ghost small" id="acc2Reset">Theme's own</button></div></div>
             <div class="set-row col"><div class="lbl"><b>Scene art</b><small>The picture a theme carries. Focused shows a little of it, Illustrated shows more, Off shows none.</small></div><div class="seg" id="artSeg"></div></div>
           </div>
           <div class="set-group">
@@ -10409,6 +10450,18 @@ function setSkin(id){
 }
 // the themes that carry a picture in the Terminal look (design/theme-art)
 const TERM_ART_THEMES = new Set(["mortimer", "parchment", "crystal", "air", "water", "earth", "fire", "mind", "nature", "law", "chaos", "death", "blood", "cosmic", "astral", "lava"]);
+// The second colour's hue a theme was given in Settings, Look, or null for the theme's own pair.
+function acc2Hue(t){ const v = state.acc2 && state.acc2[t]; return typeof v === "number" && isFinite(v) ? Math.round(v) : null; }
+// The oklch hue of the theme's own second colour, so the slider rests where the pair is.
+function acc2ThemeHue(){
+  const hex = (getComputedStyle(document.body).getPropertyValue("--acc2") || "").trim();
+  const m = /^#([0-9a-f]{6})$/i.exec(hex); if(!m) return 60;
+  const lin = c=>{ c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+  const r = lin(parseInt(m[1].slice(0, 2), 16)), g = lin(parseInt(m[1].slice(2, 4), 16)), b = lin(parseInt(m[1].slice(4, 6), 16));
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b), mm = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b), s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  const a = 1.9779984951 * l - 2.428592205 * mm + 0.4505937099 * s, bb = 0.0259040371 * l + 0.7827717662 * mm - 0.808675766 * s;
+  return Math.round(((Math.atan2(bb, a) * 180 / Math.PI) + 360) % 360);
+}
 function applyTheme(){
   applySkin();
   // a theme that no longer exists: Dark becomes Night, the rest go to the default
@@ -10416,6 +10469,9 @@ function applyTheme(){
   const t = state.theme || DEFAULT_THEME;
   document.body.dataset.theme = t;
   document.body.classList.toggle("rune", RUNE_THEMES.has(t));
+  const h2 = acc2Hue(t);
+  if(h2 != null){ document.body.dataset.acc2 = "1"; document.body.style.setProperty("--acc2-h", h2); }
+  else { delete document.body.dataset.acc2; document.body.style.removeProperty("--acc2-h"); }
   // the painted scene: on for the themes that have one, unless turned off in Look
   const mode = ["focused", "illustrated", "off"].includes(state.themeArt) ? state.themeArt : "focused";
   const termPrint = document.body.dataset.skin === "term" && TERM_ART_THEMES.has(t);
@@ -21338,6 +21394,17 @@ function renderLookSettings(){
   const cur = state.theme || DEFAULT_THEME;
   tp.innerHTML = THEMES.map(([id,label,ic])=>`<button class="su-theme ${id===cur?"on":""}" data-settheme="${id}"><img src="${WIKI+ic}" alt=""><span>${label}</span></button>`).join("");
   tp.querySelectorAll("[data-settheme]").forEach(b=>b.onclick=()=>{ if(state.theme !== b.dataset.settheme){ state.theme = b.dataset.settheme; save(); applyTheme(); } renderLookSettings(); });
+  // the second colour's hue, per theme; the slider sits on the theme's own pair until moved
+  const hs = $("#acc2Hue"), hr = $("#acc2Reset"), hv = $("#acc2Val");
+  if(hs){
+    const own = acc2Hue(cur), custom = own != null;
+    hs.value = custom ? own : acc2ThemeHue();
+    if(hv) hv.textContent = custom ? own + "°" : "";
+    if(hr) hr.classList.toggle("hidden", !custom);
+    hs.oninput = ()=>{ state.acc2 = Object.assign({}, state.acc2, {[cur]: +hs.value}); applyTheme(); if(hv) hv.textContent = hs.value + "°"; if(hr) hr.classList.remove("hidden"); };
+    hs.onchange = ()=>save();
+    if(hr) hr.onclick = ()=>{ if(state.acc2) delete state.acc2[cur]; save(); applyTheme(); renderLookSettings(); };
+  }
   const art = $("#artSeg"), artCur = state.themeArt || "focused";
   art.innerHTML = ART_CHOICES.map(([id,label])=>`<button class="${id===artCur?"on":""}" data-setart="${id}">${label}</button>`).join("");
   art.querySelectorAll("[data-setart]").forEach(b=>b.onclick=()=>{ state.themeArt = b.dataset.setart; save(); applyTheme(); renderLookSettings(); });
