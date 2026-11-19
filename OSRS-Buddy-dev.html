@@ -5323,6 +5323,31 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .acc2-row input[type=range]::-webkit-slider-thumb{appearance:none; -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--acc2, var(--gold)); border:2px solid var(--bg); box-shadow:0 0 0 1px var(--text)}
   .acc2-row input[type=range]::-moz-range-thumb{width:16px; height:16px; border-radius:50%; background:var(--acc2, var(--gold)); border:2px solid var(--bg); box-shadow:0 0 0 1px var(--text)}
   .acc2-row small{font:12px var(--fm); color:var(--muted); min-width:3.5ch}
+
+  /* ============ THE FONT CHOICE IN THE TERMINAL LOOK ============
+     Settings, Look, Font used to apply only to Classic; the Terminal look set its own type and
+     ignored the choice ("fonts aren't working", Josh, 2026-11-18). Now a chosen face goes on the
+     headings and the names: page titles, pane titles' big words, the brand, the character's name,
+     the quiz question, a money maker's name. Numbers, the small labels, chips and the command line
+     stay in the terminal's mono, so the figures still line up. Garamond, the default, is the
+     terminal's own type here, so nothing changes until a face is picked. */
+  body[data-skin="term"][data-font] :is(h1, h2, h3, .brand, .tb-title, .sh-word, .ht-name, .su-title, .su-h, .goals-head h2, .cf-q, .bq-name, .cf-hname, .qg-t h3, .item .name){font-family:var(--font-display); letter-spacing:0}
+  body[data-skin="term"][data-font] :is(.brand, .sh-word, .ht-name){letter-spacing:-.2px}
+  body[data-skin="term"][data-font] :is(.section-title h3, .ht-more h3, .ht-menu .ttl, .wf-h, .ht-lab){font-family:var(--fm); letter-spacing:.14em}
+  /* the Terminal look sets --font-display to its mono after the Classic font rules, so the chosen
+     face is said again here, under the look */
+  body[data-skin="term"][data-font="alegreya"]{--font-display:"Alegreya",Georgia,serif}
+  body[data-skin="term"][data-font="classic"]{--font-display:Georgia,"Times New Roman",serif}
+  body[data-skin="term"][data-font="cinzel"]{--font-display:"Cinzel",Georgia,serif}
+  body[data-skin="term"][data-font="inter"]{--font-display:"Inter",system-ui,sans-serif}
+  body[data-skin="term"][data-font="lora"]{--font-display:"Lora",Georgia,serif}
+  body[data-skin="term"][data-font="playfair"]{--font-display:"Playfair Display",Georgia,serif}
+  body[data-skin="term"][data-font="almendra"]{--font-display:"Almendra",Georgia,serif}
+  body[data-skin="term"][data-font="medieval"]{--font-display:"MedievalSharp",Georgia,serif}
+  body[data-skin="term"][data-font="pixelify"]{--font-display:"Pixelify Sans",monospace}
+  body[data-skin="term"][data-font="jacquard"]{--font-display:"Jacquard 12",monospace}
+  /* the pixel faces are small at a heading's size */
+  body[data-skin="term"][data-font="pixelify"] :is(h1, h2, .sh-word, .ht-name, .brand), body[data-skin="term"][data-font="jacquard"] :is(h1, h2, .sh-word, .ht-name, .brand){font-size:1.15em}
 </style>
 </head>
 <body>
@@ -5494,7 +5519,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
           <div class="set-group">
             <div class="set-h">Font</div>
             <p class="set-note classic-only">Headings and numbers throughout the app. Body text stays as it is.</p>
-            <p class="set-note term-only">The Terminal look sets its own type. These apply when the look is Classic.</p>
+            <p class="set-note term-only">In the Terminal look the face you pick goes on headings and names. Numbers, small labels and the command line stay in the terminal's mono so the figures line up. Garamond is the terminal's own type.</p>
             <div id="fontSeg"></div>
           </div>
           <div class="set-group">
