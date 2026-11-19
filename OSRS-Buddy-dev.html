@@ -669,12 +669,38 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
     .qpq-scrim{background:rgba(0,0,0,.45)}
   }
   /* tech tree */
-  .qp-tree-wrap{overflow:auto; padding:6px 2px 12px}
+  /* The tree scrolls, but without scrollbars: you drag the empty space to look around (Josh,
+     2026-11-18: "I wanna move it freely"). The wheel still scrolls it, and a finger always did. */
+  .qp-tree-wrap{overflow:auto; padding:6px 2px 12px; scrollbar-width:none; cursor:grab; overscroll-behavior:contain}
+  .qp-tree-wrap::-webkit-scrollbar{display:none}
+  .qp-tree-wrap.panning{cursor:grabbing; user-select:none}
+  .qp-tree-wrap.panning .qp-node{pointer-events:none}
   /* popped out: the tree panel takes the whole viewport, everything else waits */
   .qp-panel.popped{position:fixed; inset:0; z-index:70; margin:0; border-radius:0;
     display:flex; flex-direction:column; overflow:hidden; padding:12px 16px 0}
-  .qp-panel.popped .qp-tree-wrap{flex:1; min-height:0}
-  .qp-panel.popped .qp-detail{max-height:34vh; overflow:auto; flex:none}
+  .qp-panel.popped, .qp-panel.windowed{margin:0 !important; background:color-mix(in srgb, var(--panel) 80%, var(--bg)) !important}
+  .qp-panel.popped .qp-tree-wrap, .qp-panel.windowed .qp-tree-wrap{flex:1; min-height:0}
+  .qp-panel.popped .qp-detail, .qp-panel.windowed .qp-detail{max-height:34vh; overflow:auto; flex:none}
+  /* a window: the same panel floating over the page, moved by its top row, sized by its corner.
+     Where it sat is kept, so it opens where you left it. */
+  .qp-panel.windowed{position:fixed; z-index:70; margin:0; display:flex; flex-direction:column; overflow:hidden; resize:both;
+    min-width:360px; min-height:260px; max-width:calc(100vw - 8px); max-height:calc(100vh - 8px); padding:10px 14px 0; border-radius:12px;
+    border:1px solid color-mix(in srgb, var(--gold) 45%, var(--border)); box-shadow:0 22px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.3)}
+  .qp-panel.windowed .qp-nav{cursor:move; margin:-10px -14px 6px; padding:8px 14px 6px; border-bottom:1px solid var(--border); background:color-mix(in srgb, var(--panel2) 60%, transparent)}
+  .qp-panel.windowed .qp-nav button, .qp-panel.windowed .qp-nav .qp-crumb{cursor:pointer}
+  .qp-panel.windowed::after{content:""; position:absolute; right:3px; bottom:3px; width:10px; height:10px; pointer-events:none;
+    border-right:2px solid var(--gold-dim); border-bottom:2px solid var(--gold-dim); border-radius:0 0 3px 0; opacity:.8}
+  @media (prefers-reduced-motion:no-preference){ .qp-panel.windowed{animation:cfFade .25s ease both} }
+  /* where the tree shows: page, window or full screen, one switch in the foot */
+  .qp-views{display:inline-flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; flex:none}
+  .qp-views button{min-height:0; border:0; border-radius:0; box-shadow:none; background:transparent; padding:4px 10px; font-size:12px; color:var(--muted); cursor:pointer}
+  .qp-views button + button{border-left:1px solid var(--border)}
+  .qp-views button:hover{color:var(--text); background:var(--btnhov2, var(--panel2))}
+  .qp-views button.on{background:var(--gold); color:var(--bg); font-weight:600}
+  /* the pop-out button in the search row says what it does */
+  .qp-popbtn{width:auto; padding:0 13px; gap:1px; grid-auto-flow:row; align-content:center; line-height:1; font-size:16px}
+  .qp-popbtn small{font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .qp-popbtn.on{border-color:var(--gold); color:var(--gold)} .qp-popbtn.on small{color:var(--gold)}
   .qp-tree{position:relative}
   .qp-tree svg{position:absolute; inset:0; pointer-events:none; overflow:visible}
   .qp-node{position:absolute; width:176px; box-sizing:border-box; padding:6px 8px; border-radius:8px;
@@ -5862,7 +5888,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
         <div class="qp-bar">
           <div class="qp-search"><span class="g" aria-hidden="true">⌕</span><input type="text" id="qpSearch" placeholder="Search any quest, or pick a goal below" autocomplete="off"></div>
           <button class="qp-big" id="qpGuideBtn" title="The wiki's optimal quest order, ticked against your own quests"><span class="ic">📜</span><span class="lbl">Optimal quest guide<small>Every quest in the best order</small></span></button>
-          <button class="qp-iconbtn" id="qpFull" title="Fill the window with the tree">⤢</button>
+          <button class="qp-iconbtn qp-popbtn" id="qpFull" title="Open the tree in a window you can move and size">⧉<small>Pop out</small></button>
         </div>
         <div id="qpSuggest"></div>
       </div>
@@ -13553,8 +13579,8 @@ function renderQuestPlanner(){
     state.qpFilter = b.dataset.qpfilter || null; if(state.qpFilter) state.qpSugOpen = true; save(); renderQuestPlanner();
   });
   res.innerHTML = target ? qpPlanHtml(target, db) : qpIdleHtml(db);
-  if(target){ qpWire(db); qpFitTree(); }
-  else if(qpPopped) qpTogglePop(false);   // no tree to fill the screen with
+  if(target){ qpWire(db); qpFitTree(); if(qpView === "window"){ const p = $("#qpTreePanel"); qpWinPlace(p); qpWinWire(p); } }
+  else if(qpPopped) qpSetView("page");   // no tree to show off the page
   qpWireStrips(db);
   qpWirePinButtons();
   // the panel follows the tree: a repaint keeps it open on the same quest
@@ -19924,17 +19950,17 @@ function qpPlanHtml(target, db){
         <button class="ghost small" id="qpPin">${qpBoardHas(target)?"📌 On your board":"📌 Pin"}</button>
       </div>
     </div>
-  <div class="panel qp-panel${qpPopped?" popped":""}" id="qpTreePanel">
+  <div class="panel qp-panel${qpView==="full"?" popped":qpView==="window"?" windowed":""}" id="qpTreePanel">
     ${qpCrumbs(target)}
     <div class="qp-tree-wrap">${qpTreeHtml(isAll?remaining.slice(0,60):plan.all, target, db)}</div>
     <div class="qp-treefoot">
-      <span>${isAll ? `${remaining.length} quests left, the first 60 drawn` : `${all} quest${all===1?"":"s"} in the chain · ${done} done${live?` · ${ready} ready now`:""}`}</span>
+      <span>${isAll ? `${remaining.length} quests left, the first 60 drawn` : `${all} quest${all===1?"":"s"} in the chain · ${done} done${live?` · ${ready} ready now`:""}`} <span class="muted">· drag the space to look around</span></span>
       <span class="sp"></span>
       <div class="qp-legend"><span><i style="background:var(--green-bg);border:1px solid #2f5a28"></i>done</span>
         <span><i style="background:var(--panel2);border:1px solid var(--gold)"></i>ready now</span>
         <span><i style="background:var(--panel2);border:1px solid var(--border);opacity:.6"></i>blocked</span></div>
       <button class="ghost small" id="qpRefresh" title="Re-read the quest data from the wiki">⟲</button>
-      <button class="ghost small" id="qpPop" title="${qpPopped?"Back to the page (Esc)":"Fill the window"}">${qpPopped?"⤡ Exit full screen":"⤢ Full screen"}</button>
+      <div class="qp-views" role="group" aria-label="Where the tree shows" title="Where the tree shows">${QP_VIEWS.map(([v, l, t])=>`<button data-qpview="${v}" class="${qpView===v?"on":""}" title="${t}">${l}</button>`).join("")}</div>
     </div>
   </div>
   <div id="qpStrips">${qpStripsHtml(db, target)}</div>`;
@@ -20095,7 +20121,36 @@ const QP_COLW=200, QP_ROWH=64, QP_PADX=8, QP_PADY=8, QP_NODEW=176, QP_NODEH=52;
 function qpTrail(){ return (state.qpHist = state.qpHist || []); }
 let qpDrag=false; // true while a node is being dragged (suppresses hover highlight)
 let qpKeyWired=false; // Esc handler is global, so it's only attached once
-let qpPopped=false;   // tree panel filling the window (not persisted — a viewing mode, not a preference)
+let qpPopped=false;   // the tree panel is off the page (a window or the full screen); not persisted, a viewing mode
+let qpView="page";    // "page" | "window" | "full"
+const QP_VIEWS = [["page", "▭ Page", "In the page"], ["window", "⧉ Window", "A window you can move and size"], ["full", "⤢ Full screen", "Fill the window (Esc to leave)"]];
+// The window's last place and size, kept in the save so it opens where you left it.
+function qpWinPlace(p){
+  if(!p) return;
+  const w = state.qpWin || {}, vw = innerWidth, vh = innerHeight;
+  const ww = Math.min(w.w || Math.min(920, vw - 48), vw - 8), wh = Math.min(w.h || Math.min(640, vh - 48), vh - 8);
+  const x = Math.max(4, Math.min(w.x == null ? (vw - ww) / 2 : w.x, vw - ww - 4)), y = Math.max(4, Math.min(w.y == null ? (vh - wh) / 2 : w.y, vh - wh - 4));
+  p.style.left = x + "px"; p.style.top = y + "px"; p.style.width = ww + "px"; p.style.height = wh + "px";
+}
+function qpWinSave(p){
+  if(!p || qpView !== "window") return;
+  const r = p.getBoundingClientRect();
+  state.qpWin = {x:Math.round(r.left), y:Math.round(r.top), w:Math.round(r.width), h:Math.round(r.height)}; save();
+}
+// Move the window by its top row; a press on a button or a crumb is left to them.
+function qpWinWire(p){
+  const nav = p && p.querySelector(".qp-nav"); if(!nav || nav.dataset.winwired) return; nav.dataset.winwired = "1";
+  nav.addEventListener("mousedown", ev=>{
+    if(qpView !== "window" || ev.button !== 0 || ev.target.closest("button, a, input")) return;
+    ev.preventDefault();
+    const r = p.getBoundingClientRect(), sx = ev.clientX - r.left, sy = ev.clientY - r.top;
+    const move = e=>{ p.style.left = Math.max(4, Math.min(e.clientX - sx, innerWidth - r.width - 4)) + "px"; p.style.top = Math.max(4, Math.min(e.clientY - sy, innerHeight - r.height - 4)) + "px"; };
+    const up = ()=>{ document.removeEventListener("mousemove", move); document.removeEventListener("mouseup", up); qpWinSave(p); };
+    document.addEventListener("mousemove", move); document.addEventListener("mouseup", up);
+  });
+  // the corner sizes it; remember the size once the drag ends
+  let rt, first = true; new ResizeObserver(()=>{ if(first){ first = false; return; } if(qpView !== "window") return; clearTimeout(rt); rt = setTimeout(()=>qpWinSave(p), 250); }).observe(p);
+}
 // The tree lays out to a fixed pixel width; when the container is wider, centre it
 // so a small chain doesn't hug the left edge of a big window.
 function qpFitTree(){
@@ -20195,6 +20250,7 @@ function qpCrumbs(target){
       ${trail.length?`<button class="ghost small" id="qpBack" title="Back one step (Esc)">← Back</button>`:""}
       <button class="ghost small" id="qpTidy" title="Put the boxes back where they started">⟲ Tidy layout</button>
       <button class="ghost small" id="qpOver" title="Clear the goal and every box you've moved">✕ Start over</button>
+      <button class="ghost small${qpView==="page"?" hidden":""}" id="qpDock" title="Back to the page (Esc)">✕ Close</button>
     </div>
   </div>`;
 }
@@ -20630,13 +20686,19 @@ function qpPopWire(db){
   });
   qpWireFolderButtons();
 }
-function qpTogglePop(force){
-  qpPopped = force==null ? !qpPopped : !!force;
-  const p = $("#qpTreePanel"); if(p) p.classList.toggle("popped", qpPopped);
-  document.body.style.overflow = qpPopped ? "hidden" : "";
-  const pop = $("#qpPop");
-  if(pop){ pop.textContent = qpPopped ? "⤡ Exit full screen" : "⤢ Full screen"; pop.title = qpPopped ? "Back to the page (Esc)" : "Fill the window"; }
-  const f = $("#qpFull"); if(f) f.textContent = qpPopped ? "⤡" : "⤢";
+// Full screen on and off; false always means back to the page.
+function qpTogglePop(force){ qpSetView(force === false ? "page" : (force === true || qpView !== "full") ? "full" : "page"); }
+function qpSetView(v){
+  qpView = v; qpPopped = v !== "page";
+  const p = $("#qpTreePanel");
+  if(p){
+    p.classList.toggle("popped", v === "full"); p.classList.toggle("windowed", v === "window");
+    if(v === "window"){ qpWinPlace(p); qpWinWire(p); } else p.style.cssText = "";
+  }
+  document.body.style.overflow = v === "full" ? "hidden" : "";
+  $$("#qpTreePanel [data-qpview]").forEach(b=>b.classList.toggle("on", b.dataset.qpview === v));
+  const d = $("#qpDock"); if(d) d.classList.toggle("hidden", v === "page");
+  const f = $("#qpFull"); if(f){ f.classList.toggle("on", v !== "page"); f.title = v === "page" ? "Open the tree in a window you can move and size" : "Put the tree back in the page"; }
   qpFitTree();
 }
 function qpWire(db){
@@ -20659,10 +20721,28 @@ function qpWire(db){
       });
     });
   }
+  // ---- drag the empty space to look around (the middle button anywhere); no scrollbars to find
+  const wrap = document.querySelector("#qpResult .qp-tree-wrap");
+  if(wrap && !wrap.dataset.panwired){
+    wrap.dataset.panwired = "1";
+    wrap.addEventListener("mousedown", ev=>{
+      if(ev.button === 0 ? !!ev.target.closest(".qp-node, button, a, input") : ev.button !== 1) return;
+      ev.preventDefault();
+      const sx = ev.clientX, sy = ev.clientY, sl = wrap.scrollLeft, st = wrap.scrollTop; let moved = false;
+      const move = e=>{
+        const dx = e.clientX - sx, dy = e.clientY - sy;
+        if(!moved && Math.abs(dx) + Math.abs(dy) < 3) return;
+        if(!moved){ moved = true; wrap.classList.add("panning"); qpDrag = true; }
+        wrap.scrollLeft = sl - dx; wrap.scrollTop = st - dy;
+      };
+      const up = ()=>{ document.removeEventListener("mousemove", move); document.removeEventListener("mouseup", up); wrap.classList.remove("panning"); qpDrag = false; };
+      document.addEventListener("mousemove", move); document.addEventListener("mouseup", up);
+    });
+  }
   // ---- drag to reposition (saved per target); a click that doesn't move still re-targets
   $$("#qpResult [data-qpnode]").forEach(el=>{
     el.addEventListener("mousedown", ev=>{
-      if(ev.target.closest("[data-qpdone2]")) return;
+      if(ev.button !== 0 || ev.target.closest("[data-qpdone2]")) return;
       ev.preventDefault();
       const n = el.dataset.qpnode, start={x:ev.clientX, y:ev.clientY}, orig={...qpPos[n]};
       let moved=false;
@@ -20696,7 +20776,8 @@ function qpWire(db){
       document.addEventListener("mouseup", up);
     });
   });
-  const pop = $("#qpPop"); if(pop) pop.onclick = ()=>qpTogglePop();
+  $$("#qpTreePanel [data-qpview]").forEach(b=>b.onclick = ()=>qpSetView(b.dataset.qpview));
+  const dock = $("#qpDock"); if(dock) dock.onclick = ()=>qpSetView("page");
   const rf = $("#qpRefresh"); if(rf) rf.onclick = qpLoad;
   const pin = $("#qpPin");
   if(pin) pin.onclick = ()=>{
@@ -21533,7 +21614,10 @@ $("#bossGrid").onclick = (e)=>{
   if(t) openBossModal(t.dataset.bossinfo);
 };
 $("#qpGuideBtn").onclick = ()=>setMapSec("guide");
-$("#qpFull").onclick = ()=>qpTogglePop();
+$("#qpFull").onclick = ()=>{
+  if(!$("#qpTreePanel")){ toast("Pick a quest first; then the tree can pop out."); return; }
+  qpSetView(qpView === "page" ? "window" : "page");
+};
 $("#qpqScrim").onclick = qpClose;
 // Enter charts the first hit
 $("#qpSearch").addEventListener("keydown", e=>{ if(e.key==="Enter"){ const b = $("#qpSuggest [data-qptarget]"); if(b) b.click(); } });
@@ -23464,7 +23548,10 @@ function ceDesktop(){ return !IS_ANDROID && !!(window.__TAURI__ && window.__TAUR
 function ceInvoke(cmd, args){ return window.__TAURI__.core.invoke(cmd, args || {}); }
 // Which build this is. The desktop app answers with its identifier; the Beta's ends in ".beta".
 let appIdent = "";
-if(window.__TAURI__ && window.__TAURI__.core) ceInvoke("app_identifier").then(v=>{ appIdent = String(v || ""); }).catch(()=>{});
+// Board and Mockups show once the answer is in, not on a timer: launch got heavier on 2026-11-18
+// (the quest sync at start, the terminal) and the answer began to land after the timers fired, so
+// the two went missing from the Beta's sidebar.
+if(window.__TAURI__ && window.__TAURI__.core) ceInvoke("app_identifier").then(v=>{ appIdent = String(v || ""); try{ boardNavShow(); mockupsNavShow(); }catch(e){} }).catch(()=>{});
 function isBetaApp(){ return /\.beta$/.test(appIdent); }
 // Beta only, and only once the app has said which build it is
 // ---- the sidebar rail ----
