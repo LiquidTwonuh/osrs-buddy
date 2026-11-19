@@ -1125,6 +1125,9 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .cf-row .qp-pin{flex:none}
   /* the detail panel, laid out like a quest's details on Map */
   .cf-detail{border-color:color-mix(in oklab, var(--gold) 45%, var(--border))}
+  .cf-report{margin-top:10px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--panel2); font-size:13px}
+  .cf-report .seg{flex-wrap:wrap; margin:8px 0}
+  .cf-report input{width:100%; box-sizing:border-box}
   .cf-dhead{display:flex; gap:16px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap}
   .cf-dtitle{font-size:22px; margin:2px 0 0}
   .cf-dpay{font-family:var(--font-display); font-weight:700; color:var(--gold); font-size:26px; white-space:nowrap}
@@ -18052,7 +18055,7 @@ function mmgGaps(m){
 const COFFER_QUIZ = [
   {id:"members", q:"Are you a member?", opts:[["yes","Yes, members"],["no","Free-to-play"]]},
   {id:"iron",    q:"Ironman?", opts:[["no","No, a main"],["yes","Yes, an iron"]], hint:"Irons don't see the buy-and-sell methods."},
-  {id:"style",   q:"What do you actually enjoy?", opts:[["any","A bit of everything"],["combat","Combat and bossing"],["skilling","Skilling"],["gather","Gathering and processing"]]},
+  {id:"style",   q:"What do you actually enjoy?", opts:[["any","A bit of everything"],["combat","Combat of any kind"],["bossing","Bossing"],["skilling","Skilling"],["gather","Gathering and processing"]], hint:"Bossing is the methods that name a boss: the ones the hiscores track, the raids, the Fight Cave, the Inferno and the Colosseum."},
   {id:"skills",  q:"How do you feel about each skill?", tiers:true, hint:"Love and Like move those methods up. Hate keeps them out of your picks. Leave the rest alone and they're fine either way."},
   {id:"pace",    q:"How busy do you want to be?", opts:[["any","Don't mind"],["Low","AFK, barely touching it"],["Moderate","Somewhere in between"],["High","Hands on the whole time"]]},
   {id:"session", q:"How long is a normal session?", opts:[["any","Doesn't matter"],["short","20 minutes or so"],["hour","About an hour"],["long","A long evening"]], hint:"Short sessions skip raids and anything with a long setup."},
@@ -18103,6 +18106,31 @@ function cofferPrefs(){
   return pf;
 }
 function cofferSet(k, v){ cofferPrefs()[k] = v; save(); renderCoffer(); }
+// ---- bossing ----
+// A method is bossing when its name names a boss: the ones the hiscores track (the kill-count
+// keys the character came with) and the names the wiki uses instead of those (Dagannoth Kings,
+// the moons, the Fight Cave, the Inferno, the Colosseum, the raids). Josh asked for it as a style
+// of its own (2026-11-18). The report button on a method is for the ones this gets wrong.
+const COFFER_BOSS_NAMES = ["dagannoth", "blood moon", "blue moon", "eclipse moon", "moons of peril", "fight cave", "tztok", "tzkal", "inferno", "colosseum", "sol heredit",
+  "barrows", "gauntlet", "chambers of xeric", "theatre of blood", "tombs of amascut", "nightmare", "alchemical hydra", "kalphite queen", "king black dragon", "giant mole",
+  "corporeal beast", "nex", "zulrah", "vorkath", "cerberus", "kraken", "abyssal sire", "thermonuclear smoke devil", "grotesque guardians", "skotizo", "sarachnis", "scurrius",
+  "hespori", "mimic", "obor", "bryophyta", "amoxliatl", "araxxor", "hueycoatl", "royal titans", "whisperer", "leviathan", "vardorvis", "duke sucellus", "phantom muspah",
+  "yama", "doom of mokhaiotl", "fractured archive", "wintertodt", "tempoross", "zalcano", "fire queen", "ice king", "general graardor", "commander zilyana", "kreearra", "kril tsutsaroth",
+  "venenatis", "vetion", "callisto", "artio", "spindel", "calvarion", "scorpia", "chaos elemental", "chaos fanatic", "crazy archaeologist", "deranged archaeologist"];
+function cfBossNorm(s){ return String(s || "").toLowerCase().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, " ").trim(); }
+function cofferBossRes(){
+  if(cofferBossRes.v && cofferBossRes.live === live) return cofferBossRes.v;
+  const set = new Set(COFFER_BOSS_NAMES.map(cfBossNorm));
+  Object.keys((live && live.bosses) || {}).forEach(k=>set.add(cfBossNorm(k.replace(/_/g, " "))));
+  cofferBossRes.live = live;
+  return cofferBossRes.v = [...set].filter(n=>n.length > 2).map(n=>new RegExp("\\b" + n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b"));
+}
+// a fight, or one of the skilling bosses: Barrows teleport tablets name a boss without being one
+function cofferIsBoss(m){
+  if(!m || !m.name) return false; const n = cfBossNorm(m.name);
+  if(m.group !== "Combat" && !/\b(zalcano|tempoross|wintertodt|hespori)\b/.test(n)) return false;
+  return cofferBossRes().some(r=>r.test(n));
+}
 // hard filters: these decide whether a method is shown at all
 function cofferMatches(m, pf){
   if(pf.members === "no" && !m.f2p) return false;
@@ -18111,6 +18139,7 @@ function cofferMatches(m, pf){
   if(pf.pace !== "any" && m.pace && m.pace !== pf.pace) return false;
   if(pf.floor !== "0" && m.profit < +pf.floor) return false;
   if(pf.style === "combat" && m.group !== "Combat") return false;
+  if(pf.style === "bossing" && !cofferIsBoss(m)) return false;
   if(pf.style === "skilling" && m.group !== "Skilling") return false;
   if(pf.style === "gather" && !["Collecting","Processing"].includes(m.group)) return false;
   if(pf.iron === "yes" && /^(Buying|Selling|Flipping|Merching)\b/i.test(m.name)) return false;
@@ -18250,6 +18279,7 @@ function cofferTagsHtml(m){
     ${m.recur && m.every?`<span class="cf-tag">every ${escapeHtml(mmgEvery(m.every))}</span>`:""}
     ${m.f2p?`<span class="cf-tag">F2P</span>`:""}
     <span class="cf-tag">${escapeHtml(m.cat)}</span>
+    ${cofferIsBoss(m)?`<span class="cf-tag" title="Counted as bossing: the Bossing style shows it">Boss</span>`:""}
     ${m.pace?`<span class="cf-tag">${escapeHtml(m.pace)}</span>`:""}`;
 }
 // one card on the picks board
@@ -18295,8 +18325,10 @@ function cofferDetailHtml(m){
       <a class="ghost small" href="${cofferGuideUrl(m)}" target="_blank" rel="noopener">Wiki guide ↗</a>
       <button class="ghost small" data-cfhide="${escapeHtml(m.name)}" title="Hide this one. It goes to Hidden at the foot of the page, and comes back from there.">Hide this one</button>
       <span class="grow"></span>
+      <button class="ghost small" data-cfreport="${escapeHtml(m.name)}" title="Filed in the wrong place, wrong figures, wrong requirements: say so, and it is written down for the next pass over Coffer">Not organized right?</button>
       <button class="ghost small" data-cfclose>Close</button>
     </div>
+    <div class="cf-report hidden" id="cfReport"></div>
   </div>`;
 }
 // ============ SKILL GUIDES ============
@@ -18598,14 +18630,61 @@ function cofferOpen(name, opts){
   q.classList.remove("hidden"); sc.classList.remove("hidden");
   if(!(opts && opts.keep)) body.scrollTop = 0;
   body.onclick = e=>{
-    const b = e.target.closest("[data-cfclose], [data-cfpin], [data-cffav], [data-cfhide]"); if(!b) return;
+    const b = e.target.closest("[data-cfclose], [data-cfpin], [data-cffav], [data-cfhide], [data-cfreport], [data-cfrwhy], [data-cfrsend], [data-cfrcancel]"); if(!b) return;
     e.stopPropagation();
     if(b.hasAttribute("data-cfclose")) cofferClose();
     else if(b.dataset.cfpin) cofferPinToggle(b.dataset.cfpin);
     else if(b.dataset.cffav) cofferFavToggle(b.dataset.cffav);
     else if(b.dataset.cfhide){ cofferClose(); cofferHide(b.dataset.cfhide); }
+    else if(b.dataset.cfreport) cofferReportForm(m);
+    else if(b.dataset.cfrwhy) b.classList.toggle("on");
+    else if(b.hasAttribute("data-cfrcancel")){ const f = $("#cfReport"); if(f){ f.classList.add("hidden"); f.innerHTML = ""; } }
+    else if(b.dataset.cfrsend) cofferReportSend(m);
   };
   sc.onclick = cofferClose;
+}
+// ---- reports: a method that is not organized right ----
+// A player says what is off about a method, in a word or two and a note. It goes in the save
+// (state.cofferReports) and, in the desktop app, onto the Board under Coffer reports, where the
+// next pass over Coffer reads it (Josh, 2026-11-18: gather them, then tidy).
+const COFFER_REPORT_WHYS = ["Wrong group", "Is a boss", "Not a boss", "Rate is off", "Requirements wrong", "Wrong pace", "Not for my account", "Something else"];
+function cofferReportForm(m){
+  const f = $("#cfReport"); if(!f) return;
+  if(!f.classList.contains("hidden")){ f.classList.add("hidden"); f.innerHTML = ""; return; }
+  f.innerHTML = `<div class="cf-report-h">What is off about <b>${escapeHtml(m.name)}</b>? Pick what fits, add a word if you like.</div>
+    <div class="seg cf-rwhy">${COFFER_REPORT_WHYS.map(w=>`<button type="button" data-cfrwhy="${escapeHtml(w)}">${escapeHtml(w)}</button>`).join("")}</div>
+    <input type="text" id="cfrNote" maxlength="240" placeholder="What you expected instead" autocomplete="off" spellcheck="false">
+    <div class="row" style="gap:6px; margin-top:8px"><button class="primary small" data-cfrsend="1">Send it</button><button class="ghost small" data-cfrcancel>Cancel</button>
+      <span class="small muted">${ceDesktop() ? "It goes on the Board, where Claude reads it." : "It is kept with your save."}</span></div>`;
+  f.classList.remove("hidden");
+  const i = $("#cfrNote"); if(i){ i.onkeydown = e=>{ if(e.key === "Enter"){ e.preventDefault(); cofferReportSend(m); } }; i.focus(); }
+}
+async function cofferReportSend(m){
+  const f = $("#cfReport"); if(!f) return;
+  const whys = $$("#cfReport [data-cfrwhy].on").map(b=>b.dataset.cfrwhy), note = (($("#cfrNote") || {}).value || "").trim();
+  if(!whys.length && !note){ toast("Pick one of the reasons, or write a word.", true); return; }
+  const pf = cofferPrefs();
+  const r = {at:Date.now(), who:termWho(), method:m.name, page:m.page || "", group:m.group || "", cat:m.cat || "", pace:m.pace || "", profit:m.profit || 0, boss:cofferIsBoss(m), style:pf.style, whys, note};
+  const list = state.cofferReports = Array.isArray(state.cofferReports) ? state.cofferReports : [];
+  list.push(r); if(list.length > 200) list.splice(0, list.length - 200);
+  save();
+  f.classList.add("hidden"); f.innerHTML = "";
+  let where = "kept with your save";
+  if(ceDesktop()){ try{ await cofferReportBoard(r); where = "on the Board"; }catch(e){ console.error(e); } }
+  toast(`Noted, ${where}. Thank you.`);
+}
+// a line under the Board's Coffer reports heading, the heading made the first time
+async function cofferReportBoard(r){
+  const doc = await ceInvoke("board_read"); let text = String((doc && doc.text) || "");
+  const d = new Date(r.at), day = isoDate(d), hm = d.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit"});
+  const line = `- [ ] ${day} ${hm} ${r.who}: "${r.method}" (${[r.group, r.cat, r.pace].filter(Boolean).join(", ")}${r.boss ? ", read as bossing" : ""}; style set to ${r.style}): ${r.whys.join(", ") || "see note"}${r.note ? ". Note: " + r.note : ""}`;
+  const head = "## Coffer reports";
+  if(!text.includes("\n" + head) && !text.startsWith(head)) text = text.replace(/\s*$/, "") + `\n\n${head}\nWhat players flagged in Coffer with Not organized right. Tick one when it is handled.\n`;
+  const at = text.indexOf(head), next = text.indexOf("\n## ", at + head.length);
+  const before = next < 0 ? text.replace(/\s*$/, "") + "\n" : text.slice(0, next).replace(/\s*$/, "") + "\n", after = next < 0 ? "" : text.slice(next);
+  text = before + line + "\n" + after;
+  if(typeof boardDoc !== "undefined" && boardDoc) boardDoc.text = text;
+  await ceInvoke("board_write", {text});
 }
 function cofferClose(){
   const q = $("#cfq"), sc = $("#cfqScrim"); if(q) q.classList.add("hidden"); if(sc) sc.classList.add("hidden");
@@ -18623,7 +18702,7 @@ function cofferLayout(){ return state.cofferLayout === "list" ? "list" : "board"
 function cofferLayoutSet(v){ state.cofferLayout = v === "list" ? "list" : "board"; save(); try{ renderCoffer(); }catch(e){} try{ renderLookSettings(); }catch(e){} }
 // a line of the settings file is one quiz answer: the word it goes by, and short names for its values
 const COFFER_TKEY = {members:"account", iron:"iron", style:"enjoy", skills:"skills", pace:"pace", session:"session", stage:"stage", xp:"xp", wildy:"wilderness", market:"risk", reach:"reach", goal:"goal", floor:"floor"};
-const COFFER_TSHORT = {members:{yes:"members", no:"free to play"}, iron:{no:"main", yes:"ironman"}, style:{any:"everything", combat:"combat", skilling:"skilling", gather:"gathering"},
+const COFFER_TSHORT = {members:{yes:"members", no:"free to play"}, iron:{no:"main", yes:"ironman"}, style:{any:"everything", combat:"combat", bossing:"bossing", skilling:"skilling", gather:"gathering"},
   pace:{any:"any", Low:"afk", Moderate:"in between", High:"hands on"}, session:{any:"any", short:"20 min", hour:"an hour", long:"a long evening"}, stage:{auto:"auto", early:"early", mid:"mid", late:"late", end:"endgame"},
   xp:{gp:"gold only", both:"xp too"}, wildy:{ok:"fine", no:"avoid"}, market:{ok:"fine", no:"steady only"}, reach:{ready:"ready only", close:"near ones", all:"everything"}};
 var cfEcho = "", cfBSort = "", cfTuneRefocus = false;
