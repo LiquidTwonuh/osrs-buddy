@@ -15683,13 +15683,13 @@ function termNote(text){
   }};
 }
 function termAskCmd(q){ return {hint:`<u>enter</u> asks ${termAi() ? "Claude" : "Mortimer"}`, ask:true, run:()=>termAsk(q)}; }
-// Ask mode: -mort on its own, and every line that is not a command is a question until -mort again.
+// Mort mode: -mort on its own, and every line that is not a command is a question until -mort again.
 // It lasts the session only, so a restart is back to the safe side and nothing is sent by accident.
 var termAskMode = false;
 function termAskToggle(){
-  return {hint:`<u>enter</u> turns ask mode ${termAskMode ? "off" : "on"}`, run:()=>{
+  return {hint:`<u>enter</u> turns mort mode ${termAskMode ? "off" : "on"}`, run:()=>{
     termAskMode = !termAskMode;
-    termOut(termAskMode ? `Ask mode on. Every line that is not a command is a question for ${termAi() ? "Claude" : "Mortimer (Claude is not connected)"} until -mort again.` : "Ask mode off. Questions go with -mort again.");
+    termOut(termAskMode ? `Mort mode on. Every line that is not a command is a question for ${termAi() ? "Claude" : "Mortimer (Claude is not connected)"} until -mort again.` : "Mort mode off. Questions go with -mort again.");
     try{ termHint(); }catch(e){}
   }};
 }
@@ -15723,7 +15723,7 @@ function termLoose(raw){
     const sk = live && live.skills ? SKILL_ORDER.find(k=>frSkName(k).toLowerCase().startsWith(low) || k.startsWith(low)) : null;
     if(sk) return {hint:`<u>enter</u> opens <span class="g">${frSkName(sk)}</span>`, fill:frSkName(sk), run:()=>openSkillModal(sk)};
   }
-  // in ask mode a line that is nothing else is a question. Otherwise plain text is a mistake, not a
+  // in mort mode a line that is nothing else is a question. Otherwise plain text is a mistake, not a
   // note and never a question: notes take -note and questions -mort, so nothing is kept or sent to
   // Claude by accident (Josh, 2026-11-18)
   if(termAskMode) return termAskCmd(v);
@@ -15740,7 +15740,7 @@ function termHint(){
 }
 function termHelp(){
   const acts = [...new Set(termRounds().filter(m=>m.st.up).map(m=>termVerb(m).act.toLowerCase()))];
-  termLog("s", "-note keeps a note in Notes. -mort asks a question; on its own it turns ask mode on, where every line is a question. " + (acts.length ? `Type the start of an action to tick it: ${acts.join(", ")}. ` : "") + "A page or a skill opens it. Also: theme and a name, layout mosaic or orderly, claude, clear. Plain text that is none of these is an error, not a note. Tab completes, the up arrow brings back the last line.");
+  termLog("s", "-note keeps a note in Notes. -mort asks a question; on its own it turns mort mode on, where every line is a question. " + (acts.length ? `Type the start of an action to tick it: ${acts.join(", ")}. ` : "") + "A page or a skill opens it. Also: theme and a name, layout mosaic or orderly, claude, clear. Plain text that is none of these is an error, not a note. Tab completes, the up arrow brings back the last line.");
 }
 function termAsk(q){
   termLog("q", q);
@@ -16032,7 +16032,7 @@ termDef(["reset"], "reset layout", "Puts every page's panes, Home's widgets and 
 termDef(["panes"], "panes reset", "Puts Home's panes back where they started.", "App", rest=>rest.trim().toLowerCase() === "reset" ? {hint:`<u>enter</u> puts Home's panes back`, run:()=>{ htArrReset(); termOut("Home's panes are back where they started."); }} : "panes takes reset", {soft:true});
 termDef(["reload", "refresh"], "reload", "Reads your stats from the hiscores again.", "App", ()=>state.username ? {hint:`<u>enter</u> reads your stats again`, run:()=>{ termOut("Reading your stats from the hiscores."); loadCharacter({name:state.username, live:true}); }} : "No character is loaded yet.", {bare:true});
 termDef(["claude"], "claude", "Opens the setup for answers from Claude, with your own key.", "App", ()=>termLoose("claude"), {bare:true});
-termDef(["mort", "ask"], "mort [question]", "Asks Mortimer a question: Claude with a key, this device without. On its own it turns ask mode on or off, where every line that is not a command is a question.", "App", rest=>rest.trim() ? termAskCmd(rest.trim()) : termAskToggle());
+termDef(["mort", "ask"], "mort [question]", "Asks Mortimer a question: Claude with a key, this device without. On its own it turns mort mode on or off, where every line that is not a command is a question.", "App", rest=>rest.trim() ? termAskCmd(rest.trim()) : termAskToggle());
 termDef(["clear", "cls"], "clear", "Empties the log.", "App", ()=>termLoose("clear"), {bare:true});
 termDef(["history"], "history", "The last lines you ran.", "App", ()=>({hint:`<u>enter</u> lists the last lines you ran`, run:()=>termOut(termHist.slice(-12, -1).map(h=>termLn(termBtn(h, h))).join("") || "Nothing yet.")}), {bare:true});
 termDef(["echo"], "echo <text>", "Prints the text back. Useful in an alias.", "App", rest=>({hint:`<u>enter</u> prints it`, run:()=>termOut(tE(rest))}));
