@@ -7,6 +7,7 @@ const src = path.join(root, "design", "mockups"), dst = path.join(root, "data", 
 // One line per mockup, in the order the page shows them. A file not listed here still copies,
 // with its <title> as the name and no description.
 const DESC = {
+  "themes-variety.html": "The four house themes (Mortimer, Night, Abyss, Crystal) with more than one colour, the same small Home in each. Today for comparison; A gives each theme a second colour with a job (figures, bars, prompt, tags) and Night its own accent; B keeps one accent and splits the neutrals warm and cool instead. Gilded stays as it is. For 1.1.",
   "coffer-loves.html": "Coffer's Board with the skills you love up front, three ways: a column per loved skill under the podium; a fourth, loved seat on the podium and a shelf; or everything shelved by skill, loved first and twice the size. Figures from Josh's own screen. For 1.1.",
   "home-tiles.html": "Home as glass tiles (Josh's sketch): square panes with a small gap, the whole window tiled like terminals. Two layouts of the same panes: Mosaic follows the sketch, Orderly puts every edge on one grid. Gap, glass or flat, and theme switches in the top strip.",
   "home-terminal.html": "Home, second pass on the Interface direction (Josh picked it): modern mono type instead of the pixel face, the app's own themes, a sidebar with the Mortimer icon, and the chat line as a command line that runs an action when you type the start of one. Type and Theme switches in the top strip.",

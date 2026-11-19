@@ -3448,6 +3448,16 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .cf-stage .cf-q{font-size:clamp(24px, 3vw, 32px); letter-spacing:-.6px}
   body[data-skin="term"] .cf-stage .cf-opts button{border-radius:8px; font:15px var(--fm)}
   body[data-skin="term"] .cf-stage .cf-next{border-radius:8px}
+  /* the button that moves on glows a little so it is found under a tall list of skills; the last
+     step's glows more. A slow breath, or a still halo when motion is off. */
+  .cf-stage .cf-next{--cfg:color-mix(in srgb, var(--gold) 45%, transparent); position:relative; box-shadow:0 0 0 1px color-mix(in srgb, var(--gold) 35%, transparent), 0 0 14px var(--cfg)}
+  .cf-stage .cf-next.cf-last{--cfg:color-mix(in srgb, var(--gold) 62%, transparent)}
+  @media (prefers-reduced-motion:no-preference){
+    .cf-stage .cf-next{animation:cfBreath 2.8s ease-in-out .6s infinite}
+    .cf-stage .cf-next.cf-last{animation-duration:2.2s}
+  }
+  @keyframes cfBreath{0%,100%{box-shadow:0 0 0 1px color-mix(in srgb, var(--gold) 35%, transparent), 0 0 10px var(--cfg)} 50%{box-shadow:0 0 0 1px color-mix(in srgb, var(--gold) 60%, transparent), 0 0 22px var(--cfg), 0 0 46px color-mix(in srgb, var(--cfg) 45%, transparent)}}
+  .cf-stage .cf-next:hover{animation-play-state:paused; box-shadow:0 0 0 1px var(--gold), 0 0 24px var(--cfg), 0 0 50px color-mix(in srgb, var(--cfg) 45%, transparent)}
   body[data-skin="term"] .cf-step{font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
   body[data-skin="term"] .cf-q{font-size:20px; letter-spacing:-.4px; color:var(--text)}
   body[data-skin="term"] .cf-tiers{margin:0}
@@ -18877,7 +18887,7 @@ function renderCoffer(){
       <h3 class="cf-q">${qq.q}</h3>
       ${qq.hint ? `<div class="small muted" style="margin:-10px 0 14px">${qq.hint}${qq.id==="stage" ? ` Right now it says <b>${cofferStage(Object.assign({}, pf, {stage:"auto"})).autoLabel}</b> (${cofferStage(Object.assign({}, pf, {stage:"auto"})).why}).` : ""}</div>` : ""}
       ${body}
-      <button class="primary cf-next" id="cfNext">${single || last ? "Show me the list" : "Next →"}</button>
+      <button class="primary cf-next${single || last ? " cf-last" : ""}" id="cfNext">${single || last ? "Show me the list" : "Next →"}</button>
       <div class="cf-foot">
         ${step && !single ? `<button class="ghost small" id="cfBack">← Back</button>` : `<span class="grow"></span>`}
         <span class="grow"></span>

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The four house themes, with more than one colour</title>
+<style>
+  /* The four house themes of the Terminal look (Mortimer, Night, Abyss, Crystal) each run on one
+     accent over a ramp of one dark. Josh, 2026-11-18: "the themes are too one colour". Gilded is
+     fine as it is and stays out. Same small Home in all four, three ways:
+       Today        the palettes as they are in the app, for comparison.
+       A  Two colours   each theme keeps its accent and gains a second one with a job of its own:
+                        figures (levels, xp, gold), the bars, the prompt and the tags take it, so
+                        the accent is left for what you can press. Night also stops borrowing
+                        Mortimer's teal and gets a colour of its own.
+       B  Warm and cool  no second accent; the neutrals split instead. The page leans one way and
+                        the panes the other, the borders carry a hue, text and figures go warm,
+                        and the states (done, ready, locked) are allowed their own colours.
+     Figures and names are Josh's own from 2026-11-18. */
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#000; -webkit-font-smoothing:antialiased}
+  button{font:inherit}
+  .hidden{display:none !important}
+  .mk-strip{position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-height:36px; padding:6px 16px; background:#0a0a0a; border-bottom:1px solid #242424; color:#8c8c8c; font:12px/1.35 "Segoe UI",system-ui,sans-serif}
+  .mk-strip b{color:#d8d8d8; font-weight:600; margin-right:8px}
+  .mk-strip span.k{margin:0 2px 0 10px}
+  .mk-strip button{color:#b4b4b4; background:none; border:1px solid #333; padding:3px 9px; cursor:pointer}
+  .mk-strip button.on{color:#000; background:#d8d8d8; border-color:#d8d8d8}
+  .mk-note{padding:9px 16px 10px; background:#0a0a0a; border-bottom:1px solid #242424; color:#9a9a9a; font:12.5px/1.5 "Segoe UI",system-ui,sans-serif; max-width:1100px}
+  .mk-note b{color:#d8d8d8; font-weight:600}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(540px, 1fr)); gap:14px; padding:14px}
+  .grid.one{grid-template-columns:minmax(0, 1100px); justify-content:center}
+  .cap{display:flex; align-items:baseline; gap:10px; padding:0 2px 6px; color:#9a9a9a; font:12px "Segoe UI",system-ui,sans-serif}
+  .cap b{color:#d8d8d8; font-weight:600; font-size:13px}
+  .cap .sw{display:inline-flex; gap:3px; margin-left:auto} .cap .sw i{width:14px; height:14px; border:1px solid #333}
+
+  /* ---------- the small Home: the app's own token names, so a palette is a drop-in ---------- */
+  .W{
+    --fs:"Bahnschrift","DIN Alternate","Inter","Segoe UI",system-ui,sans-serif;
+    --fm:"Cascadia Mono","Cascadia Code","SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+    /* derived unless a palette says otherwise */
+    --line:color-mix(in srgb, var(--border) 58%, var(--bg));
+    --faint:color-mix(in srgb, var(--muted) 56%, var(--bg));
+    --glow:color-mix(in srgb, var(--gold) 14%, transparent);
+    --gold2:var(--gold); --figure:var(--text); --bar:var(--gold); --tag:var(--gold-dim); --ps:var(--gold);
+    --done:#7fd18a; --ready:var(--gold); --locked:var(--faint); --head:var(--text);
+  }
+  .T{display:grid; grid-template-columns:150px 1fr; min-height:430px; border:1px solid #222; background:var(--bg); color:var(--text); font:13px/1.45 var(--fs)}
+  .sb{padding:16px 10px; border-right:1px solid var(--line); background:var(--sb, var(--bg)); display:flex; flex-direction:column; gap:3px}
+  .brand{font:600 15px var(--fm); letter-spacing:-.4px; color:var(--head); margin:0 0 12px 4px; display:flex; align-items:center; gap:8px}
+  .brand i{width:22px; height:22px; border-radius:6px; background:var(--gold); display:inline-block; mask:radial-gradient(circle at 50% 42%, #000 46%, transparent 48%) , linear-gradient(#000, #000); -webkit-mask:radial-gradient(circle at 50% 42%, #000 46%, transparent 48%); opacity:.9}
+  .nav{padding:5px 8px; border-radius:7px; color:var(--muted); font-size:13px}
+  .nav.on{color:var(--text); background:var(--active, color-mix(in srgb, var(--gold) 10%, transparent))}
+  .nav.on::before{content:"▸ "; color:var(--gold); font-size:10px}
+  .nav.secret{color:var(--gold); text-shadow:0 0 8px var(--glow)}
+  .sb .grow{flex:1}
+  .sb small{color:var(--faint); font:11px var(--fm); padding:0 8px}
+  .main{padding:16px 16px 14px; display:flex; flex-direction:column; gap:10px; min-width:0}
+  .hd{display:flex; align-items:baseline; gap:10px}
+  .hd h1{margin:0; font:600 19px/1.1 var(--fm); letter-spacing:-.5px; color:var(--head)}
+  .hd span{color:var(--muted); font-size:12px}
+  .hd .btn{margin-left:auto}
+  .btn{padding:6px 12px; border-radius:7px; border:1px solid var(--line); background:transparent; color:var(--text); font:12.5px var(--fs); cursor:default}
+  .btn.p{background:var(--gold); border-color:var(--gold); color:var(--bg); font-weight:600}
+  .panes{display:grid; grid-template-columns:1.25fr 1fr; gap:8px}
+  .pane{border:1px solid var(--line); border-radius:10px; padding:11px 12px; background:var(--panel-fill, transparent); min-width:0}
+  .pane h3{margin:0 0 8px; font:500 10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--tag)}
+  .pane h3 em{float:right; font-style:normal; letter-spacing:0; text-transform:none; color:var(--faint)}
+  .who{display:flex; align-items:baseline; gap:8px; margin-bottom:8px; min-width:0; overflow:hidden}
+  .who b{font:600 16px var(--fm); letter-spacing:-.3px; color:var(--head); white-space:nowrap} .who span{color:var(--muted); font-size:12px; white-space:nowrap}
+  .who .cb{margin-left:auto; font:600 12.5px var(--fm); color:var(--figure); white-space:nowrap}
+  .sk .n, .sk .n small{white-space:nowrap}
+  .sk{display:grid; grid-template-columns:18px 1fr auto; gap:3px 8px; align-items:center; padding:3px 0}
+  .sk img{width:16px; height:16px; object-fit:contain; opacity:.9}
+  .sk .n{font-size:12.5px} .sk .n small{color:var(--muted); margin-left:6px; font:11px var(--fm)}
+  .sk .lv{font:600 13px var(--fm); color:var(--figure)}
+  .sk .bar{grid-column:2 / -1; height:3px; background:color-mix(in srgb, var(--text) 9%, transparent)}
+  .sk .bar i{display:block; height:100%; width:var(--p); background:var(--bar)}
+  .q{display:flex; align-items:center; gap:8px; padding:5px 0; border-top:1px solid var(--line); font-size:12.5px}
+  .q:first-of-type{border-top:0}
+  .q i{width:7px; height:7px; border-radius:50%; background:var(--locked); flex:none}
+  .q.done i{background:var(--done)} .q.ready i{background:var(--ready); box-shadow:0 0 6px var(--ready)}
+  .q.done span{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--faint)}
+  .q.locked span{color:var(--muted)}
+  .q b{margin-left:auto; font:500 11px var(--fm); color:var(--figure)}
+  .q.ready b{color:var(--ready)} .q.done b{color:var(--done)}
+  .pod{display:grid; grid-template-columns:repeat(3, 1fr); gap:6px}
+  .pod div{border:1px solid var(--line); border-radius:8px; padding:7px 8px}
+  .pod div:first-child{border-color:color-mix(in srgb, var(--gold) 55%, var(--line))}
+  .pod small{display:block; color:var(--muted); font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .pod b{display:block; font:600 15px var(--fm); color:var(--figure); letter-spacing:-.3px}
+  .pod em{display:inline-block; margin-top:4px; font:500 9.5px var(--fm); letter-spacing:.12em; text-transform:uppercase; font-style:normal; color:var(--tag)}
+  .pod em.love{color:var(--love, var(--tag))}
+  .term{margin-top:auto; border-top:1px solid var(--line); padding-top:9px; display:flex; align-items:baseline; gap:8px; font:12.5px var(--fm); white-space:nowrap; min-width:0}
+  .term .ps{color:var(--ps); font-weight:600}
+  .term .in{color:var(--text); overflow:hidden; text-overflow:ellipsis; min-width:0} .term .hint{color:var(--faint); overflow:hidden; text-overflow:ellipsis; flex:0 1 auto} .term .cur{display:inline-block; width:7px; height:13px; background:var(--gold); vertical-align:-2px; margin-left:1px}
+  .term .ans{color:var(--muted); margin-left:auto; font:11px var(--fm)} .term .ans b{color:var(--gold2); font-weight:500}
+
+  /* ============ TODAY: the palettes as they are in the app ============ */
+  .W[data-th="mortimer"]{--bg:#0b1513; --panel:#11201d; --border:#2a443f; --gold:#66cbb9; --gold-dim:#4a9c8f; --text:#e0e6d9; --muted:#8fa39c; --active:#1c332f}
+  .W[data-th="night"]{--bg:#060707; --panel:#0c0e0e; --border:#242a29; --gold:#66cbb9; --gold-dim:#45948a; --text:#e7e9e4; --muted:#8b918e; --active:#1a2120; --faint:#5e6763}
+  .W[data-th="black"]{--bg:#000; --panel:#070707; --border:#232426; --gold:#f2f3f4; --gold-dim:#9a9da1; --text:#cfd1d4; --muted:#878a8e; --active:#18191b; --faint:#5f6266; --line:#1a1b1d}
+  .W[data-th="crystal"]{--bg:#0a0d10; --panel:#111519; --border:#2c343d; --gold:#8dcde8; --gold-dim:#6693a7; --text:#e2e7e7; --muted:#a2b0b4; --active:#1d242d}
+
+  /* ============ A: two colours. The accent keeps what you press; the second takes the figures,
+     the bars, the prompt and the tags. ============ */
+  [data-dir="a"] .T{--figure:var(--gold2); --bar:linear-gradient(90deg, var(--gold2), var(--gold)); --tag:var(--gold2-dim); --ps:var(--gold2); --ready:var(--gold2)}
+  [data-dir="a"] .W[data-th="mortimer"]{--gold2:#dba36a; --gold2-dim:#a77a4c; --love:#dba36a}           /* verdigris and copper */
+  [data-dir="a"] .W[data-th="night"]{--gold:#b8c4e6; --gold-dim:#7f8aa8; --active:#171a22; --gold2:#e2b55b; --gold2-dim:#a8864a; --love:#e2b55b}   /* moonlight and a lamp */
+  [data-dir="a"] .W[data-th="black"]{--gold2:#b48cff; --gold2-dim:#7f63b8; --love:#b48cff; --glow:rgba(180,140,255,.18)}   /* white with a vein of violet */
+  [data-dir="a"] .W[data-th="crystal"]{--gold2:#d7a6ea; --gold2-dim:#9c77ad; --love:#f0a3c0}            /* ice and the prism's violet */
+
+  /* ============ B: warm and cool. One accent still, but the page and the panes pull apart,
+     borders carry a hue, text and figures run warm, and the states get colours. ============ */
+  [data-dir="b"] .T{--figure:var(--warm); --head:var(--warm); --done:var(--okc); --ready:var(--gold); --locked:color-mix(in srgb, var(--cool) 55%, var(--bg)); --panel-fill:color-mix(in srgb, var(--panel) 72%, transparent); --sb:color-mix(in srgb, var(--panel) 40%, var(--bg)); --bar:linear-gradient(90deg, var(--gold-dim), var(--warm))}
+  [data-dir="b"] .W[data-th="mortimer"]{--bg:#09120f; --panel:#17201a; --border:#3f4a3a; --line:#26302a; --text:#e9e3d2; --muted:#9aa693; --faint:#5f6b60; --warm:#e8d4a2; --cool:#8aa3b8; --okc:#a6d58a; --active:#1f2c25}
+  [data-dir="b"] .W[data-th="night"]{--bg:#050608; --panel:#111319; --border:#2b2f3d; --line:#1c1f29; --gold:#c4cde8; --gold-dim:#8690b0; --text:#ebe6dc; --muted:#8f93a0; --faint:#585c6a; --warm:#e9c98a; --cool:#6f7fa6; --okc:#9fd0a4; --active:#1a1d27}
+  [data-dir="b"] .W[data-th="black"]{--bg:#000; --panel:#0c0a0f; --border:#2a2431; --line:#1b171f; --gold:#f2f3f4; --gold-dim:#9a9da1; --text:#d6d2cc; --muted:#8a8690; --faint:#5a5661; --warm:#efe0c4; --cool:#7d7a99; --okc:#9ed49c; --active:#18151c}
+  [data-dir="b"] .W[data-th="crystal"]{--bg:#090c12; --panel:#13171c; --border:#34404a; --line:#202a33; --gold:#8dcde8; --gold-dim:#6693a7; --text:#e8e8e1; --muted:#a0adb0; --faint:#60707a; --warm:#f0ddc0; --cool:#7f9db3; --okc:#95d3a0; --active:#1c2630}
+</style>
+</head>
+<body data-dir="today">
+<div class="mk-strip"><b>The four house themes</b>
+  <span class="k">Direction</span>
+  <button data-dir="today" class="on">Today</button><button data-dir="a">A Two colours</button><button data-dir="b">B Warm and cool</button>
+  <span class="k">Show</span>
+  <button data-one="" class="on">All four</button><button data-one="mortimer">Mortimer</button><button data-one="night">Night</button><button data-one="black">Abyss</button><button data-one="crystal">Crystal</button>
+</div>
+<div class="mk-note" id="note"></div>
+<div class="grid" id="grid"></div>
+<script>
+const $ = s=>document.querySelector(s), $$ = s=>Array.from(document.querySelectorAll(s));
+const NOTES = {
+  today: "<b>Today.</b> Each theme is one accent over a ramp of one dark: the levels, the bars, the prompt, the buttons and the headings all take the same colour, and Night runs on Mortimer's teal. Gilded is not here; it stays as it is.",
+  a: "<b>A, two colours.</b> The accent keeps what you can press (buttons, the active page, the podium's frame). A second colour with a job of its own takes the figures, the bars, the prompt and the small tags: copper beside Mortimer's verdigris, a lamp's amber beside Night's moonlight (Night gets its own accent at last), a vein of violet through Abyss's white, the prism's violet beside Crystal's ice. One rule for all four, so a new theme only needs the pair.",
+  b: "<b>B, warm and cool.</b> No second accent. The page leans cool and the panes lean warm, the borders carry a hue instead of grey, the headings and figures go to a warm off-white, and the states are allowed their colours: done is green, ready is the accent, locked is a cool grey. The sidebar sits a shade apart from the page. Quieter than A; the variety is in the surfaces, not in a colour."
+};
+const ICON = k=>`https://oldschool.runescape.wiki/images/${k}_icon.png`;
+const THEMES = [["mortimer","Mortimer"],["night","Night"],["black","Abyss"],["crystal","Crystal"]];
+const home = ([id, name])=>`<div class="W" data-th="${id}"><div class="cap"><b>${name}</b><span>${id === "night" ? "borrows Mortimer's teal today" : id === "black" ? "white on black" : id === "crystal" ? "ice blue" : "the default"}</span><span class="sw" aria-hidden="true"><i style="background:var(--gold)"></i><i style="background:var(--gold2)"></i><i style="background:var(--figure)"></i><i style="background:var(--panel)"></i></span></div>
+<div class="T">
+  <div class="sb"><div class="brand"><i></i>Mortimeter</div>
+    <div class="nav on">Home</div><div class="nav">Quest Hub</div><div class="nav">Map</div><div class="nav">Coffer</div><div class="nav">Vault</div><div class="nav">Upgrades</div><div class="nav secret">Game corner</div>
+    <div class="grow"></div><small>1.1 · 96 quests</small></div>
+  <div class="main">
+    <div class="hd"><h1>Home</h1><span>Tuesday evening</span><button class="btn p">Sync</button><button class="btn">Settings</button></div>
+    <div class="panes">
+      <div class="pane"><h3>Character <em>RuneLite · live</em></h3>
+        <div class="who"><b>Mortimer</b><span>member</span><span class="cb">cb 112</span></div>
+        <div class="sk"><img src="${ICON("Slayer")}" alt=""><span class="n">Slayer<small>72k left</small></span><span class="lv">86</span><span class="bar"><i style="--p:71%"></i></span></div>
+        <div class="sk"><img src="${ICON("Ranged")}" alt=""><span class="n">Ranged<small>14k left</small></span><span class="lv">94</span><span class="bar"><i style="--p:88%"></i></span></div>
+        <div class="sk"><img src="${ICON("Sailing")}" alt=""><span class="n">Sailing<small>new</small></span><span class="lv">41</span><span class="bar"><i style="--p:23%"></i></span></div>
+        <div class="sk"><img src="${ICON("Fishing")}" alt=""><span class="n">Fishing<small>loved</small></span><span class="lv">63</span><span class="bar"><i style="--p:52%"></i></span></div>
+      </div>
+      <div>
+        <div class="pane"><h3>Quests <em>178 qp</em></h3>
+          <div class="q done"><i></i><span>Dragon Slayer II</span><b>done</b></div>
+          <div class="q ready"><i></i><span>Monkey Madness II</span><b>ready</b></div>
+          <div class="q locked"><i></i><span>Song of the Elves</span><b>70 agility</b></div>
+        </div>
+        <div class="pane" style="margin-top:8px"><h3>Coffer <em>tonight</em></h3>
+          <div class="pod"><div><small>Zulrah</small><b>3.1m</b><em>best</em></div><div><small>Vorkath</small><b>2.6m</b><em>boss</em></div><div><small>Barbarian fishing</small><b>0.4m</b><em class="love">love</em></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="term"><span class="ps">$</span><span class="in">-mort what's left for Song of the Elves</span><span class="cur"></span><span class="ans">next <b>Agility 70</b></span></div>
+  </div>
+</div></div>`;
+$("#grid").innerHTML = THEMES.map(home).join("");
+const setNote = ()=>{ $("#note").innerHTML = NOTES[document.body.dataset.dir]; };
+setNote();
+document.addEventListener("click", e=>{
+  const d = e.target.closest("[data-dir]"); if(d && d.tagName === "BUTTON"){ document.body.dataset.dir = d.dataset.dir; $$("button[data-dir]").forEach(b=>b.classList.toggle("on", b === d)); setNote(); }
+  const o = e.target.closest("[data-one]"); if(o){ $$("button[data-one]").forEach(b=>b.classList.toggle("on", b === o)); $("#grid").classList.toggle("one", !!o.dataset.one); $$("#grid > div").forEach(w=>w.classList.toggle("hidden", !!o.dataset.one && w.dataset.th !== o.dataset.one)); }
+});
+</script>
+</body>
+</html>
