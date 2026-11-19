@@ -303,6 +303,13 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .navitem:hover{background:var(--panel2); color:var(--text); border-color:transparent}
   .navitem.active{background:var(--active); color:var(--gold); box-shadow:inset 3px 0 0 var(--gold)}
   .navitem .ni-ic{font-size:16px; width:20px; text-align:center; flex:0 0 auto}
+  /* The Game corner is a secret: off the sidebar until the arcade command, then lit in the theme's
+     colour until the app closes. It comes in with a stretch of its letters and keeps a slow glow. */
+  .navitem.nav-secret, body[data-skin="term"] .navitem.nav-secret{--sglow:color-mix(in srgb, var(--gold) 70%, transparent); color:var(--gold); opacity:1; animation:secretIn .7s cubic-bezier(.2,.7,.2,1) both, secretGlow 2.6s ease-in-out .7s infinite}
+  .navitem.nav-secret .ni-ic{filter:drop-shadow(0 0 6px var(--sglow))}
+  @keyframes secretIn{from{opacity:0; transform:translateX(-12px); letter-spacing:.25em; filter:blur(3px)}}
+  @keyframes secretGlow{0%,100%{text-shadow:0 0 6px var(--sglow)} 50%{text-shadow:0 0 14px var(--sglow), 0 0 30px color-mix(in srgb, var(--sglow) 55%, transparent)}}
+  @media (prefers-reduced-motion:reduce){ .navitem.nav-secret{animation:none; text-shadow:0 0 8px var(--sglow)} }
   /* the quiet row: Game corner sits under the list, dimmed, without a heading of its own */
   .nav-quiet{margin-top:14px; position:relative; color:var(--muted); font-weight:normal; font-size:12.5px; opacity:.55;
     transition:opacity .22s, color .18s, background .18s}
@@ -5256,7 +5263,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
       <button class="navitem hidden" data-view="board" id="navBoard"><span class="ni-ic">📋</span>Board</button>
       <button class="navitem hidden" data-view="mockups" id="navMockups"><span class="ni-ic">🖼️</span>Mockups</button>
       <button class="navitem hidden" data-view="ask" id="navAsk"><span class="ni-ic">💬</span>Ask Bud</button>
-      <button class="navitem nav-quiet" data-view="arcade" title="Game corner"><span class="ni-ic">🕹️</span>Game corner</button>
+      <button class="navitem nav-quiet hidden" data-view="arcade" id="navArcade" title="Game corner"><span class="ni-ic">🕹️</span>Game corner</button>
     </nav>
     <div class="side-char" id="sideChar">
       <div class="side-mini">
@@ -16028,6 +16035,16 @@ termDef(["fill"], "fill on | off", "Turns the extra panes on a wide window on or
   const a = rest.trim().toLowerCase(); if(a !== "on" && a !== "off") return "fill takes on or off";
   return {hint:`<u>enter</u> turns the wide-window panes ${a}`, run:()=>{ state.wideFill = a === "on"; save(); wfDraw(); termOut(`Wide-window panes ${a}.`); }};
 }, {soft:true});
+// ---- the Game corner is a secret ----
+// Hidden from the sidebar until the arcade command, which lights it up in the theme's colour until
+// the app closes. Nothing is saved, so the next launch starts hidden again (Josh, 2026-11-18).
+var arcadeOpen = false;
+function arcadeReveal(go){
+  const b = $("#navArcade"); if(!b) return;
+  if(!arcadeOpen){ arcadeOpen = true; b.classList.remove("hidden"); b.classList.add("nav-secret"); try{ dockRender(); }catch(e){} }
+  if(go) switchView("arcade");
+}
+termDef(["arcade", "games", "corner"], "arcade", "Opens the Game corner. It stays off the sidebar until this is typed, then sits there lit until the app closes.", "App", ()=>({hint:`<u>enter</u> opens the Game corner`, run:()=>{ const was = arcadeOpen; arcadeReveal(true); termOut(was ? "The Game corner is open already." : "The Game corner is open. It stays in the sidebar until the app closes."); }}), {bare:true});
 termDef(["reset"], "reset layout", "Puts every page's panes, Home's widgets and the console back where they started. Settings, Look has the same button.", "App", rest=>/^layout$/i.test(rest.trim()) ? {hint:`<u>enter</u> resets the layout of every page`, run:()=>layoutReset("all")} : "reset takes layout: -reset layout", {soft:true});
 termDef(["panes"], "panes reset", "Puts Home's panes back where they started.", "App", rest=>rest.trim().toLowerCase() === "reset" ? {hint:`<u>enter</u> puts Home's panes back`, run:()=>{ htArrReset(); termOut("Home's panes are back where they started."); }} : "panes takes reset", {soft:true});
 termDef(["reload", "refresh"], "reload", "Reads your stats from the hiscores again.", "App", ()=>state.username ? {hint:`<u>enter</u> reads your stats again`, run:()=>{ termOut("Reading your stats from the hiscores."); loadCharacter({name:state.username, live:true}); }} : "No character is loaded yet.", {bare:true});
