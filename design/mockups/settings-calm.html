@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600&family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;600&family=Lora:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* Terminal look, Mortimer theme: the same tokens the app carries */
+  :root{
+    --bg:#0b1513; --bg2:#10201c; --panel:#11201d; --panel2:#172a26; --border:#2a443f;
+    --gold:#66cbb9; --gold-dim:#4a9c8f; --gold2:#57b5a5; --gold3:#2f655d;
+    --text:#e0e6d9; --muted:#8fa39c; --inset:#07100e; --active:#1c332f;
+    --green:#7fd18a; --red:#e07a6c; --blue:#7fb4e6;
+    --acc2:#e8a858;
+    --line:color-mix(in srgb, var(--border) 58%, var(--bg));
+    --faint:color-mix(in srgb, var(--muted) 56%, var(--bg));
+    --fs:"Bahnschrift","DIN Alternate","Inter","Segoe UI",system-ui,sans-serif;
+    --fm:"Cascadia Mono","Cascadia Code","SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+    --app-face:var(--fm); /* what the Font choice sets on the page behind; Settings never takes it */
+  }
+  :root[data-theme="night"]{
+    --bg:#060707; --bg2:#090a0a; --panel:#0c0e0e; --panel2:#131616; --border:#242a29;
+    --gold:#66cbb9; --gold-dim:#45948a; --gold2:#57b5a5; --gold3:#2b5d56;
+    --text:#e7e9e4; --muted:#8b918e; --inset:#000000; --active:#1a2120;
+  }
+  :root[data-theme="blood"]{
+    --bg:#140b0c; --bg2:#1c1012; --panel:#1b1012; --panel2:#261619; --border:#4a2a2e;
+    --gold:#e07a6c; --gold-dim:#a85a50; --gold2:#c96a5d; --gold3:#6a3a34;
+    --text:#ead9d6; --muted:#a58a86; --inset:#0b0506; --active:#331b1e; --acc2:#e0b35a;
+  }
+  :root[data-theme="gilded"]{
+    --bg:#1a1712; --bg2:#241f18; --panel:#26211a; --panel2:#2f2820; --border:#4a3f2e;
+    --gold:#e6c35c; --gold-dim:#b9974a; --gold2:#c9a642; --gold3:#8a6f2e;
+    --text:#e8e0cf; --muted:#a99b7d; --inset:#15120d; --active:#3a3122; --acc2:#6fbf5b;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; background:var(--bg); color:var(--text); font:14px/1.45 var(--fs); -webkit-font-smoothing:antialiased}
+  button{font:inherit; color:inherit; cursor:pointer}
+
+  /* ---- the mockup's own chrome ---- */
+  .top{position:sticky; top:0; z-index:5; background:color-mix(in srgb, var(--bg) 92%, black); border-bottom:1px solid var(--line); padding:10px 22px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .top h1{font:600 15px var(--fm); color:var(--gold); margin:0 10px 0 0; letter-spacing:-.2px}
+  .top p{margin:0; color:var(--muted); font-size:12.5px; flex:1 1 320px}
+  .pick{display:flex; gap:2px; background:var(--inset); padding:3px; border-radius:9px; border:1px solid var(--line)}
+  .pick button{border:0; background:none; color:var(--muted); font:12.5px var(--fm); padding:5px 12px; border-radius:7px}
+  .pick button.on{background:var(--panel2); color:var(--gold)}
+  .pick label{color:var(--faint); font:11px var(--fm); letter-spacing:.12em; text-transform:uppercase; padding:7px 4px 0 8px}
+  .dir{display:none} .dir.on{display:block}
+
+  /* a slice of the page behind the dialog, so the Font choice has something to land on */
+  .stage{position:relative; min-height:calc(100vh - 54px); overflow:hidden; padding:28px 0 60px}
+  .behind{position:absolute; inset:0; padding:22px 30px; opacity:.55; pointer-events:none; font-family:var(--app-face)}
+  .behind h2{font:600 22px var(--app-face); margin:0 0 6px; color:var(--text)}
+  .behind p{margin:0 0 18px; color:var(--muted); font-size:13px}
+  .behind .grid{display:grid; grid-template-columns:repeat(6, 1fr); gap:8px; max-width:1100px}
+  .behind .cell{height:64px; border:1px solid var(--line); border-radius:9px; background:var(--panel); padding:8px 10px; display:flex; flex-direction:column; justify-content:space-between}
+  .behind .cell b{font:600 20px var(--app-face)} .behind .cell small{color:var(--faint); font-size:11px}
+  .behind .term{margin-top:18px; border:1px solid var(--line); border-radius:9px; background:var(--inset); padding:10px 12px; font:12.5px var(--fm); color:var(--muted); max-width:520px}
+  .behind .term b{color:var(--gold); font-weight:400}
+  .stage::before{content:""; position:absolute; inset:0; background:rgba(0,0,0,.55)}
+
+  /* ---- shared control kit (the app's, trimmed) ---- */
+  .sw{position:relative; width:38px; height:21px; flex:none; display:block}
+  .sw input{position:absolute; inset:0; opacity:0; margin:0; cursor:pointer; z-index:1}
+  .sw i{position:absolute; inset:0; border-radius:999px; background:var(--panel2); border:1px solid var(--border); transition:background .2s, border-color .2s}
+  .sw i::after{content:""; position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background:var(--muted); transition:transform .22s cubic-bezier(.2,.7,.2,1), background .2s}
+  .sw input:checked + i{background:color-mix(in srgb, var(--gold) 28%, var(--panel2)); border-color:var(--gold-dim)}
+  .sw input:checked + i::after{transform:translateX(17px); background:var(--gold)}
+  .seg{display:inline-flex; gap:2px; flex-wrap:wrap}
+  .seg button{background:transparent; border:1px solid transparent; border-radius:7px; color:var(--muted); font:12px var(--fm); padding:5px 10px; transition:background .15s, color .15s}
+  .seg button:hover{background:var(--panel2); color:var(--text)}
+  .seg button.on{background:var(--panel2); border-color:var(--line); color:var(--gold)}
+  .ghost{background:transparent; border:1px solid var(--line); border-radius:8px; color:var(--muted); font:12.5px var(--fm); padding:6px 11px; white-space:nowrap; transition:border-color .15s, color .15s}
+  .ghost:hover{border-color:var(--border); color:var(--text)}
+  .ghost.danger:hover{color:var(--red); border-color:var(--red)}
+  .primary{background:var(--gold); color:var(--bg); border:1px solid var(--gold); border-radius:8px; font:600 12.5px var(--fm); padding:6px 12px}
+  .field{background:var(--inset); border:1px solid var(--line); border-radius:8px; color:var(--text); font:13px var(--fs); padding:7px 10px; flex:1; min-width:0; outline:0}
+  .field::placeholder{color:var(--faint)}
+  input[type=range]{accent-color:var(--gold); margin:0}
+  .hue{appearance:none; -webkit-appearance:none; height:8px; border-radius:4px; outline:0; background:linear-gradient(90deg,#e46,#ea5,#dd5,#7d6,#5cc,#58d,#a6d,#e46)}
+  .hue::-webkit-slider-thumb{appearance:none; -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--acc2); border:2px solid var(--bg); box-shadow:0 0 0 1px var(--text)}
+  .dot{display:inline-block; width:12px; height:12px; border-radius:50%; background:var(--acc2); box-shadow:0 0 0 3px color-mix(in srgb, var(--acc2) 25%, transparent); margin-right:8px; vertical-align:-1px}
+  .tip{display:inline-grid; place-items:center; width:16px; height:16px; border-radius:50%; border:1px solid var(--line); color:var(--faint); font:10px var(--fm); margin-left:6px; vertical-align:1px; cursor:help}
+  .tip:hover{color:var(--gold); border-color:var(--gold-dim)}
+  .bar{height:6px; border-radius:3px; background:var(--inset); border:1px solid var(--line); overflow:hidden; position:relative}
+  .bar i{position:absolute; inset:0 auto 0 0; width:29.5%; background:var(--gold-dim)}
+  .x{background:none; border:0; color:var(--muted); font-size:14px; padding:4px 6px; border-radius:6px} .x:hover{color:var(--gold); background:var(--panel2)}
+  .pane{display:none} .pane.on{display:block; animation:paneIn .22s cubic-bezier(.2,.7,.2,1)}
+  @keyframes paneIn{from{opacity:0; transform:translateY(5px)} to{opacity:1; transform:none}}
+  .note{font-size:12px; color:var(--muted); line-height:1.45}
+  .note a{color:var(--gold)}
+
+  /* theme swatches: a row of little rune circles, not a wall of tiles */
+  .swatches{display:flex; flex-wrap:wrap; gap:6px}
+  .swatch{width:38px; height:38px; border-radius:50%; border:1px solid var(--line); background:var(--inset); display:grid; place-items:center; padding:0; transition:border-color .15s, transform .15s; position:relative}
+  .swatch img{width:20px; height:20px; object-fit:contain; image-rendering:pixelated}
+  .swatch:hover{border-color:var(--gold-dim); transform:translateY(-1px)}
+  .swatch.on{border-color:var(--gold); box-shadow:0 0 0 3px color-mix(in srgb, var(--gold) 22%, transparent)}
+  .swatch::after{content:attr(data-name); position:absolute; top:calc(100% + 5px); left:50%; transform:translateX(-50%); font:10.5px var(--fm); color:var(--faint); white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s}
+  .swatch:hover::after{opacity:1}
+  /* font chips: the sample in the face, name under */
+  .faces{display:grid; grid-template-columns:repeat(auto-fill, minmax(108px, 1fr)); gap:6px}
+  .face{display:flex; flex-direction:column; align-items:center; gap:2px; padding:9px 6px 7px; border-radius:9px; background:var(--inset); border:1px solid var(--line); color:var(--faint); transition:border-color .14s, transform .14s}
+  .face .s{font-size:16px; line-height:1.1; color:var(--text); font-weight:600; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap} .face small{font:10.5px var(--fm)}
+  .face:hover{border-color:var(--gold-dim); transform:translateY(-1px)} .face.on{border-color:var(--gold); color:var(--gold)} .face.on .s{color:var(--gold)}
+  .fgroup{font:10.5px var(--fm); letter-spacing:.12em; text-transform:uppercase; color:var(--faint); margin:10px 0 6px}
+  .faces + .fgroup{margin-top:12px}
+
+  /* =================================================================
+     A  ·  RAIL
+     A wider dialog with sections down the left. Every section is one card
+     of same-height rows: name and one short line on the left, the control in
+     a fixed column on the right. Long explanations live behind a ? .
+     ================================================================= */
+  .A .dlg{position:relative; z-index:1; width:min(900px, calc(100vw - 32px)); height:min(640px, calc(100vh - 110px)); margin:0 auto; background:var(--panel); border:1px solid var(--border); border-radius:14px; display:grid; grid-template-columns:200px 1fr; overflow:hidden; box-shadow:0 24px 70px rgba(0,0,0,.55)}
+  .A .rail{background:var(--bg2); border-right:1px solid var(--line); padding:14px 10px; display:flex; flex-direction:column; gap:2px; overflow:auto}
+  .A .rail h2{font:600 15px var(--fm); color:var(--gold); margin:4px 8px 12px; letter-spacing:-.2px}
+  .A .rail .h{font:10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin:12px 8px 4px}
+  .A .rail .h:first-of-type{margin-top:0}
+  .A .rail button{display:flex; align-items:center; gap:9px; width:100%; text-align:left; background:none; border:0; border-radius:8px; color:var(--muted); font:13px var(--fs); padding:7px 9px; transition:background .15s, color .15s}
+  .A .rail button i{width:16px; height:16px; display:grid; place-items:center; font:12px var(--fm); color:var(--faint)}
+  .A .rail button:hover{background:var(--panel); color:var(--text)}
+  .A .rail button.on{background:var(--panel2); color:var(--gold)} .A .rail button.on i{color:var(--gold)}
+  .A .main{display:flex; flex-direction:column; min-width:0}
+  .A .head{display:flex; align-items:baseline; gap:12px; padding:18px 22px 10px; border-bottom:1px solid var(--line)}
+  .A .head h3{margin:0; font:600 16px var(--fm); color:var(--text); letter-spacing:-.2px}
+  .A .head p{margin:0; color:var(--muted); font-size:12.5px; flex:1}
+  .A .head .x{margin-left:auto}
+  .A .body{overflow:auto; padding:16px 22px 22px}
+  .A .card{border:1px solid var(--line); border-radius:11px; background:var(--bg); overflow:hidden}
+  .A .card + .card{margin-top:14px}
+  .A .card > .ch{font:10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim); padding:10px 14px 0}
+  .A .row{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:18px; padding:11px 14px; min-height:54px}
+  .A .row + .row{border-top:1px solid var(--line)}
+  .A .row .l{min-width:0} .A .row .l b{display:block; font-weight:600; font-size:13.5px} .A .row .l small{display:block; color:var(--muted); font-size:12px; margin-top:1px}
+  .A .row .c{display:flex; align-items:center; justify-content:flex-end; gap:8px; min-width:180px}
+  .A .row.stack{grid-template-columns:1fr} .A .row.stack .c{justify-content:flex-start; margin-top:6px; min-width:0}
+  .A .row.wide .c{min-width:0}
+  .A .status{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted)} .A .status b{color:var(--green); font-weight:500}
+  .A .list{display:grid; gap:0}
+  .A .list .it{display:grid; grid-template-columns:110px 1fr auto; gap:12px; align-items:center; padding:8px 14px; border-top:1px solid var(--line); font-size:12.5px}
+  .A .list .it span:first-child{font-family:var(--fm); color:var(--muted)} .A .list .it span:nth-child(2){color:var(--faint)}
+  .A .looks{display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%}
+  .A .look{text-align:left; background:var(--inset); border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--muted); display:flex; flex-direction:column; gap:2px}
+  .A .look b{color:var(--text); font-size:13px} .A .look small{font-size:11.5px}
+  .A .look.on{border-color:var(--gold)} .A .look.on b{color:var(--gold)}
+  .A .slider{display:grid; grid-template-columns:1fr 5ch; gap:10px; align-items:center; width:240px}
+  .A .slider small{font:12px var(--fm); color:var(--muted); text-align:right}
+
+  /* =================================================================
+     B  ·  BOARD
+     Tabs stay on top. Each tab is a board of same-size cards, one setting
+     each, the control as the centre of the card and a line under it.
+     ================================================================= */
+  .B .dlg{position:relative; z-index:1; width:min(820px, calc(100vw - 32px)); height:min(640px, calc(100vh - 110px)); margin:0 auto; background:var(--panel); border:1px solid var(--border); border-radius:14px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 24px 70px rgba(0,0,0,.55)}
+  .B .head{display:flex; align-items:center; gap:14px; padding:14px 18px 0}
+  .B .head h2{margin:0; font:600 16px var(--fm); color:var(--gold); letter-spacing:-.2px}
+  .B .tabs{display:flex; gap:2px; margin-left:8px}
+  .B .tabs button{background:none; border:0; border-bottom:2px solid transparent; color:var(--muted); font:12.5px var(--fm); padding:8px 11px 10px; border-radius:0}
+  .B .tabs button:hover{color:var(--text)} .B .tabs button.on{color:var(--gold); border-bottom-color:var(--gold)}
+  .B .head .x{margin-left:auto; align-self:flex-start}
+  .B .sep{height:1px; background:var(--line)}
+  .B .body{overflow:auto; padding:16px 18px 20px}
+  .B .board{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+  .B .board + .bh, .B .bh{font:10.5px var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim); margin:16px 2px 8px}
+  .B .bh:first-child{margin-top:0}
+  .B .tile{background:var(--bg); border:1px solid var(--line); border-radius:11px; padding:12px 14px 12px; display:flex; flex-direction:column; gap:9px; min-height:104px}
+  .B .tile.full{grid-column:1 / -1}
+  .B .tile .t{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .B .tile .t b{font-weight:600; font-size:13.5px}
+  .B .tile .t .v{font:12px var(--fm); color:var(--gold)}
+  .B .tile .ctl{display:flex; align-items:center; gap:8px; flex-wrap:wrap; flex:1}
+  .B .tile .ctl .seg button{padding:6px 12px}
+  .B .tile small.h{color:var(--muted); font-size:12px; margin-top:auto}
+  .B .tile.toggle{flex-direction:row; align-items:center; min-height:0; padding:12px 14px}
+  .B .tile.toggle .l{flex:1} .B .tile.toggle .l b{display:block; font-weight:600; font-size:13.5px} .B .tile.toggle .l small{display:block; color:var(--muted); font-size:12px}
+  .B .looks{display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%}
+  .B .look{text-align:left; background:var(--inset); border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--muted); display:flex; flex-direction:column; gap:2px}
+  .B .look b{color:var(--text); font-size:13px} .B .look small{font-size:11.5px}
+  .B .look.on{border-color:var(--gold)} .B .look.on b{color:var(--gold)}
+  .B .sl{display:grid; grid-template-columns:4.5em 1fr 5ch; gap:10px; align-items:center; width:100%}
+  .B .sl b{font:500 12px var(--fm); color:var(--muted)} .B .sl small{font:12px var(--fm); color:var(--muted); text-align:right}
+  .B .act{display:flex; gap:8px; flex-wrap:wrap}
+  .B .list .it{display:grid; grid-template-columns:110px 1fr auto; gap:12px; align-items:center; padding:7px 0; border-top:1px solid var(--line); font-size:12.5px}
+  .B .list .it:first-child{border-top:0}
+  .B .list .it span:first-child{font-family:var(--fm); color:var(--muted)} .B .list .it span:nth-child(2){color:var(--faint)}
+  .B .status{font-size:12.5px; color:var(--muted)} .B .status b{color:var(--green); font-weight:500}
+
+  @media (max-width:760px){
+    .A .dlg{grid-template-columns:1fr; height:auto} .A .rail{flex-direction:row; flex-wrap:wrap; border-right:0; border-bottom:1px solid var(--line)} .A .rail .h{display:none} .A .rail button{width:auto}
+    .A .row{grid-template-columns:1fr} .A .row .c{justify-content:flex-start; min-width:0}
+    .B .board{grid-template-columns:1fr} .B .dlg{height:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>Settings · two directions</h1>
+  <p>Same settings, same values as your save. In both, Settings keeps the Terminal look's own type whatever face the Font choice puts on the page: try the Font switch and watch the page behind change while the dialog does not.</p>
+  <div class="pick" id="dirPick"><label>Direction</label><button class="on" data-dir="A">A · Rail</button><button data-dir="B">B · Board</button></div>
+  <div class="pick" id="facePick"><label>Font</label><button class="on" data-face="mono">Default</button><button data-face='"Playfair Display",Georgia,serif'>Playfair</button><button data-face='"Inter",system-ui,sans-serif'>Inter</button><button data-face='"EB Garamond",Georgia,serif'>Garamond</button></div>
+  <div class="pick" id="themePick"><label>Theme</label><button class="on" data-theme="mortimer">Mortimer</button><button data-theme="night">Night</button><button data-theme="blood">Blood</button><button data-theme="gilded">Gilded</button></div>
+</div>
+
+<div class="stage">
+  <div class="behind" aria-hidden="true">
+    <h2>Twonuh</h2>
+    <p>Combat 107 · 1,531 total · 24 skills, none at 99 yet</p>
+    <div class="grid">
+      <div class="cell"><small>Attack</small><b>77</b></div><div class="cell"><small>Strength</small><b>80</b></div><div class="cell"><small>Defence</small><b>75</b></div>
+      <div class="cell"><small>Ranged</small><b>81</b></div><div class="cell"><small>Prayer</small><b>66</b></div><div class="cell"><small>Magic</small><b>75</b></div>
+      <div class="cell"><small>Slayer</small><b>71</b></div><div class="cell"><small>Fletching</small><b>33</b></div><div class="cell"><small>Woodcutting</small><b>46</b></div>
+      <div class="cell"><small>Mining</small><b>68</b></div><div class="cell"><small>Smithing</small><b>66</b></div><div class="cell"><small>Fishing</small><b>52</b></div>
+    </div>
+    <div class="term"><b>twonuh@mortimeter</b> ~/home<br>&gt; stats mining<br>Mining 68 · 605,032 xp · 1,196,668 to 75</div>
+  </div>
+
+  <!-- ================================ A · RAIL ================================ -->
+  <div class="dir A on" data-dir="A">
+    <div class="dlg" role="dialog" aria-label="Settings">
+      <nav class="rail" id="railA">
+        <h2>Settings</h2>
+        <div class="h">You</div>
+        <button class="on" data-sec="character"><i>@</i>Character</button>
+        <button data-sec="pages"><i>▤</i>Pages</button>
+        <div class="h">Look</div>
+        <button data-sec="appearance"><i>◧</i>Appearance</button>
+        <button data-sec="theme"><i>◉</i>Theme</button>
+        <button data-sec="type"><i>A</i>Type</button>
+        <div class="h">Data</div>
+        <button data-sec="claude"><i>✦</i>Claude</button>
+        <button data-sec="backups"><i>⇓</i>Backups</button>
+        <button data-sec="devices"><i>⇄</i>Devices</button>
+        <div class="h">&nbsp;</div>
+        <button data-sec="about"><i>i</i>About</button>
+      </nav>
+      <div class="main">
+        <!-- Character -->
+        <section class="pane on" data-sec="character">
+          <div class="head"><h3>Character</h3><p>Twonuh, from the hiscores.</p><button class="x" aria-label="Close">✕</button></div>
+          <div class="body">
+            <div class="card">
+              <div class="row"><div class="l"><b>Setup</b><small>Run it again with your details filled in. Nothing is erased.</small></div><div class="c"><button class="ghost">Run setup again</button></div></div>
+              <div class="row"><div class="l"><b>Auto-refresh</b><small>Pull your stats from the hiscores every 15 minutes.</small></div><div class="c"><label class="sw"><input type="checkbox" checked><i></i></label></div></div>
+              <div class="row"><div class="l"><b>Fill in Scroll from your stats</b><small>Days you never logged still show the XP the hiscores saw.</small></div><div class="c"><label class="sw"><input type="checkbox" checked><i></i></label></div></div>
+            </div>
+            <div class="card">
+              <div class="ch">RuneLite data</div>
+              <div class="row"><div class="l"><div class="status"><b>✓ Imported</b> Twonuh · Sun, Nov 15 at 3:21 PM</div><small>This browser can't watch the folder; import again for newer data. <span class="tip" title="The desktop app keeps it in sync on its own.">?</span></small></div><div class="c"><button class="ghost">Import again</button></div></div>
+            </div>
+          </div>
+        </section>
+        <!-- Pages -->
+        <section class="pane" data-sec="pages">
+          <div class="head"><h3>Pages</h3><p>How the pages open and count.</p><button class="x" aria-label="Close">✕</button></div>
+          <div class="body">
+            <div class="card">
+              <div class="row"><div class="l"><b>Tabs</b><small>Where a page opens when you come back to it. <span class="tip" title="Scroll, Achievements, Quest Hub, Coffer, Skills and Upgrades. The app itself always opens on Home.">?</span></small></div><div class="c"><div class="seg"><button class="on">First tab</button><button>Where you left off</button></div></div></div>
+              <div class="row"><div class="l"><b>Numbers</b><small>How skill XP is written.</small></div><div class="c"><div class="seg"><button class="on">Short · 1.1m</button><button>Exact · 1,148,000</button></div></div></div>
+              <div class="row"><div class="l"><b>How big everything is</b><small>A phone setting. On a computer, Ctrl and plus or minus does the same.</small></div><div class="c"><div class="seg"><button>Compact</button><button class="on">Normal</button><button>Large</button><button>Larger</button></div></div></div>
+            </div>
+          </div>
+        </section>
+        <!-- Appearance -->
+        <section class="pane" data-sec="appearance">
+          <div class="head"><h3>Appearance</h3><p>The look, and how the Terminal look lays itself out.</p><button class="x" aria-label="Close">✕</button></div>
+          <div class="body">
+            <div class="card">
+              <div class="row stack"><div class="l"><b>Look</b></div><div class="c looks"><button class="look on"><b>Terminal</b><small>Monospace, hairlines, a command line on Home.</small></button><button class="look"><b>Classic</b><small>The look before the redesign, exactly as it was.</small></button></div></div>
+            </div>
+            <div class="card">
+              <div class="ch">Terminal look</div>
+              <div class="row"><div class="l"><b>Home layout</b><small>Mosaic is uneven on purpose; Orderly lines every edge up. <span class="tip" title="Drag a pane by its header to move it.">?</span></small></div><div class="c"><div class="seg"><button class="on">Mosaic</button><button>Orderly</button></div></div></div>
+              <div class="row"><div class="l"><b>Command line</b><small>The line at the top of every page. Press / to start typing. <span class="tip" title="cd scroll, log mined for an hour, stats mining, -help for the list.">?</span></small></div><div class="c"><div class="seg"><button class="on">Shown</button><button>Hidden</button></div></div></div>
+              <div class="row stack"><div class="l"><b>Console</b><small>Where the console sits. Shortcut Ctrl+` shows and hides it. <span class="tip" title="At the side is a column to the right of every page when the window has room. Floating is a window you can move and resize. Drag the console's header to pull it off the side.">?</span></small></div><div class="c"><div class="seg"><button class="on">At the side</button><button>Floating</button><button>Hidden</button></div><button class="ghost">Shortcut</button></div></div>
+              <div class="row"><div class="l"><b>Bakery layout</b><small>Board puts the best three side by side. Listing is one table.</small></div><div class="c"><div class="seg"><button class="on">Board</button><button>Listing</button></div></div></div>
+              <div class="row stack"><div class="l"><b>Progress bars</b><small>How a bar is drawn wherever one appears.</small></div><div class="c"><div class="seg"><button class="on">Solid</button><button>Hairline</button><button>LED tip</button><button>Ten cells</button><button>Brackets</button><button>Dotted</button></div></div></div>
+              <div class="row stack"><div class="l"><b>Backdrop</b><small>What sits behind the panes. Clean is a soft glow, no pattern.</small></div><div class="c"><div class="seg"><button class="on">Clean</button><button>Dots</button><button>Grid</button><button>Lines</button><button>Weave</button><button>Flat</button></div></div></div>
+              <div class="row"><div class="l"><b>Wide window</b><small>On a wide monitor the room beside a page fills with extra panes.</small></div><div class="c"><div class="seg"><button class="on">Fill it</button><button>Leave it empty</button></div></div></div>
+              <div class="row"><div class="l"><b>Page layouts</b><small>Edit, on the command line, moves and hides panes. This puts every page back.</small></div><div class="c"><button class="ghost">Reset every page</button></div></div>
+            </div>
+          </div>
+        </section>
+        <!-- Theme -->
+        <section class="pane" data-sec="theme">
+          <div class="head"><h3>Theme</h3><p>Mortimer. The colour the whole app takes.</p><button class="x" aria-label="Close">✕</button></div>
+          <div class="body">
+            <div class="card">
+              <div class="row stack wide"><div class="l"><b>Theme</b><small>Hover for a name. Runes carry their own colours.</small></div><div class="c swatches" data-swatches></div></div>
+              <div class="row"><div class="l"><b>Second colour</b><small>Figures, bars, the prompt and the small labels take it. <span class="tip" title="Slide to choose its hue for this theme. Theme's own puts the pair back.">?</span></small></div><div class="c"><span class="dot"></span><input class="hue" type="range" min="0" max="359" value="36" style="width:170px"><button class="ghost">Theme's own</button></div></div>
+              <div class="row"><div class="l"><b>Scene art</b><small>The picture a theme carries.</small></div><div class="c"><div class="seg"><button>Focused</button><button>Illustrated</button><button class="on">Off</button></div></div></div>
+            </div>
+          </div>
+        </section>
+        <!-- Type -->
+        <section class="pane" data-sec="type">
+          <div class="head"><h3>Type</h3><p>The face on everything but the terminal, and how heavy it draws.</p><button class="x" aria-label="Close">✕</button></div>
+          <div class="body">
+            <div class="card">
+              <div class="row stack wide"><div class="l"><b>Font</b><small>Garamond is the terminal's own. The command line, the Home terminal, the boot screen and Settings keep their mono whichever you pick.</small></div>
+                <div class="c" style="display:block">
+                  <div class="fgroup" style="margin-top:0">Clean</div>
+                  <div class="faces"><button class="face" style="--f:'Inter',system-ui,sans-serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Inter</small></button><button class="face" style="--f:'Lora',Georgia,serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Lora</small></button><button class="face" style="--f:'Playfair Display',Georgia,serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Playfair</small></button></div>
+                  <div class="fgroup">Classic</div>
+                  <div class="faces"><button class="face on" style="--f:'EB Garamond',Georgia,serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Garamond</small></button><button class="face" style="--f:'Alegreya',Georgia,serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Alegreya</small></button><button class="face" style="--f:Georgia,serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Georgia</small></button><button class="face" style="--f:'Cinzel',serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Cinzel</small></button></div>
+                  <div class="fgroup">Old school</div>
+                  <div class="faces"><button class="face" style="--f:'Almendra',serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Almendra</small></button><button class="face" style="--f:'MedievalSharp',cursive"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Medieval</small></button><button class="face" style="--f:'Pixelify Sans',sans-serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Pixelify</small></button><button class="face" style="--f:'Jacquard 24',serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Jacquard</small></button></div>
+                </div></div>
+              <div class="row"><div class="l"><b>Size</b><small>Grows the letters without moving the layout. Takes a picked face.</small></div><div class="c"><div class="slider"><input type="range" min="90" max="125" step="5" value="100"><small>100%</small></div></div></div>
+              <div class="row"><div class="l"><b>Weight</b><small>Thickens the text in either look, regular to bold.</small></div><div class="c"><div class="slider"><input type="range" min="400" max="700" step="50" value="400"><small>regular</small></div></div></div>
+              <div class="row"><div class="l"><b>As the face comes</b><small>Size and weight back to the face's own.</small></div><div class="c"><button class="ghost">Reset</button></div></div>
+            </div>
+          </div>
+        </section>
+        <!-- Claude -->
+        <section class="pane" data-sec="claude">
+          <div class="head"><h3>Claude</h3><p>Optional. A question asked on Home with -mort goes to Claude.</p><button class="x" aria-label="Close">✕</button></div>
+          <div class="body">
+            <div class="card">
+              <div class="row stack wide"><div class="l"><b>API key</b><small>Kept on this device only, apart from your save and your backups, and sent to Anthropic and nowhere else. <span class="tip" title="Keys come from the Claude Console. Each question is billed to your key.">?</span></small></div><div class="c"><input class="field" type="password" placeholder="A key is saved on this device"><button class="primary">Check and save</button><button class="ghost danger">Remove</button></div></div>
+              <div class="row"><div class="l"><b>Model</b><small>Opus is the most capable and costs the most; Haiku the fastest and cheapest.</small></div><div class="c"><div class="seg"><button class="on">Opus 5.5</button><button>Sonnet 5.5</button><button>Haiku 5.5</button></div></div></div>
+              <div class="row"><div class="l"><div class="status"><b>Connected.</b> -mort on Home goes to Claude.</div></div><div class="c"></div></div>
+            </div>
+          </div>
+        </section>
+        <!-- Backups -->
+        <section class="pane" data-sec="backups">
+          <div class="head"><h3>Backups</h3><p>A copy you keep, and the snapshots the app keeps.</p><button class="x" aria-label="Close">✕</button></div>
+          <div class="body">
+            <div class="card">
+              <div class="row"><div class="l"><b>Backup file</b><small>Everything: character, goals, Scroll, priorities, notes. Import merges. <span class="tip" title="The desktop app keeps plain backup files in your Documents folder. In a browser there's nowhere safe to put them, so use Backup instead.">?</span></small></div><div class="c"><button class="ghost">⇓ Backup</button><button class="ghost">⇑ Import</button></div></div>
+            </div>
+            <div class="card">
+              <div class="ch">Restore</div>
+              <div class="row"><div class="l"><small>Snapshots taken daily and before anything risky. They live on this device.</small></div><div class="c"></div></div>
+              <div class="list">
+                <div class="it"><span>5h ago</span><span>53 log · 3 goals · 204 quests</span><button class="ghost">Restore</button></div>
+                <div class="it"><span>Wed, Nov 18</span><span>52 log · 3 goals · 204 quests</span><button class="ghost">Restore</button></div>
+                <div class="it"><span>Tue, Nov 17</span><span>50 log · 3 goals · 204 quests</span><button class="ghost">Restore</button></div>
+                <div class="it"><span>Mon, Nov 16</span><span>49 log · 3 goals · 203 quests</span><button class="ghost">Restore</button></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="ch">Storage</div>
+              <div class="row stack wide"><div class="l"><b>1.5 MB of about 5 MB</b><small>quest data 133 KB · Scroll 30 KB · 6 snapshots, stored separately</small></div><div class="c" style="display:block"><div class="bar"><i></i></div></div></div>
+            </div>
+          </div>
+        </section>
+        <!-- Devices -->
+        <section class="pane" data-sec="devices">
+          <div class="head"><h3>Devices</h3><p>Your other devices, and the app itself.</p><button class="x" aria-label="Close">✕</button></div>
+          <div class="body">
+            <div class="card">
+              <div class="row"><div class="l"><b>Find my PC</b><small>Turn on sharing in the desktop app, then find it here. Same Wi-Fi.</small></div><div class="c"><button class="ghost">Find my PC</button></div></div>
+              <div class="row"><div class="l"><b>Update app from GitHub</b><small>Fetch the newest page onto this device.</small></div><div class="c"><button class="ghost">Update</button></div></div>
+            </div>
+          </div>
+        </section>
+        <!-- About -->
+        <section class="pane" data-sec="about">
+          <div class="head"><h3>About</h3><p>Mortimeter v1.0, formerly OSRS Buddy, 15 July to 18 October 2026.</p><button class="x" aria-label="Close">✕</button></div>
+          <div class="body">
+            <div class="card">
+              <div class="row"><div class="l"><b>Mortimeter v1.0</b><small>The version you are running.</small></div><div class="c"><button class="ghost">Check for updates</button></div></div>
+              <div class="row"><div class="l"><b>What's new</b><small>Patch notes for this and every previous version.</small></div><div class="c"><button class="ghost">Open</button></div></div>
+              <div class="row"><div class="l"><b>Report a bug</b><small>Opens a GitHub issue with the version filled in.</small></div><div class="c"><button class="ghost">Report</button></div></div>
+              <div class="row"><div class="l"><b>Send a suggestion</b><small>An idea or a correction, kept apart from the bugs.</small></div><div class="c"><button class="ghost">Suggest</button></div></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================ B · BOARD ================================ -->
+  <div class="dir B" data-dir="B">
+    <div class="dlg" role="dialog" aria-label="Settings">
+      <div class="head">
+        <h2>Settings</h2>
+        <nav class="tabs" id="tabsB"><button class="on" data-tab="general">General</button><button data-tab="look">Look</button><button data-tab="data">Data</button><button data-tab="about">About</button></nav>
+        <button class="x" aria-label="Close">✕</button>
+      </div>
+      <div class="sep"></div>
+      <div class="body">
+        <!-- General -->
+        <section class="pane on" data-tab="general">
+          <div class="bh">Character</div>
+          <div class="board">
+            <div class="tile toggle"><div class="l"><b>Auto-refresh</b><small>Hiscores every 15 minutes.</small></div><label class="sw"><input type="checkbox" checked><i></i></label></div>
+            <div class="tile toggle"><div class="l"><b>Fill in Scroll</b><small>From the hiscores on days you never logged.</small></div><label class="sw"><input type="checkbox" checked><i></i></label></div>
+            <div class="tile"><div class="t"><b>Setup</b></div><div class="ctl"><button class="ghost">Run setup again</button></div><small class="h">Your details filled in. Nothing is erased.</small></div>
+            <div class="tile"><div class="t"><b>RuneLite data</b><span class="v">Nov 15</span></div><div class="ctl"><button class="ghost">Import again</button></div><small class="h"><span class="status"><b>✓ Imported</b></span> Twonuh, 3:21 PM. This browser can't watch the folder.</small></div>
+          </div>
+          <div class="bh">Pages</div>
+          <div class="board">
+            <div class="tile"><div class="t"><b>Tabs</b></div><div class="ctl"><div class="seg"><button class="on">First tab</button><button>Where you left off</button></div></div><small class="h">Where a page opens when you come back to it.</small></div>
+            <div class="tile"><div class="t"><b>Numbers</b></div><div class="ctl"><div class="seg"><button class="on">Short · 1.1m</button><button>Exact · 1,148,000</button></div></div><small class="h">How skill XP is written.</small></div>
+            <div class="tile full"><div class="t"><b>How big everything is</b><span class="v">phone</span></div><div class="ctl"><div class="seg"><button>Compact</button><button class="on">Normal</button><button>Large</button><button>Larger</button></div></div><small class="h">On a computer, Ctrl and plus or minus does the same.</small></div>
+          </div>
+        </section>
+        <!-- Look -->
+        <section class="pane" data-tab="look">
+          <div class="bh">Look</div>
+          <div class="board">
+            <div class="tile full" style="min-height:0"><div class="looks"><button class="look on"><b>Terminal</b><small>Monospace, hairlines, a command line on Home.</small></button><button class="look"><b>Classic</b><small>The look before the redesign, exactly as it was.</small></button></div></div>
+            <div class="tile full"><div class="t"><b>Theme</b><span class="v">Mortimer</span></div><div class="ctl swatches" data-swatches></div><small class="h">Runes carry their own colours. Hover for a name.</small></div>
+            <div class="tile"><div class="t"><b>Second colour</b></div><div class="ctl"><span class="dot"></span><input class="hue" type="range" min="0" max="359" value="36" style="flex:1"></div><small class="h">Figures, bars, the prompt and the small labels. <button class="ghost" style="padding:2px 7px; font-size:11px; margin-left:4px">Theme's own</button></small></div>
+            <div class="tile"><div class="t"><b>Scene art</b></div><div class="ctl"><div class="seg"><button>Focused</button><button>Illustrated</button><button class="on">Off</button></div></div><small class="h">The picture a theme carries.</small></div>
+          </div>
+          <div class="bh">Type</div>
+          <div class="board">
+            <div class="tile full"><div class="t"><b>Font</b><span class="v">Garamond</span></div>
+              <div class="ctl" style="display:block">
+                <div class="faces"><button class="face" style="--f:'Inter',system-ui,sans-serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Inter</small></button><button class="face" style="--f:'Lora',Georgia,serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Lora</small></button><button class="face" style="--f:'Playfair Display',Georgia,serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Playfair</small></button><button class="face on" style="--f:'EB Garamond',Georgia,serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Garamond</small></button><button class="face" style="--f:'Alegreya',Georgia,serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Alegreya</small></button><button class="face" style="--f:Georgia,serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Georgia</small></button><button class="face" style="--f:'Cinzel',serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Cinzel</small></button><button class="face" style="--f:'Almendra',serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Almendra</small></button><button class="face" style="--f:'MedievalSharp',cursive"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Medieval</small></button><button class="face" style="--f:'Pixelify Sans',sans-serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Pixelify</small></button><button class="face" style="--f:'Jacquard 24',serif"><span class="s" style="font-family:var(--f)">Mortimeter</span><small>Jacquard</small></button></div>
+              </div>
+              <small class="h">On everything but the terminal and Settings, which keep their mono. Garamond is the terminal's own.</small></div>
+            <div class="tile"><div class="t"><b>Size</b><span class="v">100%</span></div><div class="ctl"><div class="sl"><b>90</b><input type="range" min="90" max="125" step="5" value="100"><small>125</small></div></div><small class="h">Grows the letters without moving the layout.</small></div>
+            <div class="tile"><div class="t"><b>Weight</b><span class="v">regular</span></div><div class="ctl"><div class="sl"><b>400</b><input type="range" min="400" max="700" step="50" value="400"><small>700</small></div></div><small class="h">Regular to bold, in either look.</small></div>
+          </div>
+          <div class="bh">Terminal look</div>
+          <div class="board">
+            <div class="tile"><div class="t"><b>Home layout</b></div><div class="ctl"><div class="seg"><button class="on">Mosaic</button><button>Orderly</button></div></div><small class="h">Mosaic is uneven on purpose. Drag a pane by its header.</small></div>
+            <div class="tile"><div class="t"><b>Command line</b></div><div class="ctl"><div class="seg"><button class="on">Shown</button><button>Hidden</button></div></div><small class="h">The line at the top of every page. Press / to type.</small></div>
+            <div class="tile"><div class="t"><b>Console</b><span class="v">Ctrl+`</span></div><div class="ctl"><div class="seg"><button class="on">At the side</button><button>Floating</button><button>Hidden</button></div></div><small class="h">Drag its header to pull it off the side. <button class="ghost" style="padding:2px 7px; font-size:11px; margin-left:4px">Shortcut</button></small></div>
+            <div class="tile"><div class="t"><b>Bakery layout</b></div><div class="ctl"><div class="seg"><button class="on">Board</button><button>Listing</button></div></div><small class="h">Board puts the best three side by side. Listing is one table.</small></div>
+            <div class="tile"><div class="t"><b>Progress bars</b></div><div class="ctl"><div class="seg"><button class="on">Solid</button><button>Hairline</button><button>LED tip</button><button>Ten cells</button><button>Brackets</button><button>Dotted</button></div></div><small class="h">Wherever a bar appears.</small></div>
+            <div class="tile"><div class="t"><b>Backdrop</b></div><div class="ctl"><div class="seg"><button class="on">Clean</button><button>Dots</button><button>Grid</button><button>Lines</button><button>Weave</button><button>Flat</button></div></div><small class="h">Behind the panes. Clean is a soft glow, no pattern.</small></div>
+            <div class="tile"><div class="t"><b>Wide window</b></div><div class="ctl"><div class="seg"><button class="on">Fill it</button><button>Leave it empty</button></div></div><small class="h">Extra panes in the room beside a page.</small></div>
+            <div class="tile"><div class="t"><b>Page layouts</b></div><div class="ctl"><button class="ghost">Reset every page</button></div><small class="h">Edit, on the command line, moves and hides panes.</small></div>
+          </div>
+        </section>
+        <!-- Data -->
+        <section class="pane" data-tab="data">
+          <div class="bh">Claude</div>
+          <div class="board">
+            <div class="tile full"><div class="t"><b>Claude in the terminal</b><span class="v status"><b>Connected</b></span></div><div class="ctl"><input class="field" type="password" placeholder="A key is saved on this device"><button class="primary">Check and save</button><button class="ghost danger">Remove</button></div><div class="ctl"><div class="seg"><button class="on">Opus 5.5</button><button>Sonnet 5.5</button><button>Haiku 5.5</button></div></div><small class="h">Optional. -mort on Home goes to Claude with your account. The key stays on this device and goes to Anthropic and nowhere else; each question is billed to it. Keys come from the <a href="#" style="color:var(--gold)">Claude Console</a>.</small></div>
+          </div>
+          <div class="bh">Backup</div>
+          <div class="board">
+            <div class="tile"><div class="t"><b>Backup file</b></div><div class="ctl act"><button class="ghost">⇓ Backup</button><button class="ghost">⇑ Import</button></div><small class="h">Everything. Import merges with what is here.</small></div>
+            <div class="tile"><div class="t"><b>Storage</b><span class="v">1.5 of 5 MB</span></div><div class="ctl" style="display:block"><div class="bar"><i></i></div></div><small class="h">quest data 133 KB · Scroll 30 KB · 6 snapshots apart</small></div>
+            <div class="tile full"><div class="t"><b>Restore</b><span class="v">daily, and before anything risky</span></div>
+              <div class="list">
+                <div class="it"><span>5h ago</span><span>53 log · 3 goals · 204 quests</span><button class="ghost">Restore</button></div>
+                <div class="it"><span>Wed, Nov 18</span><span>52 log · 3 goals · 204 quests</span><button class="ghost">Restore</button></div>
+                <div class="it"><span>Tue, Nov 17</span><span>50 log · 3 goals · 204 quests</span><button class="ghost">Restore</button></div>
+              </div></div>
+          </div>
+          <div class="bh">Your other devices</div>
+          <div class="board">
+            <div class="tile"><div class="t"><b>Find my PC</b></div><div class="ctl"><button class="ghost">Find my PC</button></div><small class="h">Turn on sharing in the desktop app first. Same Wi-Fi.</small></div>
+            <div class="tile"><div class="t"><b>Update app</b></div><div class="ctl"><button class="ghost">Update from GitHub</button></div><small class="h">Fetch the newest page onto this device.</small></div>
+          </div>
+        </section>
+        <!-- About -->
+        <section class="pane" data-tab="about">
+          <div class="bh">Mortimeter</div>
+          <div class="board">
+            <div class="tile"><div class="t"><b>Mortimeter v1.0</b></div><div class="ctl"><button class="ghost">Check for updates</button></div><small class="h">The version you are running.</small></div>
+            <div class="tile"><div class="t"><b>What's new</b></div><div class="ctl"><button class="ghost">Open</button></div><small class="h">Patch notes for this and every previous version.</small></div>
+            <div class="tile"><div class="t"><b>Report a bug</b></div><div class="ctl"><button class="ghost">Report</button></div><small class="h">A GitHub issue with the version filled in.</small></div>
+            <div class="tile"><div class="t"><b>Send a suggestion</b></div><div class="ctl"><button class="ghost">Suggest</button></div><small class="h">An idea or a correction, kept apart from the bugs.</small></div>
+          </div>
+          <p class="note" style="margin:14px 2px 0">Mortimeter, formerly OSRS Buddy, 15 July to 18 October 2026.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const THEMES = [["mortimer","Mortimer","Adamant_full_helm.png"],["night","Night","Skull.png"],["black","Abyss","Abyssal_whip.png"],["crystal","Crystal","Sapphire.png"],["parchment","Gilded","Papyrus.png"],["air","Air","Air_rune.png"],["water","Water","Water_rune.png"],["earth","Earth","Earth_rune.png"],["fire","Fire","Fire_rune.png"],["mind","Mind","Mind_rune.png"],["cosmic","Cosmic","Cosmic_rune.png"],["chaos","Chaos","Chaos_rune.png"],["astral","Astral","Astral_rune.png"],["nature","Nature","Nature_rune.png"],["law","Law","Law_rune.png"],["death","Death","Death_rune.png"],["blood","Blood","Blood_rune.png"],["lava","Lava","Lava_rune.png"]];
+  const MOCK = {mortimer:"mortimer", night:"night", blood:"blood", parchment:"gilded"};
+  document.querySelectorAll("[data-swatches]").forEach(el=>{
+    el.innerHTML = THEMES.map(([id,name,img])=>`<button class="swatch ${id==="mortimer"?"on":""}" data-name="${name}" data-t="${id}" title="${name}"><img src="https://oldschool.runescape.wiki/images/${img}" alt=""></button>`).join("");
+  });
+  const setTheme = t=>{ document.documentElement.dataset.theme = t; document.querySelectorAll("#themePick button").forEach(b=>b.classList.toggle("on", b.dataset.theme===t)); };
+  document.addEventListener("click", e=>{
+    const sw = e.target.closest(".swatch");
+    if(sw){ document.querySelectorAll(".swatch").forEach(b=>b.classList.toggle("on", b.dataset.t===sw.dataset.t)); if(MOCK[sw.dataset.t]) setTheme(MOCK[sw.dataset.t]); return; }
+    const seg = e.target.closest(".seg > button, .faces > .face, .looks > .look");
+    if(seg){ [...seg.parentElement.children].forEach(b=>b.classList.toggle("on", b===seg)); return; }
+    const d = e.target.closest("#dirPick button"); if(d){ document.querySelectorAll("#dirPick button").forEach(b=>b.classList.toggle("on", b===d)); document.querySelectorAll(".dir").forEach(x=>x.classList.toggle("on", x.dataset.dir===d.dataset.dir)); return; }
+    const f = e.target.closest("#facePick button"); if(f){ document.querySelectorAll("#facePick button").forEach(b=>b.classList.toggle("on", b===f)); document.documentElement.style.setProperty("--app-face", f.dataset.face==="mono" ? "var(--fm)" : f.dataset.face); return; }
+    const t = e.target.closest("#themePick button"); if(t){ setTheme(t.dataset.theme); return; }
+    const r = e.target.closest("#railA button"); if(r){ document.querySelectorAll("#railA button").forEach(b=>b.classList.toggle("on", b===r)); document.querySelectorAll(".A .pane").forEach(p=>p.classList.toggle("on", p.dataset.sec===r.dataset.sec)); return; }
+    const tb = e.target.closest("#tabsB button"); if(tb){ document.querySelectorAll("#tabsB button").forEach(b=>b.classList.toggle("on", b===tb)); document.querySelectorAll(".B .pane").forEach(p=>p.classList.toggle("on", p.dataset.tab===tb.dataset.tab)); return; }
+  });
+  document.querySelectorAll('input[type=range]:not(.hue)').forEach(r=>r.oninput = ()=>{ const out = r.closest(".slider, .tile")?.querySelector(".slider > small, .t .v"); if(!out) return; out.textContent = r.max==="700" ? ({400:"regular",450:"a little more",500:"medium",550:"more still",600:"semibold",650:"nearly bold",700:"bold"})[r.value] : r.value + "%"; });
+</script>
+</body>
+</html>
