@@ -1,5 +1,11 @@
 [
   {
+    "file": "settings-calm.html",
+    "title": "Settings mockups",
+    "desc": "Settings, calmer and less like a list (Josh's ask). Two directions with your real values: A, Rail, sections down the left and one card of even rows per section; B, Board, the four tabs kept and each setting its own card. In both, Settings keeps the look's own type whatever the Font choice sets. Direction, font and theme switches in the top strip.",
+    "date": "2026-11-20"
+  },
+  {
     "file": "themes-variety.html",
     "title": "The four house themes, with more than one colour",
     "desc": "The four house themes (Mortimer, Night, Abyss, Crystal) with more than one colour, the same small Home in each. Today for comparison; A gives each theme a second colour with a job (figures, bars, prompt, tags) and Night its own accent; B keeps one accent and splits the neutrals warm and cool instead. Gilded stays as it is. For 1.1.",
@@ -74,25 +80,19 @@
   {
     "file": "bakery.html",
     "title": "The Bakery, two ways",
-    "desc": "",
+    "desc": "Coffer's Bakery two ways, both now built: A, Board, the best three side by side and the rest as tiles; B, Listing, one aligned table with the chosen row opened beside it. Tune as a settings file you click or type into.",
     "date": "2026-11-18"
   },
   {
     "file": "bars.html",
     "title": "Progress bars",
-    "desc": "",
+    "desc": "Twenty-one ways to draw a progress bar on the same cells. Six of them are now a setting in Look.",
     "date": "2026-11-18"
-  },
-  {
-    "file": "settings-calm.html",
-    "title": "Settings mockups",
-    "desc": "",
-    "date": "2026-11-20"
   },
   {
     "file": "wide-fill.html",
     "title": "Filling a wide window",
-    "desc": "",
+    "desc": "What goes in the empty part of a big monitor: extras in three tiers, as a side rail or as panes the page grows. The second is what was built.",
     "date": "2026-11-17"
   }
 ]
