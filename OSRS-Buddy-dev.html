@@ -5331,10 +5331,11 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
      headings and names only; Josh: "I want EVERYTHING to change, except the terminal itself". So a
      chosen face takes the whole look, body text, figures, labels and chips included, by becoming
      both of the look's faces (--fs and --fm). Only the terminal keeps its mono (--ft): the Home
-     terminal, the command line and its dock, the path line, the boot screen and Coffer's tune strip.
+     terminal, the command line and its dock, the console on page tabs (floating or on the rail), the
+     path line, the boot screen and Coffer's tune strip.
      Garamond, the default, is the terminal's own type here, so nothing changes until a face is picked. */
   body[data-skin="term"][data-font]{--fs:var(--font-display); --fm:var(--font-display); font-family:var(--font-display)}
-  body[data-skin="term"][data-font] :is(.ht-term, .term-line, .term-dock, .term-path, .mt-boot-in, .cf-tt){--fs:var(--ft); --fm:var(--ft); --font-display:var(--ft); --font-body:var(--ft); font-family:var(--ft)}
+  body[data-skin="term"][data-font] :is(.ht-term, .term-line, .term-dock, .term-path, .mt-boot-in, .cf-tt, .term-float, .term-rail){--fs:var(--ft); --fm:var(--ft); --font-display:var(--ft); --font-body:var(--ft); font-family:var(--ft)}
   body[data-skin="term"][data-font] :is(h1, h2, h3, .brand, .tb-title, .sh-word, .ht-name, .su-title, .su-h, .goals-head h2, .cf-q, .bq-name, .cf-hname, .qg-t h3, .item .name){letter-spacing:0}
   body[data-skin="term"][data-font] :is(.brand, .sh-word, .ht-name){letter-spacing:-.2px}
   /* the Terminal look sets --font-display to its mono after the Classic font rules, so the chosen
@@ -5351,6 +5352,24 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"][data-font="jacquard"]{--font-display:"Jacquard 12",monospace}
   /* the pixel faces are small at a heading's size */
   body[data-skin="term"][data-font="pixelify"] :is(h1, h2, .sh-word, .ht-name, .brand), body[data-skin="term"][data-font="jacquard"] :is(h1, h2, .sh-word, .ht-name, .brand){font-size:1.15em}
+
+  /* ============ TYPE SIZE AND WEIGHT ============
+     Josh (2026-11-19): a thin or small face needs more size or weight; make it a preference. Weight
+     goes on the body text in either look (what sets its own weight, headings and bold bits, keeps it).
+     Size uses font-size-adjust, so the letters grow or shrink without the layout moving; it takes a
+     picked face in the Terminal look, where every px size would otherwise need changing by hand. The
+     x-height the adjust is measured against comes from the face itself (typeXHeight). The terminal
+     keeps its own size and weight. */
+  body[data-tweight]{font-weight:var(--tw)}
+  /* said on every element, not inherited: the font shorthand (font:500 11px ...) resets the adjust */
+  body[data-skin="term"][data-font][data-tsize], body[data-skin="term"][data-font][data-tsize] *{font-size-adjust:var(--tsa)}
+  body[data-skin="term"]:is([data-tweight], [data-tsize]) :is(.ht-term, .term-line, .term-dock, .term-path, .mt-boot-in, .cf-tt, .term-float, .term-rail){font-weight:400}
+  body[data-skin="term"][data-tsize] :is(.ht-term, .term-line, .term-dock, .term-path, .mt-boot-in, .cf-tt, .term-float, .term-rail, .set-font), body[data-skin="term"][data-tsize] :is(.ht-term, .term-line, .term-dock, .term-path, .mt-boot-in, .cf-tt, .term-float, .term-rail, .set-font) *{font-size-adjust:none}
+  .type-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px}
+  .type-row > b{flex:none; min-width:4.5em; font-size:12px; font-weight:500; color:var(--muted)}
+  .type-row input[type=range]{flex:1 1 160px; width:auto; margin:0; accent-color:var(--gold)}
+  .type-row small{font-size:12px; color:var(--muted); min-width:5ch; font-variant-numeric:tabular-nums}
+  .type-reset{margin-top:8px}
 </style>
 </head>
 <body>
@@ -5524,6 +5543,10 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <p class="set-note classic-only">Headings and numbers throughout the app. Body text stays as it is.</p>
             <p class="set-note term-only">In the Terminal look the face you pick goes on everything but the terminal itself: the command line, the Home terminal and the boot screen keep their mono. Garamond is the terminal's own type.</p>
             <div id="fontSeg"></div>
+            <div class="set-row col" style="border-bottom:0"><div class="lbl"><b>Size and weight</b><small>For a face that draws thin or small. Size grows the letters without moving the layout and takes a picked face in the Terminal look; weight thickens the body text in either look. The terminal keeps its own.</small></div>
+              <div class="type-row term-only"><b>Size</b><input type="range" id="tsize" min="90" max="125" step="5" aria-label="Type size"><small id="tsizeVal"></small></div>
+              <div class="type-row"><b>Weight</b><input type="range" id="tweight" min="400" max="600" step="50" aria-label="Type weight"><small id="tweightVal"></small></div>
+              <div class="type-reset"><button class="ghost small" id="typeReset">As the face comes</button></div></div>
           </div>
           <div class="set-group">
             <div class="set-h">Size</div>
@@ -10500,6 +10523,7 @@ function applyTheme(){
   const h2 = acc2Hue(t);
   if(h2 != null){ document.body.dataset.acc2 = "1"; document.body.style.setProperty("--acc2-h", h2); }
   else { delete document.body.dataset.acc2; document.body.style.removeProperty("--acc2-h"); }
+  if(typeof applyType === "function") applyType();
   // the painted scene: on for the themes that have one, unless turned off in Look
   const mode = ["focused", "illustrated", "off"].includes(state.themeArt) ? state.themeArt : "focused";
   const termPrint = document.body.dataset.skin === "term" && TERM_ART_THEMES.has(t);
@@ -21347,6 +21371,39 @@ function applyFont(){
   const f = state.font || "garamond";
   if(f==="garamond") document.body.removeAttribute("data-font");
   else document.body.dataset.font = f;
+  applyType();
+}
+// ---- type size and weight (Settings, Look, Font) ----
+const TYPE_X = {};
+// The x-height the browser scales a face by under font-size-adjust, as a share of its size. Probed
+// rather than read from the font: a face with a wrong x-height in its metrics (Almendra) would
+// otherwise draw huge. With font-size-adjust at 0.5 a line is 0.5 / x-height times as wide, so the
+// width with and without it gives the metric. 0.5 when it cannot be read.
+function typeXHeight(fam){
+  if(TYPE_X[fam] != null) return TYPE_X[fam];
+  try{
+    const p = document.createElement("span");
+    p.style.cssText = "position:absolute; left:-9999px; top:0; white-space:nowrap; font-size-adjust:none; font-weight:400; font-size:100px; font-family:" + fam;
+    p.textContent = "Mortimeter weighs the hours xxxx";
+    document.body.appendChild(p);
+    const w0 = p.getBoundingClientRect().width; p.style.fontSizeAdjust = "0.5"; const w1 = p.getBoundingClientRect().width; p.remove();
+    const m = 0.5 * w0 / w1;
+    if(w0 > 0 && w1 > 0 && m > 0.1 && m < 1.5) return (TYPE_X[fam] = m);
+  }catch(e){}
+  return 0.5;
+}
+const TYPE_WEIGHTS = {400:"regular", 450:"a little more", 500:"medium", 550:"more still", 600:"semibold"};
+function applyType(){
+  const b = document.body, s = +state.typeSize || 100, w = +state.typeWeight || 400;
+  if(s !== 100 && b.dataset.font && state.skin !== "classic"){
+    const fam = FONT_FAMILY[b.dataset.font] || getComputedStyle(b).fontFamily;
+    const set = ()=>b.style.setProperty("--tsa", (typeXHeight(fam) * s / 100).toFixed(3));
+    b.dataset.tsize = s; set();
+    // measured again once the face itself has loaded, in case the fallback was read first
+    if(document.fonts && document.fonts.load) document.fonts.load("100px " + fam).then(()=>{ delete TYPE_X[fam]; set(); }).catch(()=>{});
+  } else { delete b.dataset.tsize; b.style.removeProperty("--tsa"); }
+  if(w !== 400){ b.dataset.tweight = w; b.style.setProperty("--tw", w); }
+  else { delete b.dataset.tweight; b.style.removeProperty("--tw"); }
 }
 // the font tiles, each drawn in its own face; used by Settings and by the setup's Look step
 function renderFontPick(el){
@@ -21432,6 +21489,18 @@ function renderLookSettings(){
     hs.oninput = ()=>{ state.acc2 = Object.assign({}, state.acc2, {[cur]: +hs.value}); applyTheme(); if(hv) hv.textContent = hs.value + "°"; if(hr) hr.classList.remove("hidden"); };
     hs.onchange = ()=>save();
     if(hr) hr.onclick = ()=>{ if(state.acc2) delete state.acc2[cur]; save(); applyTheme(); renderLookSettings(); };
+  }
+  // type size and weight
+  const tsz = $("#tsize"), twt = $("#tweight"), tsv = $("#tsizeVal"), twv = $("#tweightVal"), tyr = $("#typeReset");
+  if(tsz && twt){
+    const sz = +state.typeSize || 100, wt = +state.typeWeight || 400;
+    const wlab = v=>TYPE_WEIGHTS[v] || String(v);
+    tsz.value = sz; twt.value = wt; if(tsv) tsv.textContent = sz + "%"; if(twv) twv.textContent = wlab(wt);
+    if(tyr) tyr.classList.toggle("hidden", sz === 100 && wt === 400);
+    tsz.oninput = ()=>{ state.typeSize = +tsz.value; applyType(); if(tsv) tsv.textContent = tsz.value + "%"; if(tyr) tyr.classList.remove("hidden"); };
+    twt.oninput = ()=>{ state.typeWeight = +twt.value; applyType(); if(twv) twv.textContent = wlab(+twt.value); if(tyr) tyr.classList.remove("hidden"); };
+    tsz.onchange = twt.onchange = ()=>save();
+    if(tyr) tyr.onclick = ()=>{ delete state.typeSize; delete state.typeWeight; save(); applyType(); renderLookSettings(); };
   }
   const art = $("#artSeg"), artCur = state.themeArt || "focused";
   art.innerHTML = ART_CHOICES.map(([id,label])=>`<button class="${id===artCur?"on":""}" data-setart="${id}">${label}</button>`).join("");
