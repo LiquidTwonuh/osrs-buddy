@@ -2999,12 +2999,17 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .mt-tour-spot{position:fixed; border:1px solid var(--gold); border-radius:10px; box-shadow:0 0 0 200vmax color-mix(in srgb, var(--bg) 76%, transparent); pointer-events:none;
     transition:left .4s cubic-bezier(.2,.7,.2,1), top .4s cubic-bezier(.2,.7,.2,1), width .4s cubic-bezier(.2,.7,.2,1), height .4s cubic-bezier(.2,.7,.2,1), border-color .25s}
   .mt-tour-spot.none{border-color:transparent}
-  .mt-tour-card{position:fixed; width:min(360px, calc(100vw - 24px)); padding:14px 16px 12px; background:var(--panel); border:1px solid var(--gold-dim); border-radius:12px; box-shadow:0 18px 50px rgba(0,0,0,.55);
+  .mt-tour-card{position:fixed; width:min(380px, calc(100vw - 24px)); padding:14px 16px 12px; background:var(--panel); border:1px solid var(--gold-dim); border-radius:12px; box-shadow:0 18px 50px rgba(0,0,0,.55);
     transition:left .4s cubic-bezier(.2,.7,.2,1), top .4s cubic-bezier(.2,.7,.2,1); animation:mtTourIn .35s cubic-bezier(.2,.7,.2,1)}
   @keyframes mtTourIn{from{opacity:0; transform:translateY(8px)}}
   .mt-tour-n{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
   .mt-tour-t{display:block; margin:4px 0 6px; font-size:18px; line-height:1.25; color:var(--text)}
   .mt-tour-card p{margin:0 0 12px; font-size:13.5px; line-height:1.55; color:var(--muted)}
+  .mt-tour-list{display:grid; gap:5px; margin:-4px 0 13px; font-size:12.5px; line-height:1.4}
+  .mt-tour-list[hidden]{display:none}
+  .mt-tour-list div{display:grid; grid-template-columns:minmax(0,11.5em) minmax(0,1fr); gap:10px; align-items:baseline}
+  #mtTour .mt-tour-list code{font-family:var(--ft, ui-monospace, Consolas, monospace); font-size:12px; color:var(--gold); background:none; padding:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .mt-tour-list span{color:var(--muted)}
   .mt-tour-acts{display:flex; align-items:center; gap:6px}
   .mt-tour-acts [hidden]{display:none}
   @media (prefers-reduced-motion:reduce){ .mt-tour-spot, .mt-tour-card, .mt-tour{transition:none; animation:none} }
@@ -6005,7 +6010,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
         <section class="set-pane" data-setpane="character">
           <div class="set-group">
             <div class="set-row"><div class="lbl"><b>Setup</b><small>Run it again with your details filled in. Nothing is erased.</small></div><button class="ghost small" id="setupAgainBtn">Run setup again</button></div>
-            <div class="set-row"><div class="lbl"><b>Tour</b><small>A one-minute walk through the pages and what each is for.</small></div><button class="ghost small" id="tourAgainBtn">Take the tour</button></div>
+            <div class="set-row"><div class="lbl"><b>Tour</b><small>A short walk through the pages and the terminal, and what each is for.</small></div><button class="ghost small" id="tourAgainBtn">Take the tour</button></div>
             <div class="set-row"><div class="lbl"><b>Launch screen</b><small>Wait for Let's go, or go in when it is <span class="set-nw">ready. <button type="button" class="set-tip" aria-label="More about this" data-tip="When the app opens it shows what it is loading: your save, the quest log and its steps, your character.">?</button></span></small></div><div class="seg" id="bootSeg"></div></div>
             <div class="set-row"><div class="lbl"><b>Auto-refresh</b><small>Pull your stats from the hiscores every 15 minutes.</small></div><label class="sw"><input type="checkbox" id="autoRefresh"><i></i></label></div>
             <div class="set-row"><div class="lbl"><b>Fill in Scroll from your stats</b><small>Days you never logged still show the XP the hiscores saw.</small></div><label class="sw"><input type="checkbox" id="autoActivity"><i></i></label></div>
@@ -16740,7 +16745,7 @@ function arcadeReveal(go){
 termDef(["arcade", "games", "corner"], "arcade", "Opens the Game corner. It stays off the sidebar until this is typed, then sits there lit until the app closes.", "App", ()=>({hint:`<u>enter</u> opens the Game corner`, run:()=>{ const was = arcadeOpen; arcadeReveal(true); termOut(was ? "The Game corner is open already." : "The Game corner is open. It stays in the sidebar until the app closes."); }}), {bare:true});
 termDef(["reset"], "reset layout", "Puts every page's panes, Home's widgets and the console back where they started. Settings, Appearance has the same button.", "App", rest=>/^layout$/i.test(rest.trim()) ? {hint:`<u>enter</u> resets the layout of every page`, run:()=>layoutReset("all")} : "reset takes layout: -reset layout", {soft:true});
 termDef(["panes"], "panes reset", "Puts Home's panes back where they started.", "App", rest=>rest.trim().toLowerCase() === "reset" ? {hint:`<u>enter</u> puts Home's panes back`, run:()=>{ htArrReset(); termOut("Home's panes are back where they started."); }} : "panes takes reset", {soft:true});
-termDef(["tour"], "tour", "A one-minute walk through the pages and what each is for.", "App", ()=>({hint:`<u>enter</u> starts the tour`, quiet:true, run:()=>tourStart({})}), {bare:true});
+termDef(["tour"], "tour", "A short walk through the pages and the terminal, and what each is for.", "App", ()=>({hint:`<u>enter</u> starts the tour`, quiet:true, run:()=>tourStart({})}), {bare:true});
 termDef(["boot"], "boot [first]", "Plays the launch screen again. boot first previews a first launch with its tour; your save is not touched.", "App", rest=>{
   const w = String(rest || "").trim().toLowerCase().replace(/^-/, "");
   if(w && w !== "first") return "boot takes nothing, or first";
@@ -18602,16 +18607,29 @@ setTimeout(async ()=>{
 // A step names what to light (sel), the page to be on (view), a title and a line or two. A step
 // marked term only shows in the Terminal look. Nothing is saved except that the tour was seen.
 const TOUR_STEPS = [
-  {t:"Welcome to Mortimeter", x:"It reads your Old School RuneScape account and tells you where you stand: what you trained, what is ready to do, and what is close. This tour takes about a minute."},
+  {t:"A look around first", x:"Mortimeter reads your Old School RuneScape account and tells you where you stand: what you trained, what is ready to do, and what is close. This tour takes a couple of minutes, and Skip is always there."},
   {sel:".sidebar .nav", t:"Pages", x:"Everything lives in the sidebar. Your character's pages are at the top and the tools are under them."},
   {view:"home", sel:"#view-home", t:"Home", x:"Your account at a glance: every skill and how far it is from the next level, what you gained this week, what is ready to do, and the days you played."},
   {view:"home", sel:"#tpEdit", term:true, t:"Make it yours", x:"Press edit on any page to move, hide and resize its panes. Reset puts them back the way they started."},
-  {view:"home", sel:"#termPath", term:true, t:"The command line", x:"Commands work on every page. cd scroll goes to Scroll, stats mining shows a skill, and -help lists the rest."},
-  {view:"scroll", sel:'.navitem[data-view="scroll"]', t:"Scroll", x:"Your journal. Days you played fill in on their own from your stats, and you can add what the stats cannot see."},
+  {view:"home", sel:".ht-term", term:true, t:"The terminal", x:"Home has a terminal. It logs what you did and what the app noticed, and the line at its foot takes commands. Press / to start typing."},
+  {view:"home", sel:["#termRail", "#termPath"], term:true, t:"On every page", x:()=>`The same command line runs along the top of every page, and on a wide window the console sits beside the page with its log. Drag the console's header to float it, its x closes it, and ${termKeyText()} brings it back.`},
+  {view:"home", sel:["#termRail", "#termPath"], term:true, t:"What it takes", x:"A few to start with. Type -help for every command.", li:[
+    ["cd scroll", "go to a page"],
+    ["stats mining", "a skill: level, experience, how far to the next"],
+    ["ready", "what is ready to do now"],
+    ["log mined for an hour", "add to today's journal"],
+    ["-note buy runes", "keep a note"],
+    ["-mort what next", "ask a question; with a Claude key it goes to Claude"],
+    ["edit", "move, hide and resize this page's panes"]]},
+  {view:"scroll", sel:'.navitem[data-view="scroll"]', t:"Scroll", x:"Your journal. Days you played fill in on their own from your stats, and you can add what the stats cannot see. Your trophies and this week's priorities live here too."},
+  {view:"clog", sel:'.navitem[data-view="clog"]', t:"Achievements", x:"Your collection log page by page, the achievement diaries and the combat achievements, each with how close you are."},
+  {view:"goals", sel:'.navitem[data-view="goals"]', t:"Goals", x:"Goals and to-dos. Some tick themselves from your stats, and the rest is a checklist of your own."},
+  {view:"start", sel:'.navitem[data-view="start"]', t:"Roadmap", x:"The long arc: the unlocks, gear and milestones your account is headed toward. Anything gated by a level ticks itself."},
   {view:"quests", sel:'.navitem[data-view="quests"]', t:"Quest Hub", x:"Every quest with its steps built in, and what each one needs from you."},
-  {view:"coffer", sel:'.navitem[data-view="coffer"]', t:"Coffer", x:"Every money maker the wiki lists, measured against your own levels. A few questions set it up."},
+  {view:"coffer", sel:'.navitem[data-view="coffer"]', t:"Coffer", x:"Every money maker the wiki lists, measured against your own levels. A few questions set it up. It also values your bank and shows Grand Exchange margins."},
   {view:"skills", sel:'.navitem[data-view="skills"]', t:"Skills and Upgrades", x:"A training guide for each skill with you marked on it, and the gear worth aiming for."},
-  {view:"home", sel:"#settingsBtn", t:"Settings", x:"Looks, themes, backups and your other devices. The tour is in there too, if you want it again."},
+  {view:"notes", sel:'.navitem[data-view="notes"]', t:"Notes", x:()=>"Notes you keep for yourself." + (document.body.dataset.skin === "term" ? " -note on the command line adds one from any page." : "")},
+  {view:"home", sel:"#settingsBtn", t:"Settings", x:"Looks, themes, fonts, backups and your other devices. The tour is in there too, if you want it again."},
   {last:true, t:"Now, your character", x:"Add your RuneScape name and the pages fill in. Setup takes a minute and every step can be skipped."},
 ];
 let tour = null;
@@ -18620,7 +18638,7 @@ function tourStart(opts){
   if(tour) return;
   opts = opts || {};
   const el = document.createElement("div"); el.id = "mtTour"; el.className = "mt-tour";
-  el.innerHTML = `<i class="mt-tour-spot none"></i><div class="mt-tour-card" role="dialog" aria-label="Tour"><div class="mt-tour-n"></div><b class="mt-tour-t"></b><p></p>
+  el.innerHTML = `<i class="mt-tour-spot none"></i><div class="mt-tour-card" role="dialog" aria-label="Tour"><div class="mt-tour-n"></div><b class="mt-tour-t"></b><p></p><div class="mt-tour-list"></div>
     <div class="mt-tour-acts"><button type="button" class="ghost small" data-tour="skip">Skip the tour</button><span class="grow"></span><button type="button" class="ghost small" data-tour="back">Back</button><button type="button" class="primary small" data-tour="next">Next</button></div></div>`;
   document.body.appendChild(el);
   tour = {el, i:0, steps:tourSteps(), first:!!opts.first, preview:!!opts.preview, from:(($(".view:not(.hidden)") || {}).id || "view-home").replace(/^view-/, "")};
@@ -18641,10 +18659,14 @@ function tourShow(i){
   if(!tour) return; const n = tour.steps.length; i = Math.max(0, Math.min(n - 1, i)); tour.i = i;
   const stp = tour.steps[i], card = tour.el.querySelector(".mt-tour-card");
   if(stp.view){ try{ switchView(stp.view); window.scrollTo(0, 0); }catch(e){} }
-  const lastWords = stp.last && !tour.first ? ["That is the tour", "Everything here is yours to rearrange. Settings has the looks and themes, and -help lists what the command line can do."] : [stp.t, stp.x];
+  let words = stp.x; try{ if(typeof words === "function") words = words(); }catch(e){ words = ""; }
+  const lastWords = stp.last && !tour.first ? ["That is the tour", "Everything here is yours to rearrange. Settings has the looks and themes, and -help lists what the command line can do."] : [stp.t, words];
   card.querySelector(".mt-tour-n").textContent = `${i + 1} of ${n}`;
   card.querySelector(".mt-tour-t").textContent = lastWords[0];
   card.querySelector("p").textContent = lastWords[1];
+  // a step can carry a short list: what to type, and what it does
+  const list = card.querySelector(".mt-tour-list");
+  list.innerHTML = (stp.li || []).map(([c, m])=>`<div><code>${escapeHtml(c)}</code><span>${escapeHtml(m)}</span></div>`).join(""); list.hidden = !(stp.li && stp.li.length);
   card.querySelector('[data-tour="back"]').hidden = i === 0;
   card.querySelector('[data-tour="skip"]').hidden = i === n - 1;
   card.querySelector('[data-tour="next"]').textContent = i === n - 1 ? (tour.first ? "Set up my character" : "Done") : "Next";
@@ -18656,8 +18678,9 @@ function tourShow(i){
 function tourPlace(){
   if(!tour) return;
   const stp = tour.steps[tour.i], spot = tour.el.querySelector(".mt-tour-spot"), card = tour.el.querySelector(".mt-tour-card");
-  const tg = stp.sel ? document.querySelector(stp.sel) : null, r = tg ? tg.getBoundingClientRect() : null;
-  const seen = r && r.width > 4 && r.height > 4 && r.right > 0 && r.bottom > 0 && r.left < innerWidth && r.top < innerHeight;
+  const onScreen = q=>{ const e = document.querySelector(q), x = e ? e.getBoundingClientRect() : null; return x && x.width > 4 && x.height > 4 && x.right > 0 && x.bottom > 0 && x.left < innerWidth && x.top < innerHeight ? x : null; };
+  let r = null; for(const q of [].concat(stp.sel || [])){ r = onScreen(q); if(r) break; }
+  const seen = !!r;
   // a phone: the card sits along the bottom of what is on screen, whatever the page behind it measures
   const vv = window.visualViewport, VW = vv ? vv.width : innerWidth, VH = vv ? vv.height : innerHeight, OX = vv ? vv.offsetLeft : 0, OY = vv ? vv.offsetTop : 0;
   const narrow = VW <= 700;
@@ -23503,7 +23526,7 @@ const PATCH_NOTES = [
     "The setup walkthrough's Look and feel step now covers the look, theme, backdrop, progress bars, layouts and the console, each with a line saying what it does.",
     "Phones: on a foldable the app refits itself when you open or shut it.",
     "The launch screen shows what it is loading, line by line: your save, the quest log and every quest's steps, the diaries and combat tasks, the money makers and your character. It then waits for Let's go or Enter. Settings, Character can make it go straight in.",
-    "A first launch ends in a one-minute tour of the pages, then Setup. Settings, Character has Take the tour for anyone who wants it again. A new install also opens Setup by itself again; it had stopped doing that.",
+    "A first launch ends in a short tour of the pages and the terminal, then Setup. Settings, Character has Take the tour for anyone who wants it again. A new install also opens Setup by itself again; it had stopped doing that.",
     "With a Claude key, a question typed with -mort goes with your account in front of it: levels, quests done and ready, goals, diaries, and the steps of any quest you name.",
     "Quest points and quest counts match the game. Recipe for Disaster was counted twice. Subquests fold into their parent and miniquests are listed apart. Quest Hub shows the game's record from RuneLite beside the app's, with anything that disagrees.",
     "The quest tree drags to look around, and opens in a window of its own or full screen.",
@@ -24711,11 +24734,11 @@ const SU_PRIO_IDEAS = [["Quest cape",""], ["Train Slayer","slayer"], ["Base 70s"
 const SU_VIEW = {
   welcome: ()=>`
     <div class="su-hero">
-      <div class="su-eyebrow">${su.rerun ? "Setup, again" : "Setup"}</div>
-      <h2 class="su-title">${su.rerun ? "Let's go through it again" : "Welcome to Mortimeter"}</h2>
+      <div class="su-eyebrow">Setup</div>
+      <h2 class="su-title">Time to set up your character</h2>
       <p class="su-lead">A few quick steps: your character, your RuneLite data, what you're working toward, and how the app looks. Every step is optional, and you can run this again any time from Settings.</p>
     </div>
-    <div class="su-safe"><b>Your data is safe.</b> ${su.rerun ? "Running setup again doesn't erase anything." : "Setup doesn't erase anything."} Every step starts from what you already have, and only what you change is saved. If a step would remove something, you'll be asked to back up first and to confirm twice.</div>`,
+    <div class="su-safe"><b>Your data is safe.</b> Setup doesn't erase anything. Every step starts from what you already have, and only what you change is saved. If a step would remove something, you'll be asked to back up first and to confirm twice.</div>`,
   char: ()=>{
     const draft = su.nameDraft!=null ? su.nameDraft : (state.username || su.exportName || "");
     const c = live ? combatLevel() : null;
@@ -24814,8 +24837,8 @@ const SU_VIEW = {
     const did = Object.values(su.did);
     return `<div class="su-hero">
         <div class="su-eyebrow">All set</div>
-        <h2 class="su-title">You're ready</h2>
-        <p class="su-lead">${did.length ? "Here's what changed:" : "Nothing changed, so your data is exactly as it was."}</p>
+        <h2 class="su-title">Welcome to Mortimeter</h2>
+        <p class="su-lead">${did.length ? "You're ready. Here's what was set up:" : "You're ready. Everything is in place."}</p>
       </div>
       ${did.length ? `<ul class="su-did">${did.map(t=>`<li>${escapeHtml(t)}</li>`).join("")}</ul>` : ""}
       ${!state.charExport ? `<div class="su-safe" style="text-align:center">You haven't imported from RuneLite yet. Run setup again from Settings whenever you want to.</div>` : ""}`;
