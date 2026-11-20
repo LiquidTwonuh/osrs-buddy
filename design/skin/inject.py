@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 # Writes the terminal look's stylesheet into the dev page, between its two markers at the end of
 # the main sheet. First run puts the markers in. Run: python -I inject.py
+# STALE SOURCES, 2026-11-20: from 2026-11-18 on, another session changed the Terminal look's CSS
+# directly inside OSRS-Buddy-dev.html (between SKIN_TERM_START and SKIN_TERM_END) and did not
+# update these source files. Running this script would overwrite that work with older CSS.
+# The page is the source of truth now: patch its CSS in place. This script only runs with --force,
+# and only after the sources have been brought level with the page.
+import sys as _sys
+if "--force" not in _sys.argv:
+    raise SystemExit("inject.py is retired: the page's Terminal CSS is newer than design/skin. Patch the page directly. See the note at the top of this file.")
 import io, base64, os, sys, re
 HERE = os.path.dirname(os.path.abspath(__file__))
 P = r"C:\Projects\mortimeter\OSRS-Buddy-dev.html"

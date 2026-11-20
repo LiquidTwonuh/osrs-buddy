@@ -2908,6 +2908,21 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .sul-o .su-themes{margin:0}
   .sul-tip{margin:4px 0 0; padding:10px 12px; border:1px solid var(--border); line-height:1.6}
   .sul-tip b{color:var(--text)}
+  /* the tour: a light on one thing, a card beside it saying what it is for */
+  .mt-tour{position:fixed; inset:0; z-index:9990; transition:opacity .25s ease}
+  .mt-tour.out{opacity:0; pointer-events:none}
+  .mt-tour-spot{position:fixed; border:1px solid var(--gold); border-radius:10px; box-shadow:0 0 0 200vmax color-mix(in srgb, var(--bg) 76%, transparent); pointer-events:none;
+    transition:left .4s cubic-bezier(.2,.7,.2,1), top .4s cubic-bezier(.2,.7,.2,1), width .4s cubic-bezier(.2,.7,.2,1), height .4s cubic-bezier(.2,.7,.2,1), border-color .25s}
+  .mt-tour-spot.none{border-color:transparent}
+  .mt-tour-card{position:fixed; width:min(360px, calc(100vw - 24px)); padding:14px 16px 12px; background:var(--panel); border:1px solid var(--gold-dim); border-radius:12px; box-shadow:0 18px 50px rgba(0,0,0,.55);
+    transition:left .4s cubic-bezier(.2,.7,.2,1), top .4s cubic-bezier(.2,.7,.2,1); animation:mtTourIn .35s cubic-bezier(.2,.7,.2,1)}
+  @keyframes mtTourIn{from{opacity:0; transform:translateY(8px)}}
+  .mt-tour-n{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-dim)}
+  .mt-tour-t{display:block; margin:4px 0 6px; font-size:18px; line-height:1.25; color:var(--text)}
+  .mt-tour-card p{margin:0 0 12px; font-size:13.5px; line-height:1.55; color:var(--muted)}
+  .mt-tour-acts{display:flex; align-items:center; gap:6px}
+  .mt-tour-acts [hidden]{display:none}
+  @media (prefers-reduced-motion:reduce){ .mt-tour-spot, .mt-tour-card, .mt-tour{transition:none; animation:none} }
   /* ideas for priorities */
   .pi-how{margin:6px auto 8px; max-width:640px; text-align:center; font-size:12.5px; line-height:1.5; color:var(--muted)}
   .pi-how b{color:var(--text); font-weight:600}
@@ -3297,13 +3312,15 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .mt-boot-q{font:12.5px/1.5 var(--fm); font-style:normal; color:var(--faint); margin:22px 0 0; min-height:40px; max-width:none}
   body[data-skin="term"] .mt-boot-q::before{content:"# "; color:var(--gold-dim)}
   body[data-skin="term"] :is(.mt-boot-bar,.mt-boot-st){display:none}
-  body[data-skin="term"] .mt-boot-log{display:flex; flex-direction:column; gap:3px; margin-top:12px; min-height:92px; font:13px/1.6 var(--fm); color:var(--muted)}
+  body[data-skin="term"] .mt-boot-log{display:flex; flex-direction:column; gap:3px; margin-top:12px; min-height:176px; font:13px/1.6 var(--fm); color:var(--muted)}
   .mt-boot-log div{display:flex; align-items:baseline; gap:8px; animation:htLine .3s cubic-bezier(.2,.7,.2,1) backwards}
   .mt-boot-log div::before{content:">"; color:var(--gold)}
   .mt-boot-log i{flex:1; min-width:20px; border-bottom:1px dotted var(--border); transform:translateY(-4px)}
   .mt-boot-log b{font-weight:400; color:var(--k-g); min-width:2ch; text-align:right}
   .mt-boot-log .now span::after{content:"_"; margin-left:2px; color:var(--gold); animation:termBlink 1.1s steps(1) infinite}
   .mt-boot-log .fin{color:var(--text)} .mt-boot-log .fin i{border:0}
+  .mt-boot-log b{white-space:nowrap} .mt-boot-log b.late{color:var(--faint)}
+  .mt-boot-log span{white-space:nowrap; min-width:0; overflow:hidden; text-overflow:ellipsis}
   body[data-skin="term"] #mtBootGo{margin-top:16px; font:500 13px var(--fm); padding:7px 14px; border-radius:8px}
   body[data-skin="term"] #mtBootGo::after{content:"  enter"; opacity:.55; font-weight:400}
 
@@ -5895,6 +5912,8 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
           <div class="set-group">
             <div class="set-h">Character</div>
             <div class="set-row"><div class="lbl"><b>Setup</b><small>Walks through setup again with your current info filled in. Nothing is erased: only what you change is saved.</small></div><button class="ghost small" id="setupAgainBtn">Run setup again</button></div>
+            <div class="set-row"><div class="lbl"><b>Tour</b><small>A one-minute walk through the pages and what each is for.</small></div><button class="ghost small" id="tourAgainBtn">Take the tour</button></div>
+            <div class="set-row col"><div class="lbl"><b>Launch screen</b><small>When the app opens it shows what it is loading. It can wait for you to press Let's go, or go in by itself when it is ready.</small></div><div class="seg" id="bootSeg"></div></div>
             <div class="set-row"><div class="lbl"><b>Auto-refresh</b><small>Pull your stats from the hiscores every 15 minutes.</small></div><label class="sw"><input type="checkbox" id="autoRefresh"><i></i></label></div>
             <div class="set-row"><div class="lbl"><b>Fill in Scroll from your stats</b><small>Days you never logged by hand still show the XP the hiscores saw.</small></div><label class="sw"><input type="checkbox" id="autoActivity"><i></i></label></div>
           </div>
@@ -5966,6 +5985,15 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
             <div class="set-h">Storage</div>
             <div class="st-bar"><i id="stBar"></i></div>
             <div class="small muted" id="stText" style="margin-top:5px"></div>
+          </div>
+          <div class="set-group hidden" id="labSec">
+            <div class="set-h">Launch and first run</div>
+            <p class="set-note">Beta only. Plays the launch screen, or a whole first launch with its tour, on top of your real save. Nothing is deleted or changed; the first launch ends in Setup, again, which only saves what you change.</p>
+            <div class="row" style="gap:6px; flex-wrap:wrap">
+              <button class="ghost small" id="labBoot">Replay the launch screen</button>
+              <button class="ghost small" id="labFirst">Preview a first launch</button>
+              <button class="ghost small" id="labTour">Just the tour</button>
+            </div>
           </div>
           <div class="set-group hidden" id="devSec">
             <div class="set-h">🛠️ Developer</div>
@@ -7281,7 +7309,7 @@ async function backupDaily(){
 // rest of the code never knows profiles exist); inactive ones are stashed under PROF_KEY.
 // Switching = stash current, restore (or create) the other. Nothing is ever merged.
 const PROF_KEY = "osrs_todo_profiles_v1";
-const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","termLast","termKey","termCloseTips","backdrop","cofferLayout","pageEdit","pageOrder","barStyle"];
+const PROFILE_SHARED = ["theme","font","exactNums","tabMemory","autoRefresh","questDB","wikiCache","updCheck","lastView","setupDone","clogDB","boostDB","caDB","diaryDB","guideDB","mmgDB","priceMap","homeArr","homeHide","homeH","homeColW","homeSplit","wfHide","wfOrder","wfSize","wideFill","themeArt","termFloat","termRail","termLast","termKey","termCloseTips","backdrop","cofferLayout","pageEdit","pageOrder","barStyle","bootHold","tourDone"];
 function profStore(){ try{ return JSON.parse(localStorage.getItem(PROF_KEY)) || {stash:{}}; }catch(e){ return {stash:{}}; } }
 function profSaveStore(p){ localStorage.setItem(PROF_KEY, JSON.stringify(p)); }
 function profName(){ return (state.playerMeta && state.playerMeta.displayName) || state.username || ""; }
@@ -7322,8 +7350,15 @@ function deleteProfile(key){
   delete p.stash[key];
   profSaveStore(p);
 }
+let rescueDone = null;      // settles when the launch has looked for a save file and backups
 function vaultBoot(){
-  vaultRescue().finally(vaultStart);
+  rescueDone = vaultRescue(); rescueDone.finally(vaultStart);
+}
+// A first run: nothing was saved here ("missing" is how an empty storage loads), nothing came back
+// from a file or a backup, no character, no other profiles, nothing logged. A save that would not
+// read is not a first run, and Setup would be the worst possible thing to show.
+function freshInstall(){
+  return loadTrouble !== "unreadable" && loadedFrom !== "mirror" && !state.setupDone && !state.username && !Object.keys(profStore().stash || {}).length && !((state.scroll && state.scroll.log) || []).length;
 }
 function ensure(){
   // Saves that were here before the name changed get the Old Buddy trophy and the farewell; a
@@ -16610,6 +16645,12 @@ function arcadeReveal(go){
 termDef(["arcade", "games", "corner"], "arcade", "Opens the Game corner. It stays off the sidebar until this is typed, then sits there lit until the app closes.", "App", ()=>({hint:`<u>enter</u> opens the Game corner`, run:()=>{ const was = arcadeOpen; arcadeReveal(true); termOut(was ? "The Game corner is open already." : "The Game corner is open. It stays in the sidebar until the app closes."); }}), {bare:true});
 termDef(["reset"], "reset layout", "Puts every page's panes, Home's widgets and the console back where they started. Settings, Look has the same button.", "App", rest=>/^layout$/i.test(rest.trim()) ? {hint:`<u>enter</u> resets the layout of every page`, run:()=>layoutReset("all")} : "reset takes layout: -reset layout", {soft:true});
 termDef(["panes"], "panes reset", "Puts Home's panes back where they started.", "App", rest=>rest.trim().toLowerCase() === "reset" ? {hint:`<u>enter</u> puts Home's panes back`, run:()=>{ htArrReset(); termOut("Home's panes are back where they started."); }} : "panes takes reset", {soft:true});
+termDef(["tour"], "tour", "A one-minute walk through the pages and what each is for.", "App", ()=>({hint:`<u>enter</u> starts the tour`, quiet:true, run:()=>tourStart({})}), {bare:true});
+termDef(["boot"], "boot [first]", "Plays the launch screen again. boot first previews a first launch with its tour; your save is not touched.", "App", rest=>{
+  const w = String(rest || "").trim().toLowerCase().replace(/^-/, "");
+  if(w && w !== "first") return "boot takes nothing, or first";
+  return {hint:`<u>enter</u> plays ${w ? "a first launch: its screen, the tour, then Setup" : "the launch screen"}`, quiet:true, run:()=>bootPlay(w ? {replay:true, first:true, preview:true} : {replay:true})};
+}, {soft:true});
 termDef(["reload", "refresh"], "reload", "Reads your stats from the hiscores again.", "App", ()=>state.username ? {hint:`<u>enter</u> reads your stats again`, run:()=>{ termOut("Reading your stats from the hiscores."); loadCharacter({name:state.username, live:true}); }} : "No character is loaded yet.", {bare:true});
 termDef(["claude"], "claude", "Opens the setup for answers from Claude, with your own key.", "App", ()=>termLoose("claude"), {bare:true});
 termDef(["mort", "ask"], "mort [question]", "Asks Mortimer a question: Claude with a key, this device without. On its own it turns mort mode on or off, where every line that is not a command is a question.", "App", rest=>rest.trim() ? termAskCmd(rest.trim()) : termAskToggle());
@@ -18370,46 +18411,192 @@ const BOOT_QUIPS = [
   "Every quest in Quest Hub has its steps built in. Tick them as you go.",
   "The little boot icon turns running on and off. Keep it on.",
 ];
-setTimeout(async function(){
-  const el = $("#mtBoot"); if(!el) return;
-  if($("#kkHello") || $("#kkIntro")){ el.remove(); return; }
-  const quip = $("#mtBootQuip"), bar = $("#mtBootBar"), st = $("#mtBootStatus");
+// ============ THE LAUNCH SCREEN ============
+// A few seconds to watch, then Let's go or Enter (Josh, 2026-11-20: the released build ran past it
+// on its own; "the intro is a vibe"). Each job is a line that ends in what it loaded. The lines
+// are paced so the screen lasts at least BOOT_MIN_MS even when everything is already cached, and
+// if loading drags past BOOT_LATE_MS the button appears anyway, so nobody is held behind the wiki.
+// Settings, General can turn the wait off (bootHold false): then it fades by itself as it used to.
+// A first launch (bootFirstRun, set at the foot of the script on a fresh install) gets its own
+// lines, a Begin button, and then the tour and Setup. bootPlay can be run again at any time: the
+// tour and boot commands, and two Beta-only buttons in Settings, Advanced, which preview a first
+// launch without touching the save.
+const BOOT_MIN_MS = 3600, BOOT_LINE_MS = 560, BOOT_LATE_MS = 9000;
+let bootHtml = "", bootBusy = false, bootFirstRun = false;
+async function bootPlay(opts){
+  opts = opts || {};
+  let el = $("#mtBoot");
+  if(el && !bootHtml) bootHtml = el.outerHTML;
+  if(!el){ if(!bootHtml || bootBusy) return; document.body.insertAdjacentHTML("beforeend", bootHtml); el = $("#mtBoot"); }
+  if(!opts.replay && ($("#kkHello") || $("#kkIntro"))){ el.remove(); return; }
+  bootBusy = true;
+  const first = !!opts.first, hold = first || !!opts.replay || state.bootHold !== false;
+  const quip = $("#mtBootQuip"), bar = $("#mtBootBar"), st = $("#mtBootStatus"), blog = $("#mtBootLog"), go = $("#mtBootGo");
   // the name, a letter at a time
   const tt = el.querySelector(".mt-boot-t"); if(tt && !tt.querySelector("span")) tt.innerHTML = [...tt.textContent].map((c, i)=>`<span style="--i:${i}">${c}</span>`).join("");
   let qi = Math.floor(Math.random() * BOOT_QUIPS.length);
   const showQuip = ()=>{ quip.classList.add("swap"); setTimeout(()=>{ quip.textContent = BOOT_QUIPS[qi++ % BOOT_QUIPS.length]; quip.classList.remove("swap"); }, 300); };
   const setStatus = t=>{ st.classList.add("swap"); setTimeout(()=>{ st.textContent = t; st.classList.remove("swap"); }, 220); };
   showQuip(); const qt = setInterval(showQuip, 3400);
-  const t0 = Date.now(); let done = false;
-  const finish = ()=>{ if(done) return; done = true; clearInterval(qt); bar.style.width = "100%"; el.classList.add("out"); setTimeout(()=>el.remove(), 700); };
-  el.onclick = finish;
-  const sleep = ms => new Promise(r=>setTimeout(r, ms));
-  const jobs = [
-    ["Opening the quest log…", async ()=>{ if(questDB()) return; try{ qdbEnsure(); }catch(e){} for(let i=0;i<60 && !questDB();i++) await sleep(250); }],
-    ["Reading every quest's steps…", async ()=>{ await Promise.race([questStepsDbEnsure(), sleep(8000)]); }],
-    ["Checking your character…", async ()=>{ for(let i=0;i<8 && !live && state.rsn;i++) await sleep(250); }],
+  const t0 = Date.now(), sleep = ms=>new Promise(r=>setTimeout(r, ms)); let done = false, shown = false;
+  const onKey = e=>{ if(e.key === "Enter" && shown){ e.preventDefault(); e.stopPropagation(); finish(); } };
+  const finish = ()=>{
+    if(done) return; done = true; clearInterval(qt); clearTimeout(late); document.removeEventListener("keydown", onKey, true);
+    bar.style.width = "100%"; el.classList.add("out");
+    setTimeout(()=>{ el.remove(); bootBusy = false; }, 700);
+    if(first) setTimeout(()=>{ try{ tourStart({first:true, preview:!!opts.preview}); }catch(e){ console.error(e); if(!opts.preview) openSetup(); } }, 500);
+  };
+  // the button: after the lines, or early if loading is slow
+  const offer = label=>{ if(shown || done) return; shown = true; go.textContent = label; go.hidden = false; go.onclick = e=>{ e.stopPropagation(); finish(); }; document.addEventListener("keydown", onKey, true); try{ go.focus({preventScroll:true}); }catch(e){} };
+  const late = setTimeout(()=>{ if(hold) offer("Go without waiting"); }, BOOT_LATE_MS);
+  if(!hold) el.onclick = finish;
+  const days = ()=>{ const set = new Set(Object.keys((state.scroll && state.scroll.auto) || {})); ((state.scroll && state.scroll.log) || []).forEach(e=>{ if(e && e.date) set.add(e.date); }); return set.size; };
+  const questLog = async ()=>{ if(!questDB()){ try{ qdbEnsure(); }catch(e){} for(let i = 0; i < 48 && !questDB(); i++) await sleep(250); } const db = questDB(); return db ? fmt(Object.keys(db.quests || {}).length) + " quests" : "later"; };
+  const questSteps = async ()=>{ let ok = false; await Promise.race([Promise.resolve(questStepsDbEnsure()).then(()=>{ ok = true; }).catch(()=>{}), sleep(8000)]); return ok ? "ok" : "later"; };
+  const tasks = async ()=>{ await Promise.race([Promise.all([Promise.resolve(diaryDbEnsure()).catch(()=>{}), Promise.resolve(caDbEnsure()).catch(()=>{})]), sleep(6000)]); const dd = diaryDB(), ca = caDB(); return dd && ca ? fmt(ca.tasks.length) + " tasks" : "later"; };
+  // [what the line says, what it does: returns the words that end the line]
+  const jobs = first ? [
+    ["First launch", async ()=>"welcome"],
+    ["Making your save", async ()=>"ok"],
+    ["Opening the quest log", questLog],
+    ["Reading every quest's steps", questSteps],
+    ["Reading diaries and combat tasks", tasks],
+  ] : [
+    ["Reading your save", async ()=>{ const d = days(); return d ? fmt(d) + " day" + (d === 1 ? "" : "s") + " on record" : "ok"; }],
+    ["Opening the quest log", questLog],
+    ["Reading every quest's steps", questSteps],
+    ["Reading diaries and combat tasks", tasks],
+    ["Counting the money makers", async ()=>{ const d = mmgDB(); return d ? fmt(d.methods.length) + " methods" : "when you open Coffer"; }],
+    ["Checking your character", async ()=>{ if(!state.username) return "none yet"; for(let i = 0; i < 12 && !live; i++) await sleep(250); return live && live.skills && live.skills.overall ? `${termWho() || state.username}, total ${fmt(live.skills.overall.level)}` : "from the last visit"; }],
   ];
-  // the Terminal look prints each job as a line and marks it ok; the Classic one shows the bar
-  const blog = $("#mtBootLog");
-  const bline = (t, cls)=>{ if(!blog) return null; const d = document.createElement("div"); d.className = cls || "now"; d.innerHTML = `<span>${escapeHtml(t.replace(/…$/, "").toLowerCase())}</span><i></i><b></b>`; blog.appendChild(d); return d; };
+  if(!first && ceDesktop() && state.ceSync && state.ceSync.path) jobs.push(["RuneLite data", async ()=>state.ceSync.off ? "paused" : "watching"]);
+  // the Terminal look prints each job as a line and what it found; Classic shows the bar and a status
+  const bline = (t, cls)=>{ if(!blog) return null; const d = document.createElement("div"); d.className = cls || "now"; d.innerHTML = `<span>${escapeHtml(t.toLowerCase())}</span><i></i><b></b>`; blog.appendChild(d); return d; };
+  if(blog) blog.innerHTML = "";
   for(let i = 0; i < jobs.length && !done; i++){
-    setStatus(jobs[i][0]); bar.style.width = Math.round((i / jobs.length) * 100) + "%";
-    const ln = bline(jobs[i][0]);
-    try{ await jobs[i][1](); }catch(e){}
-    if(ln){ ln.classList.remove("now"); ln.querySelector("b").textContent = "ok"; }
+    setStatus(jobs[i][0] + "…"); bar.style.width = Math.round((i / jobs.length) * 100) + "%";
+    const ln = bline(jobs[i][0]), at = Date.now(); let res = "ok";
+    try{ res = (await jobs[i][1]()) || "ok"; }catch(e){ res = "later"; }
+    const wait = BOOT_LINE_MS - (Date.now() - at); if(wait > 0) await sleep(wait);
+    if(ln){ ln.classList.remove("now"); const r = ln.querySelector("b"); r.textContent = res; if(res === "later") r.classList.add("late"); }
   }
-  setStatus("Ready."); bline("ready", "fin");
+  if(done) return;
+  const rest = BOOT_MIN_MS - (Date.now() - t0); if(rest > 0 && hold) await sleep(rest);
+  if(done) return;
   bar.style.width = "100%";
-  // the Beta holds here so the screen can be judged; everywhere else it fades on its own
-  const hold = (typeof isBetaApp === "function" && isBetaApp()) || location.hostname === "localhost";
-  if(hold && !done){
-    const go = $("#mtBootGo"); go.hidden = false; el.onclick = null; go.onclick = e=>{ e.stopPropagation(); finish(); };
-    const onKey = e=>{ if(e.key === "Enter"){ document.removeEventListener("keydown", onKey); finish(); } };
-    document.addEventListener("keydown", onKey);
+  if(hold){
+    setStatus(first ? "Welcome. Press Begin." : "Ready. Press Let's go, or Enter.");
+    bline(first ? "ready when you are" : "ready", "fin");
+    if(shown) go.textContent = first ? "Begin" : "Let's go"; else offer(first ? "Begin" : "Let's go");
     return;
   }
+  setStatus("Ready."); bline("ready", "fin");
   setTimeout(finish, Math.max(0, 1600 - (Date.now() - t0)));
+}
+// The launch waits for the rescue to finish (a moment on the desktop, nothing elsewhere) so a save
+// brought back from a file is never taken for a first run. Krystal Klear has her own first launch.
+setTimeout(async ()=>{
+  try{ await Promise.race([Promise.resolve(rescueDone), new Promise(r=>setTimeout(r, 2500))]); }catch(e){}
+  bootFirstRun = !$("#kkHello") && !$("#kkIntro") && freshInstall();
+  if($("#mtBoot")) bootPlay({first:bootFirstRun}); else if(bootFirstRun) openSetup();
 }, 0);
+
+// ============ THE TOUR ============
+// A first launch ends in this: eleven short steps, each lighting up one thing and saying what it
+// is for, and then Setup. It is also in Settings, General (Take the tour) and the tour command.
+// A step names what to light (sel), the page to be on (view), a title and a line or two. A step
+// marked term only shows in the Terminal look. Nothing is saved except that the tour was seen.
+const TOUR_STEPS = [
+  {t:"Welcome to Mortimeter", x:"It reads your Old School RuneScape account and tells you where you stand: what you trained, what is ready to do, and what is close. This tour takes about a minute."},
+  {sel:".sidebar .nav", t:"Pages", x:"Everything lives in the sidebar. Your character's pages are at the top and the tools are under them."},
+  {view:"home", sel:"#view-home", t:"Home", x:"Your account at a glance: every skill and how far it is from the next level, what you gained this week, what is ready to do, and the days you played."},
+  {view:"home", sel:"#tpEdit", term:true, t:"Make it yours", x:"Press edit on any page to move, hide and resize its panes. Reset puts them back the way they started."},
+  {view:"home", sel:"#termPath", term:true, t:"The command line", x:"Commands work on every page. cd scroll goes to Scroll, stats mining shows a skill, and -help lists the rest."},
+  {view:"scroll", sel:'.navitem[data-view="scroll"]', t:"Scroll", x:"Your journal. Days you played fill in on their own from your stats, and you can add what the stats cannot see."},
+  {view:"quests", sel:'.navitem[data-view="quests"]', t:"Quest Hub", x:"Every quest with its steps built in, and what each one needs from you."},
+  {view:"coffer", sel:'.navitem[data-view="coffer"]', t:"Coffer", x:"Every money maker the wiki lists, measured against your own levels. A few questions set it up."},
+  {view:"skills", sel:'.navitem[data-view="skills"]', t:"Skills and Upgrades", x:"A training guide for each skill with you marked on it, and the gear worth aiming for."},
+  {view:"home", sel:"#settingsBtn", t:"Settings", x:"Looks, themes, backups and your other devices. The tour is in there too, if you want it again."},
+  {last:true, t:"Now, your character", x:"Add your RuneScape name and the pages fill in. Setup takes a minute and every step can be skipped."},
+];
+let tour = null;
+function tourSteps(){ const term = document.body.dataset.skin === "term"; return TOUR_STEPS.filter(x=>!x.term || term); }
+function tourStart(opts){
+  if(tour) return;
+  opts = opts || {};
+  const el = document.createElement("div"); el.id = "mtTour"; el.className = "mt-tour";
+  el.innerHTML = `<i class="mt-tour-spot none"></i><div class="mt-tour-card" role="dialog" aria-label="Tour"><div class="mt-tour-n"></div><b class="mt-tour-t"></b><p></p>
+    <div class="mt-tour-acts"><button type="button" class="ghost small" data-tour="skip">Skip the tour</button><span class="grow"></span><button type="button" class="ghost small" data-tour="back">Back</button><button type="button" class="primary small" data-tour="next">Next</button></div></div>`;
+  document.body.appendChild(el);
+  tour = {el, i:0, steps:tourSteps(), first:!!opts.first, preview:!!opts.preview, from:(($(".view:not(.hidden)") || {}).id || "view-home").replace(/^view-/, "")};
+  el.addEventListener("click", e=>{ const b = e.target.closest("[data-tour]"); if(!b) return; const d = b.dataset.tour; if(d === "skip") tourEnd(false); else if(d === "back") tourShow(tour.i - 1); else tourNext(); });
+  tour.key = e=>{
+    if(!tour) return;
+    if(e.key === "Escape"){ e.preventDefault(); e.stopPropagation(); tourEnd(false); }
+    else if(e.key === "Enter" || e.key === "ArrowRight"){ e.preventDefault(); e.stopPropagation(); tourNext(); }
+    else if(e.key === "ArrowLeft"){ e.preventDefault(); e.stopPropagation(); tourShow(tour.i - 1); }
+  };
+  document.addEventListener("keydown", tour.key, true);
+  tour.fit = ()=>{ if(tour) tourPlace(); };
+  window.addEventListener("resize", tour.fit);
+  tourShow(0);
+}
+function tourNext(){ if(!tour) return; if(tour.i >= tour.steps.length - 1) tourEnd(true); else tourShow(tour.i + 1); }
+function tourShow(i){
+  if(!tour) return; const n = tour.steps.length; i = Math.max(0, Math.min(n - 1, i)); tour.i = i;
+  const stp = tour.steps[i], card = tour.el.querySelector(".mt-tour-card");
+  if(stp.view){ try{ switchView(stp.view); window.scrollTo(0, 0); }catch(e){} }
+  const lastWords = stp.last && !tour.first ? ["That is the tour", "Everything here is yours to rearrange. Settings has the looks and themes, and -help lists what the command line can do."] : [stp.t, stp.x];
+  card.querySelector(".mt-tour-n").textContent = `${i + 1} of ${n}`;
+  card.querySelector(".mt-tour-t").textContent = lastWords[0];
+  card.querySelector("p").textContent = lastWords[1];
+  card.querySelector('[data-tour="back"]').hidden = i === 0;
+  card.querySelector('[data-tour="skip"]').hidden = i === n - 1;
+  card.querySelector('[data-tour="next"]').textContent = i === n - 1 ? (tour.first ? "Set up my character" : "Done") : "Next";
+  // the page needs a moment to draw before its parts can be measured
+  tourPlace(); setTimeout(()=>{ if(tour && tour.i === i) tourPlace(); }, 140);
+  try{ card.querySelector('[data-tour="next"]').focus({preventScroll:true}); }catch(e){}
+}
+// puts the light on the step's target and the card beside it; with nothing to light, the card sits in the middle
+function tourPlace(){
+  if(!tour) return;
+  const stp = tour.steps[tour.i], spot = tour.el.querySelector(".mt-tour-spot"), card = tour.el.querySelector(".mt-tour-card");
+  const tg = stp.sel ? document.querySelector(stp.sel) : null, r = tg ? tg.getBoundingClientRect() : null;
+  const seen = r && r.width > 4 && r.height > 4 && r.right > 0 && r.bottom > 0 && r.left < innerWidth && r.top < innerHeight;
+  // a phone: the card sits along the bottom of what is on screen, whatever the page behind it measures
+  const vv = window.visualViewport, VW = vv ? vv.width : innerWidth, VH = vv ? vv.height : innerHeight, OX = vv ? vv.offsetLeft : 0, OY = vv ? vv.offsetTop : 0;
+  const narrow = VW <= 700;
+  card.style.width = narrow ? Math.round(VW - 24) + "px" : "";
+  const cw = card.offsetWidth, ch = card.offsetHeight, pad = 6, gap = 14;
+  const low = ()=>{ card.style.left = Math.round(OX + 12) + "px"; card.style.top = Math.round(OY + VH - ch - 14) + "px"; };
+  if(!seen){
+    spot.classList.add("none"); spot.style.left = innerWidth / 2 + "px"; spot.style.top = innerHeight / 2 + "px"; spot.style.width = "0px"; spot.style.height = "0px";
+    if(narrow) low(); else { card.style.left = Math.round((innerWidth - cw) / 2) + "px"; card.style.top = Math.round(Math.max(12, (innerHeight - ch) / 2)) + "px"; }
+    return;
+  }
+  const L = Math.max(4, r.left - pad), T = Math.max(4, r.top - pad), W = Math.min(innerWidth - 8, r.right + pad) - L, Hh = Math.min(innerHeight - 8, r.bottom + pad) - T;
+  spot.classList.remove("none"); spot.style.left = L + "px"; spot.style.top = T + "px"; spot.style.width = W + "px"; spot.style.height = Hh + "px";
+  if(narrow){ low(); return; }
+  // beside it if there is room, else under, else over, else on top of it in the middle
+  let x, y;
+  if(L + W + gap + cw <= innerWidth - 8){ x = L + W + gap; y = T; }
+  else if(L - gap - cw >= 8){ x = L - gap - cw; y = T; }
+  else if(T + Hh + gap + ch <= innerHeight - 8){ x = L; y = T + Hh + gap; }
+  else if(T - gap - ch >= 8){ x = L; y = T - gap - ch; }
+  else { x = (innerWidth - cw) / 2; y = (innerHeight - ch) / 2; }
+  card.style.left = Math.round(Math.max(8, Math.min(innerWidth - cw - 8, x))) + "px";
+  card.style.top = Math.round(Math.max(8, Math.min(innerHeight - ch - 8, y))) + "px";
+}
+function tourEnd(finished){
+  if(!tour) return; const t = tour; tour = null;
+  document.removeEventListener("keydown", t.key, true); window.removeEventListener("resize", t.fit);
+  t.el.classList.add("out"); setTimeout(()=>t.el.remove(), 260);
+  try{ switchView(t.first ? "home" : t.from); }catch(e){}
+  if(!t.preview && !state.tourDone){ state.tourDone = true; save(); }
+  // a first launch goes on to Setup whether the tour was finished or skipped; a preview does too, and
+  // with a save already there Setup opens as "Setup, again", which erases nothing
+  if(t.first) setTimeout(()=>{ try{ openSetup(); }catch(e){ console.error(e); } }, 300);
+}
 
 // ============ REACH ============
 // "Can I do this yet, and if not, how far off is it?" asked once, in one place, so every part of
@@ -22000,11 +22187,29 @@ function openSettings(tab){
   renderClaudeSetting();
   settingsTab(typeof tab === "string" ? tab : "general"); renderBackups(); renderStorage(); renderCeSetting(); renderVaultSetting(); renderSyncSetting();
   renderDevSection(); devWireSettings();
+  try{ launchSettingsDraw(); }catch(e){ console.error(e); }
   const bb = $("#bugBtn"); if(bb) bb.href = ghIssueUrl("bug.yml", {device: ghDevice()});
   const sg = $("#suggestBtn"); if(sg) sg.href = ghIssueUrl("suggestion.yml", {page: "Somewhere else"});
   $("#settingsWrap").classList.remove("hidden");
 }
 function closeSettings(){ $("#settingsWrap").classList.add("hidden"); }
+// Settings: the launch screen's wait, the tour, and the Beta's two ways to try a first launch
+function launchSettingsDraw(){
+  const seg = $("#bootSeg");
+  if(seg){
+    const hold = state.bootHold !== false;
+    seg.innerHTML = `<button class="${hold ? "on" : ""}" data-boothold="1">Wait for Let's go</button><button class="${hold ? "" : "on"}" data-boothold="0">Go straight in</button>`;
+    seg.querySelectorAll("[data-boothold]").forEach(b=>b.onclick = ()=>{ state.bootHold = b.dataset.boothold === "1"; save(); launchSettingsDraw(); });
+  }
+  const ta = $("#tourAgainBtn"); if(ta) ta.onclick = ()=>{ closeSettings(); tourStart({}); };
+  const lab = $("#labSec");
+  if(lab){
+    lab.classList.toggle("hidden", !(isBetaApp() || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)));
+    $("#labBoot").onclick = ()=>{ closeSettings(); bootPlay({replay:true}); };
+    $("#labFirst").onclick = ()=>{ closeSettings(); bootPlay({replay:true, first:true, preview:true}); };
+    $("#labTour").onclick = ()=>{ closeSettings(); tourStart({preview:true}); };
+  }
+}
 // A GitHub issue from one of the repo's forms, fields filled in. The form carries the label (bug,
 // suggestion), which a plain link only applies for people with write access to the repo, so a
 // stranger's report arrives sorted too. Needs a free GitHub account on their side.
@@ -23147,7 +23352,7 @@ const PATCH_NOTES = [
     "The gold theme the app started with is now called Gilded. The About panel remembers the old name and dates. Anyone whose save is older than the rename finds a new trophy in the cabinet.",
     "A new look, Terminal: monospace headings, thin lines and square corners, with a command line at the top of every page. Classic, the look the app had before, is one click away in Settings, Look, and nothing about it has changed.",
     "Home in the Terminal look is panes you arrange yourself. Press edit on the top line, then drag a pane by its header, hide it with its x, or pull its corner to resize it. Skills is the biggest pane. Every other page can be edited the same way, and Reset this page or Reset every page puts things back.",
-    "The console takes commands, notes and questions: cd scroll, stats mining, log mined for an hour, and -help for the full list. On a wide window it sits in its own column at the right of every page. Drag its header to float it, its x closes it, and Ctrl+Shift+T brings it back.",
+    "The console takes commands: cd scroll, stats mining, log mined for an hour, -note to keep a note, -mort to ask a question, and -help for the full list. A line that is none of those is an error, so nothing is kept or asked by accident. On a wide window it sits in its own column at the right of every page. Drag its header to float it, its x closes it, and Ctrl+Shift+T brings it back.",
     "A wide window fills itself. On a big monitor the room beside and under a page fills with extra panes, the most useful first, and any of them can be hidden.",
     "Eighteen themes: Mortimer, Night, Abyss, Crystal, Gilded and thirteen runes. Most carry a painting on Home's Character pane. Settings, Look also chooses the backdrop behind the panes and how progress bars are drawn.",
     "Priorities are built around the week. Each one sits in Main focus, Keep warm or Someday, and can carry a weekly target that counts itself from your experience and kills. Ideas lists thirteen to start from, and weekly targets can be switched off.",
@@ -23157,6 +23362,15 @@ const PATCH_NOTES = [
     "New page: Upgrades. The wiki's gear progression for melee, ranged and magic as a ladder: the rung your levels reach, what changes on the next one, and what each piece costs today. A fourth tab covers skilling outfits and tools.",
     "The setup walkthrough's Look and feel step now covers the look, theme, backdrop, progress bars, layouts and the console, each with a line saying what it does.",
     "Phones: on a foldable the app refits itself when you open or shut it.",
+    "The launch screen shows what it is loading, line by line: your save, the quest log and every quest's steps, the diaries and combat tasks, the money makers and your character. It then waits for Let's go or Enter. Settings, General can make it go straight in.",
+    "A first launch ends in a one-minute tour of the pages, then Setup. Settings, General has Take the tour for anyone who wants it again. A new install also opens Setup by itself again; it had stopped doing that.",
+    "With a Claude key, a question typed with -mort goes with your account in front of it: levels, quests done and ready, goals, diaries, and the steps of any quest you name.",
+    "Quest points and quest counts match the game. Recipe for Disaster was counted twice. Subquests fold into their parent and miniquests are listed apart. Quest Hub shows the game's record from RuneLite beside the app's, with anything that disagrees.",
+    "The quest tree drags to look around, and opens in a window of its own or full screen.",
+    "Coffer: Bossing is a style of its own in the quiz, with a Boss tag on those methods. The quiz is a centred stage with a progress strip. The skills you love get a column each under the best three. Every section has all or fewer and folds to its title. Not organized right? on a method's card reports a wrong call.",
+    "Mortimer, Night, Abyss and Crystal carry a second colour for figures, bars and the prompt, and Night has an accent of its own. Settings, Look has a hue slider for the second colour.",
+    "The Font choice now changes the Terminal look as well; only the terminal keeps its own type. Size and Weight sliders sit under it.",
+    "Settings has Send a suggestion beside Report a bug. Both open a form on GitHub with the version, the device and the page filled in. Upgrades says plainly that it is still being built.",
     "New section: Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
     "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
     "The phone can take the app itself from your PC. Pair them, tap Update app from PC, and it keeps that copy and runs it from then on, so a change doesn't mean installing an APK again. If a copy ever fails to load, the built-in one comes back by itself.",
@@ -25144,12 +25358,8 @@ if(phonePreview && window.__TAURI__){
 }
 // The farewell never plays on its own. Josh has seen it; for everyone else it stays an easter egg,
 // reached by typing "buddy" or clicking the old name under About.
-// Setup opens by itself only on a genuinely fresh install: no character, no other profiles,
-// nothing logged. Anyone with data reaches it from Settings instead. A state that failed to load
-// isn't a fresh install, and setup would be the worst possible thing to show.
-if(!loadTrouble && !state.setupDone && !state.username && !Object.keys(profStore().stash||{}).length && !(state.scroll.log||[]).length){
-  setTimeout(openSetup, 400);
-}
+// Setup opens by itself only on a genuinely fresh install, after the tour: see freshInstall and the
+// launch screen. Anyone with data reaches it from Settings instead.
 // Desktop app: pick up anything the plugin saved since last time, then keep watching.
 // The folder only re-reads when a file is newer than last time. bank.json joined the list after
 // that stamp was taken, so the first launch with it reads the folder once regardless.
