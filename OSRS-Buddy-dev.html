@@ -2216,9 +2216,6 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   @keyframes setIn{from{opacity:0; transform:translate(-50%, 12px) scale(.985)} to{opacity:1; transform:translateX(-50%)}}
   .set-head{display:flex; align-items:center; justify-content:space-between; padding:14px 18px 0; flex:0 0 auto}
   .set-title{font-family:var(--font-display); font-size:21px; color:var(--gold); font-weight:600}
-  .set-tabs{display:flex; gap:2px; padding:8px 12px 0; border-bottom:1px solid var(--border); overflow-x:auto; flex:0 0 auto}
-  .set-tabs button{background:none; border:0; border-bottom:2px solid transparent; border-radius:0; color:var(--muted); padding:9px 13px; font:inherit; font-size:13.5px; cursor:pointer; box-shadow:none; margin-bottom:-1px; white-space:nowrap; transition:color .18s, border-color .18s}
-  .set-tabs button:hover{color:var(--text)} .set-tabs button.on{color:var(--gold); border-bottom-color:var(--gold)}
   .set-body{overflow:auto; padding:4px 18px 18px; flex:1; min-height:0}
   .set-pane{animation:paneIn .24s cubic-bezier(.2,.7,.2,1)} @keyframes paneIn{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
   .set-group{margin-top:18px} .set-group:first-child{margin-top:12px}
@@ -2241,6 +2238,94 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   @media (prefers-reduced-motion:reduce){ #settingsModal, .set-pane{animation:none} .sw i, .sw i::after, .set-font, .nav-quiet{transition:none} }
   .set-sec{margin-top:12px; padding-top:10px; border-top:1px solid var(--border)}
   .set-h{font-size:11px; color:var(--gold-dim); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:7px}
+  /* ---- Settings, calmer (2026-11-20; Josh picked A, the rail, from design/mockups/settings-calm.html) ----
+     Sections down the left. A section is one or more cards (.set-group); a card is same-height rows
+     (.set-row): name and one line on the left, the control on the right, .col when the control needs
+     the full width. The long explanation sits behind a ? (.set-tip). The dialog keeps one size
+     whichever section is open. Settings carries class tk and keeps the look's own type, size and
+     weight whatever Settings, Type puts on the pages (Josh asked for that too), so the weights
+     written here need no companion in the weight lift. */
+  #settingsModal{top:5%; width:min(920px, calc(100vw - 24px)); height:min(680px, 90vh); max-height:90vh; display:grid; grid-template-columns:204px minmax(0,1fr); grid-template-rows:minmax(0,1fr); border-radius:14px}
+  .set-rail{background:var(--bg2); border-right:1px solid var(--border); padding:14px 10px; display:flex; flex-direction:column; gap:2px; overflow:auto; min-height:0}
+  .set-rail .set-title{margin:2px 8px 8px; font-size:19px}
+  .sr-h{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:12px 8px 4px; min-height:13px; opacity:.8}
+  #settingsModal .set-rail button{display:flex; align-items:center; gap:9px; width:100%; min-height:0; text-align:left; background:none; border:0; border-radius:8px; box-shadow:none; color:var(--muted); font:inherit; font-size:13.5px; padding:7px 9px; cursor:pointer; transition:background .15s, color .15s}
+  #settingsModal .set-rail button.hidden{display:none}
+  #settingsModal .set-rail button i{flex:none; width:16px; text-align:center; font-style:normal; font-size:12px; opacity:.7}
+  #settingsModal .set-rail button:hover{background:var(--panel); color:var(--text)}
+  #settingsModal .set-rail button.on{background:var(--panel2); color:var(--gold)} #settingsModal .set-rail button.on i{opacity:1}
+  .set-main{display:flex; flex-direction:column; min-width:0; min-height:0}
+  .set-head{align-items:baseline; justify-content:flex-start; gap:12px; padding:16px 20px 11px; border-bottom:1px solid var(--border)}
+  .set-head h3{margin:0; font-family:var(--font-display); font-size:19px; font-weight:600; color:var(--text); white-space:nowrap}
+  .set-head p{margin:0; flex:1; min-width:0; color:var(--muted); font-size:12.5px; line-height:1.4}
+  .set-head .dp-x{margin-left:auto; align-self:center; flex:none}
+  .set-body{padding:16px 20px 22px}
+  .set-group{margin-top:14px; border:1px solid var(--border); border-radius:11px; background:var(--bg); padding:0 14px}
+  .set-group:first-child{margin-top:0}
+  .set-group > .set-h{margin:11px 0 0}
+  .set-group > .set-h:only-child{margin-bottom:11px}
+  .set-note{margin:9px 0 10px}
+  .set-row{display:grid; grid-template-columns:minmax(220px,1fr) auto; align-items:center; gap:6px 18px; margin:0 -14px; padding:10px 14px; min-height:56px; border-bottom:0; border-top:1px solid var(--border)}
+  .set-row:first-child, .set-h + .set-row{border-top:0}
+  .set-row > :not(.lbl){justify-self:end; min-width:0}
+  .set-row .lbl b{font-size:13.5px} .set-row .lbl small{display:block}
+  .set-row.col{grid-template-columns:minmax(0,1fr); align-items:start} .set-row.col > :not(.lbl){justify-self:stretch}
+  #settingsModal .set-row .seg{margin:0; justify-content:flex-end}
+  #settingsModal .set-row.col .seg{margin:0 0 2px; justify-content:flex-start}
+  .set-nw{white-space:nowrap}
+  .set-h + div:not(.set-row){margin-top:8px}
+  .set-group > div:first-child:not(.set-row):not(.set-h):not(:has(> .set-row:first-child)){padding-top:12px}
+  .set-group > div:last-child:not(.set-row):not(.set-h){margin-bottom:12px}
+  .set-ctl{display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap}
+  .set-row.col .set-ctl{justify-content:flex-start}
+  #settingsModal .set-tip{display:inline-grid; place-items:center; width:16px; height:16px; min-width:0; min-height:0; padding:0; margin-left:4px; border-radius:50%; border:1px solid var(--border); background:none; box-shadow:none; color:var(--muted); font:10px/1 var(--font-body); vertical-align:1px; cursor:help; transition:color .15s, border-color .15s}
+  #settingsModal .set-tip:hover, #settingsModal .set-tip.on{color:var(--gold); border-color:var(--gold-dim)}
+  .set-row .lbl small.set-tipbox{margin-top:5px; padding:7px 9px; border-radius:8px; background:var(--inset); border:1px solid var(--border); animation:paneIn .2s cubic-bezier(.2,.7,.2,1)}
+  /* themes: a row of rune circles; the name shows under the one you point at, and in the section's heading */
+  #settingsModal .set-themes{display:flex; flex-wrap:wrap; gap:8px; margin:2px 0 4px}
+  #settingsModal .set-themes .su-theme{position:relative; flex:none; width:40px; height:40px; min-height:0; padding:0; gap:0; border-radius:50%; justify-content:center; transition:border-color .15s, transform .15s, box-shadow .15s}
+  #settingsModal .set-themes .su-theme img{width:21px; height:21px}
+  #settingsModal .set-themes .su-theme:hover{transform:translateY(-1px)}
+  #settingsModal .set-themes .su-theme.on{box-shadow:0 0 0 3px color-mix(in srgb, var(--gold) 22%, transparent)}
+  #settingsModal .set-themes .su-theme span{position:absolute; z-index:2; top:calc(100% + 5px); left:50%; transform:translateX(-50%); padding:1px 7px; border-radius:6px; background:var(--panel); border:1px solid var(--border); color:var(--text); font-size:11px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s}
+  #settingsModal .set-themes .su-theme:hover span, #settingsModal .set-themes .su-theme:focus-visible span{opacity:1}
+  /* font chips, smaller */
+  #settingsModal .set-fonts{grid-template-columns:repeat(auto-fill, minmax(104px,1fr)); gap:6px}
+  #settingsModal .set-font{padding:9px 6px 7px; border-radius:9px; gap:2px; min-width:0}
+  #settingsModal .set-font .sample{font-size:16px; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  #settingsModal .set-font small{font-size:10.5px}
+  #settingsModal .set-fgroup{margin:10px 0 6px} #settingsModal .set-fgroup:first-child{margin-top:2px}
+  #settingsModal .set-row .type-row{margin:0; width:260px; max-width:100%; flex-wrap:nowrap}
+  #settingsModal .set-row .acc2-row{width:270px; max-width:100%; flex-wrap:nowrap} #settingsModal .set-row .acc2-row input[type=range]{flex:1 1 120px; min-width:0}
+  #settingsModal button:disabled{opacity:.45; cursor:default}
+  /* Settings keeps the look's own type, size and weight */
+  body[data-skin="term"][data-font] #settingsModal{--fs:"Bahnschrift","DIN Alternate","Inter","Segoe UI",system-ui,sans-serif; --fm:var(--ft); --font-display:var(--ft); --font-body:var(--fs); font-family:var(--fs)}
+  body[data-skin="classic"][data-font] #settingsModal{--font-display:"EB Garamond",Georgia,serif}
+  body[data-skin="term"][data-tsize] #settingsModal, body[data-skin="term"][data-tsize] #settingsModal *{font-size-adjust:none}
+  body[data-tweight] #settingsModal{font-weight:400}
+  /* the Terminal look's clothes */
+  body[data-skin="term"] .set-rail, body[data-skin="term"] .set-head{border-color:var(--line)}
+  body[data-skin="term"] .set-rail .set-title{font:600 15px var(--fm); letter-spacing:-.2px}
+  body[data-skin="term"] .sr-h{font:10.5px var(--fm); letter-spacing:.14em; color:var(--faint); opacity:1}
+  body[data-skin="term"] #settingsModal .set-rail button{font:13px var(--fs)}
+  body[data-skin="term"] #settingsModal .set-rail button i{font-family:var(--fm)}
+  body[data-skin="term"] .set-head h3{font:600 16px var(--fm); letter-spacing:-.2px}
+  body[data-skin="term"] .set-group{border-color:var(--line)}
+  body[data-skin="term"] .set-row{border-top-color:var(--line)}
+  body[data-skin="term"] #settingsModal .set-tip, body[data-skin="term"] .set-row .lbl small.set-tipbox{border-color:var(--line)}
+  body[data-skin="term"] #settingsModal .set-tip{font-family:var(--fm)}
+  body[data-skin="term"] #settingsModal .set-themes .su-theme span{border-color:var(--line); font-family:var(--fm)}
+  @media (max-width:760px){
+    #settingsModal{top:3%; height:auto; max-height:93vh; grid-template-columns:minmax(0,1fr); grid-template-rows:auto minmax(0,1fr)}
+    .set-rail{flex-direction:row; align-items:center; overflow-x:auto; overflow-y:hidden; border-right:0; border-bottom:1px solid var(--border); padding:8px 10px; scrollbar-width:none}
+    .set-rail::-webkit-scrollbar{display:none}
+    .set-rail .sr-h{display:none} .set-rail .set-title{margin:0 8px 0 4px; font-size:16px; flex:none}
+    #settingsModal .set-rail button{width:auto; flex:none; white-space:nowrap; padding:6px 9px}
+    .set-head{padding:12px 14px 9px} .set-head p{display:none} .set-body{padding:12px 12px 18px}
+    .set-row{grid-template-columns:minmax(0,1fr)} .set-row > :not(.lbl){justify-self:start}
+    #settingsModal .set-row .seg, .set-ctl{justify-content:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){ .set-row .lbl small.set-tipbox, #settingsModal .set-themes .su-theme, #settingsModal .set-rail button{animation:none; transition:none} }
   /* font choices (settings) — garamond is the base --font-display */
   body[data-font="alegreya"]{--font-display:"Alegreya",Georgia,serif}
   body[data-font="classic"]{--font-display:Georgia,"Times New Roman",serif}
@@ -2950,7 +3035,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   /*SKIN_TERM_START*/
   /* ============ THE TERMINAL LOOK ============
      One block, at the end of the sheet so it wins ties. Everything here sits under
-     body[data-skin="term"], so the Classic look (Settings, Look) is the page exactly as it was.
+     body[data-skin="term"], so the Classic look (Settings, Appearance) is the page exactly as it was.
      The idea: RuneScape's own conventions on a modern terminal. A monospace for names, numbers
      and labels, a plain sans for sentences, hairlines instead of filled panels, soft corners,
      no gradients, no shadows. Colour still comes from the theme tokens, so every theme works.
@@ -3064,9 +3149,6 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .seg button:hover{background:var(--panel); color:var(--text)}
   body[data-skin="term"] .seg button.on{background:var(--panel); border-color:var(--line); color:var(--gold); font-weight:normal}
   body[data-skin="term"] :is(.pill,.tag,.rd-chip,.streak-pill){border-radius:6px; background:transparent; border-color:var(--line); font-family:var(--fm)}
-  body[data-skin="term"] .set-tabs{border-bottom-color:var(--line)}
-  body[data-skin="term"] .set-tabs button{font:12.5px var(--fm); background:none; border:0; border-bottom:2px solid transparent; border-radius:0}
-  body[data-skin="term"] .set-tabs button:hover{background:none}
   body[data-skin="term"] .set-row{border-bottom-color:var(--line)}
   body[data-skin="term"] .su-theme{border-radius:9px}
   body[data-skin="term"] .su-theme.on{box-shadow:none; border-color:var(--gold)}
@@ -3535,14 +3617,14 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
      small gap apart, the sidebar included, the way a tiling window manager lays out terminals;
      the pane under the pointer takes the accent border. Home's panes come in two arrangements,
      body[data-tiles]: mosaic (three columns that each split at their own height) and orderly
-     (every edge on one grid). Settings, Look picks between them. */
+     (every edge on one grid). Settings, Appearance picks between them. */
   body[data-skin="term"]{
     --gap:10px;
     --hair:color-mix(in srgb, var(--text) 9%, transparent);
     --glass:color-mix(in srgb, var(--panel) 50%, transparent);
     --glow1:color-mix(in srgb, var(--gold-dim) 50%, var(--bg));
     --glow2:color-mix(in srgb, var(--me) 30%, var(--bg));
-    /* the backdrop in two parts, so Settings, Look can swap the pattern (body[data-backdrop]) and leave the glows */
+    /* the backdrop in two parts, so Settings, Appearance can swap the pattern (body[data-backdrop]) and leave the glows */
     --bd-none:linear-gradient(transparent, transparent);
     --bd-glow:radial-gradient(ellipse 46% 52% at 12% 8%, color-mix(in srgb, var(--glow1) 62%, transparent), transparent 70%),
       radial-gradient(ellipse 40% 50% at 92% 96%, color-mix(in srgb, var(--glow2) 58%, transparent), transparent 70%);
@@ -4207,7 +4289,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   /* ============ THE COMMAND LINE ============
      The path line at the top of every page is a place to type (tpWire in the page's script). It
      stays at the top of the window as the page scrolls, and what a line prints drops down under
-     it. Settings, Look turns the typing off and it is a plain path again. */
+     it. Settings, Appearance turns the typing off and it is a plain path again. */
   body[data-skin="term"] .term-path{position:relative; display:block; overflow:visible}
   body[data-skin="term"]:not(.dock) .term-path{position:sticky; top:var(--gap); z-index:25}
   body[data-skin="term"] .tp-row{display:flex; align-items:baseline; gap:0; min-width:0; margin:0; white-space:nowrap; cursor:text}
@@ -5178,7 +5260,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
 
   /* ============ PROGRESS BARS, SIX WAYS ============
      Josh picked six from the mockup (design/mockups/bars.html) on 2026-11-18 and asked for them as
-     a choice: body[data-bars], set in Settings, Look and in setup. Every bar in this look is a
+     a choice: body[data-bars], set in Settings, Appearance and in setup. Every bar in this look is a
      track with a fill inside it (.bar > i, .wf-m > i, and Coffer's .cf-ltrack with .cf-lbar), so a
      style only has to say how those two are drawn. Dotted is the look's own drawing, in comp.css,
      and needs nothing here. --bc is a fill's colour, so a style can glow in it. */
@@ -5307,7 +5389,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
      (--gold) keeps what you can press; a second colour, --acc2, takes the figures (levels, xp,
      gold), the bars, the prompt and the small labels. A theme without a pair sets --acc2 to its
      accent, so nothing changes for it. Night stops borrowing Mortimer's teal and gets moonlight.
-     Settings, Look has a hue slider that sets --acc2 per theme (state.acc2, body[data-acc2]);
+     Settings, Theme has a hue slider that sets --acc2 per theme (state.acc2, body[data-acc2]);
      lightness and chroma are fixed there, so any hue keeps its contrast on the dark grounds. */
   body[data-skin="term"]{--acc2:var(--gold); --acc2-dim:var(--gold-dim)}
   body[data-skin="term"][data-theme="mortimer"]{--acc2:#dba36a; --acc2-dim:#a77a4c}
@@ -5333,7 +5415,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   body[data-skin="term"] .cf-step, body[data-skin="term"] .ht-menu .ttl, body[data-skin="term"] .wrap-title, body[data-skin="term"] :is(.tp-oh, .tf-h) .lab,
   body[data-skin="term"] .bq-sec td, body[data-skin="term"] .bq-heart{color:var(--acc2-dim)}
   body[data-skin="term"] .bq-heart::before{color:var(--acc2)}
-  /* Settings, Look: the hue slider */
+  /* Settings, Theme: the hue slider */
   .acc2-row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
   .acc2-sw{flex:none; width:24px; height:24px; border-radius:50%; background:var(--acc2, var(--gold)); border:1px solid var(--line); box-shadow:0 0 0 3px color-mix(in srgb, var(--acc2, var(--gold)) 25%, transparent)}
   .acc2-row input[type=range]{flex:1 1 200px; width:auto; height:10px; margin:0; border-radius:5px; appearance:none; -webkit-appearance:none; outline:0; cursor:pointer;
@@ -5343,7 +5425,7 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   .acc2-row small{font:12px var(--fm); color:var(--muted); min-width:3.5ch}
 
   /* ============ THE FONT CHOICE IN THE TERMINAL LOOK ============
-     Settings, Look, Font used to apply only to Classic; the Terminal look set its own type and
+     Settings, Type used to apply only to Classic; the Terminal look set its own type and
      ignored the choice ("fonts aren't working", Josh, 2026-11-18). A first pass put the face on
      headings and names only; Josh: "I want EVERYTHING to change, except the terminal itself". So a
      chosen face takes the whole look, body text, figures, labels and chips included, by becoming
@@ -5899,104 +5981,126 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
   </div>
   <div id="settingsWrap" class="hidden">
     <div id="settingsBack"></div>
-    <div id="settingsModal" role="dialog" aria-label="Settings">
-      <div class="set-head"><div class="set-title">Settings</div><button class="dp-x" id="settingsX" aria-label="Close">✕</button></div>
-      <div class="set-tabs" id="setTabs">
-        <button class="on" data-settab="general">General</button>
-        <button data-settab="look">Look</button>
-        <button data-settab="advanced">Advanced</button>
-        <button data-settab="about">About</button>
-      </div>
+    <div id="settingsModal" class="tk" role="dialog" aria-label="Settings">
+      <nav class="set-rail" id="setTabs" aria-label="Settings sections">
+        <div class="set-title">Settings</div>
+        <div class="sr-h">You</div>
+        <button class="on" data-settab="character"><i>@</i>Character</button>
+        <button data-settab="pages"><i>▤</i>Pages</button>
+        <div class="sr-h">Look</div>
+        <button data-settab="appearance"><i>◧</i>Appearance</button>
+        <button data-settab="theme"><i>◉</i>Theme</button>
+        <button data-settab="type"><i>A</i>Type</button>
+        <div class="sr-h">Data</div>
+        <button data-settab="claude"><i>✦</i>Claude</button>
+        <button data-settab="backups"><i>⇓</i>Backups</button>
+        <button data-settab="devices"><i>⇄</i>Devices</button>
+        <div class="sr-h sr-gap"></div>
+        <button data-settab="about"><i>i</i>About</button>
+        <button class="hidden" data-settab="lab" id="setLabTab"><i>&gt;</i>Testing</button>
+      </nav>
+      <div class="set-main">
+      <div class="set-head"><h3 id="setHeadT">Character</h3><p id="setHeadP"></p><button class="dp-x" id="settingsX" aria-label="Close">✕</button></div>
       <div class="set-body">
-        <section class="set-pane" data-setpane="general">
+        <section class="set-pane" data-setpane="character">
           <div class="set-group">
-            <div class="set-h">Character</div>
-            <div class="set-row"><div class="lbl"><b>Setup</b><small>Walks through setup again with your current info filled in. Nothing is erased: only what you change is saved.</small></div><button class="ghost small" id="setupAgainBtn">Run setup again</button></div>
+            <div class="set-row"><div class="lbl"><b>Setup</b><small>Run it again with your details filled in. Nothing is erased.</small></div><button class="ghost small" id="setupAgainBtn">Run setup again</button></div>
             <div class="set-row"><div class="lbl"><b>Tour</b><small>A one-minute walk through the pages and what each is for.</small></div><button class="ghost small" id="tourAgainBtn">Take the tour</button></div>
-            <div class="set-row col"><div class="lbl"><b>Launch screen</b><small>When the app opens it shows what it is loading. It can wait for you to press Let's go, or go in by itself when it is ready.</small></div><div class="seg" id="bootSeg"></div></div>
+            <div class="set-row"><div class="lbl"><b>Launch screen</b><small>Wait for Let's go, or go in when it is <span class="set-nw">ready. <button type="button" class="set-tip" aria-label="More about this" data-tip="When the app opens it shows what it is loading: your save, the quest log and its steps, your character.">?</button></span></small></div><div class="seg" id="bootSeg"></div></div>
             <div class="set-row"><div class="lbl"><b>Auto-refresh</b><small>Pull your stats from the hiscores every 15 minutes.</small></div><label class="sw"><input type="checkbox" id="autoRefresh"><i></i></label></div>
-            <div class="set-row"><div class="lbl"><b>Fill in Scroll from your stats</b><small>Days you never logged by hand still show the XP the hiscores saw.</small></div><label class="sw"><input type="checkbox" id="autoActivity"><i></i></label></div>
+            <div class="set-row"><div class="lbl"><b>Fill in Scroll from your stats</b><small>Days you never logged still show the XP the hiscores saw.</small></div><label class="sw"><input type="checkbox" id="autoActivity"><i></i></label></div>
           </div>
           <div class="set-group">
             <div class="set-h">RuneLite data</div>
             <div id="ceSetting"></div>
           </div>
+        </section>
+        <section class="set-pane hidden" data-setpane="pages">
           <div class="set-group">
-            <div class="set-h">Pages</div>
-            <div class="set-row col"><div class="lbl"><b>Tabs</b><small>What Scroll, Achievements, Quest Hub, Coffer, Skills and Upgrades open on when you come back to them. The app itself always opens on Home.</small></div><div class="seg" id="tabSeg"></div></div>
-            <div class="set-row col"><div class="lbl"><b>Numbers</b><small>How skill XP is shown.</small></div><div class="seg" id="numSeg"></div></div>
+            <div class="set-row"><div class="lbl"><b>Tabs</b><small>Where a page opens when you come back to <span class="set-nw">it. <button type="button" class="set-tip" aria-label="More about this" data-tip="Scroll, Achievements, Quest Hub, Coffer, Skills and Upgrades. The app itself always opens on Home.">?</button></span></small></div><div class="seg" id="tabSeg"></div></div>
+            <div class="set-row"><div class="lbl"><b>Numbers</b><small>How skill XP is written.</small></div><div class="seg" id="numSeg"></div></div>
+            <div class="set-row"><div class="lbl"><b>How big everything is</b><small id="scaleNote"></small></div><div class="seg" id="scaleSeg"></div></div>
           </div>
         </section>
-        <section class="set-pane hidden" data-setpane="look">
+        <section class="set-pane hidden" data-setpane="appearance">
           <div class="set-group">
-            <div class="set-h">Look</div>
-            <div class="skin-pick" id="skinPick"></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>How Home's panes are arranged. Mosaic is uneven on purpose, and you can drag a pane by its header to move it. Orderly lines every edge up.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="tilesSeg"></div><button class="ghost small hidden" id="tilesReset" title="Put Home's panes back where they started">Reset panes</button></div></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Command line</b><small>The line at the top of every page takes commands: cd scroll, log mined for an hour, stats mining, -help for the list. Press / or the key under Esc to start typing. On a wide window the console sits in its own column at the right of every page; the console button on the line shows and hides it, and dragging its header off floats it over the page. Off leaves the line as a plain path.</small></div><div class="seg" id="tpSeg"></div></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Console</b><small>Where the console sits. At the side is a column to the right of every page, when the window has room. Floating is a window you can move and resize. Hidden closes it. The shortcut shows and hides it from anywhere; drag the console's header to pull it off the side.</small></div><div class="row" style="gap:8px; flex-wrap:wrap; align-items:center"><div class="seg" id="conSeg"></div><button class="ghost small" id="conKeyBtn" title="Press this, then the keys you want"></button></div></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Layout</b><small>Edit, on the line at the top of any page, lets you move, hide and resize its panes. This puts every page back to how it started, with nothing hidden.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><button class="ghost small" id="layoutResetBtn">Reset every page's layout</button></div></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Bakery layout</b><small>How Coffer's Bakery is laid out. Board puts the best three side by side and the rest in tiles. Listing is one aligned table with the row you choose opened beside it. The same switch is on the page itself.</small></div><div class="seg" id="bkSeg"></div></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Progress bars</b><small>How a bar is drawn, everywhere one appears: under a skill, beside a day, on a goal.</small></div><div class="seg" id="barSeg"></div></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Backdrop</b><small>What sits behind the panes. Clean is no pattern, with a soft glow in the corners. Dots, Grid, Lines and Weave are faint patterns. Flat is the theme's plain colour.</small></div><div class="seg" id="bdSeg"></div></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Wide window</b><small>On a wide monitor, the room beside and under a page fills with extra panes. The most useful come first, so more room only ever adds less essential ones. A pane's x hides it.</small></div><div class="row" style="gap:8px; flex-wrap:wrap"><div class="seg" id="wfSeg"></div><button class="ghost small hidden" id="wfShowAll" title="Bring back the panes you hid"></button></div></div>
+            <div class="set-row col"><div class="lbl"><b>Look</b></div><div class="skin-pick" id="skinPick"></div></div>
           </div>
-          <div class="set-group">
-            <div class="set-h">Theme</div>
-            <div class="su-themes set-themes" id="themePick"></div>
-            <div class="set-row col term-only"><div class="lbl"><b>Second colour</b><small>Beside the theme's accent, a second colour takes the figures, the bars, the prompt and the small labels. Slide to choose its hue for this theme; Theme's own puts the pair back.</small></div><div class="acc2-row"><i class="acc2-sw" id="acc2Sw"></i><input type="range" id="acc2Hue" min="0" max="359" step="1" aria-label="Hue of the second colour"><small id="acc2Val"></small><button class="ghost small" id="acc2Reset">Theme's own</button></div></div>
-            <div class="set-row col"><div class="lbl"><b>Scene art</b><small>The picture a theme carries. Focused shows a little of it, Illustrated shows more, Off shows none.</small></div><div class="seg" id="artSeg"></div></div>
-          </div>
-          <div class="set-group">
-            <div class="set-h">Font</div>
-            <p class="set-note classic-only">Headings and numbers throughout the app. Body text stays as it is.</p>
-            <p class="set-note term-only">In the Terminal look the face you pick goes on everything but the terminal itself: the command line, the Home terminal and the boot screen keep their mono. Garamond is the terminal's own type.</p>
-            <div id="fontSeg"></div>
-            <div class="set-row col" style="border-bottom:0"><div class="lbl"><b>Size and weight</b><small>For a face that draws thin or small. Size grows the letters without moving the layout and takes a picked face in the Terminal look; weight thickens the text in either look, regular first and the rest as the slider passes them. The terminal keeps its own.</small></div>
-              <div class="type-row term-only"><b>Size</b><input type="range" id="tsize" min="90" max="125" step="5" aria-label="Type size"><small id="tsizeVal"></small></div>
-              <div class="type-row"><b>Weight</b><input type="range" id="tweight" min="400" max="700" step="50" aria-label="Type weight"><small id="tweightVal"></small></div>
-              <div class="type-reset"><button class="ghost small" id="typeReset">As the face comes</button></div></div>
-          </div>
-          <div class="set-group">
-            <div class="set-h">Size</div>
-            <div class="set-row col"><div class="lbl"><b>How big everything is</b><small id="scaleNote"></small></div><div class="seg" id="scaleSeg"></div></div>
+          <div class="set-group term-only">
+            <div class="set-h">Terminal look</div>
+            <div class="set-row"><div class="lbl"><b>Home layout</b><small>Mosaic is uneven on purpose. Orderly lines every edge <span class="set-nw">up. <button type="button" class="set-tip" aria-label="More about this" data-tip="In Mosaic, drag a pane by its header to move it.">?</button></span></small></div><div class="set-ctl"><div class="seg" id="tilesSeg"></div><button class="ghost small hidden" id="tilesReset" title="Put Home's panes back where they started">Reset panes</button></div></div>
+            <div class="set-row"><div class="lbl"><b>Command line</b><small>The line at the top of every page. Press / to start <span class="set-nw">typing. <button type="button" class="set-tip" aria-label="More about this" data-tip="It takes commands: cd scroll, stats mining, log mined for an hour, -help for the list. Off leaves the line as a plain path.">?</button></span></small></div><div class="seg" id="tpSeg"></div></div>
+            <div class="set-row col"><div class="lbl"><b>Console</b><small>Where the console sits. The shortcut shows and hides it from <span class="set-nw">anywhere. <button type="button" class="set-tip" aria-label="More about this" data-tip="At the side is a column to the right of every page, when the window has room. Floating is a window you can move and resize. Hidden closes it. Drag the console's header to pull it off the side.">?</button></span></small></div><div class="set-ctl"><div class="seg" id="conSeg"></div><button class="ghost small" id="conKeyBtn" title="Press this, then the keys you want"></button></div></div>
+            <div class="set-row"><div class="lbl"><b>Bakery layout</b><small>Board puts the best three side by side. Listing is one <span class="set-nw">table. <button type="button" class="set-tip" aria-label="More about this" data-tip="This is Coffer's front page. The same switch is on the page itself.">?</button></span></small></div><div class="seg" id="bkSeg"></div></div>
+            <div class="set-row col"><div class="lbl"><b>Progress bars</b><small>How a bar is drawn wherever one appears.</small></div><div class="seg" id="barSeg"></div></div>
+            <div class="set-row col"><div class="lbl"><b>Backdrop</b><small>What sits behind the panes. Clean is a soft glow with no <span class="set-nw">pattern. <button type="button" class="set-tip" aria-label="More about this" data-tip="Dots, Grid, Lines and Weave are faint patterns. Flat is the theme's plain colour.">?</button></span></small></div><div class="seg" id="bdSeg"></div></div>
+            <div class="set-row"><div class="lbl"><b>Wide window</b><small>On a wide monitor the room beside a page fills with extra <span class="set-nw">panes. <button type="button" class="set-tip" aria-label="More about this" data-tip="The most useful come first, so more room only ever adds less essential ones. A pane's x hides it.">?</button></span></small></div><div class="set-ctl"><div class="seg" id="wfSeg"></div><button class="ghost small hidden" id="wfShowAll" title="Bring back the panes you hid"></button></div></div>
+            <div class="set-row"><div class="lbl"><b>Page layouts</b><small>Edit, on the line at the top of a page, moves and hides its <span class="set-nw">panes. <button type="button" class="set-tip" aria-label="More about this" data-tip="This puts every page back to how it started, with nothing hidden, and the console back at the side.">?</button></span></small></div><button class="ghost small" id="layoutResetBtn">Reset every page's layout</button></div>
           </div>
         </section>
-        <section class="set-pane hidden" data-setpane="advanced">
+        <section class="set-pane hidden" data-setpane="theme">
           <div class="set-group">
-            <div class="set-h">Claude</div>
+            <div class="set-row col"><div class="lbl"><b>Theme</b><small>Each circle is a theme. Runes carry their own colours.</small></div><div class="su-themes set-themes" id="themePick"></div></div>
+            <div class="set-row term-only"><div class="lbl"><b>Second colour</b><small>Figures, bars, the prompt and the small labels take <span class="set-nw">it. <button type="button" class="set-tip" aria-label="More about this" data-tip="Slide to choose its hue for this theme. Theme's own puts the pair back.">?</button></span></small></div><div class="acc2-row"><i class="acc2-sw" id="acc2Sw"></i><input type="range" id="acc2Hue" min="0" max="359" step="1" aria-label="Hue of the second colour"><small id="acc2Val"></small><button class="ghost small" id="acc2Reset">Theme's own</button></div></div>
+            <div class="set-row"><div class="lbl"><b>Scene art</b><small>The picture a theme <span class="set-nw">carries. <button type="button" class="set-tip" aria-label="More about this" data-tip="Focused shows a little of it, Illustrated shows more, Off shows none.">?</button></span></small></div><div class="seg" id="artSeg"></div></div>
+          </div>
+        </section>
+        <section class="set-pane hidden" data-setpane="type">
+          <div class="set-group">
+            <div class="set-row col"><div class="lbl"><b>Font</b><small class="classic-only">Headings and numbers throughout the app. Body text stays as it is.</small><small class="term-only">The face goes on everything but the terminal itself. Garamond is the look's own type. Settings keeps its own too.</small></div><div id="fontSeg"></div></div>
+            <div class="set-row term-only"><div class="lbl"><b>Size</b><small>Grows the letters without moving the layout. Takes a picked face.</small></div><div class="type-row"><input type="range" id="tsize" min="90" max="125" step="5" aria-label="Type size"><small id="tsizeVal"></small></div></div>
+            <div class="set-row"><div class="lbl"><b>Weight</b><small>Thickens the text in either look, regular to <span class="set-nw">bold. <button type="button" class="set-tip" aria-label="More about this" data-tip="Regular text rises first, and the heavier text follows as the slider passes it. The terminal keeps its own.">?</button></span></small></div><div class="type-row"><input type="range" id="tweight" min="400" max="700" step="50" aria-label="Type weight"><small id="tweightVal"></small></div></div>
+            <div class="set-row"><div class="lbl"><b>As the face comes</b><small>Size and weight back to the face's own.</small></div><button class="ghost small" id="typeReset">Reset</button></div>
+          </div>
+        </section>
+        <section class="set-pane hidden" data-setpane="claude">
+          <div class="set-group">
             <div id="claudeSetting"></div>
           </div>
+        </section>
+        <section class="set-pane hidden" data-setpane="backups">
           <div class="set-group">
-            <div class="set-h">Backup</div>
-            <div class="set-row"><div class="lbl"><b>Backup file</b><small>Everything: character, goals, Scroll, priorities, notes. Import merges with what is here.</small></div><div class="row" style="gap:6px; flex-wrap:nowrap"><button class="ghost small" id="exportBtn" title="Download all app data as a JSON backup">⇓ Backup</button><button class="ghost small" id="importBtn" title="Import a backup JSON (merges with current data)">⇑ Import</button></div></div>
+            <div class="set-row"><div class="lbl"><b>Backup file</b><small>Everything: character, goals, Scroll, priorities, <span class="set-nw">notes. <button type="button" class="set-tip" aria-label="More about this" data-tip="Backup saves one file with all of it. Import merges a backup file with what is here.">?</button></span></small></div><div class="set-ctl"><button class="ghost small" id="exportBtn" title="Download all app data as a JSON backup">⇓ Backup</button><button class="ghost small" id="importBtn" title="Import a backup JSON (merges with current data)">⇑ Import</button></div></div>
             <input type="file" id="importFile" accept="application/json,.json" class="hidden">
             <div id="vaultSetting"></div>
           </div>
           <div class="set-group">
             <div class="set-h">Restore</div>
-            <p class="set-note">The app snapshots your data daily and before anything risky. These live on this device. Use Backup for a copy you keep elsewhere.</p>
+            <p class="set-note">Snapshots taken daily and before anything risky. They live on this device; Backup is the copy you keep elsewhere.</p>
             <div id="backupList" class="bk-list"></div>
-          </div>
-          <div class="set-group">
-            <div class="set-h">Your other devices</div>
-            <div id="syncSetting"></div>
           </div>
           <div class="set-group">
             <div class="set-h">Storage</div>
             <div class="st-bar"><i id="stBar"></i></div>
-            <div class="small muted" id="stText" style="margin-top:5px"></div>
+            <div class="small muted" id="stText" style="margin:5px 0 12px"></div>
           </div>
+        </section>
+        <section class="set-pane hidden" data-setpane="devices">
+          <div class="set-group">
+            <div id="syncSetting"></div>
+          </div>
+        </section>
+        <section class="set-pane hidden" data-setpane="about">
+          <div class="set-group">
+            <div class="set-row"><div class="lbl"><b id="updStatus">Mortimeter v<span id="updCur"></span></b><small>The version you are running.</small></div><button class="ghost small" id="updCheckBtn">Check for updates</button></div>
+            <div class="set-row"><div class="lbl"><b>What's new</b><small>Patch notes for this and every earlier version.</small></div><button class="ghost small" id="openPatch">Open</button></div>
+            <div class="set-row"><div class="lbl"><b>Report a bug</b><small>Opens a GitHub form with the app version filled <span class="set-nw">in. <button type="button" class="set-tip" aria-label="More about this" data-tip="Needs a free GitHub account.">?</button></span></small></div><a class="ghost small" id="bugBtn" target="_blank" rel="noopener" style="display:inline-block">Report</a></div>
+            <div class="set-row"><div class="lbl"><b>Send a suggestion</b><small>An idea or a correction, kept apart from the <span class="set-nw">bugs. <button type="button" class="set-tip" aria-label="More about this" data-tip="Opens a GitHub form with the app version filled in. Needs a free GitHub account.">?</button></span></small></div><a class="ghost small" id="suggestBtn" target="_blank" rel="noopener" style="display:inline-block">Suggest</a></div>
+            <p class="set-note" id="aboutOld">Mortimeter, formerly OSRS Buddy, 15 July to 18 October 2026.</p>
+          </div>
+        </section>
+        <section class="set-pane hidden" data-setpane="lab">
           <div class="set-group hidden" id="labSec">
             <div class="set-h">Launch and first run</div>
-            <p class="set-note">Beta only. Plays the launch screen, or a whole first launch with its tour, on top of your real save. Nothing is deleted or changed; the first launch ends in Setup, again, which only saves what you change.</p>
-            <div class="row" style="gap:6px; flex-wrap:wrap">
+            <p class="set-note">Plays the launch screen, or a whole first launch with its tour, on top of your real save. Nothing is deleted or changed; the first launch ends in Setup, again, which only saves what you change.</p>
+            <div class="row" style="gap:6px; flex-wrap:wrap; margin-bottom:12px">
               <button class="ghost small" id="labBoot">Replay the launch screen</button>
               <button class="ghost small" id="labFirst">Preview a first launch</button>
               <button class="ghost small" id="labTour">Just the tour</button>
             </div>
           </div>
           <div class="set-group hidden" id="devSec">
-            <div class="set-h">🛠️ Developer</div>
+            <div class="set-h">Developer</div>
             <p class="set-note">Preview things that normally need weeks of play. Nothing here changes your stats.</p>
             <div class="set-h" style="font-size:11px">Celebrations</div>
             <div class="row" style="gap:6px; flex-wrap:wrap; margin-bottom:8px">
@@ -6011,19 +6115,10 @@ window.__pageRunningFrom = (document.querySelector('meta[name="buddy-page-from"]
               <button class="ghost small" id="devRescan">Wipe &amp; re-scan history</button>
             </div>
             <div class="small muted" id="devMsInfo" style="margin-top:6px"></div>
-            <button class="ghost small" id="devOff" style="margin-top:10px">Turn off developer mode</button>
+            <button class="ghost small" id="devOff" style="margin:10px 0 12px">Turn off developer mode</button>
           </div>
         </section>
-        <section class="set-pane hidden" data-setpane="about">
-          <div class="set-group">
-            <div class="set-h">Mortimeter</div>
-            <div class="set-row"><div class="lbl"><b id="updStatus">Mortimeter v<span id="updCur"></span></b><small>The version you are running.</small></div><button class="ghost small" id="updCheckBtn">Check for updates</button></div>
-            <div class="set-row"><div class="lbl"><b>What's new</b><small>Patch notes for this and every previous version.</small></div><button class="ghost small" id="openPatch">Open</button></div>
-            <div class="set-row"><div class="lbl"><b>Report a bug</b><small>Opens a GitHub issue with the app version filled in. Needs a free GitHub account.</small></div><a class="ghost small" id="bugBtn" target="_blank" rel="noopener" style="display:inline-block">Report</a></div>
-            <div class="set-row"><div class="lbl"><b>Send a suggestion</b><small>An idea or a correction, kept apart from the bugs. Opens a GitHub form with the app version filled in.</small></div><a class="ghost small" id="suggestBtn" target="_blank" rel="noopener" style="display:inline-block">Suggest</a></div>
-            <p class="set-note" id="aboutOld">Mortimeter, formerly OSRS Buddy, 15 July to 18 October 2026.</p>
-          </div>
-        </section>
+      </div>
       </div>
     </div>
   </div>
@@ -10925,7 +11020,7 @@ function setSkin(id){
 }
 // the themes that carry a picture in the Terminal look (design/theme-art)
 const TERM_ART_THEMES = new Set(["mortimer", "parchment", "crystal", "air", "water", "earth", "fire", "mind", "nature", "law", "chaos", "death", "blood", "cosmic", "astral", "lava"]);
-// The second colour's hue a theme was given in Settings, Look, or null for the theme's own pair.
+// The second colour's hue a theme was given in Settings, Theme, or null for the theme's own pair.
 function acc2Hue(t){ const v = state.acc2 && state.acc2[t]; return typeof v === "number" && isFinite(v) ? Math.round(v) : null; }
 // The oklch hue of the theme's own second colour, so the slider rests where the pair is.
 function acc2ThemeHue(){
@@ -14919,7 +15014,7 @@ function cofferGoRound(key){
 setInterval(()=>{ if(document.hidden) return; const v = $("#view-home"); if(v && !v.classList.contains("hidden")) renderRoundsHome(); const c = $("#view-coffer"); if(c && !c.classList.contains("hidden")){ if($("#cofferView .rd-row")) renderCoffer(); if($("#runsView .rk")) renderRuns(); } }, 60000);
 
 // ============ CLAUDE, WITH YOUR OWN KEY ============
-// Optional, and off until a key is given (setup's Claude step, or Settings, Advanced). With a key,
+// Optional, and off until a key is given (setup's Claude step, or Settings, Claude). With a key,
 // a question asked in Home's terminal with -mort goes to Claude with the account and the quest it names.
 // Without one, or when the call fails, the answer comes from what the page knows (reldoAnswer).
 // The key is the user's own. It lives in its own localStorage entry on this device and never in
@@ -15305,7 +15400,7 @@ function termAiNotice(){
 function termAiPending(){ return termState().log.some(e=>e.p); }
 function termAiAnswer(yes){
   const t = termState(); t.log = t.log.filter(e=>!e.p);
-  if(yes){ t.ai = "yes"; termLog("w", "Opening Settings, Advanced. The key goes in the Claude section there."); try{ claudeOpen(); }catch(e){} }
+  if(yes){ t.ai = "yes"; termLog("w", "Opening Settings, Claude. The key goes there."); try{ claudeOpen(); }catch(e){} }
   else { t.ai = "no"; termLog("w", "Claude stays off and this will not be asked again. Type claude if you change your mind."); }
   try{ termTop(); termHint(); }catch(e){}
 }
@@ -15725,7 +15820,7 @@ function htDragEnd(commit){
   if(d.drop.res.length !== d.arr.length && state.homeColW) delete state.homeColW[d.key];
   (state.homeArr || (state.homeArr = {}))[d.key] = d.drop.res; save();
   htArrange(true); try{ htPlay(); }catch(e){} htMenuFit();
-  if(!state.homeArrTold){ state.homeArrTold = 1; save(); toast("Pane moved. Settings, Look has a reset if you want the usual arrangement back."); }
+  if(!state.homeArrTold){ state.homeArrTold = 1; save(); toast("Pane moved. Settings, Appearance has a reset if you want the usual arrangement back."); }
 }
 (function htDragWire(){
   const HANDLE = "#homeTerm[data-arr] :is(.ht-lab, .ht-menu .ttl, .ht-term .top)";
@@ -15974,7 +16069,7 @@ function wfFillInto(el, list){
   const ids = list.map(x=>x.d.id).join(",");
   if(el.dataset.ids !== ids){
     el.dataset.ids = ids;
-    el.innerHTML = list.map((x, i)=>`<section class="wf" data-wf="${x.d.id}" data-tier="${x.d.tier}" style="--i:${i}"><h2 class="wf-h">${wfEsc(x.d.title)} <small></small><button class="wf-x" data-wfhide="${x.d.id}" title="Hide this pane. Settings, Look brings it back." aria-label="Hide ${wfEsc(x.d.title)}">x</button></h2><div class="wf-b"></div>${x.d.sizes ? `<span class="wf-grip" data-wfgrip="${x.d.id}" title="Drag down for more rows, up for fewer."></span>` : ""}</section>`).join("");
+    el.innerHTML = list.map((x, i)=>`<section class="wf" data-wf="${x.d.id}" data-tier="${x.d.tier}" style="--i:${i}"><h2 class="wf-h">${wfEsc(x.d.title)} <small></small><button class="wf-x" data-wfhide="${x.d.id}" title="Hide this pane. Settings, Appearance brings it back." aria-label="Hide ${wfEsc(x.d.title)}">x</button></h2><div class="wf-b"></div>${x.d.sizes ? `<span class="wf-grip" data-wfgrip="${x.d.id}" title="Drag down for more rows, up for fewer."></span>` : ""}</section>`).join("");
   }
   list.forEach((x, i)=>{
     const sec = el.children[i]; if(!sec) return;
@@ -16068,7 +16163,7 @@ function wfLater(fromObserver){
 (function wfWire(){
   const act = e=>{
     const hide = e.target.closest("[data-wfhide]");
-    if(hide){ (state.wfHide || (state.wfHide = {}))[hide.dataset.wfhide] = 1; save(); wfDraw(); if(!state.wfHideTold){ state.wfHideTold = 1; save(); toast("Hidden. Settings, Look brings hidden panes back."); } return; }
+    if(hide){ (state.wfHide || (state.wfHide = {}))[hide.dataset.wfhide] = 1; save(); wfDraw(); if(!state.wfHideTold){ state.wfHideTold = 1; save(); toast("Hidden. Settings, Appearance brings hidden panes back."); } return; }
     const b = e.target.closest(".wf-r"); if(!b) return; const d = b.dataset;
     if(d.wftick){ roundTick(d.wftick); wfLater(); }
     else if(d.wfround) cofferGoRound(d.wfround);
@@ -16643,7 +16738,7 @@ function arcadeReveal(go){
   if(go) switchView("arcade");
 }
 termDef(["arcade", "games", "corner"], "arcade", "Opens the Game corner. It stays off the sidebar until this is typed, then sits there lit until the app closes.", "App", ()=>({hint:`<u>enter</u> opens the Game corner`, run:()=>{ const was = arcadeOpen; arcadeReveal(true); termOut(was ? "The Game corner is open already." : "The Game corner is open. It stays in the sidebar until the app closes."); }}), {bare:true});
-termDef(["reset"], "reset layout", "Puts every page's panes, Home's widgets and the console back where they started. Settings, Look has the same button.", "App", rest=>/^layout$/i.test(rest.trim()) ? {hint:`<u>enter</u> resets the layout of every page`, run:()=>layoutReset("all")} : "reset takes layout: -reset layout", {soft:true});
+termDef(["reset"], "reset layout", "Puts every page's panes, Home's widgets and the console back where they started. Settings, Appearance has the same button.", "App", rest=>/^layout$/i.test(rest.trim()) ? {hint:`<u>enter</u> resets the layout of every page`, run:()=>layoutReset("all")} : "reset takes layout: -reset layout", {soft:true});
 termDef(["panes"], "panes reset", "Puts Home's panes back where they started.", "App", rest=>rest.trim().toLowerCase() === "reset" ? {hint:`<u>enter</u> puts Home's panes back`, run:()=>{ htArrReset(); termOut("Home's panes are back where they started."); }} : "panes takes reset", {soft:true});
 termDef(["tour"], "tour", "A one-minute walk through the pages and what each is for.", "App", ()=>({hint:`<u>enter</u> starts the tour`, quiet:true, run:()=>tourStart({})}), {bare:true});
 termDef(["boot"], "boot [first]", "Plays the launch screen again. boot first previews a first launch with its tour; your save is not touched.", "App", rest=>{
@@ -16827,7 +16922,7 @@ function tfSet(on, at){
   return true;
 }
 // ---- showing and hiding the console, wherever it was ----
-// Its x closes it. The shortcut (Ctrl+Shift+T unless changed in Settings, Look) and the console
+// Its x closes it. The shortcut (Ctrl+Shift+T unless changed in Settings, Appearance) and the console
 // button on the line at the top bring it back to where it last was: at the side, or floating.
 const TERM_KEY = {ctrl:true, shift:true, alt:false, key:"t"};
 var conKeyGrab = false;
@@ -16950,7 +17045,7 @@ function trSet(on){ const r = state.termRail || (state.termRail = {}); r.on = !!
     else if(e.target.closest("[data-conx]")){ e.preventDefault(); conClose(); }
     else if(e.target.closest("#tpCon")){ e.preventDefault(); if(conShown()) conClose(); else conOpen(); }
   });
-  // the shortcut, from anywhere; and choosing a new one in Settings, Look
+  // the shortcut, from anywhere; and choosing a new one in Settings, Appearance
   document.addEventListener("keydown", e=>{
     if(conKeyGrab){
       if(["Control", "Shift", "Alt", "Meta"].includes(e.key)) return;
@@ -18416,10 +18511,10 @@ const BOOT_QUIPS = [
 // on its own; "the intro is a vibe"). Each job is a line that ends in what it loaded. The lines
 // are paced so the screen lasts at least BOOT_MIN_MS even when everything is already cached, and
 // if loading drags past BOOT_LATE_MS the button appears anyway, so nobody is held behind the wiki.
-// Settings, General can turn the wait off (bootHold false): then it fades by itself as it used to.
+// Settings, Character can turn the wait off (bootHold false): then it fades by itself as it used to.
 // A first launch (bootFirstRun, set at the foot of the script on a fresh install) gets its own
 // lines, a Begin button, and then the tour and Setup. bootPlay can be run again at any time: the
-// tour and boot commands, and two Beta-only buttons in Settings, Advanced, which preview a first
+// tour and boot commands, and Beta-only buttons in Settings, Testing, which preview a first
 // launch without touching the save.
 const BOOT_MIN_MS = 3600, BOOT_LINE_MS = 560, BOOT_LATE_MS = 9000;
 let bootHtml = "", bootBusy = false, bootFirstRun = false;
@@ -18503,7 +18598,7 @@ setTimeout(async ()=>{
 
 // ============ THE TOUR ============
 // A first launch ends in this: eleven short steps, each lighting up one thing and saying what it
-// is for, and then Setup. It is also in Settings, General (Take the tour) and the tour command.
+// is for, and then Setup. It is also in Settings, Character (Take the tour) and the tour command.
 // A step names what to light (sel), the page to be on (view), a title and a line or two. A step
 // marked term only shows in the Terminal look. Nothing is saved except that the tour was seen.
 const TOUR_STEPS = [
@@ -19811,7 +19906,7 @@ function renderCoffer(){
         <select id="cfLensSel" class="small"><option value="">another skill…</option>${COFFER_TIER_SKILLS.filter(k=>k !== lens).map(k=>`<option value="${k}">${nice(k)}</option>`).join("")}</select>
         <span class="grow"></span>
         <span class="bq-count"><b>${fmt(readyN)}</b> ready now of ${fmt(db.methods.length)}${live ? "" : ", load your stats to check them against your levels"}</span>
-        <span class="bq-lay" title="How this page is laid out. Also in Settings, Look."><button class="${TL === "board" ? "on" : ""}" data-bklay="board">board</button><button class="${TL === "list" ? "on" : ""}" data-bklay="list">listing</button></span>
+        <span class="bq-lay" title="How this page is laid out. Also in Settings, Appearance."><button class="${TL === "board" ? "on" : ""}" data-bklay="board">board</button><button class="${TL === "list" ? "on" : ""}" data-bklay="list">listing</button></span>
       </div>
       <div class="tt-bar"><span class="tt-ps">$</span><span class="tt-sum">tune <span>${words.map(esc).join(" · ")}</span></span><span class="grow"></span><button class="ghost small" id="cfTune">${tuneOpen ? "Done" : "⚙ Tune"}</button></div>
       <div class="tt-body">
@@ -21949,7 +22044,7 @@ function applyFont(){
   else document.body.dataset.font = f;
   applyType();
 }
-// ---- type size and weight (Settings, Look, Font) ----
+// ---- type size and weight (Settings, Type) ----
 const TYPE_X = {};
 // The x-height the browser scales a face by under font-size-adjust, as a share of its size. Probed
 // rather than read from the font: a face with a wrong x-height in its metrics (Almendra) would
@@ -21993,9 +22088,10 @@ function renderFontPick(el){
   });
 }
 function renderFontSeg(){ renderFontPick($("#fontSeg")); }
-// the Look tab: theme tiles, scene art, size (a phone setting)
+// Appearance, Theme and Type in Settings: the look, theme tiles, scene art, the sliders, size (a phone setting)
 function renderLookSettings(){
   const tp = $("#themePick"); if(!tp) return;
+  settingsHead();
   const sp = $("#skinPick"), skin = state.skin === "classic" ? "classic" : "term";
   if(sp){
     sp.innerHTML = SKINS.map(([id,label,sub])=>`<button class="skin-opt ${id===skin?"on":""}" data-setskin="${id}"><b>${label}</b><small>${sub}</small></button>`).join("");
@@ -22072,9 +22168,9 @@ function renderLookSettings(){
     const sz = +state.typeSize || 100, wt = +state.typeWeight || 400;
     const wlab = v=>TYPE_WEIGHTS[v] || String(v);
     tsz.value = sz; twt.value = wt; if(tsv) tsv.textContent = sz + "%"; if(twv) twv.textContent = wlab(wt);
-    if(tyr) tyr.classList.toggle("hidden", sz === 100 && wt === 400);
-    tsz.oninput = ()=>{ state.typeSize = +tsz.value; applyType(); if(tsv) tsv.textContent = tsz.value + "%"; if(tyr) tyr.classList.remove("hidden"); };
-    twt.oninput = ()=>{ state.typeWeight = +twt.value; applyType(); if(twv) twv.textContent = wlab(+twt.value); if(tyr) tyr.classList.remove("hidden"); };
+    if(tyr) tyr.disabled = sz === 100 && wt === 400;
+    tsz.oninput = ()=>{ state.typeSize = +tsz.value; applyType(); if(tsv) tsv.textContent = tsz.value + "%"; if(tyr) tyr.disabled = false; };
+    twt.oninput = ()=>{ state.typeWeight = +twt.value; applyType(); if(twv) twv.textContent = wlab(+twt.value); if(tyr) tyr.disabled = false; };
     tsz.onchange = twt.onchange = ()=>save();
     if(tyr) tyr.onclick = ()=>{ delete state.typeSize; delete state.typeWeight; save(); applyType(); renderLookSettings(); };
   }
@@ -22088,10 +22184,43 @@ function renderLookSettings(){
     sc.querySelectorAll("[data-setscale]").forEach(b=>b.onclick=()=>{ state.uiScale = b.dataset.setscale; save(); applyScale(); renderLookSettings(); });
   } else { note.textContent = "A phone setting. On a computer, Ctrl and plus or minus does the same."; sc.innerHTML = ""; }
 }
+// Settings' sections: the heading and the one line under it. The old tab names still open the
+// nearest section, so openSettings("look") and the like keep working.
+const SET_SECS = {
+  character:["Character", ()=>state.username ? `${termWho() || state.username}, from the hiscores.` : "No character yet. Setup adds one."],
+  pages:["Pages", "How the pages open and count."],
+  appearance:["Appearance", "The look, and how it lays itself out."],
+  theme:["Theme", ()=>{ const id = state.theme || DEFAULT_THEME, t = THEMES.find(x=>x[0] === id); return (t ? t[1] + ". " : "") + "The colour the whole app takes."; }],
+  type:["Type", "The face on the pages, and how heavy it draws."],
+  claude:["Claude", "Optional. A question asked with -mort goes to Claude."],
+  backups:["Backups", "A copy you keep, and the snapshots the app keeps."],
+  devices:["Devices", "Your phone and your PC, over your own Wi-Fi."],
+  about:["About", "The version, what changed, and where to send a word."],
+  lab:["Testing", "Beta only. Nothing here changes your save."],
+};
+const SET_OLD = {general:"character", look:"appearance", advanced:"claude"};
+let setCur = "character";
+function settingsHead(){
+  const d = SET_SECS[setCur]; if(!d) return;
+  const h = $("#setHeadT"), p = $("#setHeadP");
+  if(h) h.textContent = d[0];
+  if(p){ let x = d[1]; try{ if(typeof x === "function") x = x(); }catch(e){ x = ""; } p.textContent = x; }
+}
+// the Testing section shows only when it has something in it (the Beta's launch buttons, developer mode)
+function settingsLabTab(){
+  const b = $("#setLabTab"); if(!b) return;
+  const any = ["#labSec", "#devSec"].some(q=>{ const e = $(q); return e && !e.classList.contains("hidden"); });
+  b.classList.toggle("hidden", !any);
+  if(!any && setCur === "lab") settingsTab("character");
+}
 function settingsTab(t){
   const tabs = $$("#setTabs [data-settab]"); if(!tabs.length) return;
-  if(!tabs.some(b=>b.dataset.settab===t)) t = "general";
+  t = SET_OLD[t] || t;
+  if(!tabs.some(b=>b.dataset.settab===t && !b.classList.contains("hidden"))) t = "character";
+  setCur = t; settingsHead();
+  $$("#settingsModal .set-tipbox").forEach(x=>x.remove()); $$("#settingsModal .set-tip.on").forEach(x=>x.classList.remove("on"));
   tabs.forEach(b=>b.classList.toggle("on", b.dataset.settab===t));
+  const onb = tabs.find(b=>b.dataset.settab===t); if(onb && onb.scrollIntoView) try{ onb.scrollIntoView({block:"nearest", inline:"nearest"}); }catch(e){}
   $$("#settingsModal .set-pane").forEach(p=>{
     const on = p.dataset.setpane===t;
     if(on && p.classList.contains("hidden")){ p.classList.remove("hidden"); p.style.animation = "none"; void p.offsetWidth; p.style.animation = ""; }
@@ -22185,9 +22314,10 @@ function openSettings(tab){
   renderFontSeg(); renderLookSettings(); renderNumSeg(); renderTabSeg(); renderUpdSetting();
   $$("#setTabs [data-settab]").forEach(b=>b.onclick = ()=>settingsTab(b.dataset.settab));
   renderClaudeSetting();
-  settingsTab(typeof tab === "string" ? tab : "general"); renderBackups(); renderStorage(); renderCeSetting(); renderVaultSetting(); renderSyncSetting();
+  settingsTab(typeof tab === "string" ? tab : "character"); renderBackups(); renderStorage(); renderCeSetting(); renderVaultSetting(); renderSyncSetting();
   renderDevSection(); devWireSettings();
   try{ launchSettingsDraw(); }catch(e){ console.error(e); }
+  settingsLabTab();
   const bb = $("#bugBtn"); if(bb) bb.href = ghIssueUrl("bug.yml", {device: ghDevice()});
   const sg = $("#suggestBtn"); if(sg) sg.href = ghIssueUrl("suggestion.yml", {page: "Somewhere else"});
   $("#settingsWrap").classList.remove("hidden");
@@ -22410,9 +22540,19 @@ $("#settingsBtn").onclick = openSettings;
 $("#openPatch").onclick = ()=>{ closeSettings(); switchView("patch"); };
 $("#settingsX").onclick = closeSettings;
 $("#settingsBack").onclick = closeSettings;
+// a ? beside a setting: press it for the longer explanation, press again to put it away
+$("#settingsModal").addEventListener("click", e=>{
+  const t = e.target.closest(".set-tip"); if(!t) return;
+  e.preventDefault();
+  const lbl = t.closest(".lbl") || t.parentElement, had = !!lbl.querySelector(".set-tipbox");
+  $$("#settingsModal .set-tipbox").forEach(x=>x.remove()); $$("#settingsModal .set-tip.on").forEach(x=>x.classList.remove("on"));
+  if(had) return;
+  const box = document.createElement("small"); box.className = "set-tipbox"; box.textContent = t.dataset.tip || "";
+  lbl.appendChild(box); t.classList.add("on");
+});
 
 // thirty themes is too many to cycle through: the button opens the Look step of Setup
-$("#themeBtn").onclick = ()=>openSettings("look");
+$("#themeBtn").onclick = ()=>openSettings("theme");
 // Shift+D and Shift+A step through the themes, as long as you are not typing somewhere
 document.addEventListener("keydown", e=>{
   if(!e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) return;
@@ -23350,11 +23490,11 @@ const PATCH_NOTES = [
     "The app is now Mortimeter. OSRS Buddy was one letter away from OSBuddy, a third-party client from years ago that this app has nothing to do with, and the name needed to be ours. Nothing about your save, your backups or your files changes.",
     "Mortimeter is Mortimer, the Slayer master, plus meter, because the app measures your account.",
     "The gold theme the app started with is now called Gilded. The About panel remembers the old name and dates. Anyone whose save is older than the rename finds a new trophy in the cabinet.",
-    "A new look, Terminal: monospace headings, thin lines and square corners, with a command line at the top of every page. Classic, the look the app had before, is one click away in Settings, Look, and nothing about it has changed.",
+    "A new look, Terminal: monospace headings, thin lines and square corners, with a command line at the top of every page. Classic, the look the app had before, is one click away in Settings, Appearance, and nothing about it has changed.",
     "Home in the Terminal look is panes you arrange yourself. Press edit on the top line, then drag a pane by its header, hide it with its x, or pull its corner to resize it. Skills is the biggest pane. Every other page can be edited the same way, and Reset this page or Reset every page puts things back.",
     "The console takes commands: cd scroll, stats mining, log mined for an hour, -note to keep a note, -mort to ask a question, and -help for the full list. A line that is none of those is an error, so nothing is kept or asked by accident. On a wide window it sits in its own column at the right of every page. Drag its header to float it, its x closes it, and Ctrl+Shift+T brings it back.",
     "A wide window fills itself. On a big monitor the room beside and under a page fills with extra panes, the most useful first, and any of them can be hidden.",
-    "Eighteen themes: Mortimer, Night, Abyss, Crystal, Gilded and thirteen runes. Most carry a painting on Home's Character pane. Settings, Look also chooses the backdrop behind the panes and how progress bars are drawn.",
+    "Eighteen themes: Mortimer, Night, Abyss, Crystal, Gilded and thirteen runes. Most carry a painting on Home's Character pane. Settings, Appearance also chooses the backdrop behind the panes and how progress bars are drawn.",
     "Priorities are built around the week. Each one sits in Main focus, Keep warm or Someday, and can carry a weekly target that counts itself from your experience and kills. Ideas lists thirteen to start from, and weekly targets can be switched off.",
     "Carry over: when a session runs past midnight, the XP lands on the next day and the day you started on looks empty. Mark that day as played, pick the skills, and it counts without adding any XP. The app asks when it thinks this has happened.",
     "The Bakery, Coffer's front page, comes two ways: Board, with the best three side by side and the rest as tiles, or Listing, one aligned table with the row you pick opened beside it. Tune shows your answers as lines you can press or type into.",
@@ -23362,13 +23502,13 @@ const PATCH_NOTES = [
     "New page: Upgrades. The wiki's gear progression for melee, ranged and magic as a ladder: the rung your levels reach, what changes on the next one, and what each piece costs today. A fourth tab covers skilling outfits and tools.",
     "The setup walkthrough's Look and feel step now covers the look, theme, backdrop, progress bars, layouts and the console, each with a line saying what it does.",
     "Phones: on a foldable the app refits itself when you open or shut it.",
-    "The launch screen shows what it is loading, line by line: your save, the quest log and every quest's steps, the diaries and combat tasks, the money makers and your character. It then waits for Let's go or Enter. Settings, General can make it go straight in.",
-    "A first launch ends in a one-minute tour of the pages, then Setup. Settings, General has Take the tour for anyone who wants it again. A new install also opens Setup by itself again; it had stopped doing that.",
+    "The launch screen shows what it is loading, line by line: your save, the quest log and every quest's steps, the diaries and combat tasks, the money makers and your character. It then waits for Let's go or Enter. Settings, Character can make it go straight in.",
+    "A first launch ends in a one-minute tour of the pages, then Setup. Settings, Character has Take the tour for anyone who wants it again. A new install also opens Setup by itself again; it had stopped doing that.",
     "With a Claude key, a question typed with -mort goes with your account in front of it: levels, quests done and ready, goals, diaries, and the steps of any quest you name.",
     "Quest points and quest counts match the game. Recipe for Disaster was counted twice. Subquests fold into their parent and miniquests are listed apart. Quest Hub shows the game's record from RuneLite beside the app's, with anything that disagrees.",
     "The quest tree drags to look around, and opens in a window of its own or full screen.",
     "Coffer: Bossing is a style of its own in the quiz, with a Boss tag on those methods. The quiz is a centred stage with a progress strip. The skills you love get a column each under the best three. Every section has all or fewer and folds to its title. Not organized right? on a method's card reports a wrong call.",
-    "Mortimer, Night, Abyss and Crystal carry a second colour for figures, bars and the prompt, and Night has an accent of its own. Settings, Look has a hue slider for the second colour.",
+    "Mortimer, Night, Abyss and Crystal carry a second colour for figures, bars and the prompt, and Night has an accent of its own. Settings, Theme has a hue slider for the second colour.",
     "The Font choice now changes the Terminal look as well; only the terminal keeps its own type. Size and Weight sliders sit under it.",
     "Settings has Send a suggestion beside Report a bug. Both open a form on GitHub with the version, the device and the page filled in. Upgrades says plainly that it is still being built.",
     "New section: Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
@@ -24646,7 +24786,7 @@ const SU_VIEW = {
     const opt = (name, what, control)=>`<div class="sul-o"><div class="sul-ol"><b>${name}</b>${what ? `<span>${what}</span>` : ""}</div>${control}</div>`;
     const grp = (title, body)=>`<section class="sul-g"><h4>${title}</h4>${body}</section>`;
     return `<h3 class="su-h">Look and feel <span class="su-opt">Optional</span></h3>
-      <p class="su-p">How the app looks and where things sit. Each one changes as you click, so you can see it straight away, and all of them stay in Settings, Look.</p>`
+      <p class="su-p">How the app looks and where things sit. Each one changes as you click, so you can see it straight away, and all of them stay in Settings, Appearance.</p>`
       + grp("Appearance",
           opt("Look", "Terminal is the new one. Classic is the app as it was.", seg(SKINS, "data-suskin", term ? "term" : "classic"))
         + opt("Theme", "The colours, and for most themes a picture on Home.", `<div class="su-themes">${THEMES.map(([id,label,ic])=>`<button class="su-theme ${id===cur?"on":""}" data-sutheme="${id}"><img src="${WIKI+ic}" alt=""><span>${label}</span></button>`).join("")}</div>`)
@@ -24663,13 +24803,13 @@ const SU_VIEW = {
         + opt("Bakery layout", "How Coffer lays out its money makers. Board is cards and tiles. Listing is one aligned table.", seg(COFFER_LAYOUTS, "data-subak", cofferLayout())))
       + grp("Console",
           opt("Where it sits", "In a column beside every page, as a window you can move, or put away.", seg([["side", "At the side"], ["float", "Floating"], ["off", "Hidden"]], "data-sucon", conWhere()))
-        + `<p class="su-note sul-tip">It takes a command: -note keeps a note, -mort asks a question. Drag its header to float it, and its x closes it. <b>${escapeHtml(termKeyText())}</b> brings it back from anywhere. The shortcut can be changed in Settings, Look.</p>`) : "");
+        + `<p class="su-note sul-tip">It takes a command: -note keeps a note, -mort asks a question. Drag its header to float it, and its x closes it. <b>${escapeHtml(termKeyText())}</b> brings it back from anywhere. The shortcut can be changed in Settings, Appearance.</p>`) : "");
   },
   ai: ()=>`<h3 class="su-h">Claude in the terminal <span class="su-opt">Optional</span></h3>
       <p class="su-p">Home has a terminal. Ask a question there with -mort and it is answered on this device, from what the app knows. Give it your own Claude API key and the question goes to Claude instead, along with your levels, so it can answer nearly anything about the game for your account.</p>
       <div class="su-row cl-row"><input type="password" id="suAiKey" placeholder="${claudeOn() ? "A key is saved on this device" : "sk-ant-..."}" autocomplete="off" spellcheck="false"><button class="primary" id="suAiSave">Check and save</button></div>
       <div class="su-note cl-note" id="suAiNote">${claudeOn() ? "Connected. -mort on Home goes to Claude." : "No key yet. Skip this step and nothing changes."}</div>
-      <div class="su-safe"><b>What happens to the key.</b> It is kept on this device only, apart from your save and your backups, and it is sent to Anthropic and nowhere else. Each question is billed to your key. Keys come from the <a href="https://platform.claude.com/" target="_blank" rel="noopener">Claude Console</a>. You can add, change or remove it later in Settings, Advanced.</div>`,
+      <div class="su-safe"><b>What happens to the key.</b> It is kept on this device only, apart from your save and your backups, and it is sent to Anthropic and nowhere else. Each question is billed to your key. Keys come from the <a href="https://platform.claude.com/" target="_blank" rel="noopener">Claude Console</a>. You can add, change or remove it later in Settings, Claude.</div>`,
   done: ()=>{
     const did = Object.values(su.did);
     return `<div class="su-hero">
