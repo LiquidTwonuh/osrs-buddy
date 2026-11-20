@@ -9,7 +9,7 @@ a copy of your data — for that, use ⇓ Backup in Settings.
 
 | File | Released |
 |---|---|
-| `OSRS-Buddy-v2.0.html` | 18 Nov 2026. Mortimeter 1.0 (2.0 underneath): the new name, the Terminal look, the console, Coffer, Skills and Upgrades |
+| `OSRS-Buddy-v2.0.html` | 20 Nov 2026. Mortimeter 1.0 (2.0 underneath): the new name, the Terminal look, the console, Coffer, Skills and Upgrades, the launch screen and tour, Settings as a rail |
 | `OSRS-Buddy-v1.7.html` | 24 Sep 2026 — RuneLite auto-sync, Achievements, The Map, XP counted on the right day |
 | `OSRS-Buddy-v1.6.html` | 13 Sep 2026 — Setup walkthrough, RuneLite Character Export import |
 | `OSRS-Buddy-v1.5.html` | 13 Sep 2026 — the Scroll upgraded, Trophy cabinet, quest board and route |

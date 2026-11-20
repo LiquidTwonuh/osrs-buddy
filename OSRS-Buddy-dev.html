@@ -23509,7 +23509,7 @@ const APP_VERSION = "2.0";
 function verLabel(v){ const m = /^(\d+)(\.\d+.*)?$/.exec(String(v || "")); if(!m || +m[1] < 2) return String(v || ""); return (+m[1] - 1) + (m[2] || ""); }
 const APP_LABEL = verLabel(APP_VERSION);
 const PATCH_NOTES = [
-  {v:"2.0", date:"November 18, 2026", title:"Farewell Buddy, hello Mortimeter", notes:[
+  {v:"2.0", date:"November 20, 2026", title:"Farewell Buddy, hello Mortimeter", notes:[
     "The app is now Mortimeter. OSRS Buddy was one letter away from OSBuddy, a third-party client from years ago that this app has nothing to do with, and the name needed to be ours. Nothing about your save, your backups or your files changes.",
     "Mortimeter is Mortimer, the Slayer master, plus meter, because the app measures your account.",
     "The gold theme the app started with is now called Gilded. The About panel remembers the old name and dates. Anyone whose save is older than the rename finds a new trophy in the cabinet.",
@@ -23533,6 +23533,7 @@ const PATCH_NOTES = [
     "Coffer: Bossing is a style of its own in the quiz, with a Boss tag on those methods. The quiz is a centred stage with a progress strip. The skills you love get a column each under the best three. Every section has all or fewer and folds to its title. Not organized right? on a method's card reports a wrong call.",
     "Mortimer, Night, Abyss and Crystal carry a second colour for figures, bars and the prompt, and Night has an accent of its own. Settings, Theme has a hue slider for the second colour.",
     "The Font choice now changes the Terminal look as well; only the terminal keeps its own type. Size and Weight sliders sit under it.",
+    "Settings is rebuilt. Sections run down the left, every setting is one row with its control on the right, and a ? opens the longer explanation. Themes are a row of small rune tiles. Settings keeps its own type whatever font you pick for the pages.",
     "Settings has Send a suggestion beside Report a bug. Both open a form on GitHub with the version, the device and the page filled in. Upgrades says plainly that it is still being built.",
     "New section: Coffer, for making GP. It reads the wiki's money making guide, all 490 methods plus the 35 you only do once a day or two, and measures every one against your own levels and quests. Ready now lists what you can do today, sorted by what it pays.",
     "Six quick questions set it up: members or free-to-play, what you enjoy, how busy you want to be, whether you'll risk being attacked, whether to show methods you can't do yet, and what's worth your time. Every answer stays on screen as a filter you can change, and you can retake the questions whenever.",
